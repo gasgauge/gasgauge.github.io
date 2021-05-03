@@ -1,0 +1,231 @@
+Compilation warnings/errors on ./noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol:
+./noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol:453:31: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly {codehash := extcodehash(account)}
+                              ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in YFXRewardsUNIPool.checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#784-805):
+	External calls:
+	- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#801)
+	- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#795)
+Reentrancy in YFXRewardsUNIPool.getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748-774):
+	External calls:
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#752)
+Reentrancy in YFXRewardsUNIPool.notifyRewardAmount(uint256) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#812-827):
+	External calls:
+	- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#821)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#824)
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#825)
+	- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#822)
+Reentrancy in YFXRewardsUNIPool.stake(uint256,address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#726-738):
+	External calls:
+	- y.safeTransferFrom(msg.sender,_wallet,tokenAmount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#731)
+	- super.tokenStake(left) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#733)
+		- y.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#617)
+		- (success,returndata) = address(token).call(data) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#561)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#618)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#726)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	State variables written after the call(s):
+	- super.tokenStake(left) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#733)
+		- _balances[msg.sender] = _balances[msg.sender].add(amount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#616)
+	- super.tokenStake(left) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#733)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#615)
+Reentrancy in YFXRewardsUNIPool.stakeReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#740-746):
+	External calls:
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- (success,returndata) = address(token).call(data) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#561)
+		- token.safeTransfer(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#757)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+		- token.safeTransfer(referrer,commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#765)
+		- token.burn(commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#768)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#740)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	State variables written after the call(s):
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- currentEpoch ++ (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#796)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- currentEpochReward = EPOCH_REWARD.mul(rewardMultiplier).div(100) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#787)
+		- currentEpochReward = TOTAL_REWARD.sub(totalAccumulatedReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#790)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#676)
+		- lastUpdateTime = block.timestamp (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#800)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- periodFinish = block.timestamp.add(DURATION) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#801)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#675)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- rewardRate = currentEpochReward.div(DURATION) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#799)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- rewards[msg.sender] = 0 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#752)
+		- rewards[account] = earned(account) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#678)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#795)
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#679)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+YFXRewardsUNIPool.setRewardStake(address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#721-724) ignores return value by token.approve(rewardStake,0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#723)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+YFXRewardsUNIPool.constructor(address,address,address,uint256).wallet (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#667) shadows:
+	- YFXRewardsUNIPool.wallet() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#684-686) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in YFXRewardsUNIPool.checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#784-805):
+	External calls:
+	- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	State variables written after the call(s):
+	- currentEpoch ++ (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#796)
+	- lastUpdateTime = block.timestamp (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#800)
+	- rewardRate = currentEpochReward.div(DURATION) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#799)
+Reentrancy in YFXRewardsUNIPool.getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748-774):
+	External calls:
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	State variables written after the call(s):
+	- accumulatedStakingPower[msg.sender] = accumulatedStakingPower[msg.sender].add(rewards[msg.sender]) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#751)
+Reentrancy in YFXRewardsUNIPool.notifyRewardAmount(uint256) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#812-827):
+	External calls:
+	- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#821)
+	State variables written after the call(s):
+	- currentEpoch ++ (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#823)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in YFXRewardsUNIPool.checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#784-805):
+	External calls:
+	- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#802)
+Reentrancy in YFXRewardsUNIPool.getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748-774):
+	External calls:
+	- token.safeTransfer(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#757)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#758)
+Reentrancy in YFXRewardsUNIPool.getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748-774):
+	External calls:
+	- token.safeTransfer(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#757)
+	- token.safeTransfer(referrer,commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#765)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#766)
+Reentrancy in YFXRewardsUNIPool.getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748-774):
+	External calls:
+	- token.safeTransfer(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#757)
+	- token.burn(commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#768)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	Event emitted after the call(s):
+	- Burned(commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#769)
+Reentrancy in YFXRewardsUNIPool.notifyRewardAmount(uint256) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#812-827):
+	External calls:
+	- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#821)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#826)
+Reentrancy in YFXRewardsUNIPool.stake(uint256,address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#726-738):
+	External calls:
+	- y.safeTransferFrom(msg.sender,_wallet,tokenAmount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#731)
+	- super.tokenStake(left) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#733)
+		- y.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#617)
+		- (success,returndata) = address(token).call(data) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#561)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#618)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#726)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	Event emitted after the call(s):
+	- Staked(msg.sender,left) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#734)
+Reentrancy in YFXRewardsUNIPool.stakeReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#740-746):
+	External calls:
+	- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+		- (success,returndata) = address(token).call(data) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#561)
+		- token.safeTransfer(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#757)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+		- token.safeTransfer(referrer,commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#765)
+		- token.burn(commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#768)
+	- checkNextEpoch() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#740)
+		- token.mint(address(this),currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#794)
+	Event emitted after the call(s):
+	- Burned(commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#769)
+		- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+	- RewardAdded(currentEpochReward) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#802)
+		- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+	- RewardPaid(msg.sender,actualPaid) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#758)
+		- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+	- RewardPaid(msg.sender,commission) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#766)
+		- reward = getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#742)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YFXRewardsUNIPool.earned(address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#706-715) uses timestamp for comparisons
+	Dangerous comparisons:
+	- calculatedEarned > poolBalance (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#713)
+YFXRewardsUNIPool.stakeReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#740-746) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(reward > 1,Earned too little) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#744)
+YFXRewardsUNIPool.getReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#748-774) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 1 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#750)
+YFXRewardsUNIPool.nextRewardMultiplier() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#776-782) uses timestamp for comparisons
+	Dangerous comparisons:
+	- votingValue > 0 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#779)
+YFXRewardsUNIPool.notifyRewardAmount(uint256) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#812-827) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(periodFinish == 0,Only can call once to start staking) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#813)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#442-455) uses assembly
+	- INLINE ASM (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#453-454)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#42) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#74) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#264) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#342) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#425) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#496) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#573) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#593) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#485-491):
+	- (success) = recipient.call.value(amount)() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#489)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#549-568):
+	- (success,returndata) = address(token).call(data) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#561)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardReferral(address)._rewardReferral (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#582) is not in mixedCase
+Parameter IRewardDistributionRecipient.setRewardVote(address)._rewardVote (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#586) is not in mixedCase
+Parameter YFXRewardsUNIPool.setRewardStake(address)._rewardStake (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#721) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#291-293)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#317-320)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#326-328)
+wallet() should be declared external:
+	- YFXRewardsUNIPool.wallet() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#684-686)
+stakingPower(address) should be declared external:
+	- YFXRewardsUNIPool.stakingPower(address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#717-719)
+stake(uint256,address) should be declared external:
+	- YFXRewardsUNIPool.stake(uint256,address) (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#726-738)
+stakeReward() should be declared external:
+	- YFXRewardsUNIPool.stakeReward() (noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol#740-746)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol analyzed (13 contracts with 46 detectors), 45 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf50510bc5abce4a6733b85237d84e2c4f1988e09.sol
+Tool Runtime = 1.2794148640023195 seconds
+#############################################

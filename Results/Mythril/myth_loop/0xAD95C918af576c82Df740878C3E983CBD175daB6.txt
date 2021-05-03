@@ -1,0 +1,281 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: AddressResolver
+Function name: rebuildCaches(address[])
+PC address: 2428
+Estimated Gas Usage: 2097 - 36473
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:247
+
+destinations[i].rebuildCache()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: importAddresses(bytes32[],address[]), txdata: 0xab0b8f7700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200400401084001010101010104800101010101010101010101010101010201208020088004000101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [SOMEGUY], function: rebuildCaches(address[]), txdata: 0x766f781500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AddressResolver
+Function name: rebuildCaches(address[])
+PC address: 2428
+Estimated Gas Usage: 3756 - 72413
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:247
+
+destinations[i].rebuildCache()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8200a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: rebuildCaches(address[]), txdata: 0x766f78150000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000280808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: AddressResolver
+Function name: areAddressesImported(bytes32[],address[])
+PC address: 3088
+Estimated Gas Usage: 698 - 793
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:255
+
+destinations[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [SOMEGUY], function: areAddressesImported(bytes32[],address[]), txdata: 0x9f42102f0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: EternalStorage
+Function name: getBytesValue(bytes32)
+PC address: 4142
+Estimated Gas Usage: 3439 - 4947
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:1025
+
+return BytesStorage[record]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000080000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setBytesValue(bytes32,bytes), txdata: 0xc9a52d2c00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: getBytesValue(bytes32), txdata: 0x44bfa56e0000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: EternalStorage
+Function name: getBytesValue(bytes32)
+PC address: 4194
+Estimated Gas Usage: 3439 - 4947
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:1025
+
+return BytesStorage[record]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000080000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setBytesValue(bytes32,bytes), txdata: 0xc9a52d2c00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: getBytesValue(bytes32), txdata: 0x44bfa56e0000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: EternalStorage
+Function name: getStringValue(bytes32)
+PC address: 5857
+Estimated Gas Usage: 3417 - 4925
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:999
+
+return StringStorage[record]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400c1000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000001004200000000000000080000000000000800000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setStringValue(bytes32,string), txdata: 0xf586606600000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: getStringValue(bytes32), txdata: 0xa209a29c0000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: EternalStorage
+Function name: getStringValue(bytes32)
+PC address: 5909
+Estimated Gas Usage: 3417 - 4925
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops7/0xAD95C918af576c82Df740878C3E983CBD175daB6.sol:999
+
+return StringStorage[record]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400c1000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000001004200000000000000080000000000000800000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setStringValue(bytes32,string), txdata: 0xf586606600000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: getStringValue(bytes32), txdata: 0xa209a29c0000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: Low
+Contract: EternalStorage
+Function name: deleteBytesValue(bytes32)
+PC address: 7068
+Estimated Gas Usage: 12388 - 53098
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000004002040000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setBytesValue(bytes32,bytes), txdata: 0xc9a52d2c00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: deleteBytesValue(bytes32), txdata: 0x0c55d9250000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: Low
+Contract: EternalStorage
+Function name: deleteStringValue(bytes32)
+PC address: 7140
+Estimated Gas Usage: 12364 - 53074
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000120102004400180088002040208200401021001000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: setStringValue(bytes32,string), txdata: 0xf586606600000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: deleteStringValue(bytes32), txdata: 0xba69fcaa0000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: Low
+Contract: EternalStorage
+Function name: setBytesValue(bytes32,bytes)
+PC address: 7212
+Estimated Gas Usage: 17763 - 78473
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000002001012004082002804008082008400804020180000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setBytesValue(bytes32,bytes), txdata: 0xc9a52d2c0000000000000000000000000000000000000000000000000000000000000021000000000000000000000000000000000000000000000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: setBytesValue(bytes32,bytes), txdata: 0xc9a52d2c0000000000000000000000000000000000000000000000000000000000000021000000000000000000000000000000000000000000000000000000000000000080, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: Low
+Contract: EternalStorage
+Function name: setStringValue(bytes32,string)
+PC address: 7340
+Estimated Gas Usage: 17785 - 78495
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation.  This issue is reported for internal compiler generated code.
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101200000000000000000000000000000000000000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: setStringValue(bytes32,string), txdata: 0xf58660660000000000000000000000000000000000000000000000000000000000000021000000000000000000000000000000000000000000000000000000000000000008, value: 0x0
+Caller: [CREATOR], function: setStringValue(bytes32,string), txdata: 0xf58660660000000000000000000000000000000000000000000000000000000000000021000000000000000000000000000000000000000000000000000000000000000086, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xAD95C918af576c82Df740878C3E983CBD175daB6.sol
+Tool Runtime = 8769.575315732 seconds
+#############################################

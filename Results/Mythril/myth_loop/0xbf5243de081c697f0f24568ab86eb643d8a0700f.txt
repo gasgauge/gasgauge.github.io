@@ -1,0 +1,1128 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1048
+Estimated Gas Usage: 10598 - 184986
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.iterate_getValue(balances, msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000000238, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transfer(address,uint256), txdata: 0xa9059cbb000000000000000000000000010101010101010101010101010101010101010118a16d0401312002025054c449c19040820042028117268a0855692a14800b0c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1048
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.iterate_getValue(balances, msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x102041426, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101100101010101010101010a3e0fa674677efdfafa00dc4352000000040000800204c27789dffffbffffff, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1259
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.insert(balances, msg.sender, IterableMapping.iterate_getValue(balances, msg.sender).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x102041426, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101100101010101010101010a3e0fa674677efdfafa00dc4352000000040000800204c27789dffffbffffff, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: IterableMapping
+Function name: iterate_get(IterableMapping.itmap storage,uint256)
+PC address: 1412
+Estimated Gas Usage: 1146 - 1241
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:67
+
+self.keys[keyIndex]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000440, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: iterate_get(IterableMapping.itmap storage,uint256), txdata: 0x75a3e8e800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1512
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:166
+
+IterableMapping.iterate_getValue(balances, _to)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x102041426, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101100101010101010101010a3e0fa674677efdfafa00dc4352000000040000800204c27789dffffbffffff, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: IterableMapping
+Function name: iterate_start(IterableMapping.itmap storage)
+PC address: 1546
+Estimated Gas Usage: 1239 - 1615
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:60
+
+keyIndex++
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20420109404830404, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: iterate_start(IterableMapping.itmap storage), txdata: 0xa21ab7160000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 1562
+Estimated Gas Usage: 17944 - 213472
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:232
+
+allowed[_from][msg.sender]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1723
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:166
+
+IterableMapping.insert(balances, _to, IterableMapping.iterate_getValue(balances, _to).add(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x102041426, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101100101010101010101010a3e0fa674677efdfafa00dc4352000000040000800204c27789dffffbffffff, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 1832
+Estimated Gas Usage: 17944 - 213472
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.iterate_getValue(balances, _from)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000008008100400024040800001080102104001021000000000000000000000000020100204408001200808080102802004011002200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 1832
+Estimated Gas Usage: 17944 - 213472
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.iterate_getValue(balances, _from)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1904
+Estimated Gas Usage: 3771 - 73180
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:111
+
+assert(_b <= _a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xbc0482402000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: BasicToken
+Function name: transfer(address,uint256)
+PC address: 1934
+Estimated Gas Usage: 7238 - 146056
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:120
+
+assert(c >= _a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000010003a59e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000101010101010101010101010101010101010101a30605084864263806000000000000000404090082200400824dfffffbffffff, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 2043
+Estimated Gas Usage: 17944 - 213472
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.insert(balances, _from, IterableMapping.iterate_getValue(balances, _from).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000020008020008200200000000001020000000040000000000000000000000000001010101010101010101200101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 2043
+Estimated Gas Usage: 17944 - 213472
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.insert(balances, _from, IterableMapping.iterate_getValue(balances, _from).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 2296
+Estimated Gas Usage: 17944 - 213472
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:236
+
+IterableMapping.iterate_getValue(balances, _to)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 2451
+Estimated Gas Usage: 17989 - 213517
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:232
+
+allowed[_from][msg.sender]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 2507
+Estimated Gas Usage: 17944 - 213472
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:236
+
+IterableMapping.insert(balances, _to, IterableMapping.iterate_getValue(balances, _to).add(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 2693
+Estimated Gas Usage: 17944 - 213472
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:239
+
+allowed[_from][msg.sender]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 2721
+Estimated Gas Usage: 17989 - 213517
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.iterate_getValue(balances, _from)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42000000002000003, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000040000800000042000000000010002040402002000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 2721
+Estimated Gas Usage: 17989 - 213517
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.iterate_getValue(balances, _from)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transferFrom(address,address,uint256)
+PC address: 2834
+Estimated Gas Usage: 17944 - 213472
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:239
+
+allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104014008a001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010004010000000000082010000000401020400000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 2932
+Estimated Gas Usage: 17989 - 213517
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.insert(balances, _from, IterableMapping.iterate_getValue(balances, _from).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3402480004000005, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000004000012004040800000080020110200000200200000000000000000000000001010101010101010101010120010102010201020000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 2932
+Estimated Gas Usage: 17989 - 213517
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:235
+
+IterableMapping.insert(balances, _from, IterableMapping.iterate_getValue(balances, _from).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 3185
+Estimated Gas Usage: 17989 - 213517
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:236
+
+IterableMapping.iterate_getValue(balances, _to)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 3396
+Estimated Gas Usage: 17989 - 213517
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:236
+
+IterableMapping.insert(balances, _to, IterableMapping.iterate_getValue(balances, _to).add(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 3582
+Estimated Gas Usage: 17989 - 213517
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:239
+
+allowed[_from][msg.sender]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transferFrom(address,address,uint256)
+PC address: 3723
+Estimated Gas Usage: 17989 - 213517
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:239
+
+allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000040040000000000000000000000010480000200000000000000000000000001010101010101010101010101010101400101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 4324
+Estimated Gas Usage: 10598 - 184986
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.iterate_getValue(balances, msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb000000000000000000000000010180042080040801040004080040044040400400906b08c90010504c450364282f212311adc9d483033a9108c043a480a8ad64, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 4324
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.iterate_getValue(balances, msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x50040100080010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000200000400010202004040010240081002804002664a584150000020006b0a401988a01106d655da516c0d280a292a4dd57b5e67, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 4535
+Estimated Gas Usage: 10598 - 184986
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.insert(balances, msg.sender, IterableMapping.iterate_getValue(balances, msg.sender).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000000100000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010020400010000100000002801002018001000000000000000000000000000001000201020180801001088001010101010101010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb898989898989898989898989010101010200010101012001010108010101010171144820c8ad0100051881740240060002004001000a0142874aa41200100105, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 4535
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.insert(balances, msg.sender, IterableMapping.iterate_getValue(balances, msg.sender).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x50040100080010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000200000400010202004040010240081002804002664a584150000020006b0a401988a01106d655da516c0d280a292a4dd57b5e67, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 4788
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:166
+
+IterableMapping.iterate_getValue(balances, _to)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x50040100080010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000200000400010202004040010240081002804002664a584150000020006b0a401988a01106d655da516c0d280a292a4dd57b5e67, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 4999
+Estimated Gas Usage: 10598 - 184986
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:166
+
+IterableMapping.insert(balances, _to, IterableMapping.iterate_getValue(balances, _to).add(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x50040100080010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000200000400010202004040010240081002804002664a584150000020006b0a401988a01106d655da516c0d280a292a4dd57b5e67, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 5607
+Estimated Gas Usage: 10643 - 185031
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.iterate_getValue(balances, msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000400e500c, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x40, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101018102e280c120108864a08854a72056a9054800c0098108b7b774fd026ad49d03, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 5607
+Estimated Gas Usage: 10643 - 185031
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.iterate_getValue(balances, msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x41040000086002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101018000902ce602005417240081c585bdff6f5ffffffbfffe8000000a0000000001, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 5818
+Estimated Gas Usage: 10643 - 185031
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.insert(balances, msg.sender, IterableMapping.iterate_getValue(balances, msg.sender).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10108000000040021, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000010001010000000201000000000001000000000000000000000000000000000001204001204002100101200140010440010101400000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000001001100101010100010101010101040100200101310420050a40c80250150224d1080225211306103a499006ab216940c6908a24, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 5818
+Estimated Gas Usage: 10643 - 185031
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:165
+
+IterableMapping.insert(balances, msg.sender, IterableMapping.iterate_getValue(balances, msg.sender).sub(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x41040000086002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101018000902ce602005417240081c585bdff6f5ffffffbfffe8000000a0000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 5823
+Estimated Gas Usage: 3771 - 73180
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:111
+
+assert(_b <= _a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x141080020000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: StandardToken
+Function name: transfer(address,uint256)
+PC address: 5853
+Estimated Gas Usage: 7238 - 146056
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:120
+
+assert(c >= _a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000101010101010101010101010101010101010101008000000000000800000054508a2500800000461a5a7d7fffffffffffffffff, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 6071
+Estimated Gas Usage: 10643 - 185031
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:166
+
+IterableMapping.iterate_getValue(balances, _to)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x41040000086002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101018000902ce602005417240081c585bdff6f5ffffffbfffe8000000a0000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 6282
+Estimated Gas Usage: 10643 - 185031
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:166
+
+IterableMapping.insert(balances, _to, IterableMapping.iterate_getValue(balances, _to).add(_value))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x41040000086002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101018000902ce602005417240081c585bdff6f5ffffffbfffe8000000a0000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 7648
+Estimated Gas Usage: 3816 - 73225
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:111
+
+assert(_b <= _a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000001010101010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: IBNEST
+Function name: transfer(address,uint256)
+PC address: 7678
+Estimated Gas Usage: 7283 - 146101
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol:120
+
+assert(c >= _a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8000006000806c44, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: transfer(address,uint256), txdata: 0xa9059cbb0000000000000000000000000120200401018001080101010140014000010480bfe577d2f8a8887f00cd082c40000259489014b084a5344a40054a2502814104, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xbf5243de081c697f0f24568ab86eb643d8a0700f.sol
+Tool Runtime = 1115.5928366330045 seconds
+#############################################

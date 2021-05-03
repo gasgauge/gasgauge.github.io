@@ -1,0 +1,300 @@
+Compilation warnings/errors on ./loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol:
+./loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol:535:25: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+            codehash := extcodehash(account)
+                        ^------------------^
+
+INFO:Detectors:[91m
+GenesisKingdomToken._withdrawal(address,address,uint256) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2109-2124) sends eth to arbitrary user
+	Dangerous calls:
+	- _recepient.toPayable().transfer(_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2118)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1990-2048):
+	External calls:
+	- IERC20(_currency).safeTransfer(order.maker,amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2029)
+	- IERC721(address(this)).safeTransferFrom(address(this),_taker,order.landIds[0]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2034)
+	- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	External calls sending eth:
+	- order.maker.toPayable().transfer(amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2026)
+	State variables written after the call(s):
+	- _orderHolders[_orderId] = _taker (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2044)
+	- order.taker = _taker (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2039)
+	- order.fulfilledCurrency = _currency (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2040)
+	- order.fulfilledAmount = amount (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2041)
+	- order.status = OrderStatus.FULFILLED (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2042)
+	- _processedTxids[_txid] = true (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2045)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+Reentrancy in GenesisKingdomToken.cancelOrder(uint128) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1937-1951):
+	External calls:
+	- IERC721(address(this)).safeTransferFrom(address(this),order.maker,order.landIds[0]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1944)
+	- _batchSafeTransferFrom(address(this),address(this),order.maker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1946)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	State variables written after the call(s):
+	- order.status = OrderStatus.CANCELLED (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1948)
+Reentrancy in GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1887-1901):
+	External calls:
+	- _batchSafeTransferFrom(address(0),msg.sender,address(this),_landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1898)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	State variables written after the call(s):
+	- _createOrder(_orderId,_bundleId,_landIds,_offeredCurrencies,_offeredAmounts,OrderType.OrderBundle,_sellingMethod,_feeId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1900)
+		- _orders[_orderId] = Order(_orderId,_landIds,msg.sender,address(0),_offeredCurrencies,_offeredAmounts,address(0),0,_type,_sellingMethod,OrderStatus.OPEN) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1802-1814)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC721Metadata.constructor(string,string).name (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1182) shadows:
+	- ERC721Metadata.name() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1194-1196) (function)
+	- IERC721Metadata.name() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1150) (function)
+ERC721Metadata.constructor(string,string).symbol (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1182) shadows:
+	- ERC721Metadata.symbol() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1202-1204) (function)
+	- IERC721Metadata.symbol() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1152) (function)
+ERC721Metadata._setBaseURI(string).baseURI (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1248) shadows:
+	- ERC721Metadata.baseURI() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1259-1261) (function)
+ERC721Full.constructor(string,string).name (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1356) shadows:
+	- ERC721Metadata.name() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1194-1196) (function)
+	- IERC721Metadata.name() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1150) (function)
+ERC721Full.constructor(string,string).symbol (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1356) shadows:
+	- ERC721Metadata.symbol() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1202-1204) (function)
+	- IERC721Metadata.symbol() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1152) (function)
+GenesisKingdomToken.constructor(string,string)._name (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1613) shadows:
+	- ERC721Metadata._name (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1159) (state variable)
+GenesisKingdomToken.constructor(string,string)._symbol (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1613) shadows:
+	- ERC721Metadata._symbol (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1162) (state variable)
+GenesisKingdomToken.getLandDetail(uint128).owner (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1633) shadows:
+	- Ownable.owner() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#35-37) (function)
+GenesisKingdomToken._issueNewLand(address,uint128,bytes32,uint128)._owner (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1663) shadows:
+	- Ownable._owner (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#19) (state variable)
+GenesisKingdomToken._issueNewLand(address,uint128,bytes32,uint128)._name (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1665) shadows:
+	- ERC721Metadata._name (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1159) (state variable)
+GenesisKingdomToken.issueNewLandBundle(address,uint128[],bytes32[],uint128)._owner (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1685) shadows:
+	- Ownable._owner (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#19) (state variable)
+GenesisKingdomToken.setBaseURI(string).baseURI (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2168) shadows:
+	- ERC721Metadata.baseURI() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1259-1261) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+GenesisKingdomToken._batchSafeTransferFrom(address,address,address,uint128[]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2183-2196) has external calls inside a loop: IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1887-1901):
+	External calls:
+	- _batchSafeTransferFrom(address(0),msg.sender,address(this),_landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1898)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	State variables written after the call(s):
+	- _createOrder(_orderId,_bundleId,_landIds,_offeredCurrencies,_offeredAmounts,OrderType.OrderBundle,_sellingMethod,_feeId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1900)
+		- _goodIdOfOrders[_orderId] = _goodId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1816)
+	- _createOrder(_orderId,_bundleId,_landIds,_offeredCurrencies,_offeredAmounts,OrderType.OrderBundle,_sellingMethod,_feeId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1900)
+		- _orderFees[_orderId] = _feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1815)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in GenesisKingdomToken.cancelOrder(uint128) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1937-1951):
+	External calls:
+	- IERC721(address(this)).safeTransferFrom(address(this),order.maker,order.landIds[0]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1944)
+	- _batchSafeTransferFrom(address(this),address(this),order.maker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1946)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	Event emitted after the call(s):
+	- OrderCancelled(msg.sender,order.id) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1950)
+Reentrancy in GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1990-2048):
+	External calls:
+	- IERC20(_currency).safeTransfer(order.maker,amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2029)
+	- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	External calls sending eth:
+	- order.maker.toPayable().transfer(amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2026)
+	Event emitted after the call(s):
+	- Transfer(from,to,tokenId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#987)
+		- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+Reentrancy in GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1990-2048):
+	External calls:
+	- IERC20(_currency).safeTransfer(order.maker,amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2029)
+	- IERC721(address(this)).safeTransferFrom(address(this),_taker,order.landIds[0]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2034)
+	- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	External calls sending eth:
+	- order.maker.toPayable().transfer(amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2026)
+	Event emitted after the call(s):
+	- OrderFulfilled(msg.sender,order.id) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2047)
+Reentrancy in GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1887-1901):
+	External calls:
+	- _batchSafeTransferFrom(address(0),msg.sender,address(this),_landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1898)
+		- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+		- IERC721(_token).safeTransferFrom(_from,_recepient,_tokenIds[i]) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2191)
+	Event emitted after the call(s):
+	- OrderCreate(msg.sender,_orderId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1818)
+		- _createOrder(_orderId,_bundleId,_landIds,_offeredCurrencies,_offeredAmounts,OrderType.OrderBundle,_sellingMethod,_feeId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1900)
+Reentrancy in GenesisKingdomToken.refund(uint128,address,address,uint256) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2148-2158):
+	External calls:
+	- _withdrawal(_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2156)
+		- (success,returndata) = address(token).call(data) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1519)
+		- IERC20(_currency).safeTransfer(_recepient,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2122)
+	External calls sending eth:
+	- _withdrawal(_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2156)
+		- _recepient.toPayable().transfer(_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2118)
+	Event emitted after the call(s):
+	- Refund(_recepient,_orderId,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2157)
+Reentrancy in GenesisKingdomToken.withdrawal(address,address,uint256) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2132-2139):
+	External calls:
+	- _withdrawal(_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2137)
+		- (success,returndata) = address(token).call(data) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1519)
+		- IERC20(_currency).safeTransfer(_recepient,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2122)
+	External calls sending eth:
+	- _withdrawal(_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2137)
+		- _recepient.toPayable().transfer(_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2118)
+	Event emitted after the call(s):
+	- Withdrawal(msg.sender,_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2138)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#527-538) uses assembly
+	- INLINE ASM (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#534-537)
+ERC721._checkOnERC721Received(address,address,uint256,bytes) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1001-1028) uses assembly
+	- INLINE ASM (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1017-1021)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#568-574):
+	- (success) = recipient.call.value(amount)() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#572)
+Low level call in ERC721._checkOnERC721Received(address,address,uint256,bytes) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1001-1028):
+	- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,msg.sender,from,tokenId,_data)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1011-1013)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1506-1527):
+	- (success,returndata) = address(token).call(data) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1519)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Roles.add(Roles.Role,address)._role (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#96) is not in mixedCase
+Parameter Roles.add(Roles.Role,address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#96) is not in mixedCase
+Parameter Roles.remove(Roles.Role,address)._role (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#104) is not in mixedCase
+Parameter Roles.remove(Roles.Role,address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#104) is not in mixedCase
+Parameter Roles.has(Roles.Role,address)._role (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#113) is not in mixedCase
+Parameter Roles.has(Roles.Role,address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#113) is not in mixedCase
+Parameter Operator.isOperator(address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#127) is not in mixedCase
+Parameter Operator.addOperator(address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#131) is not in mixedCase
+Parameter Operator.removeOperator(address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#135) is not in mixedCase
+Parameter ERC721.safeTransferFrom(address,address,uint256,bytes)._data (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#837) is not in mixedCase
+Parameter Whitelist.isWhitelist(address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1310) is not in mixedCase
+Parameter Whitelist.addWhitelist(address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1314) is not in mixedCase
+Parameter Whitelist.removeWhitelist(address)._account (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1318) is not in mixedCase
+Parameter GenesisKingdomToken.issueNewLandBundle(address,uint128[],bytes32[],uint128)._owner (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1685) is not in mixedCase
+Parameter GenesisKingdomToken.issueNewLandBundle(address,uint128[],bytes32[],uint128)._ids (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1686) is not in mixedCase
+Parameter GenesisKingdomToken.issueNewLandBundle(address,uint128[],bytes32[],uint128)._names (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1687) is not in mixedCase
+Parameter GenesisKingdomToken.issueNewLandBundle(address,uint128[],bytes32[],uint128)._bundleId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1688) is not in mixedCase
+Parameter GenesisKingdomToken.getOrderDetails(uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1705) is not in mixedCase
+Parameter GenesisKingdomToken.getOrderGoodId(uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1741) is not in mixedCase
+Parameter GenesisKingdomToken.getOrderGenesisFeeId(uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1750) is not in mixedCase
+Parameter GenesisKingdomToken.hasExistentOrder(uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1759) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1833) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._bundleId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1834) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._ids (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1835) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._names (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1836) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredCurrencies (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1837) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredAmounts (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1838) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._sellingMethod (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1839) is not in mixedCase
+Parameter GenesisKingdomToken.issueAndCreateLandBundleOrder(uint128,uint128,uint128[],bytes32[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1840) is not in mixedCase
+Parameter GenesisKingdomToken.createSingleLandOrder(uint128,uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1861) is not in mixedCase
+Parameter GenesisKingdomToken.createSingleLandOrder(uint128,uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._landId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1862) is not in mixedCase
+Parameter GenesisKingdomToken.createSingleLandOrder(uint128,uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredCurrencies (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1863) is not in mixedCase
+Parameter GenesisKingdomToken.createSingleLandOrder(uint128,uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredAmounts (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1864) is not in mixedCase
+Parameter GenesisKingdomToken.createSingleLandOrder(uint128,uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._sellingMethod (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1865) is not in mixedCase
+Parameter GenesisKingdomToken.createSingleLandOrder(uint128,uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1866) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1888) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._bundleId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1889) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._landIds (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1890) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredCurrencies (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1891) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredAmounts (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1892) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._sellingMethod (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1893) is not in mixedCase
+Parameter GenesisKingdomToken.createLandBundleOrder(uint128,uint128,uint128[],address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1894) is not in mixedCase
+Parameter GenesisKingdomToken.updateOrder(uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1912) is not in mixedCase
+Parameter GenesisKingdomToken.updateOrder(uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredCurrencies (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1913) is not in mixedCase
+Parameter GenesisKingdomToken.updateOrder(uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._offeredAmounts (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1914) is not in mixedCase
+Parameter GenesisKingdomToken.updateOrder(uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._sellingMethod (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1915) is not in mixedCase
+Parameter GenesisKingdomToken.updateOrder(uint128,address[],uint256[],GenesisKingdomToken.OrderSellingMethod,uint128)._feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1916) is not in mixedCase
+Parameter GenesisKingdomToken.cancelOrder(uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1937) is not in mixedCase
+Parameter GenesisKingdomToken.takeOrderByEther(uint128)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1957) is not in mixedCase
+Parameter GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1991) is not in mixedCase
+Parameter GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string)._taker (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1992) is not in mixedCase
+Parameter GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string)._currency (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1993) is not in mixedCase
+Parameter GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string)._amount (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1994) is not in mixedCase
+Parameter GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string)._txid (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1995) is not in mixedCase
+Parameter GenesisKingdomToken.getSystemFee(uint128)._feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2059) is not in mixedCase
+Parameter GenesisKingdomToken.setNewSystemFee(uint128,uint256,uint256,uint256)._feeId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2087) is not in mixedCase
+Parameter GenesisKingdomToken.setNewSystemFee(uint128,uint256,uint256,uint256)._genesisFee (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2088) is not in mixedCase
+Parameter GenesisKingdomToken.setNewSystemFee(uint128,uint256,uint256,uint256)._inviterReward (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2089) is not in mixedCase
+Parameter GenesisKingdomToken.setNewSystemFee(uint128,uint256,uint256,uint256)._buyerReward (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2090) is not in mixedCase
+Parameter GenesisKingdomToken.withdrawal(address,address,uint256)._recepient (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2133) is not in mixedCase
+Parameter GenesisKingdomToken.withdrawal(address,address,uint256)._currency (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2134) is not in mixedCase
+Parameter GenesisKingdomToken.withdrawal(address,address,uint256)._amount (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2135) is not in mixedCase
+Parameter GenesisKingdomToken.refund(uint128,address,address,uint256)._orderId (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2149) is not in mixedCase
+Parameter GenesisKingdomToken.refund(uint128,address,address,uint256)._recepient (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2150) is not in mixedCase
+Parameter GenesisKingdomToken.refund(uint128,address,address,uint256)._currency (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2151) is not in mixedCase
+Parameter GenesisKingdomToken.refund(uint128,address,address,uint256)._amount (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2152) is not in mixedCase
+Parameter GenesisKingdomToken.setTokenURI(uint256,string)._tokenURI (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2164) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in GenesisKingdomToken.completeOrder(uint128,address,address,uint256,string) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1990-2048):
+	External calls:
+	- order.maker.toPayable().transfer(amount.sub(fee)) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2026)
+	State variables written after the call(s):
+	- _orderHolders[_orderId] = _taker (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2044)
+	- order.taker = _taker (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2039)
+	- order.fulfilledCurrency = _currency (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2040)
+	- order.fulfilledAmount = amount (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2041)
+	- order.status = OrderStatus.FULFILLED (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2042)
+	- _processedTxids[_txid] = true (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2045)
+	- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+		- _tokenApprovals[tokenId] = address(0) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1036)
+	- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+		- _tokenOwner[tokenId] = to (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#985)
+	Event emitted after the call(s):
+	- OrderFulfilled(msg.sender,order.id) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2047)
+	- Transfer(from,to,tokenId) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#987)
+		- _batchSafeTransferFrom(address(this),address(this),_taker,order.landIds) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2036)
+Reentrancy in GenesisKingdomToken.refund(uint128,address,address,uint256) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2148-2158):
+	External calls:
+	- _withdrawal(_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2156)
+		- _recepient.toPayable().transfer(_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2118)
+	Event emitted after the call(s):
+	- Refund(_recepient,_orderId,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2157)
+Reentrancy in GenesisKingdomToken.takeOrderByEther(uint128) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1957-1980):
+	External calls:
+	- msg.sender.transfer(msg.value) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1977)
+	Event emitted after the call(s):
+	- Refund(msg.sender,_orderId,address(0),msg.value) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1978)
+Reentrancy in GenesisKingdomToken.withdrawal(address,address,uint256) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2132-2139):
+	External calls:
+	- _withdrawal(_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2137)
+		- _recepient.toPayable().transfer(_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2118)
+	Event emitted after the call(s):
+	- Withdrawal(msg.sender,_recepient,_currency,_amount) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2138)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#61-64)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#70-72)
+paused() should be declared external:
+	- Pausable.paused() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#187-189)
+balanceOf(address) should be declared external:
+	- IERC721.balanceOf(address) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#256)
+	- ERC721.balanceOf(address) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#712-716)
+onERC721Received(address,address,uint256,bytes) should be declared external:
+	- IERC721Receiver.onERC721Received(address,address,uint256,bytes) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#331-336)
+totalSupply() should be declared external:
+	- IERC721Enumerable.totalSupply() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1046)
+	- ERC721Enumerable.totalSupply() (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#1081-1083)
+onERC721Received(address,address,uint256,bytes) should be declared external:
+	- GenesisKingdomToken.onERC721Received(address,address,uint256,bytes) (loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol#2202-2210)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol analyzed (23 contracts with 46 detectors), 109 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xedd190d250c752BAf6c96D77E2A678b1b0C2B42E.sol
+Tool Runtime = 10.940542093998374 seconds
+#############################################

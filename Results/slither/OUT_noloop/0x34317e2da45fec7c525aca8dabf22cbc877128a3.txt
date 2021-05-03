@@ -1,0 +1,184 @@
+INFO:Detectors:[91m
+VidyaFLUX.ambassadors_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#130) is never initialized. It is used in:
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+VidyaFLUX.sell(uint256,address) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#406-480) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_amountOfTokens,exitFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#414)
+	-_maintenance = SafeMath.div(SafeMath.mul(_undividedDividends,maintenanceFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#418)
+VidyaFLUX.sell(uint256,address) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#406-480) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_amountOfTokens,exitFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#414)
+	-_referralBonus = SafeMath.div(SafeMath.mul(_undividedDividends,referralFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#420)
+VidyaFLUX.transfer(address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#484-534) performs a multiplication on the result of a division:
+	-_tokenFee = SafeMath.div(SafeMath.mul(_amountOfTokens,transferFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#500)
+	-_dividends = _tokenFee (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#504)
+	-profitPerShare_ = SafeMath.add(profitPerShare_,(_dividends * magnitude) / tokenSupply_) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#524)
+VidyaFLUX.purchaseTokens(address,address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#658-750) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_incomingVIDYA,entryFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#672)
+	-_maintenance = SafeMath.div(SafeMath.mul(_undividedDividends,maintenanceFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#676)
+VidyaFLUX.purchaseTokens(address,address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#658-750) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_incomingVIDYA,entryFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#672)
+	-_referralBonus = SafeMath.div(SafeMath.mul(_undividedDividends,referralFee_),100) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#678)
+VidyaFLUX.purchaseTokens(address,address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#658-750) performs a multiplication on the result of a division:
+	-_fee = _fee - (_fee - (_amountOfTokens * (_dividends * magnitude / tokenSupply_))) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#722)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract VidyaFLUX (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#126-898) has payable functions:
+	 - VidyaFLUX.fallback() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#342-346)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+Reentrancy in VidyaFLUX.transfer(address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#484-534):
+	External calls:
+	- withdraw() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#494)
+		- erc20.transfer(_customerAddress,_dividends) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#398)
+	State variables written after the call(s):
+	- payoutsTo_[_customerAddress] -= int256(profitPerShare_ * _amountOfTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#518)
+	- payoutsTo_[_toAddress] += int256(profitPerShare_ * _taxedTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#520)
+	- profitPerShare_ = SafeMath.add(profitPerShare_,(_dividends * magnitude) / tokenSupply_) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#524)
+	- tokenBalanceLedger_[_customerAddress] = SafeMath.sub(tokenBalanceLedger_[_customerAddress],_amountOfTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#512)
+	- tokenBalanceLedger_[_toAddress] = SafeMath.add(tokenBalanceLedger_[_toAddress],_taxedTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#514)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+VidyaFLUX.withdraw() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#384-402) ignores return value by erc20.transfer(_customerAddress,_dividends) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#398)
+VidyaFLUX.feedInventory() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#758-804) ignores return value by erc20.transfer(maintenanceAddress,toInventory) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#788)
+VidyaFLUX.feedInventory() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#758-804) ignores return value by erc20.transfer(msg.sender,bonus) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#794)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in VidyaFLUX.buy(uint256,address) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#332-338):
+	External calls:
+	- checkAndTransferVIDYA(_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#334)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#326)
+	State variables written after the call(s):
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- allTimeRefEarnings_[_referredBy] = SafeMath.add(allTimeRefEarnings_[_referredBy],_referralBonus) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#702)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- ambassadorAccumulatedQuota_[_customerAddress] = SafeMath.add(ambassadorAccumulatedQuota_[_customerAddress],_amountOfVIDYA) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#156)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- invested_[msg.sender] += _incomingVIDYA (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#668)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- onlyAmbassadors = false (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#146)
+		- onlyAmbassadors = false (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#162)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- payoutsTo_[_customerAddress] += _updatedPayouts (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#738)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- profitPerShare_ += (_dividends * magnitude / tokenSupply_) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#720)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- referralBalance_[maintenanceAddress] = SafeMath.add(referralBalance_[maintenanceAddress],(_maintenance)) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#694)
+		- referralBalance_[_referredBy] = SafeMath.add(referralBalance_[_referredBy],_referralBonus) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#700)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- tokenBalanceLedger_[_customerAddress] = SafeMath.add(tokenBalanceLedger_[_customerAddress],_amountOfTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#732)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- tokenSupply_ = SafeMath.add(tokenSupply_,_amountOfTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#718)
+		- tokenSupply_ = _amountOfTokens (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#726)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- totalHolder ++ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#662)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+		- totalInvested_[_customerAddress] = SafeMath.add(totalInvested_[_customerAddress],_incomingVIDYA) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#704)
+Reentrancy in VidyaFLUX.transfer(address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#484-534):
+	External calls:
+	- withdraw() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#494)
+		- erc20.transfer(_customerAddress,_dividends) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#398)
+	State variables written after the call(s):
+	- tokenSupply_ = SafeMath.sub(tokenSupply_,_tokenFee) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#508)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in VidyaFLUX.buy(uint256,address) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#332-338):
+	External calls:
+	- checkAndTransferVIDYA(_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#334)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#326)
+	Event emitted after the call(s):
+	- Transfer(address(0),msg.sender,_amountOfTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#742)
+		- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+	- onTokenPurchase(_customerAddress,_incomingVIDYA,_amountOfTokens,_referredBy,now) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#744)
+		- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#336)
+Reentrancy in VidyaFLUX.transfer(address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#484-534):
+	External calls:
+	- withdraw() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#494)
+		- erc20.transfer(_customerAddress,_dividends) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#398)
+	Event emitted after the call(s):
+	- Transfer(_customerAddress,_toAddress,_taxedTokens) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#528)
+Reentrancy in VidyaFLUX.withdraw() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#384-402):
+	External calls:
+	- erc20.transfer(_customerAddress,_dividends) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#398)
+	Event emitted after the call(s):
+	- onWithdraw(_customerAddress,_dividends) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#400)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+VidyaFLUX.checkAndTransferVIDYA(uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#324-328) compares to a boolean constant:
+	-require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#326)
+VidyaFLUX.antiEarlyWhale(uint256,address) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#142-168) compares to a boolean constant:
+	-require(bool)((ambassadors_[_customerAddress] == true && (ambassadorAccumulatedQuota_[_customerAddress] + _amountOfVIDYA) <= ambassadorMaxPurchase_)) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#154)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#48) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Event VidyaFLUXonDistribute(address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#192-198) is not in CapWords
+Event VidyaFLUXonTokenPurchase(address,uint256,uint256,address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#202-214) is not in CapWords
+Event VidyaFLUXonTokenSell(address,uint256,uint256,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#218-228) is not in CapWords
+Event VidyaFLUXonReinvestment(address,uint256,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#232-240) is not in CapWords
+Event VidyaFLUXonWithdraw(address,uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#244-250) is not in CapWords
+Parameter VidyaFLUX.checkAndTransferVIDYA(uint256)._amount (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#324) is not in mixedCase
+Parameter VidyaFLUX.buy(uint256,address)._amount (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#332) is not in mixedCase
+Parameter VidyaFLUX.buy(uint256,address)._referredBy (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#332) is not in mixedCase
+Parameter VidyaFLUX.sell(uint256,address)._amountOfTokens (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#406) is not in mixedCase
+Parameter VidyaFLUX.sell(uint256,address)._referredBy (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#406) is not in mixedCase
+Parameter VidyaFLUX.transfer(address,uint256)._toAddress (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#484) is not in mixedCase
+Parameter VidyaFLUX.transfer(address,uint256)._amountOfTokens (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#484) is not in mixedCase
+Parameter VidyaFLUX.myDividends(bool)._includeReferralBonus (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#564) is not in mixedCase
+Parameter VidyaFLUX.balanceOf(address)._customerAddress (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#584) is not in mixedCase
+Parameter VidyaFLUX.dividendsOf(address)._customerAddress (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#592) is not in mixedCase
+Parameter VidyaFLUX.calculateTokensReceived(uint256)._VIDYAToSpend (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#620) is not in mixedCase
+Parameter VidyaFLUX.calculateVIDYAReceived(uint256)._tokensToSell (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#634) is not in mixedCase
+Parameter VidyaFLUX.purchaseTokens(address,address,uint256)._referredBy (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#658) is not in mixedCase
+Parameter VidyaFLUX.purchaseTokens(address,address,uint256)._customerAddress (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#658) is not in mixedCase
+Parameter VidyaFLUX.purchaseTokens(address,address,uint256)._incomingVIDYA (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#658) is not in mixedCase
+Constant VidyaFLUX.ambassadorMaxPurchase_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#132) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable VidyaFLUX.ACTIVATION_TIME (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#138) is not in mixedCase
+Constant VidyaFLUX.magnitude (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#284) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+VidyaFLUX.slitherConstructorConstantVariables() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#126-898) uses literals with too many digits:
+	- ambassadorMaxPurchase_ = 500000e18 (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#132)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+VidyaFLUX.ACTIVATION_TIME (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#138) should be constant
+VidyaFLUX.entryFee_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#272) should be constant
+VidyaFLUX.exitFee_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#276) should be constant
+VidyaFLUX.maintenanceFee_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#280) should be constant
+VidyaFLUX.name (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#266) should be constant
+VidyaFLUX.referralFee_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#278) should be constant
+VidyaFLUX.stakingRequirement (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#304) should be constant
+VidyaFLUX.symbol (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#268) should be constant
+VidyaFLUX.totalDonation (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#308) should be constant
+VidyaFLUX.transferFee_ (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#274) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+buy(uint256,address) should be declared external:
+	- VidyaFLUX.buy(uint256,address) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#332-338)
+reinvest() should be declared external:
+	- VidyaFLUX.reinvest() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#350-366)
+myReferrals() should be declared external:
+	- VidyaFLUX.myReferrals() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#574-580)
+calculateTokensReceived(uint256) should be declared external:
+	- VidyaFLUX.calculateTokensReceived(uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#620-630)
+calculateVIDYAReceived(uint256) should be declared external:
+	- VidyaFLUX.calculateVIDYAReceived(uint256) (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#634-646)
+feedInventory() should be declared external:
+	- VidyaFLUX.feedInventory() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#758-804)
+inventoryFund() should be declared external:
+	- VidyaFLUX.inventoryFund() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#808-812)
+getOneTimeData() should be declared external:
+	- VidyaFLUX.getOneTimeData() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#816-820)
+multiData() should be declared external:
+	- VidyaFLUX.multiData() (noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol#824-896)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol analyzed (3 contracts with 46 detectors), 64 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol
+Tool Runtime = 2.079134809999232 seconds
+#############################################

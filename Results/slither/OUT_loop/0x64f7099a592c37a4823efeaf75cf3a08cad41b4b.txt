@@ -1,0 +1,101 @@
+INFO:Detectors:[93m
+UNI3d.calculateResult(uint256,bool,bool) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154-173) performs a multiplication on the result of a division:
+	-_increment = INCREMENT * (100) / ((100 - BUY_TAX)) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#159)
+	-(2 * _rate - _sqrt(4 * _rate * _rate + _increment * _increment - 4 * _rate * _increment - 8 * _amount * _increment) - _increment) * 1e18 / (2 * _increment) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#162)
+UNI3d.calculateResult(uint256,bool,bool) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154-173) performs a multiplication on the result of a division:
+	-_increment = INCREMENT * (100) / ((100 - BUY_TAX)) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#159)
+	-(_sqrt((_increment + 2 * _rate) * (_increment + 2 * _rate) + 8 * _amount * _increment) - _increment - 2 * _rate) * 1e18 / (2 * _increment) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#164)
+UNI3d.calculateResult(uint256,bool,bool) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154-173) performs a multiplication on the result of a division:
+	-(_rate * _amount + (_increment * (_amount + 1e18) / 2e18) * _amount) / 1e18 (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#168)
+UNI3d.calculateResult(uint256,bool,bool) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154-173) performs a multiplication on the result of a division:
+	-(_rate * _amount - (_increment * (_amount + 1e18) / 2e18) * _amount) / 1e18 (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#170)
+UNI3d._buy(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#186-195) performs a multiplication on the result of a division:
+	-_tax = _amount * BUY_TAX / 100 (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#187)
+	-info.scaledUniPerToken += _tax * FLOAT_SCALAR / info.totalSupply (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#192)
+UNI3d._sell(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#197-208) performs a multiplication on the result of a division:
+	-_tax = amount * SELL_TAX / (100 - SELL_TAX) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#200)
+	-info.scaledUniPerToken += _tax * FLOAT_SCALAR / info.totalSupply (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#204)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in UNI3d.buy(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#64-68):
+	External calls:
+	- require(bool)(info.uni.transferFrom(msg.sender,address(this),_amount)) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#66)
+	State variables written after the call(s):
+	- _buy(_amount) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#67)
+		- info.totalSupply += tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#189)
+		- info.users[msg.sender].balance += tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#190)
+		- info.users[msg.sender].scaledPayout += int256(tokens * info.scaledUniPerToken) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#191)
+		- info.scaledUniPerToken += _tax * FLOAT_SCALAR / info.totalSupply (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#192)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+UNI3d.withdraw() (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#75-82) ignores return value by info.uni.transfer(msg.sender,_dividends) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#79)
+UNI3d._sell(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#197-208) ignores return value by info.uni.transfer(msg.sender,amount) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#205)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+UNI3d.calculateResult(uint256,bool,bool)._buy (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154) shadows:
+	- UNI3d._buy(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#186-195) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in UNI3d._sell(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#197-208):
+	External calls:
+	- info.uni.transfer(msg.sender,amount) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#205)
+	Event emitted after the call(s):
+	- Sell(msg.sender,_tokens,amount) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#207)
+	- Transfer(msg.sender,address(0x0),_tokens) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#206)
+Reentrancy in UNI3d.buy(uint256) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#64-68):
+	External calls:
+	- require(bool)(info.uni.transferFrom(msg.sender,address(this),_amount)) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#66)
+	Event emitted after the call(s):
+	- Buy(msg.sender,_amount,tokens) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#194)
+		- _buy(_amount) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#67)
+	- Transfer(address(0x0),msg.sender,tokens) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#193)
+		- _buy(_amount) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#67)
+Reentrancy in UNI3d.withdraw() (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#75-82):
+	External calls:
+	- info.uni.transfer(msg.sender,_dividends) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#79)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,_dividends) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#80)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UNI3d.transferAndCall(address,uint256,bytes) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#108-118) uses assembly
+	- INLINE ASM (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#111-114)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#12) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter UNI3d.buy(uint256)._amount (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#64) is not in mixedCase
+Parameter UNI3d.sell(uint256)._tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#70) is not in mixedCase
+Parameter UNI3d.transfer(address,uint256)._to (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#92) is not in mixedCase
+Parameter UNI3d.transfer(address,uint256)._tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#92) is not in mixedCase
+Parameter UNI3d.approve(address,uint256)._spender (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#96) is not in mixedCase
+Parameter UNI3d.approve(address,uint256)._tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#96) is not in mixedCase
+Parameter UNI3d.transferFrom(address,address,uint256)._from (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#102) is not in mixedCase
+Parameter UNI3d.transferFrom(address,address,uint256)._to (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#102) is not in mixedCase
+Parameter UNI3d.transferFrom(address,address,uint256)._tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#102) is not in mixedCase
+Parameter UNI3d.transferAndCall(address,uint256,bytes)._to (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#108) is not in mixedCase
+Parameter UNI3d.transferAndCall(address,uint256,bytes)._tokens (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#108) is not in mixedCase
+Parameter UNI3d.transferAndCall(address,uint256,bytes)._data (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#108) is not in mixedCase
+Parameter UNI3d.balanceOf(address)._user (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#131) is not in mixedCase
+Parameter UNI3d.dividendsOf(address)._user (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#135) is not in mixedCase
+Parameter UNI3d.allInfoFor(address)._user (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#139) is not in mixedCase
+Parameter UNI3d.allowance(address,address)._user (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#150) is not in mixedCase
+Parameter UNI3d.allowance(address,address)._spender (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#150) is not in mixedCase
+Parameter UNI3d.calculateResult(uint256,bool,bool)._amount (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154) is not in mixedCase
+Parameter UNI3d.calculateResult(uint256,bool,bool)._buy (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154) is not in mixedCase
+Parameter UNI3d.calculateResult(uint256,bool,bool)._inverse (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#154) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+allInfoFor(address) should be declared external:
+	- UNI3d.allInfoFor(address) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#139-148)
+allowance(address,address) should be declared external:
+	- UNI3d.allowance(address,address) (loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol#150-152)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol analyzed (3 contracts with 46 detectors), 38 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x64f7099a592c37a4823efeaf75cf3a08cad41b4b.sol
+Tool Runtime = 1.203059455001494 seconds
+#############################################

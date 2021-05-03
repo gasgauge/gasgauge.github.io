@@ -1,0 +1,192 @@
+Compilation warnings/errors on ./noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:
+./noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:416:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+SeedPoolWETH.notifyRewardAmount(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#715-731) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#721)
+	-leftover = remaining.mul(rewardRate) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#724)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in SeedPoolWETH.checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#699-709):
+	External calls:
+	- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#705)
+Reentrancy in SeedPoolWETH.exit() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#685-688):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#686)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#599)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+		- wev.safeTransfer(msg.sender,reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#694)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+	State variables written after the call(s):
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- initreward = initreward.mul(50).div(100) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#701)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#637)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- periodFinish = block.timestamp.add(DURATION) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#705)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#636)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- rewardRate = initreward.div(DURATION) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#704)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- rewards[msg.sender] = 0 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#693)
+		- rewards[account] = earned(account) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#639)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#640)
+Reentrancy in SeedPoolWETH.getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#690-697):
+	External calls:
+	- checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#690)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#693)
+Reentrancy in SeedPoolWETH.notifyRewardAmount(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#715-731):
+	External calls:
+	- IWEV(address(wev)).mint(address(this),reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#727)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#728)
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#729)
+Reentrancy in SeedPoolWETH.stake(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#673-677):
+	External calls:
+	- super.stake(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#675)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+		- y.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#593)
+	- checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#673)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	State variables written after the call(s):
+	- super.stake(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#675)
+		- _balances[msg.sender] = _balances[msg.sender].add(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#592)
+	- super.stake(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#675)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#591)
+Reentrancy in SeedPoolWETH.withdraw(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#679-683):
+	External calls:
+	- super.withdraw(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#681)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#599)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+	- checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#679)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	State variables written after the call(s):
+	- super.withdraw(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#681)
+		- _balances[msg.sender] = _balances[msg.sender].sub(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#598)
+	- super.withdraw(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#681)
+		- _totalSupply = _totalSupply.sub(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#597)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LPTokenWrapper.stake(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#586-594) uses tx.origin for authorization: require(bool)(tx.origin == sender) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#589)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-usage-of-txorigin[0m
+INFO:Detectors:[92m
+Reentrancy in SeedPoolWETH.checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#699-709):
+	External calls:
+	- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	State variables written after the call(s):
+	- rewardRate = initreward.div(DURATION) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#704)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in SeedPoolWETH.checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#699-709):
+	External calls:
+	- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#706)
+Reentrancy in SeedPoolWETH.exit() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#685-688):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#686)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#599)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+	- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+		- wev.safeTransfer(msg.sender,reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#694)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#706)
+		- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+	- RewardPaid(msg.sender,reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#695)
+		- getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#687)
+Reentrancy in SeedPoolWETH.getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#690-697):
+	External calls:
+	- wev.safeTransfer(msg.sender,reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#694)
+	- checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#690)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#695)
+Reentrancy in SeedPoolWETH.notifyRewardAmount(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#715-731):
+	External calls:
+	- IWEV(address(wev)).mint(address(this),reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#727)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#730)
+Reentrancy in SeedPoolWETH.stake(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#673-677):
+	External calls:
+	- super.stake(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#675)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+		- y.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#593)
+	- checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#673)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#676)
+Reentrancy in SeedPoolWETH.withdraw(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#679-683):
+	External calls:
+	- super.withdraw(amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#681)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#599)
+		- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+	- checkhalve() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#679)
+		- IWEV(address(wev)).mint(address(this),initreward) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#702)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#682)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+SeedPoolWETH.getReward() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#690-697) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#692)
+SeedPoolWETH.notifyRewardAmount(uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#715-731) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#409-418) uses assembly
+	- INLINE ASM (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#416-417)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#7) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#39) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#198) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#228) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#307) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#386) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#459) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#536) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#605) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#448-454):
+	- (success) = recipient.call.value(amount)() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#452)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#512-531):
+	- (success,returndata) = address(token).call(data) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#524)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter RewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#559) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SeedPoolWETH.starttime (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#622) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#256-258)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#282-285)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol#291-293)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xef133080d202579634ddb425a0fa43d2608e4e95.sol analyzed (11 contracts with 46 detectors), 35 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xef133080d202579634ddb425a0fa43d2608e4e95.sol
+Tool Runtime = 1.0703368630020123 seconds
+#############################################

@@ -1,0 +1,117 @@
+INFO:Detectors:[93m
+StakingRewards.notifyRewardAmount(uint256) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#608-627) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(rewardsDuration) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#610)
+	-leftover = remaining.mul(rewardRate) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#613)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in StakingRewards.exit() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#601-604):
+	External calls:
+	- withdraw(_balances[msg.sender]) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#602)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#588)
+		- (success,returndata) = address(token).call(data) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#385)
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- (success,returndata) = address(token).call(data) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#385)
+		- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#596)
+	State variables written after the call(s):
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- _guardCounter += 1 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#430)
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#633)
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#632)
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- rewards[msg.sender] = 0 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#595)
+		- rewards[account] = earned(account) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#635)
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#636)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#248) shadows:
+	- ERC20Detailed.name() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#257-259) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#248) shadows:
+	- ERC20Detailed.symbol() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#265-267) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#248) shadows:
+	- ERC20Detailed.decimals() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#281-283) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in StakingRewards.exit() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#601-604):
+	External calls:
+	- withdraw(_balances[msg.sender]) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#602)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#588)
+		- (success,returndata) = address(token).call(data) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#385)
+	- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+		- (success,returndata) = address(token).call(data) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#385)
+		- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#596)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#597)
+		- getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#603)
+Reentrancy in StakingRewards.getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#592-599):
+	External calls:
+	- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#596)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#597)
+Reentrancy in StakingRewards.stake(uint256) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#576-582):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#580)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#581)
+Reentrancy in StakingRewards.stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#564-574):
+	External calls:
+	- IUniswapV2ERC20(address(stakingToken)).permit(msg.sender,address(this),amount,deadline,v,r,s) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#570)
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#572)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#573)
+Reentrancy in StakingRewards.withdraw(uint256) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#584-590):
+	External calls:
+	- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#588)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#589)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+StakingRewards.getReward() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#592-599) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#594)
+StakingRewards.notifyRewardAmount(uint256) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#608-627) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#609)
+	- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#622)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#305-314) uses assembly
+	- INLINE ASM (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#312-313)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#41) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#152) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#232) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#289) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#320) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#398) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#440) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#471) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#487) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#373-392):
+	- (success,returndata) = address(token).call(data) (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#385)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+StakingRewards.rewardsDuration (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#508) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#257-259)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#265-267)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol#281-283)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol analyzed (11 contracts with 46 detectors), 29 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x7c7676f11184BA00EC760116e0b5b51668961c6F.sol
+Tool Runtime = 0.8560969440004556 seconds
+#############################################

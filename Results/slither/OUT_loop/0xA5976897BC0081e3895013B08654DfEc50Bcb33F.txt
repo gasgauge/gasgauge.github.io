@@ -1,0 +1,154 @@
+Compilation warnings/errors on ./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:7:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1244:9: Warning: This declaration shadows an existing declaration.
+        uint256 totalBonded = totalBonded();
+        ^-----------------^
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1199:5: The shadowed declaration is here:
+    function totalBonded() public view returns (uint256) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1254:9: Warning: This declaration shadows an existing declaration.
+        uint256 balanceOfPhantom = balanceOfPhantom(account);
+        ^----------------------^
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1239:5: The shadowed declaration is here:
+    function balanceOfPhantom(address account) public view returns (uint256) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1183:5: Warning: Function state mutability can be restricted to pure
+    function usdc() public view returns (address) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1187:5: Warning: Function state mutability can be restricted to pure
+    function dao() public view returns (IDAO) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1191:5: Warning: Function state mutability can be restricted to pure
+    function dollar() public view returns (IDollar) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1195:5: Warning: Function state mutability can be restricted to pure
+    function univ2() public view returns (IERC20) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol:1615:5: Warning: Function state mutability can be restricted to view
+    function balanceCheck() private {
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+INFO:Detectors:[93m
+Pool.balanceCheck() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1615-1627) uses a dangerous strict equality:
+	- Require.that(dollar().balanceOf(address(this)) == totalRewarded().add(totalClaimable()),FILE,Inconsistent ESD balances) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1616-1620)
+Pool.balanceCheck() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1615-1627) uses a dangerous strict equality:
+	- Require.that(univ2().balanceOf(address(this)) == totalStaged().add(totalBonded()),FILE,Inconsistent UNI-V2 balances) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1622-1626)
+Pool.bond(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1534-1549) uses a dangerous strict equality:
+	- totalRewarded() == 0 (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1538-1540)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in Pool.claim(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1525-1532):
+	External calls:
+	- dollar().transfer(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1526)
+	State variables written after the call(s):
+	- decrementBalanceOfClaimable(msg.sender,value,Pool: insufficient claimable balance) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1527)
+		- _state.accounts[account].claimable = _state.accounts[account].claimable.sub(amount,reason) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1332)
+		- _state.balance.claimable = _state.balance.claimable.sub(amount,reason) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1333)
+Reentrancy in Pool.deposit(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1507-1514):
+	External calls:
+	- univ2().transferFrom(msg.sender,address(this),value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1508)
+	State variables written after the call(s):
+	- incrementBalanceOfStaged(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1509)
+		- _state.accounts[account].staged = _state.accounts[account].staged.add(amount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1317)
+		- _state.balance.staged = _state.balance.staged.add(amount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1318)
+Reentrancy in Pool.provide(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1574-1605):
+	External calls:
+	- (lessUsdc,newUniv2) = addLiquidity(value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1593)
+		- IERC20(dollar).transfer(pair,dollarAmount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1465)
+		- IERC20(usdc).transferFrom(msg.sender,pair,usdcAmount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1466)
+		- (usdcAmount,IUniswapV2Pair(pair).mint(address(this))) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1467)
+	State variables written after the call(s):
+	- incrementBalanceOfBonded(msg.sender,newUniv2) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1598)
+		- _state.accounts[account].bonded = _state.accounts[account].bonded.add(amount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1307)
+		- _state.balance.bonded = _state.balance.bonded.add(amount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1308)
+	- incrementBalanceOfPhantom(msg.sender,value.add(newPhantomFromBonded)) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1599)
+		- _state.accounts[account].phantom = _state.accounts[account].phantom.add(amount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1337)
+		- _state.balance.phantom = _state.balance.phantom.add(amount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1338)
+Reentrancy in Pool.withdraw(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1516-1523):
+	External calls:
+	- univ2().transfer(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1517)
+	State variables written after the call(s):
+	- decrementBalanceOfStaged(msg.sender,value,Pool: insufficient staged balance) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1518)
+		- _state.accounts[account].staged = _state.accounts[account].staged.sub(amount,reason) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1322)
+		- _state.balance.staged = _state.balance.staged.sub(amount,reason) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1323)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Liquidity.addLiquidity(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1456-1468) ignores return value by IERC20(dollar).transfer(pair,dollarAmount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1465)
+Liquidity.addLiquidity(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1456-1468) ignores return value by IERC20(usdc).transferFrom(msg.sender,pair,usdcAmount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1466)
+Pool.deposit(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1507-1514) ignores return value by univ2().transferFrom(msg.sender,address(this),value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1508)
+Pool.withdraw(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1516-1523) ignores return value by univ2().transfer(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1517)
+Pool.claim(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1525-1532) ignores return value by dollar().transfer(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1526)
+Pool.emergencyWithdraw(address,uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1607-1609) ignores return value by IERC20(token).transfer(address(dao()),value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1608)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+PoolGetters.balanceOfRewarded(address).totalBonded (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1244) shadows:
+	- PoolGetters.totalBonded() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1199-1201) (function)
+PoolGetters.balanceOfRewarded(address).balanceOfPhantom (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1254) shadows:
+	- PoolGetters.balanceOfPhantom(address) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1239-1241) (function)
+Liquidity.addLiquidity(uint256).dollar (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1457) shadows:
+	- PoolGetters.dollar() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1191-1193) (function)
+Liquidity.addLiquidity(uint256).usdc (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1457) shadows:
+	- PoolGetters.usdc() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1183-1185) (function)
+Pool.unbond(uint256).balanceOfBonded (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1554) shadows:
+	- PoolGetters.balanceOfBonded(address) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1235-1237) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Pool.claim(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1525-1532):
+	External calls:
+	- dollar().transfer(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1526)
+	Event emitted after the call(s):
+	- Claim(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1531)
+Reentrancy in Pool.deposit(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1507-1514):
+	External calls:
+	- univ2().transferFrom(msg.sender,address(this),value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1508)
+	Event emitted after the call(s):
+	- Deposit(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1513)
+Reentrancy in Pool.provide(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1574-1605):
+	External calls:
+	- (lessUsdc,newUniv2) = addLiquidity(value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1593)
+		- IERC20(dollar).transfer(pair,dollarAmount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1465)
+		- IERC20(usdc).transferFrom(msg.sender,pair,usdcAmount) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1466)
+		- (usdcAmount,IUniswapV2Pair(pair).mint(address(this))) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1467)
+	Event emitted after the call(s):
+	- Provide(msg.sender,value,lessUsdc,newUniv2) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1604)
+Reentrancy in Pool.withdraw(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1516-1523):
+	External calls:
+	- univ2().transfer(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1517)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,value) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1522)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Require.stringifyTruncated(bytes32) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#492-523) uses assembly
+	- INLINE ASM (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#513-517)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable PoolState._state (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1158) is not in mixedCase
+Function IUniswapV2Pair.DOMAIN_SEPARATOR() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1366) is not in mixedCase
+Function IUniswapV2Pair.PERMIT_TYPEHASH() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1367) is not in mixedCase
+Function IUniswapV2Pair.MINIMUM_LIQUIDITY() (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1384) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+burn(uint256) should be declared external:
+	- IDollar.burn(uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1067)
+burnFrom(address,uint256) should be declared external:
+	- IDollar.burnFrom(address,uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1068)
+mint(address,uint256) should be declared external:
+	- IDollar.mint(address,uint256) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1069)
+balanceOfStaged(address) should be declared external:
+	- PoolGetters.balanceOfStaged(address) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1227-1229)
+balanceOfClaimable(address) should be declared external:
+	- PoolGetters.balanceOfClaimable(address) (loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol#1231-1233)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol analyzed (17 contracts with 46 detectors), 34 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xA5976897BC0081e3895013B08654DfEc50Bcb33F.sol
+Tool Runtime = 3.52270808799949 seconds
+#############################################

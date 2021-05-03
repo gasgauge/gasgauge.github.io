@@ -1,0 +1,112 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: etherATM
+Function name: fallback
+PC address: 771
+Estimated Gas Usage: 43794 - 233206
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xabb81635e0ccc014c4c73cb0e90696b1785844b4.sol:92
+
+owner.transfer(collectedFees + amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: unknown, txdata: 0x01010101, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x01010101, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: etherATM
+Function name: fallback
+PC address: 905
+Estimated Gas Usage: 32131 - 181543
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xabb81635e0ccc014c4c73cb0e90696b1785844b4.sol:100
+
+owner.transfer(amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x04200110, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: etherATM
+Function name: enter()
+PC address: 1173
+Estimated Gas Usage: 63928 - 293955
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xabb81635e0ccc014c4c73cb0e90696b1785844b4.sol:112
+
+persons[payoutIdx].etherAddress.transfer(transactionAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: unknown, txdata: 0x01010101, value: 0x0
+Caller: [SOMEGUY], function: enter(), txdata: 0xe97dcb62, value: 0xb1a2bc2ec50001
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: etherATM
+Function name: persons(uint256)
+PC address: 1258
+Estimated Gas Usage: 1056 - 1151
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/8/0xabb81635e0ccc014c4c73cb0e90696b1785844b4.sol:26
+
+Person[] public persons
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: persons(uint256), txdata: 0xa2f9eac60000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xabb81635e0ccc014c4c73cb0e90696b1785844b4.sol
+Tool Runtime = 526.2610620960004 seconds
+#############################################

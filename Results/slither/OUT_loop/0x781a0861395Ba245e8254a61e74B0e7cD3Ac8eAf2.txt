@@ -1,0 +1,310 @@
+Compilation warnings/errors on ./loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol:
+./loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol:478:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+UniswapReward.notifyRewardAmount(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#981-997) performs a multiplication on the result of a division:
+	-_rewardRate = reward.div(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#988)
+	-leftover = remaining.mul(_rewardRate) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#991)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in UniswapReward.checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#940-951):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	State variables written after the call(s):
+	- _periodFinish = block.timestamp.add(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#947)
+Reentrancy in UniswapReward.exit() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#900-903):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#901)
+		- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+		- IPowerStrategy(_powerStrategy).lpOut(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#759)
+		- _lpToken.safeTransfer(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#768)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+		- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+		- fee = IPlayerBook(_playerBook).settleReward(msg.sender,reward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#910)
+		- _dego.safeTransfer(_playerBook,fee) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#912)
+		- _dego.safeTransfer(_teamWallet,teamReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#917)
+		- _dego.safeTransfer(_rewardPool,poolReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#928)
+		- _dego.safeTransfer(msg.sender,leftReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#933)
+	State variables written after the call(s):
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _initReward = _initReward.mul(50).div(100) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#942)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _lastUpdateTime = lastTimeRewardApplicable() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#821)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _periodFinish = block.timestamp.add(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#947)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _rewardPerTokenStored = rewardPerToken() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#820)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _rewardRate = _initReward.div(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#946)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _rewards[msg.sender] = 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#908)
+		- _rewards[account] = earned(account) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#823)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _userRewardPerTokenPaid[account] = _rewardPerTokenStored (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#824)
+Reentrancy in UniswapReward.getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#905-938):
+	External calls:
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#905)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	State variables written after the call(s):
+	- _rewards[msg.sender] = 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#908)
+Reentrancy in UniswapReward.notifyRewardAmount(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#981-997):
+	External calls:
+	- IERC20(_dego).safeTransferFrom(msg.sender,address(this),reward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#986)
+	State variables written after the call(s):
+	- _lastUpdateTime = block.timestamp (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#994)
+	- _periodFinish = block.timestamp.add(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#995)
+	- _rewardRate = reward.div(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#988)
+	- _rewardRate = reward.add(leftover).div(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#992)
+Reentrancy in LPTokenWrapper.stake(uint256,string) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#726-749):
+	External calls:
+	- IPowerStrategy(_powerStrategy).lpIn(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#732)
+	State variables written after the call(s):
+	- _powerBalances[msg.sender] = IPowerStrategy(_powerStrategy).getPower(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#734)
+	- _totalPower = _totalPower.add(_powerBalances[msg.sender]) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#735)
+Reentrancy in UniswapReward.stake(uint256,string) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#875-887):
+	External calls:
+	- super.stake(amount,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#882)
+		- (success,returndata) = address(token).call(data) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#594)
+		- IPowerStrategy(_powerStrategy).lpIn(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#732)
+		- _lpToken.safeTransferFrom(msg.sender,address(this),amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#741)
+		- ! IPlayerBook(_playerBook).hasRefer(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#744)
+		- IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#745)
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#878)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	State variables written after the call(s):
+	- super.stake(amount,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#882)
+		- _powerBalances[msg.sender] = IPowerStrategy(_powerStrategy).getPower(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#734)
+		- _powerBalances[msg.sender] = _balances[msg.sender] (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#738)
+	- super.stake(amount,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#882)
+		- _totalPower = _totalPower.sub(_powerBalances[msg.sender]) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#731)
+		- _totalPower = _totalPower.add(_powerBalances[msg.sender]) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#735)
+		- _totalPower = _totalSupply (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#737)
+Reentrancy in UniswapReward.startReward(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#959-976):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#970)
+	State variables written after the call(s):
+	- _lastUpdateTime = _startTime (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#972)
+	- _periodFinish = _startTime.add(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#973)
+Reentrancy in LPTokenWrapper.withdraw(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#751-769):
+	External calls:
+	- IPowerStrategy(_powerStrategy).lpOut(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#759)
+	State variables written after the call(s):
+	- _powerBalances[msg.sender] = IPowerStrategy(_powerStrategy).getPower(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#760)
+	- _totalPower = _totalPower.add(_powerBalances[msg.sender]) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#761)
+Reentrancy in UniswapReward.withdraw(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#889-898):
+	External calls:
+	- super.withdraw(amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#896)
+		- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+		- IPowerStrategy(_powerStrategy).lpOut(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#759)
+		- _lpToken.safeTransfer(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#768)
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#892)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	State variables written after the call(s):
+	- super.withdraw(amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#896)
+		- _powerBalances[msg.sender] = IPowerStrategy(_powerStrategy).getPower(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#760)
+		- _powerBalances[msg.sender] = _balances[msg.sender] (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#765)
+	- super.withdraw(amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#896)
+		- _totalPower = _totalPower.sub(_powerBalances[msg.sender]) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#758)
+		- _totalPower = _totalPower.add(_powerBalances[msg.sender]) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#761)
+		- _totalPower = _totalSupply (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#764)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LPTokenWrapper.stake(uint256,string) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#726-749) ignores return value by IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#745)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in UniswapReward.checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#940-951):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	State variables written after the call(s):
+	- _rewardRate = _initReward.div(DURATION) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#946)
+Reentrancy in UniswapReward.stake(uint256,string) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#875-887):
+	External calls:
+	- super.stake(amount,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#882)
+		- (success,returndata) = address(token).call(data) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#594)
+		- IPowerStrategy(_powerStrategy).lpIn(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#732)
+		- _lpToken.safeTransferFrom(msg.sender,address(this),amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#741)
+		- ! IPlayerBook(_playerBook).hasRefer(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#744)
+		- IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#745)
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#878)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	State variables written after the call(s):
+	- _lastStakedTime[msg.sender] = now (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#884)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in UniswapReward.checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#940-951):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	Event emitted after the call(s):
+	- RewardAdded(_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#948)
+Reentrancy in UniswapReward.exit() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#900-903):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#901)
+		- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+		- IPowerStrategy(_powerStrategy).lpOut(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#759)
+		- _lpToken.safeTransfer(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#768)
+	- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+		- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+		- fee = IPlayerBook(_playerBook).settleReward(msg.sender,reward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#910)
+		- _dego.safeTransfer(_playerBook,fee) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#912)
+		- _dego.safeTransfer(_teamWallet,teamReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#917)
+		- _dego.safeTransfer(_rewardPool,poolReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#928)
+		- _dego.safeTransfer(msg.sender,leftReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#933)
+	Event emitted after the call(s):
+	- RewardAdded(_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#948)
+		- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+	- RewardPaid(msg.sender,leftReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#936)
+		- getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#902)
+Reentrancy in UniswapReward.getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#905-938):
+	External calls:
+	- fee = IPlayerBook(_playerBook).settleReward(msg.sender,reward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#910)
+	- _dego.safeTransfer(_playerBook,fee) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#912)
+	- _dego.safeTransfer(_teamWallet,teamReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#917)
+	- _dego.safeTransfer(_rewardPool,poolReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#928)
+	- _dego.safeTransfer(msg.sender,leftReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#933)
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#905)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,leftReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#936)
+Reentrancy in UniswapReward.notifyRewardAmount(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#981-997):
+	External calls:
+	- IERC20(_dego).safeTransferFrom(msg.sender,address(this),reward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#986)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#996)
+Reentrancy in UniswapReward.stake(uint256,string) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#875-887):
+	External calls:
+	- super.stake(amount,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#882)
+		- (success,returndata) = address(token).call(data) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#594)
+		- IPowerStrategy(_powerStrategy).lpIn(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#732)
+		- _lpToken.safeTransferFrom(msg.sender,address(this),amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#741)
+		- ! IPlayerBook(_playerBook).hasRefer(msg.sender) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#744)
+		- IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#745)
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#878)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#886)
+Reentrancy in UniswapReward.startReward(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#959-976):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#970)
+	Event emitted after the call(s):
+	- RewardAdded(_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#975)
+Reentrancy in UniswapReward.withdraw(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#889-898):
+	External calls:
+	- super.withdraw(amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#896)
+		- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+		- IPowerStrategy(_powerStrategy).lpOut(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#759)
+		- _lpToken.safeTransfer(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#768)
+	- checkHalve() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#892)
+		- _dego.mint(address(this),_initReward) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#944)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#897)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniswapReward.getReward() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#905-938) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#907)
+	- fee > 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#911)
+	- teamReward > 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#916)
+	- now < (_lastStakedTime[msg.sender] + _punishTime) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#924)
+	- poolReward > 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#927)
+	- leftReward > 0 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#932)
+UniswapReward.notifyRewardAmount(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#981-997) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= _periodFinish (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#987)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#471-480) uses assembly
+	- INLINE ASM (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#478-479)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+UniswapReward.startReward(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#959-976) compares to a boolean constant:
+	-require(bool,string)(_hasStart == false,has started) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#964)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#40) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#73) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#264) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#344) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#424) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#437) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#448) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#522) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#607) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#632) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#662) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#675) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#777) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#510-516):
+	- (success) = recipient.call.value(amount)() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#514)
+Low level call in SafeERC20.safeTransfer(IERC20,address,uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#543-546):
+	- (success,data) = address(token).call(abi.encodeWithSelector(SELECTOR,to,value)) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#544)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#582-601):
+	- (success,returndata) = address(token).call(data) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#594)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Governance._governance (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#636) is not in mixedCase
+Variable LPTokenWrapper._lpToken (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#690) is not in mixedCase
+Variable LPTokenWrapper._playerBook (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#692) is not in mixedCase
+Variable LPTokenWrapper._powerStrategy (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#700) is not in mixedCase
+Variable UniswapReward._dego (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#789) is not in mixedCase
+Variable UniswapReward._teamWallet (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#790) is not in mixedCase
+Variable UniswapReward._rewardPool (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#791) is not in mixedCase
+Variable UniswapReward._initReward (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#795) is not in mixedCase
+Variable UniswapReward._startTime (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#796) is not in mixedCase
+Variable UniswapReward._periodFinish (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#797) is not in mixedCase
+Variable UniswapReward._rewardRate (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#798) is not in mixedCase
+Variable UniswapReward._lastUpdateTime (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#799) is not in mixedCase
+Variable UniswapReward._rewardPerTokenStored (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#800) is not in mixedCase
+Variable UniswapReward._teamRewardRate (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#802) is not in mixedCase
+Variable UniswapReward._poolRewardRate (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#803) is not in mixedCase
+Variable UniswapReward._baseRate (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#804) is not in mixedCase
+Variable UniswapReward._punishTime (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#805) is not in mixedCase
+Variable UniswapReward._userRewardPerTokenPaid (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#807) is not in mixedCase
+Variable UniswapReward._rewards (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#808) is not in mixedCase
+Variable UniswapReward._lastStakedTime (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#809) is not in mixedCase
+Variable UniswapReward._hasStart (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#811) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+LPTokenWrapper._playerBook (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#692) should be constant
+UniswapReward._baseRate (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#804) should be constant
+UniswapReward._rewardPool (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#791) should be constant
+UniswapReward._teamWallet (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#790) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#292-294)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#318-321)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#327-329)
+sqrt(uint256) should be declared external:
+	- DegoMath.sqrt(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#618-625)
+setGovernance(address) should be declared external:
+	- Governance.setGovernance(address) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#649-654)
+totalSupply() should be declared external:
+	- LPTokenWrapper.totalSupply() (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#703-705)
+setPowerStragegy(address) should be declared external:
+	- LPTokenWrapper.setPowerStragegy(address) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#707-709)
+setTeamRewardRate(uint256) should be declared external:
+	- UniswapReward.setTeamRewardRate(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#836-838)
+setPoolRewardRate(uint256) should be declared external:
+	- UniswapReward.setPoolRewardRate(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#840-842)
+setWithDrawPunishTime(uint256) should be declared external:
+	- UniswapReward.setWithDrawPunishTime(uint256) (loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol#844-846)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol analyzed (14 contracts with 46 detectors), 77 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x781a0861395Ba245e8254a61e74B0e7cD3Ac8eAf2.sol
+Tool Runtime = 1.5705585229989083 seconds
+#############################################

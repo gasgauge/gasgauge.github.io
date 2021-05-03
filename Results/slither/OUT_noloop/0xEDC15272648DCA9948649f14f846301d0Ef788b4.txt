@@ -1,0 +1,167 @@
+Compilation warnings/errors on ./noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol:
+./noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol:452:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+WETHXXX.earned(address) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#715-723) performs a multiplication on the result of a division:
+	-balanceOf(account).mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).mul(getTotalMultiplier(account)).div(1e18).add(rewards[account]) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#716-722)
+WETHXXX.notifyRewardAmount(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#752-768) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#759)
+	-leftover = remaining.mul(rewardRate) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#762)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in WETHXXX.exit() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#738-741):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#739)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#634)
+		- (success,returndata) = address(token).call(data) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#560)
+	- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+		- rewardToken.mint(msg.sender,reward) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#747)
+	State variables written after the call(s):
+	- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#682)
+	- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#681)
+	- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+		- rewards[msg.sender] = 0 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#746)
+		- rewards[account] = earned(account) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#684)
+	- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#685)
+Reentrancy in WETHXXX.purchase(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#801-811):
+	External calls:
+	- multiplierToken.safeTransferFrom(msg.sender,devFund,finalCost.div(2)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#806)
+	- multiplierToken.safeTransferFrom(msg.sender,devFund2,finalCost.div(2)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#807)
+	State variables written after the call(s):
+	- NAPSlevel[msg.sender] = level (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#809)
+	- spentNAPS[msg.sender] = spentNAPS[msg.sender].add(finalCost) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#808)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in WETHXXX.exit() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#738-741):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#739)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#634)
+		- (success,returndata) = address(token).call(data) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#560)
+	- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+		- rewardToken.mint(msg.sender,reward) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#747)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#748)
+		- getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#740)
+Reentrancy in WETHXXX.getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#743-750):
+	External calls:
+	- rewardToken.mint(msg.sender,reward) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#747)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#748)
+Reentrancy in WETHXXX.purchase(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#801-811):
+	External calls:
+	- multiplierToken.safeTransferFrom(msg.sender,devFund,finalCost.div(2)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#806)
+	- multiplierToken.safeTransferFrom(msg.sender,devFund2,finalCost.div(2)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#807)
+	Event emitted after the call(s):
+	- Boost(level) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#810)
+Reentrancy in WETHXXX.stake(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#726-730):
+	External calls:
+	- super.stake(amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#728)
+		- (success,returndata) = address(token).call(data) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#560)
+		- stakingToken.safeTransferFrom(msg.sender,address(this),_realAmount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#626)
+		- stakingToken.safeTransferFrom(msg.sender,devFund,_taxedAmount.div(2)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#627)
+		- stakingToken.safeTransferFrom(msg.sender,devFund2,_taxedAmount.div(2)) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#628)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#729)
+Reentrancy in WETHXXX.withdraw(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#732-736):
+	External calls:
+	- super.withdraw(amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#734)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#634)
+		- (success,returndata) = address(token).call(data) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#560)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#735)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+WETHXXX.getReward() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#743-750) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#745)
+WETHXXX.notifyRewardAmount(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#752-768) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#758)
+WETHXXX.calculateCost(uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#781-799) uses timestamp for comparisons
+	Dangerous comparisons:
+	- cycles > 5 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#784)
+WETHXXX.eject() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#829-833) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > deployedTime + DURATION,Cannot eject before period finishes) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#830)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#441-454) uses assembly
+	- INLINE ASM (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#452-453)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#46) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#78) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#237) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#267) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#345) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#424) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#495) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#572) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#596) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#484-490):
+	- (success) = recipient.call.value(amount)() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#488)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#548-567):
+	- (success,returndata) = address(token).call(data) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#560)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#586) is not in mixedCase
+Parameter LPTokenWrapper.setBPT(address).BPTAddress (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#636) is not in mixedCase
+Parameter WETHXXX.setCycleContract(address)._cycleContract (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#769) is not in mixedCase
+Variable WETHXXX.DURATION (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#650) is not in mixedCase
+Constant WETHXXX.napsDiscountRange (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#657) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.napsLevelOneCost (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#658) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.napsLevelTwoCost (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#659) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.napsLevelThreeCost (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#660) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.napsLevelFourCost (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#661) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.napsLevelFiveCost (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#662) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.FivePercentBonus (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#664) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.FifteenPercentBonus (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#665) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.ThirtyPercentBonus (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#666) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.SixtyPercentBonus (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#667) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant WETHXXX.HundredPercentBonus (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#668) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable WETHXXX.NAPSlevel (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#673) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+WETHXXX.slitherConstructorConstantVariables() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#645-834) uses literals with too many digits:
+	- napsLevelOneCost = 250000000000000000 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#658)
+WETHXXX.slitherConstructorConstantVariables() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#645-834) uses literals with too many digits:
+	- FivePercentBonus = 50000000000000000 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#664)
+WETHXXX.slitherConstructorConstantVariables() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#645-834) uses literals with too many digits:
+	- FifteenPercentBonus = 150000000000000000 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#665)
+WETHXXX.slitherConstructorConstantVariables() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#645-834) uses literals with too many digits:
+	- ThirtyPercentBonus = 300000000000000000 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#666)
+WETHXXX.slitherConstructorConstantVariables() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#645-834) uses literals with too many digits:
+	- SixtyPercentBonus = 600000000000000000 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#667)
+WETHXXX.slitherConstructorConstantVariables() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#645-834) uses literals with too many digits:
+	- HundredPercentBonus = 1000000000000000000 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#668)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+LPTokenWrapper.devFund (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#608) should be constant
+LPTokenWrapper.devFund2 (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#609) should be constant
+WETHXXX.DURATION (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#650) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#294-296)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#320-323)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#329-331)
+setCycleContract(address) should be declared external:
+	- WETHXXX.setCycleContract(address) (noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol#769-771)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol analyzed (11 contracts with 46 detectors), 55 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xEDC15272648DCA9948649f14f846301d0Ef788b4.sol
+Tool Runtime = 1.2919849129975773 seconds
+#############################################

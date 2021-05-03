@@ -1,0 +1,180 @@
+INFO:Detectors:[93m
+Reentrancy in TimeLockFactory._processUnlocks(uint256,uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2270-2318):
+	External calls:
+	- _token.safeTransfer(bundle.beneficiary,unlockAmount) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2292)
+	State variables written after the call(s):
+	- bundle.isPhaseWithdrawns[_phaseId] = true (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2294)
+	- phase.unlockedCount = phase.unlockedCount.add(1) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2298)
+	- phase.hasWithdrawal = true (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2314)
+Reentrancy in TimeLockFactory.lock(uint256,address,uint256,address,string) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022-2032):
+	External calls:
+	- _lock(_id,_beneficiary,_amount,_saleAddress) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2028)
+		- IAdvanceCrowdsale(_saleAddress).updatePurchasingState(_beneficiary,_amount) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2132)
+		- (success,returndata) = address(token).call(data) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#724)
+		- _token.safeTransfer(_beneficiary,unlockedAmount) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2162)
+	State variables written after the call(s):
+	- _processedTxids[_txid] = _id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2030)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+TimeLockFactory._postUnlockIfAvailable(uint256,address,uint256,address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2130-2166) ignores return value by IAdvanceCrowdsale(_saleAddress).updatePurchasingState(_beneficiary,_amount) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2132)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+TimeLockFactory.constructor(IERC20).token (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1450) shadows:
+	- TimeLockFactory.token() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1464-1468) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in TimeLockFactory._postUnlockIfAvailable(uint256,address,uint256,address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2130-2166):
+	External calls:
+	- IAdvanceCrowdsale(_saleAddress).updatePurchasingState(_beneficiary,_amount) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2132)
+	State variables written after the call(s):
+	- _lockupBundles[_id].isPhaseWithdrawns[phase.id] = true (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2146)
+	- _lockupBundles[_id].isPhaseWithdrawns[phase.id] = false (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2150)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in TimeLockFactory.finalize() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2376-2384):
+	External calls:
+	- _finalization() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2380)
+		- (success,returndata) = address(token).call(data) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#724)
+		- _token.safeTransfer(msg.sender,amount) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2394)
+	Event emitted after the call(s):
+	- TimeLockFactoryFinalized() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2382)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+TimeLockFactory.checkPhaseCanWithdrawal(uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1834-1846) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! phase.hasWithdrawal && _globalReleaseTime.add(phase.extraTime) <= block.timestamp (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1844)
+TimeLockFactory._preUnlockPhase(uint256,uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2252-2266) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_globalReleaseTime.add(phase.extraTime) <= block.timestamp,TimeLockFactory: Phase is locking) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2260)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#698-746):
+	- (success,returndata) = address(token).call(data) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#724)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Roles.add(Roles.Role,address)._role (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#778) is not in mixedCase
+Parameter Roles.add(Roles.Role,address)._account (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#778) is not in mixedCase
+Parameter Roles.remove(Roles.Role,address)._role (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#794) is not in mixedCase
+Parameter Roles.remove(Roles.Role,address)._account (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#794) is not in mixedCase
+Parameter Roles.has(Roles.Role,address)._role (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#812) is not in mixedCase
+Parameter Roles.has(Roles.Role,address)._account (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#812) is not in mixedCase
+Parameter Operator.isOperator(address)._account (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1068) is not in mixedCase
+Parameter Operator.addOperator(address)._account (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1076) is not in mixedCase
+Parameter Operator.batchAddOperators(address[])._accounts (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1084) is not in mixedCase
+Parameter Operator.removeOperator(address)._account (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1098) is not in mixedCase
+Parameter Operator.batchRemoveOperators(address[])._accounts (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1106) is not in mixedCase
+Variable Operator._operatorIndexs (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1010) is not in mixedCase
+Parameter TimeLockFactory.getTotalBundleIdentifiesOf(address)._beneficiary (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1536) is not in mixedCase
+Parameter TimeLockFactory.paginationBeneficiaries(uint256,uint256,bool)._startIndex (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1556) is not in mixedCase
+Parameter TimeLockFactory.paginationBeneficiaries(uint256,uint256,bool)._endIndex (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1556) is not in mixedCase
+Parameter TimeLockFactory.paginationBeneficiaries(uint256,uint256,bool)._revert (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1556) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifies(uint256,uint256,bool)._startIndex (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1614) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifies(uint256,uint256,bool)._endIndex (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1614) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifies(uint256,uint256,bool)._revert (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1614) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifiesOf(address,uint256,uint256,bool)._beneficiary (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1676) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifiesOf(address,uint256,uint256,bool)._startIndex (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1676) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifiesOf(address,uint256,uint256,bool)._endIndex (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1676) is not in mixedCase
+Parameter TimeLockFactory.paginationBundleIdentifiesOf(address,uint256,uint256,bool)._revert (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1676) is not in mixedCase
+Parameter TimeLockFactory.getBundleDetailById(uint256)._id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1730) is not in mixedCase
+Parameter TimeLockFactory.getLockupPhaseDetail(uint256)._id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1804) is not in mixedCase
+Parameter TimeLockFactory.checkPhaseCanWithdrawal(uint256)._id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1834) is not in mixedCase
+Parameter TimeLockFactory.checkPhaseHasWithdrawal(uint256)._id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1858) is not in mixedCase
+Parameter TimeLockFactory.hasProcessedTxid(string)._txid (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1882) is not in mixedCase
+Parameter TimeLockFactory.setLockupPhases(uint256[],uint256[],uint256[])._ids (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1900) is not in mixedCase
+Parameter TimeLockFactory.setLockupPhases(uint256[],uint256[],uint256[])._percentages (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1900) is not in mixedCase
+Parameter TimeLockFactory.setLockupPhases(uint256[],uint256[],uint256[])._extraTimes (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1900) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address)._id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2012) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address)._beneficiary (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2012) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address)._amount (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2012) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address)._saleAddress (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2012) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address,string)._id (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address,string)._beneficiary (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address,string)._amount (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address,string)._saleAddress (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022) is not in mixedCase
+Parameter TimeLockFactory.lock(uint256,address,uint256,address,string)._txid (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022) is not in mixedCase
+Parameter TimeLockFactory.hasEnoughTokenBeforeLockup(uint256)._amount (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2056) is not in mixedCase
+Parameter TimeLockFactory.unlocks(uint256,uint256)._phaseId (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2170) is not in mixedCase
+Parameter TimeLockFactory.unlocks(uint256,uint256)._limit (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2170) is not in mixedCase
+Parameter TimeLockFactory.hasEnoughTokenBeforeUnlock(uint256,uint256)._phaseId (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2192) is not in mixedCase
+Parameter TimeLockFactory.hasEnoughTokenBeforeUnlock(uint256,uint256)._limit (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2192) is not in mixedCase
+Parameter TimeLockFactory.setGlobalReleaseTime(uint256)._globalTime (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2340) is not in mixedCase
+Parameter TimeLockFactory.withdrawal(uint256)._amount (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2356) is not in mixedCase
+Constant TimeLockFactory.version (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1366) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#890-894)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#942-948)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#960-964)
+getAllOperators() should be declared external:
+	- Operator.getAllOperators() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1044-1064)
+addOperator(address) should be declared external:
+	- Operator.addOperator(address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1076-1080)
+batchAddOperators(address[]) should be declared external:
+	- Operator.batchAddOperators(address[]) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1084-1094)
+removeOperator(address) should be declared external:
+	- Operator.removeOperator(address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1098-1102)
+batchRemoveOperators(address[]) should be declared external:
+	- Operator.batchRemoveOperators(address[]) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1106-1122)
+renounceOperator() should be declared external:
+	- Operator.renounceOperator() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1126-1130)
+paused() should be declared external:
+	- Pausable.paused() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1232-1236)
+pause() should be declared external:
+	- Pausable.pause() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1278-1284)
+unpause() should be declared external:
+	- Pausable.unpause() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1294-1300)
+token() should be declared external:
+	- TimeLockFactory.token() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1464-1468)
+globalReleaseTime() should be declared external:
+	- TimeLockFactory.globalReleaseTime() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1478-1482)
+finalized() should be declared external:
+	- TimeLockFactory.finalized() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1492-1496)
+getTotalBeneficiaries() should be declared external:
+	- TimeLockFactory.getTotalBeneficiaries() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1506-1510)
+getTotalBundleIdentifies() should be declared external:
+	- TimeLockFactory.getTotalBundleIdentifies() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1520-1524)
+getTotalBundleIdentifiesOf(address) should be declared external:
+	- TimeLockFactory.getTotalBundleIdentifiesOf(address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1536-1540)
+paginationBeneficiaries(uint256,uint256,bool) should be declared external:
+	- TimeLockFactory.paginationBeneficiaries(uint256,uint256,bool) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1556-1598)
+paginationBundleIdentifies(uint256,uint256,bool) should be declared external:
+	- TimeLockFactory.paginationBundleIdentifies(uint256,uint256,bool) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1614-1658)
+paginationBundleIdentifiesOf(address,uint256,uint256,bool) should be declared external:
+	- TimeLockFactory.paginationBundleIdentifiesOf(address,uint256,uint256,bool) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1676-1718)
+getBundleDetailById(uint256) should be declared external:
+	- TimeLockFactory.getBundleDetailById(uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1730-1752)
+getLockupPhases() should be declared external:
+	- TimeLockFactory.getLockupPhases() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1762-1792)
+getLockupPhaseDetail(uint256) should be declared external:
+	- TimeLockFactory.getLockupPhaseDetail(uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1804-1822)
+hasProcessedTxid(string) should be declared external:
+	- TimeLockFactory.hasProcessedTxid(string) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1882-1886)
+setLockupPhases(uint256[],uint256[],uint256[]) should be declared external:
+	- TimeLockFactory.setLockupPhases(uint256[],uint256[],uint256[]) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#1900-1918)
+lock(uint256,address,uint256,address) should be declared external:
+	- TimeLockFactory.lock(uint256,address,uint256,address) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2012-2018)
+lock(uint256,address,uint256,address,string) should be declared external:
+	- TimeLockFactory.lock(uint256,address,uint256,address,string) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2022-2032)
+unlocks(uint256,uint256) should be declared external:
+	- TimeLockFactory.unlocks(uint256,uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2170-2188)
+setGlobalReleaseTime(uint256) should be declared external:
+	- TimeLockFactory.setGlobalReleaseTime(uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2340-2344)
+withdrawal(uint256) should be declared external:
+	- TimeLockFactory.withdrawal(uint256) (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2356-2364)
+finalize() should be declared external:
+	- TimeLockFactory.finalize() (loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol#2376-2384)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol analyzed (9 contracts with 46 detectors), 91 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x2c307a1952891cb2b6856155a1534a1c75ecc7cd.sol
+Tool Runtime = 2.7890743440002552 seconds
+#############################################

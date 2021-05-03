@@ -1,0 +1,154 @@
+Compilation warnings/errors on ./noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol:
+./noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol:386:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+EscrowService._takeFee(address,uint256,uint256) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1044-1065) sends eth to arbitrary user
+	Dangerous calls:
+	- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+EscrowService._release(address,uint256,address) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1068-1082) sends eth to arbitrary user
+	Dangerous calls:
+	- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in EscrowService.addEscrow(address,address,address,address,uint256,uint256,uint256,string) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#956-1024):
+	External calls:
+	- remValue = _takeFee(tokenAddress,amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#973-977)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+		- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+		- IERC20(tokenAddress).safeTransferFrom(msg.sender,_feeWallet,fee) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1062)
+	- _deposit(tokenAddress,amount,remValue) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#984-988)
+		- IERC20(token).safeTransferFrom(msg.sender,address(this),amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1038)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+	External calls sending eth:
+	- remValue = _takeFee(tokenAddress,amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#973-977)
+		- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+	State variables written after the call(s):
+	- escrow.status = Status.FUNDED (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#989)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+Reentrancy in EscrowService.deposit(uint256) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#830-863):
+	External calls:
+	- _deposit(escrow.token,escrow.amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#850-854)
+		- IERC20(token).safeTransferFrom(msg.sender,address(this),amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1038)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+	State variables written after the call(s):
+	- escrow.status = Status.FUNDED (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#855)
+	- escrow.depositor = msg.sender (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#856)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in EscrowService.addEscrow(address,address,address,address,uint256,uint256,uint256,string) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#956-1024):
+	External calls:
+	- remValue = _takeFee(tokenAddress,amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#973-977)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+		- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+		- IERC20(tokenAddress).safeTransferFrom(msg.sender,_feeWallet,fee) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1062)
+	External calls sending eth:
+	- remValue = _takeFee(tokenAddress,amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#973-977)
+		- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+	State variables written after the call(s):
+	- escrow.status = Status.CREATED (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#994)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in EscrowService.addEscrow(address,address,address,address,uint256,uint256,uint256,string) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#956-1024):
+	External calls:
+	- remValue = _takeFee(tokenAddress,amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#973-977)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+		- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+		- IERC20(tokenAddress).safeTransferFrom(msg.sender,_feeWallet,fee) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1062)
+	- _deposit(tokenAddress,amount,remValue) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#984-988)
+		- IERC20(token).safeTransferFrom(msg.sender,address(this),amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1038)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+	External calls sending eth:
+	- remValue = _takeFee(tokenAddress,amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#973-977)
+		- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+	Event emitted after the call(s):
+	- EscrowAdded(depositor,recepient,escrow.mediator,_totalEscrows,tokenAddress) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1016-1022)
+	- EscrowCreated(_totalEscrows,msg.sender) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1014)
+	- Funded(_totalEscrows) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#990)
+Reentrancy in EscrowService.deposit(uint256) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#830-863):
+	External calls:
+	- _deposit(escrow.token,escrow.amount,msg.value) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#850-854)
+		- IERC20(token).safeTransferFrom(msg.sender,address(this),amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1038)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+	Event emitted after the call(s):
+	- Funded(id) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#857)
+Reentrancy in EscrowService.mediate(uint256,address,string) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#898-943):
+	External calls:
+	- _release(escrow.token,mediationFee,escrow.mediator) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#930-934)
+		- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+		- IERC20(token).safeTransfer(beneficiary,amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1080)
+	- _release(escrow.token,tempAmount,beneficiary) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#936-940)
+		- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+		- IERC20(token).safeTransfer(beneficiary,amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1080)
+	External calls sending eth:
+	- _release(escrow.token,mediationFee,escrow.mediator) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#930-934)
+		- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+	- _release(escrow.token,tempAmount,beneficiary) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#936-940)
+		- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+	Event emitted after the call(s):
+	- Released(id,beneficiary) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#942)
+Reentrancy in EscrowService.release(uint256,address) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#795-824):
+	External calls:
+	- _release(escrow.token,escrow.amount,beneficiary) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#818-822)
+		- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+		- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+		- IERC20(token).safeTransfer(beneficiary,amount) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1080)
+	External calls sending eth:
+	- _release(escrow.token,escrow.amount,beneficiary) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#818-822)
+		- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+	Event emitted after the call(s):
+	- Released(id,beneficiary) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#823)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+EscrowService.deposit(uint256) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#830-863) uses timestamp for comparisons
+	Dangerous comparisons:
+	- escrow.lastDepositTime >= block.timestamp (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#849)
+EscrowService.addEscrow(address,address,address,address,uint256,uint256,uint256,string) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#956-1024) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(lastDepositTime > block.timestamp,EscrowService: Invalid last deposit time) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#993)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#375-388) uses assembly
+	- INLINE ASM (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#386-387)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#168) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#199) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#278) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#358) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#430) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#508) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#418-424):
+	- (success) = recipient.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#422)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#483-502):
+	- (success,returndata) = address(token).call(data) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#495)
+Low level call in EscrowService._takeFee(address,uint256,uint256) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1044-1065):
+	- (success) = _feeWallet.call.value(fee)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1057)
+Low level call in EscrowService._release(address,uint256,address) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1068-1082):
+	- (success) = beneficiary.call.value(amount)() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#1076)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#226-228)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#252-255)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#261-263)
+addEscrow(address,address,address,address,uint256,uint256,uint256,string) should be declared external:
+	- EscrowService.addEscrow(address,address,address,address,uint256,uint256,uint256,string) (noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol#956-1024)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol analyzed (7 contracts with 46 detectors), 28 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xe5DaD06Ce6d5468e26f6Ee68Ea322a181b9B659C.sol
+Tool Runtime = 1.1599832690008043 seconds
+#############################################

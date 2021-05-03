@@ -1,0 +1,139 @@
+Compilation warnings/errors on ./noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol:
+./noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol:448:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+LPTokenWrapper.stake(uint256) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#617-624) performs a multiplication on the result of a division:
+	-realamount = amount.div(100).mul(99) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#618)
+KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721) performs a multiplication on the result of a division:
+	-kassiahome.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#716)
+KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721) performs a multiplication on the result of a division:
+	-RewardPaid(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#717)
+KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721) performs a multiplication on the result of a division:
+	-kassiahome.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#718)
+KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721) performs a multiplication on the result of a division:
+	-RewardPaid(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#719)
+KASSIAHOMEPYLONPool.notifyRewardAmount(uint256) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#723-745) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#730)
+	-leftover = remaining.mul(rewardRate) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#733)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in KASSIAHOMEPYLONPool.exit() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#704-707):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#705)
+		- pylon.safeTransfer(msg.sender,amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#629)
+		- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+	- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+		- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+		- scalingFactor = KASSIAHOME(address(kassiahome)).kassiahomesScalingFactor() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#713)
+		- kassiahome.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#716)
+		- kassiahome.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#718)
+	State variables written after the call(s):
+	- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#657)
+	- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#656)
+	- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+		- rewards[msg.sender] = 0 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#712)
+		- rewards[account] = earned(account) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#659)
+	- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#660)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in KASSIAHOMEPYLONPool.exit() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#704-707):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#705)
+		- pylon.safeTransfer(msg.sender,amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#629)
+		- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+	- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+		- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+		- scalingFactor = KASSIAHOME(address(kassiahome)).kassiahomesScalingFactor() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#713)
+		- kassiahome.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#716)
+		- kassiahome.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#718)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#717)
+		- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+	- RewardPaid(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#719)
+		- getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#706)
+Reentrancy in KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721):
+	External calls:
+	- scalingFactor = KASSIAHOME(address(kassiahome)).kassiahomesScalingFactor() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#713)
+	- kassiahome.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#716)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#717)
+Reentrancy in KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721):
+	External calls:
+	- scalingFactor = KASSIAHOME(address(kassiahome)).kassiahomesScalingFactor() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#713)
+	- kassiahome.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#716)
+	- kassiahome.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#718)
+	Event emitted after the call(s):
+	- RewardPaid(fundpool,trueReward.div(100).mul(20)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#719)
+Reentrancy in KASSIAHOMEPYLONPool.stake(uint256) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#692-696):
+	External calls:
+	- super.stake(amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#694)
+		- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+		- pylon.safeTransferFrom(msg.sender,address(this),realamount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#622)
+		- pylon.safeTransferFrom(msg.sender,fundpool,amount.div(100)) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#623)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#695)
+Reentrancy in KASSIAHOMEPYLONPool.withdraw(uint256) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#698-702):
+	External calls:
+	- super.withdraw(amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#700)
+		- pylon.safeTransfer(msg.sender,amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#629)
+		- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#701)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+KASSIAHOMEPYLONPool.getReward() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#709-721) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#711)
+KASSIAHOMEPYLONPool.notifyRewardAmount(uint256) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#723-745) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > starttime (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#728)
+	- block.timestamp >= periodFinish (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#729)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#437-450) uses assembly
+	- INLINE ASM (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#448-449)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#42) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#74) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#263) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#341) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#420) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#491) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#568) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#592) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#480-486):
+	- (success) = recipient.call.value(amount)() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#484)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#544-563):
+	- (success,returndata) = address(token).call(data) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#556)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#582) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+KASSIAHOMEPYLONPool.starttime (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#637) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#290-292)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#316-319)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol#325-327)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol analyzed (11 contracts with 46 detectors), 32 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xba9B45AE4AA08B5312b905Cc9b793b23269727e1.sol
+Tool Runtime = 1.0735921900013636 seconds
+#############################################

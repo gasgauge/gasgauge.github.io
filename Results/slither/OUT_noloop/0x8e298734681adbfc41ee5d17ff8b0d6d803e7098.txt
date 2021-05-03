@@ -1,0 +1,182 @@
+Compilation warnings/errors on ./noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol:
+./noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol:37:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Vault._deposit(uint256,address,address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1155-1177) uses a dangerous strict equality:
+	- totalSupply() == 0 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1167-1169)
+Vault.getPricePerFullShare() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1034-1038) uses a dangerous strict equality:
+	- totalSupply() == 0 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1035-1037)
+Vault.underlyingBalanceWithInvestmentForHolder(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1042-1049) uses a dangerous strict equality:
+	- totalSupply() == 0 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1043)
+Vault.withdraw(uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1124-1153) uses a dangerous strict equality:
+	- numberOfShares == totalSupply (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1136)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in Vault.setStrategy(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1051-1065):
+	External calls:
+	- underlying.safeApprove(address(strategy),0) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1058)
+	- strategy.withdrawAllToVault() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1059)
+	State variables written after the call(s):
+	- strategy = IStrategy(_strategy) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1061)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#705) shadows:
+	- ERC20Detailed.name() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#714-716) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#705) shadows:
+	- ERC20Detailed.symbol() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#722-724) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#705) shadows:
+	- ERC20Detailed.decimals() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#738-740) (function)
+Vault.withdraw(uint256).totalSupply (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1127) shadows:
+	- ERC20.totalSupply() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#498-500) (function)
+	- IERC20.totalSupply() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#281) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Vault._deposit(uint256,address,address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1155-1177):
+	External calls:
+	- underlying.safeTransferFrom(sender,address(this),amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1172)
+	State variables written after the call(s):
+	- contributions[beneficiary] = contributions[beneficiary].add(amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1175)
+Reentrancy in Vault.withdraw(uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1124-1153):
+	External calls:
+	- strategy.withdrawAllToVault() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1137)
+	- strategy.withdrawToVault(missing) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1140)
+	- underlying.safeTransfer(msg.sender,underlyingAmountToWithdraw) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1148)
+	State variables written after the call(s):
+	- withdrawals[msg.sender] = withdrawals[msg.sender].add(underlyingAmountToWithdraw) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1151)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Vault._deposit(uint256,address,address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1155-1177):
+	External calls:
+	- underlying.safeTransferFrom(sender,address(this),amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1172)
+	Event emitted after the call(s):
+	- Deposit(beneficiary,amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1176)
+Reentrancy in Vault.deposit(uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1107-1109):
+	External calls:
+	- _deposit(amount,msg.sender,msg.sender) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1108)
+		- (success,returndata) = address(token).call(data) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#415)
+		- underlying.safeTransferFrom(sender,address(this),amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1172)
+	- defense() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1107)
+		- require(bool,string)((msg.sender == tx.origin) || ! IController(controller()).greyList(msg.sender),This smart contract has been grey listed) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#983-988)
+	Event emitted after the call(s):
+	- Deposit(beneficiary,amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1176)
+		- _deposit(amount,msg.sender,msg.sender) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1108)
+	- Transfer(address(0),account,amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#632)
+		- _deposit(amount,msg.sender,msg.sender) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1108)
+Reentrancy in Vault.depositFor(uint256,address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1116-1118):
+	External calls:
+	- _deposit(amount,msg.sender,holder) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1117)
+		- (success,returndata) = address(token).call(data) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#415)
+		- underlying.safeTransferFrom(sender,address(this),amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1172)
+	- defense() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1116)
+		- require(bool,string)((msg.sender == tx.origin) || ! IController(controller()).greyList(msg.sender),This smart contract has been grey listed) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#983-988)
+	Event emitted after the call(s):
+	- Deposit(beneficiary,amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1176)
+		- _deposit(amount,msg.sender,holder) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1117)
+	- Transfer(address(0),account,amount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#632)
+		- _deposit(amount,msg.sender,holder) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1117)
+Reentrancy in Vault.invest() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1095-1101):
+	External calls:
+	- underlying.safeTransfer(address(strategy),availableAmount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1098)
+	Event emitted after the call(s):
+	- Invest(availableAmount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1099)
+Reentrancy in Vault.rebalance() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1074-1077):
+	External calls:
+	- withdrawAll() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1075)
+		- strategy.withdrawAllToVault() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1121)
+	- invest() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1076)
+		- underlying.safeTransfer(address(strategy),availableAmount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1098)
+		- (success,returndata) = address(token).call(data) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#415)
+	Event emitted after the call(s):
+	- Invest(availableAmount) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1099)
+		- invest() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1076)
+Reentrancy in Vault.withdraw(uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1124-1153):
+	External calls:
+	- strategy.withdrawAllToVault() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1137)
+	- strategy.withdrawToVault(missing) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1140)
+	- underlying.safeTransfer(msg.sender,underlyingAmountToWithdraw) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1148)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,underlyingAmountToWithdraw) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1152)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#30-39) uses assembly
+	- INLINE ASM (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#37-38)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#7) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#80) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#112) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#271) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#350) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#427) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#457) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#689) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#745) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#771) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#800) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#837) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#866) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#899) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#925) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#69-75):
+	- (success) = recipient.call.value(amount)() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#73)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#403-422):
+	- (success,returndata) = address(token).call(data) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#415)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Storage.setGovernance(address)._governance (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#816) is not in mixedCase
+Parameter Storage.setController(address)._controller (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#821) is not in mixedCase
+Parameter Governable.setStorage(address)._store (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#854) is not in mixedCase
+Parameter Vault.setStrategy(address)._strategy (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1051) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#517-520)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#525-527)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#536-539)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#553-557)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#571-574)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#590-593)
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#714-716)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#722-724)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#738-740)
+setGovernance(address) should be declared external:
+	- Storage.setGovernance(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#816-819)
+setController(address) should be declared external:
+	- Storage.setController(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#821-824)
+isController(address) should be declared external:
+	- Storage.isController(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#830-832)
+setStorage(address) should be declared external:
+	- Governable.setStorage(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#854-857)
+governance() should be declared external:
+	- Governable.governance() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#859-861)
+getContributions(address) should be declared external:
+	- Vault.getContributions(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1023-1025)
+getWithdrawals(address) should be declared external:
+	- Vault.getWithdrawals(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1030-1032)
+getPricePerFullShare() should be declared external:
+	- Vault.getPricePerFullShare() (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1034-1038)
+setStrategy(address) should be declared external:
+	- Vault.setStrategy(address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1051-1065)
+depositFor(uint256,address) should be declared external:
+	- Vault.depositFor(uint256,address) (noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol#1116-1118)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol analyzed (15 contracts with 46 detectors), 59 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8e298734681adbfc41ee5d17ff8b0d6d803e7098.sol
+Tool Runtime = 1.7707620819965086 seconds
+#############################################

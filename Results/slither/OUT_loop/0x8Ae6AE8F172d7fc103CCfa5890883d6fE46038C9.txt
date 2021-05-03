@@ -1,0 +1,170 @@
+INFO:Detectors:[93m
+HelixNebulaV2.GetEOGPrice() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#303-309) performs a multiplication on the result of a division:
+	-TempPrice = EIP20Interface(Weth_Address).balanceOf(Pool_Address) * 10 ** 7 / balances[Pool_Address] (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#306)
+	-TempPrice * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#307)
+HelixNebulaV2.SendTransaction(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310-350) performs a multiplication on the result of a division:
+	-TempPrice = (msg.value * 5 / 4) * 10 ** 7 / (NowPrice * 5) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#316)
+HelixNebulaV2.SendTransaction(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310-350) performs a multiplication on the result of a division:
+	-TempPrice = (msg.value * 5 / 4) * 10 ** 7 / (NowPrice * 5) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#316)
+	-Hamount = TempPrice * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#317)
+HelixNebulaV2.SendTransaction(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310-350) performs a multiplication on the result of a division:
+	-Hamount = (msg.value * 5 / 4) * Hamount (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#319)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+HelixNebulaV2.GetAddressExpTime(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#159-166) uses a dangerous strict equality:
+	- LockedAddresses[i].adr == _adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#161)
+HelixNebulaV2.IsLockAddress(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#168-179) uses a dangerous strict equality:
+	- LockedAddresses[i].adr == _adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#170)
+HelixNebulaV2.LockAddress(uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#146-158) uses a dangerous strict equality:
+	- LockedAddresses[i].adr == msg.sender (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#148)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[92m
+HelixNebulaV2.transferFrom(address,address,uint256).allowance (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#229) shadows:
+	- HelixNebulaV2.allowance(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#250-252) (function)
+	- EIP20Interface.allowance(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#46) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in HelixNebulaV2.SendTransaction(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310-350):
+	External calls:
+	- IUniswapV2Pair(Pool_Address).sync() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#328)
+	Event emitted after the call(s):
+	- Transfer(Pool_Address,_From,Hamount) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#330)
+Reentrancy in HelixNebulaV2.SendTransaction(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310-350):
+	External calls:
+	- IUniswapV2Pair(Pool_Address).sync() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#338)
+	Event emitted after the call(s):
+	- Transfer(address(0),_From,Hamount.sub0(diff)) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#340)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+HelixNebulaV2.LockAddress(uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#146-158) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < LockedAddresses.length (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#147)
+	- LockedAddresses[i].adr == msg.sender (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#148)
+	- LockedAddresses[i].ExpireTime > block.timestamp (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#149)
+HelixNebulaV2.GetAddressExpTime(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#159-166) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < LockedAddresses.length (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#160)
+	- LockedAddresses[i].adr == _adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#161)
+HelixNebulaV2.IsLockAddress(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#168-179) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < LockedAddresses.length (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#169)
+	- LockedAddresses[i].adr == _adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#170)
+	- LockedAddresses[i].ExpireTime > block.timestamp (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#171)
+HelixNebulaV2.GetHelixAmount() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#281-301) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp.sub(ReleaseTime) < oneDaytime * 30 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#283)
+	- block.timestamp.sub(ReleaseTime) < oneDaytime * 60 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#286)
+	- block.timestamp.sub(ReleaseTime) < oneDaytime * 90 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#289)
+	- block.timestamp.sub(ReleaseTime) < oneDaytime * 120 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#292)
+	- block.timestamp.sub(ReleaseTime) < oneDaytime * 150 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#295)
+	- block.timestamp.sub(ReleaseTime) > oneDaytime * 150 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#298)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+HelixNebulaV2.transfer(address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#215-223) compares to a boolean constant:
+	-require(bool,string)(IsLockAddress(_to) == false,This Address is locked) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#216)
+HelixNebulaV2.transferFrom(address,address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#225-238) compares to a boolean constant:
+	-require(bool,string)(IsLockAddress(_from) == false,This Address is locked) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#227)
+HelixNebulaV2.transferFrom(address,address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#225-238) compares to a boolean constant:
+	-require(bool,string)(IsLockAddress(_to) == false,This Address is locked) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#226)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#14) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable EIP20Interface.MaxSupply (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#19) is not in mixedCase
+Function HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) is not in mixedCase
+Function HelixNebulaV2.LockAddress(uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#146-158) is not in mixedCase
+Parameter HelixNebulaV2.LockAddress(uint256)._days (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#146) is not in mixedCase
+Function HelixNebulaV2.GetAddressExpTime(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#159-166) is not in mixedCase
+Parameter HelixNebulaV2.GetAddressExpTime(address)._adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#159) is not in mixedCase
+Function HelixNebulaV2.IsLockAddress(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#168-179) is not in mixedCase
+Parameter HelixNebulaV2.IsLockAddress(address)._adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#168) is not in mixedCase
+Function HelixNebulaV2.SetPoolData(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#180-183) is not in mixedCase
+Parameter HelixNebulaV2.SetPoolData(address,address)._pooladr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#180) is not in mixedCase
+Parameter HelixNebulaV2.SetPoolData(address,address)._wethadr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#180) is not in mixedCase
+Parameter HelixNebulaV2.transferOwnership(address)._newOwner (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#185) is not in mixedCase
+Function HelixNebulaV2.SetHelixStorage(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#189-192) is not in mixedCase
+Parameter HelixNebulaV2.SetHelixStorage(address)._newHelix (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#189) is not in mixedCase
+Function HelixNebulaV2.CirculatingSupply() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#212-214) is not in mixedCase
+Parameter HelixNebulaV2.transfer(address,uint256)._to (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#215) is not in mixedCase
+Parameter HelixNebulaV2.transfer(address,uint256)._value (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#215) is not in mixedCase
+Parameter HelixNebulaV2.transferFrom(address,address,uint256)._from (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#225) is not in mixedCase
+Parameter HelixNebulaV2.transferFrom(address,address,uint256)._to (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#225) is not in mixedCase
+Parameter HelixNebulaV2.transferFrom(address,address,uint256)._value (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#225) is not in mixedCase
+Parameter HelixNebulaV2.balanceOf(address)._owner (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#240) is not in mixedCase
+Parameter HelixNebulaV2.approve(address,uint256)._spender (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#244) is not in mixedCase
+Parameter HelixNebulaV2.approve(address,uint256)._value (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#244) is not in mixedCase
+Parameter HelixNebulaV2.allowance(address,address)._owner (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#250) is not in mixedCase
+Parameter HelixNebulaV2.allowance(address,address)._spender (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#250) is not in mixedCase
+Function HelixNebulaV2.Mint(address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#253-259) is not in mixedCase
+Parameter HelixNebulaV2.Mint(address,uint256)._adr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#253) is not in mixedCase
+Parameter HelixNebulaV2.Mint(address,uint256)._value (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#253) is not in mixedCase
+Function HelixNebulaV2.SetAutoSync(bool) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#276-278) is not in mixedCase
+Parameter HelixNebulaV2.SetAutoSync(bool)._snc (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#276) is not in mixedCase
+Function HelixNebulaV2.GetHelixAmount() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#281-301) is not in mixedCase
+Function HelixNebulaV2.GetEOGPrice() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#303-309) is not in mixedCase
+Function HelixNebulaV2.SendTransaction(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310-350) is not in mixedCase
+Parameter HelixNebulaV2.SendTransaction(address,address)._Hadr (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310) is not in mixedCase
+Parameter HelixNebulaV2.SendTransaction(address,address)._From (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#310) is not in mixedCase
+Variable HelixNebulaV2.ReleaseTime (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#86) is not in mixedCase
+Variable HelixNebulaV2.Helix_Storage (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#90) is not in mixedCase
+Variable HelixNebulaV2.Pool_Address (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#91) is not in mixedCase
+Variable HelixNebulaV2.Weth_Address (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#92) is not in mixedCase
+Variable HelixNebulaV2.LockedAddresses (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#105) is not in mixedCase
+Variable HelixNebulaV2.AutoSync (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#272) is not in mixedCase
+Variable HelixNebulaV2.ETHPrice (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#273) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xa529D7D3D00148D861dA5c650e88250941FC291a] = 1500000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#117)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xF9D96CDBA21e917d2545E25300E96536070Fa0D4] = 500000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#122)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xBb1a016F07400696edA537658a7d76E35C61F31A] = 500000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#123)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xf56036f6a5D9b9991c209DcbC9C40b2C1cD46540] = 150000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#130)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0x750343F8327fC50b77cd805974C08f08700f79F9] = 125000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#132)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xC6f1a9D4Fb5681f986d3Dc6EC116f66D95CC2F03] = 125000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#133)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xc3aFAE482366e8584D0848056293Db0205F4d227] = 100000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#135)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0xB04a9CCbdB801C4Ca0403344eDb6Ff0ecAb07a8e] = 40000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#141)
+HelixNebulaV2.UpgardeV1ToV2Balances() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#116-145) uses literals with too many digits:
+	- balances[0x6c9A672be60B9BAfDe61944CFea1f43E9f3b6F3B] = 15000000 * 10 ** 11 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#143)
+HelixNebulaV2.slitherConstructorVariables() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#78-352) uses literals with too many digits:
+	- ETHPrice = 1000000000000000000 (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#273)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+HelixNebulaV2.ETHPrice (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#273) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- HelixNebulaV2.balanceOf(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#240-242)
+	- EIP20Interface.balanceOf(address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#22)
+transfer(address,uint256) should be declared external:
+	- EIP20Interface.transfer(address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#28)
+	- HelixNebulaV2.transfer(address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#215-223)
+transferFrom(address,address,uint256) should be declared external:
+	- EIP20Interface.transferFrom(address,address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#35)
+	- HelixNebulaV2.transferFrom(address,address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#225-238)
+approve(address,uint256) should be declared external:
+	- EIP20Interface.approve(address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#41)
+	- HelixNebulaV2.approve(address,uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#244-248)
+allowance(address,address) should be declared external:
+	- EIP20Interface.allowance(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#46)
+	- HelixNebulaV2.allowance(address,address) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#250-252)
+CirculatingSupply() should be declared external:
+	- HelixNebulaV2.CirculatingSupply() (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#212-214)
+burn(uint256) should be declared external:
+	- HelixNebulaV2.burn(uint256) (loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol#260-266)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol analyzed (4 contracts with 46 detectors), 79 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8Ae6AE8F172d7fc103CCfa5890883d6fE46038C9.sol
+Tool Runtime = 0.9484838089992991 seconds
+#############################################

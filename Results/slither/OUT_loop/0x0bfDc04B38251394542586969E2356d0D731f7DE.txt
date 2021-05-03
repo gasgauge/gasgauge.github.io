@@ -1,0 +1,168 @@
+Compilation warnings/errors on ./loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol:
+./loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol:2362:5: Warning: Function state mutability can be restricted to pure
+    function _createVirtualSynth(
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+INFO:Detectors:[93m
+Exchanger._internalSettle(address,bytes32,bool) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2453-2507) uses a dangerous strict equality:
+	- require(bool,string)(maxSecsLeftInWaitingPeriod(from,currencyKey) == 0,Cannot settle during waiting period) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2465)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract Proxy (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1526-1598) has payable functions:
+	 - Proxy.fallback() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1573-1590)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+Reentrancy in VirtualSynth.settle(address) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3085-3091):
+	External calls:
+	- settleSynth() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3086)
+		- exchanger().settle(address(this),currencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3045)
+	- IERC20(address(synth)).transfer(account,balanceUnderlying(account)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3088)
+	State variables written after the call(s):
+	- _burn(account,balanceOf(account)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3090)
+		- _balances[account] = _balances[account].sub(value) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2911)
+	- _burn(account,balanceOf(account)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3090)
+		- _totalSupply = _totalSupply.sub(value) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2910)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Exchanger._settlementOwing(address,bytes32).reclaim (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1940) is a local variable never initialized
+Exchanger._settlementOwing(address,bytes32).rebate (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1941) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+VirtualSynth.settleSynth() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3039-3050) ignores return value by exchanger().settle(address(this),currencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3045)
+VirtualSynth.settle(address) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3085-3091) ignores return value by IERC20(address(synth)).transfer(account,balanceUnderlying(account)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3088)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Exchanger._settlementOwing(address,bytes32).reclaim (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1940) shadows:
+	- Exchanger.reclaim(address,bytes32,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2509-2517) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+AddressResolver.rebuildCaches(MixinResolver[]) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#248-252) has external calls inside a loop: destinations[i].rebuildCache() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#250)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in VirtualSynth.settleSynth() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3039-3050):
+	External calls:
+	- exchanger().settle(address(this),currencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3045)
+	State variables written after the call(s):
+	- settledAmount = IERC20(address(synth)).balanceOf(address(this)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3047)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Exchanger._exchange(address,bytes32,uint256,bytes32,address,bool) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2235-2336):
+	External calls:
+	- sourceAmountAfterSettlement = _settleAndCalcSourceAmountRemaining(sourceAmount,from,sourceCurrencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2252)
+		- issuer().synths(currencyKey).burn(from,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2515)
+		- issuer().synths(currencyKey).issue(from,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2525)
+		- ISynthetixInternal(address(synthetix())).emitExchangeRebate(from,currencyKey,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2526)
+		- ISynthetixInternal(address(synthetix())).emitExchangeReclaim(from,currencyKey,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2516)
+		- debtCache().updateCachedSynthDebts(key) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2485)
+		- exchangeState().removeEntries(from,currencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2506)
+	- vSynth = _convert(sourceCurrencyKey,from,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,destinationAddress,virtualSynth) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2282-2290)
+		- issuer().synths(sourceCurrencyKey).burn(from,sourceAmountAfterSettlement) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2348)
+		- dest.issue(address(vSynth),amountReceived) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2356)
+		- dest.issue(recipient,amountReceived) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2358)
+	- issuer().synths(sUSD).issue(feePool().FEE_ADDRESS(),fee) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2304)
+	- feePool().recordFeePaid(fee) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2307)
+	- _updateSNXIssuedDebtOnExchange((sourceCurrencyKey,destinationCurrencyKey),(sourceRate,destinationRate)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2315)
+		- debtCache().updateCachedSynthDebtsWithRates(keys,rates) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2216)
+	- ISynthetixInternal(address(synthetix())).emitSynthExchange(from,sourceCurrencyKey,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,destinationAddress) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2318-2325)
+	- appendExchange(destinationAddress,sourceCurrencyKey,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,exchangeFeeRate) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2328-2335)
+		- exchangeState().appendExchangeEntry(account,src,amount,dest,amountReceived,exchangeFeeRate,now,roundIdForSrc,roundIdForDest) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2635-2645)
+	Event emitted after the call(s):
+	- ExchangeEntryAppended(account,src,amount,dest,amountReceived,exchangeFeeRate,roundIdForSrc,roundIdForDest) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2647-2656)
+		- appendExchange(destinationAddress,sourceCurrencyKey,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,exchangeFeeRate) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2328-2335)
+Reentrancy in Exchanger._internalSettle(address,bytes32,bool) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2453-2507):
+	External calls:
+	- reclaim(from,currencyKey,reclaimed) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2476)
+		- issuer().synths(currencyKey).burn(from,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2515)
+		- ISynthetixInternal(address(synthetix())).emitExchangeReclaim(from,currencyKey,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2516)
+	- refund(from,currencyKey,refunded) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2479)
+		- issuer().synths(currencyKey).issue(from,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2525)
+		- ISynthetixInternal(address(synthetix())).emitExchangeRebate(from,currencyKey,amount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2526)
+	- debtCache().updateCachedSynthDebts(key) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2485)
+	Event emitted after the call(s):
+	- ExchangeEntrySettled(from,settlements[i].src,settlements[i].amount,settlements[i].dest,settlements[i].reclaim,settlements[i].rebate,settlements[i].srcRoundIdAtPeriodEnd,settlements[i].destRoundIdAtPeriodEnd,settlements[i].timestamp) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2490-2500)
+Reentrancy in Exchanger.appendExchange(address,bytes32,uint256,bytes32,uint256,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2624-2657):
+	External calls:
+	- exchangeState().appendExchangeEntry(account,src,amount,dest,amountReceived,exchangeFeeRate,now,roundIdForSrc,roundIdForDest) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2635-2645)
+	Event emitted after the call(s):
+	- ExchangeEntryAppended(account,src,amount,dest,amountReceived,exchangeFeeRate,roundIdForSrc,roundIdForDest) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2647-2656)
+Reentrancy in VirtualSynth.settle(address) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3085-3091):
+	External calls:
+	- settleSynth() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3086)
+		- exchanger().settle(address(this),currencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3045)
+	- IERC20(address(synth)).transfer(account,balanceUnderlying(account)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3088)
+	Event emitted after the call(s):
+	- Transfer(account,address(0),value) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2912)
+		- _burn(account,balanceOf(account)) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3090)
+Reentrancy in VirtualSynth.settleSynth() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3039-3050):
+	External calls:
+	- exchanger().settle(address(this),currencyKey) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3045)
+	Event emitted after the call(s):
+	- Settled(totalSupply(),settledAmount) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#3049)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Exchanger.hasWaitingPeriodOrSettlementOwing(address,bytes32) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2018-2026) uses timestamp for comparisons
+	Dangerous comparisons:
+	- maxSecsLeftInWaitingPeriod(account,currencyKey) != 0 (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2019)
+Exchanger._internalSettle(address,bytes32,bool) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2453-2507) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(maxSecsLeftInWaitingPeriod(from,currencyKey) == 0,Cannot settle during waiting period) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2465)
+Exchanger.secsLeftInWaitingPeriodForExchange(uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2529-2536) uses timestamp for comparisons
+	Dangerous comparisons:
+	- timestamp == 0 || now >= timestamp.add(_waitingPeriodSecs) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2531)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Void constructor called in VirtualSynth.constructor(IERC20,IAddressResolver,address,uint256,bytes32) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2982-2998):
+	- ERC20() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2988)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#void-constructor[0m
+INFO:Detectors:[92m
+ReadProxy.fallback() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#300-315) uses assembly
+	- INLINE ASM (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#303-315)
+Proxy._emit(bytes,uint256,bytes32,bytes32,bytes32,bytes32) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1536-1570) uses assembly
+	- INLINE ASM (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1547-1570)
+Proxy.fallback() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1573-1590) uses assembly
+	- INLINE ASM (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1577-1590)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#61) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.nominateNewOwner(address)._owner (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#75) is not in mixedCase
+Parameter ReadProxy.setTarget(address)._target (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#295) is not in mixedCase
+Constant SafeDecimalMath.highPrecisionDecimals (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#847) is not in UPPER_CASE_WITH_UNDERSCORES
+Function IFeePool.FEE_ADDRESS() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1355) is not in mixedCase
+Parameter Proxy.setTarget(Proxyable)._target (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1531) is not in mixedCase
+Function Proxy._emit(bytes,uint256,bytes32,bytes32,bytes32,bytes32) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1536-1570) is not in mixedCase
+Parameter Proxyable.setProxy(address)._proxy (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1628) is not in mixedCase
+Parameter Proxyable.setIntegrationProxy(address)._integrationProxy (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1633) is not in mixedCase
+Function Proxyable._optionalProxy_onlyOwner() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1667-1672) is not in mixedCase
+Modifier Proxyable.optionalProxy_onlyOwner() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1661-1664) is not in mixedCase
+Constant Exchanger.sUSD (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1821) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+rebuildCache() should be declared external:
+	- MixinResolver.rebuildCache() (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#360-373)
+settlementOwing(address,bytes32) should be declared external:
+	- Exchanger.settlementOwing(address,bytes32) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#1911-1921)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2778-2781)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2786-2788)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2797-2800)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2814-2818)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2832-2835)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol#2851-2854)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x0bfDc04B38251394542586969E2356d0D731f7DE.sol analyzed (30 contracts with 46 detectors), 43 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x0bfDc04B38251394542586969E2356d0D731f7DE.sol
+Tool Runtime = 8.528246140998817 seconds
+#############################################

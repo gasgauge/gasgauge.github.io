@@ -1,0 +1,100 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PropertyFactory
+Function name: createAndAuthenticate(string,string,address,string,string,string)
+PC address: 1745
+Estimated Gas Usage: 42683 - 165593
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x8a2c73F4d243f35AD62fc651302b742E0b3fa96c.sol:1036
+
+IMarket(_market).authenticateFromPropertyFactory(
+				_create(_name, _symbol, msg.sender),
+				msg.sender,
+				_args1,
+				_args2,
+				_args3,
+				"",
+				""
+			)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: createAndAuthenticate(string,string,address,string,string,string), txdata: 0x9f3156cd00000000000000000000000000000000000000000000000000000000000000a10000000000000000000000000000000000000000000000000000000000000062000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000021000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PropertyFactory
+Function name: createAndAuthenticate(string,string,address,string,string,string)
+PC address: 1745
+Estimated Gas Usage: 42692 - 165272
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x8a2c73F4d243f35AD62fc651302b742E0b3fa96c.sol:1036
+
+IMarket(_market).authenticateFromPropertyFactory(
+				_create(_name, _symbol, msg.sender),
+				msg.sender,
+				_args1,
+				_args2,
+				_args3,
+				"",
+				""
+			)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: createAndAuthenticate(string,string,address,string,string,string), txdata: 0x9f3156cd000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PropertyFactory
+Function name: create(string,string,address)
+PC address: 2573
+Estimated Gas Usage: 39959 - 119735
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x8a2c73F4d243f35AD62fc651302b742E0b3fa96c.sol:1064
+
+IPropertyGroup(config().propertyGroup()).addGroup(address(property))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: create(string,string,address), txdata: 0x5a9c27240000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x8a2c73F4d243f35AD62fc651302b742E0b3fa96c.sol
+Tool Runtime = 11247.157872881995 seconds
+#############################################

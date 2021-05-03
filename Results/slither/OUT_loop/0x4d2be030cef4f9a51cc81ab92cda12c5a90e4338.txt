@@ -1,0 +1,371 @@
+INFO:Detectors:[93m
+SafeMath.div(uint256,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#21-27) performs a multiplication on the result of a division:
+	-c = a / b (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#23)
+	-c = c * (10 ** decimal) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#25)
+SpacePodsUSDC._interest(uint256,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#579-586) performs a multiplication on the result of a division:
+	-fullInt = _intPY / SECPYEAR / 100 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#582)
+	-fullInt = (fullInt * _time) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#583)
+SpacePodsUSDC._borrow(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#637-662) performs a multiplication on the result of a division:
+	-amount = (amount / (10 ** 18)) * (10 ** 18) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#638)
+SpacePodsUSDC._borrow(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#637-662) performs a multiplication on the result of a division:
+	-amountStable = (amount / (10 ** 18)) * (10 ** decimal) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#640)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+SpacePodsUSDC._depositContract(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#250-291) uses a dangerous strict equality:
+	- deposits[idx].amount == 0 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#273)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) uses a dangerous strict equality:
+	- require(bool)(borrows[idx].status == 1) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#698)
+SpacePodsUSDC.pricipleAndInterest(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#590-614) uses a dangerous strict equality:
+	- borrows[idx].status == 0 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#595)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in SpacePodsUSDC._borrow(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#637-662):
+	External calls:
+	- catToken.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#655)
+	- token.transfer(_addr,amountStable) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#656)
+	State variables written after the call(s):
+	- totalBorrow += amountStable (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#657)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#709)
+	- token.transferFrom(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#711)
+	State variables written after the call(s):
+	- borrows[idx].interestPay += interest (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#715)
+	- borrows[idx].repayAmount += principle (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#716)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#709)
+	- token.transferFrom(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#711)
+	- catToken.transfer(_addr,catReturn) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#725)
+	State variables written after the call(s):
+	- borrows[idx].time = now (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#727)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#732)
+	State variables written after the call(s):
+	- borrows[idx].interestPay += interest (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#739)
+	- borrows[idx].repayAmount += principle (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#740)
+	- borrows[idx].interestPay += amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#756)
+	- borrows[idx].time = now (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#759)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#732)
+	- catToken.transfer(_addr,catReturn) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#749)
+	State variables written after the call(s):
+	- borrows[idx].time = now (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#751)
+Reentrancy in SpacePodsUSDC._withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#346-401):
+	External calls:
+	- token.transfer(_to,interest) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#365)
+	- token.transfer(_to,0) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#366)
+	State variables written after the call(s):
+	- totalSupply -= interest (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#367)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+SpacePodsUSDC.getDepositDataIdx(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#536-543) contains a tautology or contradiction:
+	- require(bool)(idx >= 0 && idx < deposits.length) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#537)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#tautology-or-contradiction[0m
+INFO:Detectors:[93m
+SpacePodsUSDC.withdrawStupidUser(uint256,address,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#202-206) ignores return value by stupid.transfer(_to,amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#205)
+SpacePodsUSDC._withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#346-401) ignores return value by token.transfer(_to,interest) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#365)
+SpacePodsUSDC._withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#346-401) ignores return value by token.transfer(_to,0) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#366)
+SpacePodsUSDC._withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#346-401) ignores return value by token.transfer(_to,interest) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#397)
+SpacePodsUSDC._withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#346-401) ignores return value by token.transfer(_to,principle) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#398)
+SpacePodsUSDC.withdrawInterest(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#431-453) ignores return value by token.transfer(_to,amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#450)
+SpacePodsUSDC.withdrawStable(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#468-478) ignores return value by token.withdrawInternal(msg.sender,szGot) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#474)
+SpacePodsUSDC.withdrawIntStable(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#480-491) ignores return value by token.withdrawInternal(_to,szGot) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#486)
+SpacePodsUSDC.withdrawAllStable(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#493-504) ignores return value by token.withdrawInternal(_to,szGot) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#499)
+SpacePodsUSDC.withdrawPercentStable(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#505-518) ignores return value by token.withdrawInternal(_to,szGot) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#512)
+SpacePodsUSDC._borrow(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#637-662) ignores return value by catToken.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#655)
+SpacePodsUSDC._borrow(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#637-662) ignores return value by token.transfer(_addr,amountStable) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#656)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) ignores return value by token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#709)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) ignores return value by token.transferFrom(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#711)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) ignores return value by catToken.transfer(_addr,catReturn) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#725)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) ignores return value by token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#732)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) ignores return value by catToken.transfer(_addr,catReturn) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#749)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+SpacePodsUSDC.setBorrowInterest(uint256)._interest (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#231-234) shadows:
+	- SpacePodsUSDC._interest(uint256,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#579-586) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#709)
+	- token.transferFrom(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#711)
+	State variables written after the call(s):
+	- totalBorrow -= principle (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#718)
+	- totalInterest += interest (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#717)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#732)
+	State variables written after the call(s):
+	- totalBorrow -= principle (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#742)
+	- totalInterest += interest (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#741)
+	- totalInterest += amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#757)
+Reentrancy in SpacePodsUSDC.depositSZTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#326-343):
+	External calls:
+	- token.intTransfer(_from,address(this),amount) == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#337)
+	State variables written after the call(s):
+	- _depositContract(_from,amount,_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#338)
+		- balance[_from] += amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#252)
+	- _depositContract(_from,amount,_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#338)
+		- depositIdxs[_from].push(idx) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#266)
+		- depositIdxs[_from].push(idx) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#288)
+	- _depositContract(_from,amount,_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#338)
+		- idx = deposits.push(dep) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#265)
+		- deposits[idx].amount = amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#274)
+		- deposits[idx].lastDeposit = now (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#275)
+		- idx = deposits.push(dep_scope_0) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#287)
+	- _depositContract(_from,amount,_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#338)
+		- totalSupply += amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#254)
+Reentrancy in SpacePodsUSDC.depositTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299-320):
+	External calls:
+	- token.intTransfer(_from,address(this),amount * (10 ** 12)) == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#314)
+	State variables written after the call(s):
+	- _depositContract(_from,amount * (10 ** 12),_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#315)
+		- balance[_from] += amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#252)
+	- _depositContract(_from,amount * (10 ** 12),_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#315)
+		- depositIdxs[_from].push(idx) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#266)
+		- depositIdxs[_from].push(idx) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#288)
+	- _depositContract(_from,amount * (10 ** 12),_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#315)
+		- idx = deposits.push(dep) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#265)
+		- deposits[idx].amount = amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#274)
+		- deposits[idx].lastDeposit = now (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#275)
+		- idx = deposits.push(dep_scope_0) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#287)
+	- _depositContract(_from,amount * (10 ** 12),_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#315)
+		- totalSupply += amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#254)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in SpacePodsUSDC._borrow(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#637-662):
+	External calls:
+	- catToken.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#655)
+	- token.transfer(_addr,amountStable) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#656)
+	Event emitted after the call(s):
+	- Borrow(_addr,amountStable,borrowInterest) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#659)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#709)
+	- token.transferFrom(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#711)
+	Event emitted after the call(s):
+	- Repayment(_addr,conIdx,amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#713)
+Reentrancy in SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764):
+	External calls:
+	- token.intTransfer(_addr,address(this),amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#732)
+	Event emitted after the call(s):
+	- Repayment(_addr,conIdx,amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#735)
+Reentrancy in SpacePodsUSDC.depositSZTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#326-343):
+	External calls:
+	- token.intTransfer(_from,address(this),amount) == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#337)
+	Event emitted after the call(s):
+	- Deposit(_from,amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#253)
+		- _depositContract(_from,amount,_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#338)
+Reentrancy in SpacePodsUSDC.depositTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299-320):
+	External calls:
+	- token.intTransfer(_from,address(this),amount * (10 ** 12)) == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#314)
+	Event emitted after the call(s):
+	- Deposit(_from,amount) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#253)
+		- _depositContract(_from,amount * (10 ** 12),_term) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#315)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+SpacePodsUSDC._depositContract(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#250-291) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deposits[idx].amount == 0 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#273)
+SpacePodsUSDC._withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#346-401) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deposits[idx].amount > 0 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#357)
+SpacePodsUSDC.withdrawInterest(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#431-453) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deposits[idx].amount > 0 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#445)
+SpacePodsUSDC.getDepositDataIdx(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#536-543) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(idx >= 0 && idx < deposits.length) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#537)
+SpacePodsUSDC.getBorrowData(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#561-574) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(condIdx <= borrows.length && condIdx > 0,Error not have this idx) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#562)
+SpacePodsUSDC.pricipleAndInterest(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#590-614) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(conIdx <= borrows.length && conIdx > 0,Error not have this idx) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#591)
+	- borrows[idx].status == 0 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#595)
+	- borrows[idx].repayAmount > borrows[idx].amount (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#600)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(conIdx > 0 && conIdx <= borrows.length) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#696)
+	- require(bool)(borrows[idx].status == 1) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#698)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Permissions.addPermit(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#81-85) compares to a boolean constant:
+	-require(bool)(permits[_addr] == false) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#82)
+Permissions.onlyPermits() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#72-75) compares to a boolean constant:
+	-require(bool)(permits[msg.sender] == true) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#73)
+SpacePodsUSDC.depositTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299-320) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _from || (permits[msg.sender] == true && stopAdminControl[_from] == false),NO Permission to call this function) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#300-301)
+SpacePodsUSDC.depositTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299-320) compares to a boolean constant:
+	-token.deposit(_from,amount) == false (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#311)
+SpacePodsUSDC.depositTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299-320) compares to a boolean constant:
+	-token.intTransfer(_from,address(this),amount * (10 ** 12)) == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#314)
+SpacePodsUSDC.depositSZTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#326-343) compares to a boolean constant:
+	-token.intTransfer(_from,address(this),amount) == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#337)
+SpacePodsUSDC.depositSZTokenTerm(address,uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#326-343) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _from || (permits[msg.sender] == true && stopAdminControl[_from] == false),NO Permission to call function) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#327-328)
+SpacePodsUSDC.withdrawPercent(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#403-418) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),No Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#404-405)
+SpacePodsUSDC.withdraw(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#420-427) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),No Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#421-422)
+SpacePodsUSDC.withdrawInterest(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#431-453) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),No Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#432-433)
+SpacePodsUSDC.withdrawAll(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#455-466) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),No Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#456-457)
+SpacePodsUSDC.withdrawStable(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#468-478) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),NO Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#469-470)
+SpacePodsUSDC.withdrawIntStable(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#480-491) compares to a boolean constant:
+	-require(bool)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false)) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#481-482)
+SpacePodsUSDC.withdrawAllStable(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#493-504) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),NO Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#494-495)
+SpacePodsUSDC.withdrawPercentStable(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#505-518) compares to a boolean constant:
+	-require(bool,string)(msg.sender == _to || (permits[msg.sender] == true && stopAdminControl[_to] == false),NO Permission to call) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#506-507)
+SpacePodsUSDC._rePayment(uint256,uint256,address,bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#695-764) compares to a boolean constant:
+	-wrap == true (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#708)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Permissions.isPermit(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#77) is not in mixedCase
+Parameter Permissions.addPermit(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#81) is not in mixedCase
+Parameter Permissions.removePermit(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#89) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawStupidUser(uint256,address,address)._contract (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#202) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawStupidUser(uint256,address,address)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#202) is not in mixedCase
+Parameter SpacePodsUSDC.setMinimumDeposit(uint256)._min (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#208) is not in mixedCase
+Parameter SpacePodsUSDC.setProfitCal(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#213) is not in mixedCase
+Parameter SpacePodsUSDC.setCatToken(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#225) is not in mixedCase
+Parameter SpacePodsUSDC.setBorrowInterest(uint256)._newInterst (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#229) is not in mixedCase
+Parameter SpacePodsUSDC.getInterestProfit(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#242) is not in mixedCase
+Parameter SpacePodsUSDC.setAdminControl(bool)._set (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#246) is not in mixedCase
+Parameter SpacePodsUSDC.depositToken(address,uint256)._from (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#294) is not in mixedCase
+Parameter SpacePodsUSDC.depositTokenTerm(address,uint256,uint256)._from (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299) is not in mixedCase
+Parameter SpacePodsUSDC.depositTokenTerm(address,uint256,uint256)._term (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#299) is not in mixedCase
+Parameter SpacePodsUSDC.depositSZToken(address,uint256)._from (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#322) is not in mixedCase
+Parameter SpacePodsUSDC.depositSZTokenTerm(address,uint256,uint256)._from (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#326) is not in mixedCase
+Parameter SpacePodsUSDC.depositSZTokenTerm(address,uint256,uint256)._term (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#326) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawPercent(address,uint256)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#403) is not in mixedCase
+Parameter SpacePodsUSDC.withdraw(address,uint256)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#420) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawInterest(address)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#431) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawAll(address)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#455) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawStable(address,uint256)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#468) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawIntStable(address)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#480) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawAllStable(address)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#493) is not in mixedCase
+Parameter SpacePodsUSDC.withdrawPercentStable(address,uint256)._to (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#505) is not in mixedCase
+Parameter SpacePodsUSDC.getMaxDepositContract(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#545) is not in mixedCase
+Parameter SpacePodsUSDC.getAllDepositIdx(address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#549) is not in mixedCase
+Parameter SpacePodsUSDC.borrowWithAddr(uint256,address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#669) is not in mixedCase
+Parameter SpacePodsUSDC.rePaymentWithWrap(uint256,uint256,address)._addr (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#766) is not in mixedCase
+Variable SpacePodsUSDC.TOKEN_POOLS (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#161) is not in mixedCase
+Variable SpacePodsUSDC.POOL_HARDCAP (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#163) is not in mixedCase
+Variable SpacePodsUSDC.SECPYEAR (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#576) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SpacePodsUSDC.constructor() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#179-190) uses literals with too many digits:
+	- POOL_HARDCAP = 1000000000000000000000000 (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#188)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+SpacePodsUSDC.oneYear (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#172) is never used in SpacePodsUSDC (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#110-774)
+SpacePodsUSDC.hundred (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#173) is never used in SpacePodsUSDC (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#110-774)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+SpacePodsUSDC.SECPYEAR (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#576) should be constant
+SpacePodsUSDC.TOKEN_POOLS (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#161) should be constant
+SpacePodsUSDC.decimal (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#160) should be constant
+SpacePodsUSDC.hundred (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#173) should be constant
+SpacePodsUSDC.oneYear (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#172) should be constant
+SpacePodsUSDC.version (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#175) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#44)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#45)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#47)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#49)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#50)
+decimals() should be declared external:
+	- ERC20.decimals() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#51)
+deposit(address,uint256) should be declared external:
+	- ERC20.deposit(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#53)
+withdrawInternal(address,uint256) should be declared external:
+	- ERC20.withdrawInternal(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#54)
+isPermit(address) should be declared external:
+	- Permissions.isPermit(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#77-79)
+addPermit(address) should be declared external:
+	- Permissions.addPermit(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#81-85)
+removePermit(address) should be declared external:
+	- Permissions.removePermit(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#89-93)
+getInterest(address,address) should be declared external:
+	- ProfitCal.getInterest(address,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#100)
+getWithdrawInterest(address,address) should be declared external:
+	- ProfitCal.getWithdrawInterest(address,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#101)
+setPoolHardcap(uint256) should be declared external:
+	- SpacePodsUSDC.setPoolHardcap(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#192-195)
+getMaxInterestData() should be declared external:
+	- SpacePodsUSDC.getMaxInterestData() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#196-198)
+withdrawStupidUser(uint256,address,address) should be declared external:
+	- SpacePodsUSDC.withdrawStupidUser(uint256,address,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#202-206)
+setMinimumDeposit(uint256) should be declared external:
+	- SpacePodsUSDC.setMinimumDeposit(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#208-210)
+setProfitCal(address) should be declared external:
+	- SpacePodsUSDC.setProfitCal(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#213-215)
+setCatToken(address) should be declared external:
+	- SpacePodsUSDC.setCatToken(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#225-227)
+getInterestProfit(address) should be declared external:
+	- SpacePodsUSDC.getInterestProfit(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#242-244)
+setAdminControl(bool) should be declared external:
+	- SpacePodsUSDC.setAdminControl(bool) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#246-248)
+depositToken(address,uint256) should be declared external:
+	- SpacePodsUSDC.depositToken(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#294-296)
+depositSZToken(address,uint256) should be declared external:
+	- SpacePodsUSDC.depositSZToken(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#322-324)
+withdrawStable(address,uint256) should be declared external:
+	- SpacePodsUSDC.withdrawStable(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#468-478)
+withdrawIntStable(address) should be declared external:
+	- SpacePodsUSDC.withdrawIntStable(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#480-491)
+withdrawAllStable(address) should be declared external:
+	- SpacePodsUSDC.withdrawAllStable(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#493-504)
+withdrawPercentStable(address,uint256) should be declared external:
+	- SpacePodsUSDC.withdrawPercentStable(address,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#505-518)
+maxContracBorrow() should be declared external:
+	- SpacePodsUSDC.maxContracBorrow() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#521-523)
+getContractBorrow() should be declared external:
+	- SpacePodsUSDC.getContractBorrow() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#525-530)
+getMaxDeposit() should be declared external:
+	- SpacePodsUSDC.getMaxDeposit() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#532-534)
+getDepositDataIdx(uint256) should be declared external:
+	- SpacePodsUSDC.getDepositDataIdx(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#536-543)
+getMaxDepositContract(address) should be declared external:
+	- SpacePodsUSDC.getMaxDepositContract(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#545-547)
+getAllDepositIdx(address) should be declared external:
+	- SpacePodsUSDC.getAllDepositIdx(address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#549-553)
+getMaxBorrowContract() should be declared external:
+	- SpacePodsUSDC.getMaxBorrowContract() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#557-559)
+getBorrowData(uint256) should be declared external:
+	- SpacePodsUSDC.getBorrowData(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#561-574)
+supplyInterest() should be declared external:
+	- SpacePodsUSDC.supplyInterest() (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#619-633)
+borrow(uint256) should be declared external:
+	- SpacePodsUSDC.borrow(uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#664-667)
+borrowWithAddr(uint256,address) should be declared external:
+	- SpacePodsUSDC.borrowWithAddr(uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#669-671)
+rePaymentWithWrap(uint256,uint256,address) should be declared external:
+	- SpacePodsUSDC.rePaymentWithWrap(uint256,uint256,address) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#766-768)
+rePayment(uint256,uint256) should be declared external:
+	- SpacePodsUSDC.rePayment(uint256,uint256) (loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol#770-772)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol analyzed (5 contracts with 46 detectors), 147 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x4d2be030cef4f9a51cc81ab92cda12c5a90e4338.sol
+Tool Runtime = 1.6757982999988599 seconds
+#############################################

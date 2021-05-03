@@ -1,0 +1,74 @@
+Compilation warnings/errors on ./loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol:
+./loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol:10:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol:506:5: Warning: Function state mutability can be restricted to pure
+    function safeTotalSub(uint total, uint amount) internal returns (uint) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+INFO:Detectors:[93m
+ERC20Like_3 (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#185-192) has incorrect ERC20 function interface:ERC20Like_3.approve(address,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#191)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-erc20-interface[0m
+INFO:Detectors:[93m
+Tranche.authTransfer(address,address,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#500-502) ignores return value by ERC20Like_3(erc20).transferFrom(self,usr,amount) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#501)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in Tranche.epochUpdate(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#401-425):
+	External calls:
+	- adjustTokenBalance(epochID,supplyInToken,redeemInToken) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#418)
+		- token.burn(self,tokenAmount) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#437)
+		- token.mint(self,diff_scope_0) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#468)
+	- adjustCurrencyBalance(epochID,epochSupplyOrderCurrency,epochRedeemOrderCurrency) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#420)
+		- max = reserve.totalBalance() (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#441)
+		- currency.approve(address(reserve),diff) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#488)
+		- reserve.payout(currencyAmount) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#445)
+		- reserve.deposit(diff) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#489)
+	State variables written after the call(s):
+	- totalRedeem = safeAdd(safeTotalSub(totalRedeem,redeemInToken),rmul(redeemInToken,safeSub(ONE,epochs[epochID].redeemFulfillment.value))) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#424)
+	- totalSupply = safeAdd(safeTotalSub(totalSupply,epochSupplyOrderCurrency),rmul(epochSupplyOrderCurrency,safeSub(ONE,epochs[epochID].supplyFulfillment.value))) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#423)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Tranche.epochUpdate(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#401-425) compares to a boolean constant:
+	-require(bool)(waitingForUpdate == true) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#402)
+Tranche.closeEpoch() (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#426-430) compares to a boolean constant:
+	-require(bool)(waitingForUpdate == false) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#427)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#9) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Contract ERC20Like_3 (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#185-192) is not in CapWords
+Contract ReserveLike_4 (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#194-198) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+rely(address) should be declared external:
+	- Auth.rely(address) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#79)
+deny(address) should be declared external:
+	- Auth.deny(address) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#80)
+depend(bytes32,address) should be declared external:
+	- Tranche.depend(bytes32,address) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#260-266)
+supplyOrder(address,uint256) should be declared external:
+	- Tranche.supplyOrder(address,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#269-287)
+redeemOrder(address,uint256) should be declared external:
+	- Tranche.redeemOrder(address,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#290-307)
+calcDisburse(address) should be declared external:
+	- Tranche.calcDisburse(address) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#309-311)
+disburse(address) should be declared external:
+	- Tranche.disburse(address) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#358-360)
+epochUpdate(uint256,uint256,uint256,uint256,uint256,uint256) should be declared external:
+	- Tranche.epochUpdate(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#401-425)
+closeEpoch() should be declared external:
+	- Tranche.closeEpoch() (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#426-430)
+mint(address,uint256) should be declared external:
+	- Tranche.mint(address,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#474-476)
+authTransfer(address,address,uint256) should be declared external:
+	- Tranche.authTransfer(address,address,uint256) (loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol#500-502)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol analyzed (8 contracts with 46 detectors), 20 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x294309E42e1b3863a316BEb52df91B1CcB15eef9.sol
+Tool Runtime = 1.170547796999017 seconds
+#############################################

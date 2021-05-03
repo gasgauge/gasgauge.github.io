@@ -1,0 +1,132 @@
+Compilation warnings/errors on ./loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol:
+./loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol:351:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+BoostRewardsV2OPES.getBoosterPrice(address) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#778-810) performs a multiplication on the result of a division:
+	-boosterPrice = globalBoosterPrice.mul(boostersBought.mul(5).add(100)).div(100) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#785)
+	-boosterPrice = boosterPrice.mul((boostersBought.sub(boostThreshold)).mul(boostScaleFactor).add(100)).div(100) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#792-794)
+BoostRewardsV2OPES.getBoosterPrice(address) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#778-810) performs a multiplication on the result of a division:
+	-boosterPrice = boosterPrice.mul((boostersBought.sub(boostThreshold)).mul(boostScaleFactor).add(100)).div(100) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#792-794)
+	-boosterPrice = boosterPrice.mul(boostBalanceIncrease).mul(scaleFactor).div(boostedTotalSupply) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#806-809)
+BoostRewardsV2OPES.notifyRewardAmount(uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#911-930) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#920)
+	-leftover = remaining.mul(rewardRate) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#923)
+BoostRewardsV2OPES.pow(uint256,uint256,uint256,uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#988-1004) performs a multiplication on the result of a division:
+	-z = a.mul(b).div(c) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#999)
+	-z = z.mul(b).div(c) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#1001)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+BoostRewardsV2OPES.pow(uint256,uint256,uint256,uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#988-1004) uses a dangerous strict equality:
+	- exponent == 0 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#989)
+BoostRewardsV2OPES.pow(uint256,uint256,uint256,uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#988-1004) uses a dangerous strict equality:
+	- exponent == 1 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#992)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in BoostRewardsV2OPES.exit() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#861-864):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#862)
+		- (success,returndata) = address(token).call(data) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#543)
+		- (success) = address(this).call(abi.encodeWithSignature(_getReward(address),msg.sender)) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#844-849)
+		- stakeToken.safeTransfer(msg.sender,amount) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#854)
+	- _getReward(msg.sender) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#863)
+		- IERC20(rewardToken).safeTransfer(user,reward) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#980)
+		- (success,returndata) = address(token).call(data) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#543)
+	State variables written after the call(s):
+	- _getReward(msg.sender) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#863)
+		- rewards[user] = 0 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#979)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in BoostRewardsV2OPES._getReward(address) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#976-983):
+	External calls:
+	- IERC20(rewardToken).safeTransfer(user,reward) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#980)
+	Event emitted after the call(s):
+	- RewardPaid(user,reward) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#981)
+Reentrancy in BoostRewardsV2OPES.exit() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#861-864):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#862)
+		- (success,returndata) = address(token).call(data) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#543)
+		- (success) = address(this).call(abi.encodeWithSignature(_getReward(address),msg.sender)) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#844-849)
+		- stakeToken.safeTransfer(msg.sender,amount) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#854)
+	- _getReward(msg.sender) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#863)
+		- IERC20(rewardToken).safeTransfer(user,reward) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#980)
+		- (success,returndata) = address(token).call(data) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#543)
+	Event emitted after the call(s):
+	- RewardPaid(user,reward) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#981)
+		- _getReward(msg.sender) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#863)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+BoostRewardsV2OPES.boost() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#877-909) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > nextBoostPurchaseTime[msg.sender],early boost purchase) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#878-881)
+BoostRewardsV2OPES.notifyRewardAmount(uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#911-930) uses timestamp for comparisons
+	Dangerous comparisons:
+	- periodFinish > 0 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#916)
+	- require(bool,string)(block.timestamp >= (periodFinish - 3600),New Reward too early) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#917)
+	- block.timestamp >= periodFinish (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#919)
+BoostRewardsV2OPES._getReward(address) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#976-983) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#978)
+BoostRewardsV2OPES.pow(uint256,uint256,uint256,uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#988-1004) uses timestamp for comparisons
+	Dangerous comparisons:
+	- exponent == 0 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#989)
+	- exponent == 1 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#992)
+	- a == 0 && exponent != 0 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#995)
+	- i < exponent (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#1000)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#340-353) uses assembly
+	- INLINE ASM (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#351-352)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#12) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#216) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#322) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#397) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#478) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#558) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#574) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#588) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#608) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#673) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#383-389):
+	- (success) = recipient.call.value(amount)() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#387)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#531-550):
+	- (success,returndata) = address(token).call(data) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#543)
+Low level call in BoostRewardsV2OPES.withdraw(uint256) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#833-855):
+	- (success) = address(this).call(abi.encodeWithSignature(_getReward(address),msg.sender)) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#844-849)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function SwapRouter.WETH() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#592) is not in mixedCase
+Parameter BoostRewardsV2OPES.setScaleFactorsAndThreshold(uint256,uint256,uint256)._boostThreshold (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#867) is not in mixedCase
+Parameter BoostRewardsV2OPES.setScaleFactorsAndThreshold(uint256,uint256,uint256)._boostScaleFactor (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#868) is not in mixedCase
+Parameter BoostRewardsV2OPES.setScaleFactorsAndThreshold(uint256,uint256,uint256)._scaleFactor (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#869) is not in mixedCase
+Parameter BoostRewardsV2OPES.setGovernance(address)._governance (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#932) is not in mixedCase
+Variable BoostRewardsV2OPES.DURATION (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#693) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+BoostRewardsV2OPES.DURATION (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#693) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#270-272)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#296-299)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#305-307)
+totalSupply() should be declared external:
+	- LPTokenWrapper.totalSupply() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#626-628)
+getReward() should be declared external:
+	- BoostRewardsV2OPES.getReward() (loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol#857-859)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol analyzed (12 contracts with 46 detectors), 40 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x45ab3febb4be7882e3e4423ac736510d43f568a9.sol
+Tool Runtime = 1.3504027820017654 seconds
+#############################################

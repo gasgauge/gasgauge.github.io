@@ -1,0 +1,169 @@
+INFO:Detectors:[91m
+Reentrancy in YvsPool.exit() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1057-1060):
+	External calls:
+	- withdraw(_balances[msg.sender]) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1058)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#927)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1043)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#927)
+		- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1052)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	External calls sending eth:
+	- withdraw(_balances[msg.sender]) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1058)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	State variables written after the call(s):
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- _status = _ENTERED (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#58)
+		- _status = _NOT_ENTERED (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#64)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1136)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1135)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- rewards[msg.sender] = 0 (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1051)
+		- rewards[account] = earned(account) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1138)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1139)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+YvsPool.notifyRewardAmount(uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1080-1106) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(rewardsDuration) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1086)
+	-leftover = remaining.mul(rewardRate) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1089)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+YvsPool.rewardPerToken() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#983-995) uses a dangerous strict equality:
+	- _totalSupply == 0 (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#984)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in YvsPool.stake(uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1015-1032):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1024)
+	State variables written after the call(s):
+	- _balances[msg.sender] = _balances[msg.sender].add(actualReceived) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1029)
+	- _totalSupply = _totalSupply.add(actualReceived) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1028)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC20.constructor(string,string).name (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#615) shadows:
+	- ERC20.name() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#624-626) (function)
+ERC20.constructor(string,string).symbol (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#615) shadows:
+	- ERC20.symbol() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#632-634) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in YvsPool.exit() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1057-1060):
+	External calls:
+	- withdraw(_balances[msg.sender]) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1058)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#927)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1043)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#927)
+		- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1052)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	External calls sending eth:
+	- withdraw(_balances[msg.sender]) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1058)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1053)
+		- getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1059)
+Reentrancy in YvsPool.getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1048-1055):
+	External calls:
+	- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1052)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1053)
+Reentrancy in YvsPool.recoverERC20(address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1109-1121):
+	External calls:
+	- IERC20(tokenAddress).safeTransfer(owner(),tokenAmount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1119)
+	Event emitted after the call(s):
+	- Recovered(tokenAddress,tokenAmount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1120)
+Reentrancy in YvsPool.stake(uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1015-1032):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1024)
+	Event emitted after the call(s):
+	- Staked(msg.sender,actualReceived) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1031)
+Reentrancy in YvsPool.withdraw(uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1034-1046):
+	External calls:
+	- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1043)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1045)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YvsPool.min(uint256,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1009-1011) uses timestamp for comparisons
+	Dangerous comparisons:
+	- a < b (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1010)
+YvsPool.getReward() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1048-1055) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1050)
+YvsPool.notifyRewardAmount(uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1080-1106) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1085)
+	- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1098-1101)
+YvsPool.setRewardsDuration(uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1123-1130) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > periodFinish,Previous rewards period must be complete before changing the duration for the new period) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1124-1127)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#450-459) uses assembly
+	- INLINE ASM (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#457-458)
+Address._functionCallWithValue(address,bytes,uint256,string) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#543-564) uses assembly
+	- INLINE ASM (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#556-560)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#477-483):
+	- (success) = recipient.call.value(amount)() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#481)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#543-564):
+	- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#547)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Pausable.setPaused(bool)._paused (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#169) is not in mixedCase
+Parameter YvsPool.setStakingToken(address)._stakingToken (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1064) is not in mixedCase
+Parameter YvsPool.setController(address)._controller (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1072) is not in mixedCase
+Parameter YvsPool.setRewardsDuration(uint256)._rewardsDuration (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#1123) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+YvsPool.slitherConstructorVariables() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#935-1163) uses literals with too many digits:
+	- rewardsDuration = 52600000 (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#947)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#137-140)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#146-150)
+name() should be declared external:
+	- ERC20.name() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#624-626)
+symbol() should be declared external:
+	- ERC20.symbol() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#632-634)
+decimals() should be declared external:
+	- ERC20.decimals() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#649-651)
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#656-658)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#663-665)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#675-678)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#683-685)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#694-697)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#711-715)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#729-732)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol#748-751)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x435a28250bf5a2b453103ff0827c75d18094504d.sol analyzed (10 contracts with 46 detectors), 39 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x435a28250bf5a2b453103ff0827c75d18094504d.sol
+Tool Runtime = 1.396460694999405 seconds
+#############################################

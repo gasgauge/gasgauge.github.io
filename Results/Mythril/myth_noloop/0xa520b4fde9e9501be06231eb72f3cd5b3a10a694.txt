@@ -1,0 +1,217 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Laxative
+Function name: release()
+PC address: 2318
+Estimated Gas Usage: 19494 - 147019
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:899
+
+paper.mintPaper(farmContract, bonus)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 212121212121212121212121deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: getLpBalance(), txdata: 0x8421403d, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Laxative
+Function name: release()
+PC address: 2318
+Estimated Gas Usage: 19494 - 147019
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:899
+
+paper.mintPaper(farmContract, bonus)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Laxative
+Function name: release()
+PC address: 2443
+Estimated Gas Usage: 19494 - 147019
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:900
+
+developers
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a6a6a6a6a6a6a6a6a6a6a6a6deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Laxative
+Function name: release()
+PC address: 2628
+Estimated Gas Usage: 19494 - 147019
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:900
+
+paper.mintPaper(developers, bonus.div(10))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 212121212121212121212121deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: getLpBalance(), txdata: 0x8421403d, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Laxative
+Function name: release()
+PC address: 2628
+Estimated Gas Usage: 19494 - 147019
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:900
+
+paper.mintPaper(developers, bonus.div(10))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getLpBalance(), txdata: 0x8421403d, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Laxative
+Function name: release()
+PC address: 2628
+Estimated Gas Usage: 19494 - 147019
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:900
+
+paper.mintPaper(developers, bonus.div(10))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a6a6a6a6a6a6a6a6a6a6a6a6deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Laxative
+Function name: release()
+PC address: 2692
+Estimated Gas Usage: 19494 - 147019
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:901
+
+released
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a6a6a6a6a6a6a6a6a6a6a6a6deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Laxative
+Function name: release()
+PC address: 2711
+Estimated Gas Usage: 19494 - 147019
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol:901
+
+released = released.add(bonus)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a6a6a6a6a6a6a6a6a6a6a6a6deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: release(), txdata: 0x86d1a69f, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xa520b4fde9e9501be06231eb72f3cd5b3a10a694.sol
+Tool Runtime = 1509.1765856490092 seconds
+#############################################

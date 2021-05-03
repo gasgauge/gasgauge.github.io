@@ -1,0 +1,166 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StakingPoolFunds
+Function name: requestDividendRewards()
+PC address: 1593
+Estimated Gas Usage: 8279 - 147518
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol:126
+
+BIDSInterface(bidsTokenAddress).BURN_RATE()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xe00, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x1
+Caller: [CREATOR], function: setDivPoolAddress(address), txdata: 0x8f3eef5f000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: requestDividendRewards(), txdata: 0xda46656f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: StakingPoolFunds
+Function name: requestDividendRewards()
+PC address: 2321
+Estimated Gas Usage: 8549 - 147503
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol:147
+
+msg.sender.transfer(ethRewards)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x6a000159721e1604, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setDivPoolAddress(address), txdata: 0x8f3eef5f000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: requestDividendRewards(), txdata: 0xda46656f, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: StakingPoolFunds
+Function name: requestDividendRewards()
+PC address: 2321
+Estimated Gas Usage: 8279 - 147518
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/2/0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol:147
+
+msg.sender.transfer(ethRewards)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000010000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2e5fb0a71ffffffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x1
+Caller: [CREATOR], function: setDivPoolAddress(address), txdata: 0x8f3eef5f000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: requestDividendRewards(), txdata: 0xda46656f, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StakingPoolFunds
+Function name: availableDividendRewards()
+PC address: 3266
+Estimated Gas Usage: 7197 - 112676
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol:160
+
+BIDSInterface(bidsTokenAddress).BURN_RATE()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: availableDividendRewards(), txdata: 0xf9df2c8d, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StakingPoolFunds
+Function name: availableDividendRewards()
+PC address: 3447
+Estimated Gas Usage: 6592 - 111315
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol:161
+
+BIDSInterface(bidsTokenAddress).isStackingActive()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: availableDividendRewards(), txdata: 0xf9df2c8d, value: 0x0
+Caller: [SOMEGUY], function: availableDividendRewards(), txdata: 0xf9df2c8d, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: StakingPoolFunds
+Function name: availableDividendRewards()
+PC address: 3695
+Estimated Gas Usage: 5987 - 109954
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/2/0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol:38
+
+a * b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: availableDividendRewards(), txdata: 0xf9df2c8d, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x795Ce5D8eaB46EDB30Dc0421F130162f6B75556f.sol
+Tool Runtime = 832.7449512020103 seconds
+#############################################

@@ -1,0 +1,126 @@
+INFO:Detectors:[91m
+SmartMatrixFormulla.sendETHDividends(address,address,uint8,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#426-436) sends eth to arbitrary user
+	Dangerous calls:
+	- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+	- address(uint160(receiver)).transfer(address(this).balance) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#430)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[92m
+SmartMatrixFormulla.registration(address,address) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#143-181) uses assembly
+	- INLINE ASM (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#149-152)
+SmartMatrixFormulla.bytesToAddress(bytes) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#438-442) uses assembly
+	- INLINE ASM (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#439-442)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#17) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter SmartMatrixFormulla.findEthReceiver(address,address,uint8,uint8)._from (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#400) is not in mixedCase
+Parameter SmartMatrixFormulla.sendETHDividends(address,address,uint8,uint8)._from (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#426) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in SmartMatrixFormulla.buyNewLevel(uint8,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#107-141):
+	External calls:
+	- updateX3Referrer(msg.sender,freeX3Referrer,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#123)
+		- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+		- address(uint160(receiver)).transfer(address(this).balance) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#430)
+	Event emitted after the call(s):
+	- Upgrade(msg.sender,freeX3Referrer,1,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#125)
+Reentrancy in SmartMatrixFormulla.buyNewLevel(uint8,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#107-141):
+	External calls:
+	- updateX6Referrer(msg.sender,freeX6Referrer,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#137)
+		- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+		- address(uint160(receiver)).transfer(address(this).balance) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#430)
+	Event emitted after the call(s):
+	- Upgrade(msg.sender,freeX6Referrer,2,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#139)
+Reentrancy in SmartMatrixFormulla.registration(address,address) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#143-181):
+	External calls:
+	- updateX3Referrer(userAddress,freeX3Referrer,1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#176)
+		- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+		- address(uint160(receiver)).transfer(address(this).balance) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#430)
+	- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+		- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+		- address(uint160(receiver)).transfer(address(this).balance) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#430)
+	State variables written after the call(s):
+	- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+		- users[users[referrerAddress].x6Matrix[level].firstLevelReferrals[0]].x6Matrix[level].firstLevelReferrals.push(userAddress) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#301)
+		- users[referrerAddress].x6Matrix[level].firstLevelReferrals.push(userAddress) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#220)
+		- users[userAddress].x6Matrix[level].currentReferrer = referrerAddress (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#224)
+		- users[userAddress].x6Matrix[level].currentReferrer = users[referrerAddress].x6Matrix[level].firstLevelReferrals[0] (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#305)
+		- users[users[referrerAddress].x6Matrix[level].firstLevelReferrals[1]].x6Matrix[level].firstLevelReferrals.push(userAddress) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#307)
+		- users[users[referrerAddress].x6Matrix[level].currentReferrer].x6Matrix[level].closedPart = referrerAddress (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#325)
+		- users[userAddress].x6Matrix[level].currentReferrer = users[referrerAddress].x6Matrix[level].firstLevelReferrals[1] (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#311)
+		- users[ref].x6Matrix[level].secondLevelReferrals.push(userAddress) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#231)
+		- users[users[referrerAddress].x6Matrix[level].currentReferrer].x6Matrix[level].closedPart = referrerAddress (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#328)
+		- users[referrerAddress].x6Matrix[level].firstLevelReferrals = new address[](0) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#333)
+		- users[referrerAddress].x6Matrix[level].secondLevelReferrals = new address[](0) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#334)
+		- users[referrerAddress].x6Matrix[level].closedPart = address(0) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#335)
+		- users[referrerAddress].x6Matrix[level].blocked = true (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#338)
+		- users[referrerAddress].x6Matrix[level].reinvestCount ++ (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#341)
+		- users[referrerAddress].x6Matrix[level].secondLevelReferrals.push(userAddress) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#261)
+	Event emitted after the call(s):
+	- MissedEthReceive(receiver,_from,1,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#406)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- MissedEthReceive(receiver,_from,2,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#416)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,users[referrerAddress].x6Matrix[level].firstLevelReferrals[0],2,level,uint8(users[users[referrerAddress].x6Matrix[level].firstLevelReferrals[0]].x6Matrix[level].firstLevelReferrals.length)) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#302)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,referrerAddress,2,level,uint8(users[referrerAddress].x6Matrix[level].firstLevelReferrals.length)) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#221)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,referrerAddress,2,level,2 + uint8(users[users[referrerAddress].x6Matrix[level].firstLevelReferrals[0]].x6Matrix[level].firstLevelReferrals.length)) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#303)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,users[referrerAddress].x6Matrix[level].firstLevelReferrals[1],2,level,uint8(users[users[referrerAddress].x6Matrix[level].firstLevelReferrals[1]].x6Matrix[level].firstLevelReferrals.length)) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#308)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,referrerAddress,2,level,4 + uint8(users[users[referrerAddress].x6Matrix[level].firstLevelReferrals[1]].x6Matrix[level].firstLevelReferrals.length)) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#309)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,ref,2,level,5) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#239)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,ref,2,level,6) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#241)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,ref,2,level,3) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#246)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,ref,2,level,4) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#248)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,ref,2,level,5) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#252)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- NewUserPlace(userAddress,ref,2,level,6) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#254)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- Registration(userAddress,referrerAddress,users[userAddress].id,users[referrerAddress].id) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#180)
+	- Reinvest(referrerAddress,freeReferrerAddress,userAddress,2,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#346)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- Reinvest(owner,address(0),userAddress,2,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#349)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+	- SentExtraEthDividends(_from,receiver,matrix,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#434)
+		- updateX6Referrer(userAddress,findFreeX6Referrer(userAddress,1),1) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#178)
+Reentrancy in SmartMatrixFormulla.sendETHDividends(address,address,uint8,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#426-436):
+	External calls:
+	- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+	Event emitted after the call(s):
+	- SentExtraEthDividends(_from,receiver,matrix,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#434)
+Reentrancy in SmartMatrixFormulla.updateX3Referrer(address,address,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#183-214):
+	External calls:
+	- sendETHDividends(owner,userAddress,1,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#210)
+		- ! address(uint160(receiver)).send(levelPrice[level]) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#429)
+		- address(uint160(receiver)).transfer(address(this).balance) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#430)
+	State variables written after the call(s):
+	- users[owner].x3Matrix[level].reinvestCount ++ (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#211)
+	Event emitted after the call(s):
+	- Reinvest(owner,address(0),userAddress,1,level) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#212)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+usersActiveX3Levels(address,uint8) should be declared external:
+	- SmartMatrixFormulla.usersActiveX3Levels(address,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#374-376)
+usersActiveX6Levels(address,uint8) should be declared external:
+	- SmartMatrixFormulla.usersActiveX6Levels(address,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#378-380)
+usersX3Matrix(address,uint8) should be declared external:
+	- SmartMatrixFormulla.usersX3Matrix(address,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#382-386)
+usersX6Matrix(address,uint8) should be declared external:
+	- SmartMatrixFormulla.usersX6Matrix(address,uint8) (loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol#388-394)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xad81748b316716070005c6664e8ef562dfb9d602.sol analyzed (1 contracts with 46 detectors), 16 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xad81748b316716070005c6664e8ef562dfb9d602.sol
+Tool Runtime = 1.636783165999077 seconds
+#############################################

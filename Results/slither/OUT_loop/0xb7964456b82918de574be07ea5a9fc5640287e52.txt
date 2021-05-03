@@ -1,0 +1,157 @@
+Compilation warnings/errors on ./loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol:
+./loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol:772:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+StakingRewards.notifyRewardAmount(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1480-1520) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(rewardsDuration) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1484)
+	-leftover = remaining.mul(rewardRate) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1490)
+PaletteRewards.palletteEarned(address) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1690-1722) performs a multiplication on the result of a division:
+	-pallettes[account].add(block.timestamp.sub(palletteLastUpdateTime[account]).mul(1000000000000000000).div(86400).mul(paletteStaked.div(1000000000000000000))) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1708-1720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in StakingFactory.deployKnv(address,address,uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1827-1851):
+	External calls:
+	- genPool.transferOwnership(msg.sender) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1839)
+	State variables written after the call(s):
+	- info.stakingRewards = address(genPool) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1843)
+	- info.rewardAmount = rewardAmount (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1845)
+Reentrancy in StakingRewards.exit() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1466-1472):
+	External calls:
+	- withdraw(_balances[msg.sender]) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1468)
+		- stakingToken.safeTransfer(msg.sender,amount) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1438)
+		- (success,returndata) = address(token).call(data) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#983)
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- (success,returndata) = address(token).call(data) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#983)
+		- rewardsToken.safeTransfer(msg.sender,reward) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1456)
+	State variables written after the call(s):
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- _notEntered = false (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1198)
+		- _notEntered = true (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1210)
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- lastUpdateTime = lastTimeRewardApplicable() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1532)
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- rewardPerTokenStored = rewardPerToken() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1530)
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- rewards[msg.sender] = 0 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1454)
+		- rewards[account] = earned(account) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1536)
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1538)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in StakingFactory.deployKnv(address,address,uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1827-1851):
+	External calls:
+	- genPool.transferOwnership(msg.sender) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1839)
+	State variables written after the call(s):
+	- stakingTokens.push(stakingToken) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1849)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in StakingRewards.exit() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1466-1472):
+	External calls:
+	- withdraw(_balances[msg.sender]) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1468)
+		- stakingToken.safeTransfer(msg.sender,amount) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1438)
+		- (success,returndata) = address(token).call(data) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#983)
+	- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+		- (success,returndata) = address(token).call(data) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#983)
+		- rewardsToken.safeTransfer(msg.sender,reward) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1456)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1458)
+		- getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1470)
+Reentrancy in StakingRewards.getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1448-1462):
+	External calls:
+	- rewardsToken.safeTransfer(msg.sender,reward) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1456)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1458)
+Reentrancy in PaletteRewards.redeem(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1668-1686):
+	External calls:
+	- _kanvaNft.mint(_msgSender(),card,1,) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1680)
+	Event emitted after the call(s):
+	- Redeemed(_msgSender(),cards[card]) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1684)
+Reentrancy in StakingRewards.stake(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1408-1424):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1418)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1422)
+Reentrancy in StakingRewards.withdraw(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1428-1444):
+	External calls:
+	- stakingToken.safeTransfer(msg.sender,amount) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1438)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1442)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+StakingRewards.getReward() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1448-1462) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1452)
+StakingRewards.notifyRewardAmount(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1480-1520) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1482)
+	- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1508)
+PaletteRewards.redeem(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1668-1686) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(pallettes[_msgSender()] >= cards[card],redeem: Not enough points to redeem for card!) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1672)
+StakingFactory.constructor(address,uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1779-1795) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_stakingRewardsGenesis >= block.timestamp,constructor: genesis too soon) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1787)
+StakingFactory.notifyRewardAmount(address) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1881-1907) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= stakingRewardsGenesis,notifyRewardAmount: not ready) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1883)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#758-776) uses assembly
+	- INLINE ASM (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#772-774)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#14) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#173) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#234) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#393) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#712) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#859) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1008) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1073) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1106) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1223) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1264) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1555) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1582) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1733) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#836-848):
+	- (success) = recipient.call.value(amount)() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#844)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#959-997):
+	- (success,returndata) = address(token).call(data) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#983)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable StakingRewards._totalSupply (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1304) is not in mixedCase
+Variable StakingRewards._balances (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1306) is not in mixedCase
+Variable PaletteRewards._kanvaNft (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1588) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+StakingRewards.rewardsDuration (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1290) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#290-294)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#342-348)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#360-364)
+redeem(uint256) should be declared external:
+	- PaletteRewards.redeem(uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1668-1686)
+deploy(address,uint256) should be declared external:
+	- StakingFactory.deploy(address,uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1807-1823)
+deployKnv(address,address,uint256) should be declared external:
+	- StakingFactory.deployKnv(address,address,uint256) (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1827-1851)
+notifyRewardAmounts() should be declared external:
+	- StakingFactory.notifyRewardAmounts() (loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol#1861-1873)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xb7964456b82918de574be07ea5a9fc5640287e52.sol analyzed (14 contracts with 46 detectors), 44 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xb7964456b82918de574be07ea5a9fc5640287e52.sol
+Tool Runtime = 1.8575338829978136 seconds
+#############################################

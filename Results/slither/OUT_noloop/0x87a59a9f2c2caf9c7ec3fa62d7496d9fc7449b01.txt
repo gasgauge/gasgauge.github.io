@@ -1,0 +1,95 @@
+Compilation warnings/errors on ./noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol:
+./noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol:781:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Liquidator.triggerLiquidation(address) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1107-1176) ignores return value by uniswap.swapExactTokensForTokens(sellAmount,minOut,uniswapPath,address(this),block.timestamp.add(1800)) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1158-1164)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in Liquidator.triggerLiquidation(address) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1107-1176):
+	External calls:
+	- IERC20(sellToken).safeTransferFrom(_integration,address(this),integrationBal) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1129)
+	- IERC20(sellToken).safeApprove(address(uniswap),0) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1147)
+	- IERC20(sellToken).safeApprove(address(uniswap),sellAmount) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1148)
+	- uniswap.swapExactTokensForTokens(sellAmount,minOut,uniswapPath,address(this),block.timestamp.add(1800)) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1158-1164)
+	- purchased = _sellOnCrv(bAsset,liquidation.curvePosition) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1167)
+		- IERC20(_bAsset).safeApprove(address(curve),0) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1181)
+		- IERC20(_bAsset).safeApprove(address(curve),bAssetBal) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1182)
+		- (success,returndata) = address(token).call(data) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#873)
+		- purchased = curve.exchange_underlying(_curvePosition,0,bAssetBal,minOutCrv) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1186)
+	- IERC20(mUSD).safeApprove(savings,0) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1171)
+	- IERC20(mUSD).safeApprove(savings,purchased) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1172)
+	- ISavingsManager(savings).depositLiquidation(mUSD,purchased) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1173)
+	Event emitted after the call(s):
+	- Liquidated(sellToken,mUSD,purchased,bAsset) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1175)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Liquidator.triggerLiquidation(address) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1107-1176) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > liquidation.lastTriggered.add(604800),Must wait for interval) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1118)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#71-81) uses assembly
+	- INLINE ASM (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#79-80)
+Address.isContract(address) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#774-783) uses assembly
+	- INLINE ASM (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#781-782)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#813-819):
+	- (success) = recipient.call.value(amount)() (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#817)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#861-880):
+	- (success,returndata) = address(token).call(data) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#873)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function ICurveMetaPool.exchange_underlying(int128,int128,uint256,uint256) (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#10) is not in mixedCase
+Parameter ICurveMetaPool.exchange_underlying(int128,int128,uint256,uint256).min_dy (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#10) is not in mixedCase
+Variable Initializable.______gap (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#84) is not in mixedCase
+Variable InitializableModuleKeys.KEY_GOVERNANCE (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#90) is not in mixedCase
+Variable InitializableModuleKeys.KEY_STAKING (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#91) is not in mixedCase
+Variable InitializableModuleKeys.KEY_PROXY_ADMIN (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#92) is not in mixedCase
+Variable InitializableModuleKeys.KEY_ORACLE_HUB (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#95) is not in mixedCase
+Variable InitializableModuleKeys.KEY_MANAGER (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#96) is not in mixedCase
+Variable InitializableModuleKeys.KEY_RECOLLATERALISER (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#97) is not in mixedCase
+Variable InitializableModuleKeys.KEY_META_TOKEN (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#98) is not in mixedCase
+Variable InitializableModuleKeys.KEY_SAVINGS_MANAGER (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#99) is not in mixedCase
+Parameter MassetHelpers.transferReturnBalance(address,address,address,uint256)._sender (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#891) is not in mixedCase
+Parameter MassetHelpers.transferReturnBalance(address,address,address,uint256)._recipient (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#892) is not in mixedCase
+Parameter MassetHelpers.transferReturnBalance(address,address,address,uint256)._basset (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#893) is not in mixedCase
+Parameter MassetHelpers.transferReturnBalance(address,address,address,uint256)._qty (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#894) is not in mixedCase
+Parameter MassetHelpers.safeInfiniteApprove(address,address)._asset (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#905) is not in mixedCase
+Parameter MassetHelpers.safeInfiniteApprove(address,address)._spender (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#905) is not in mixedCase
+Parameter Liquidator.initialize(address,address,address,address)._nexus (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#956) is not in mixedCase
+Parameter Liquidator.initialize(address,address,address,address)._uniswap (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#957) is not in mixedCase
+Parameter Liquidator.initialize(address,address,address,address)._curve (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#958) is not in mixedCase
+Parameter Liquidator.initialize(address,address,address,address)._mUSD (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#959) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._integration (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#991) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._sellToken (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#992) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._bAsset (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#993) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._curvePosition (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#994) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._uniswapPath (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#995) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._trancheAmount (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#996) is not in mixedCase
+Parameter Liquidator.createLiquidation(address,address,address,int256,address[],uint256,uint256)._minReturn (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#997) is not in mixedCase
+Parameter Liquidator.updateBasset(address,address,int256,address[],uint256,uint256)._integration (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1037) is not in mixedCase
+Parameter Liquidator.updateBasset(address,address,int256,address[],uint256,uint256)._bAsset (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1038) is not in mixedCase
+Parameter Liquidator.updateBasset(address,address,int256,address[],uint256,uint256)._curvePosition (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1039) is not in mixedCase
+Parameter Liquidator.updateBasset(address,address,int256,address[],uint256,uint256)._uniswapPath (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1040) is not in mixedCase
+Parameter Liquidator.updateBasset(address,address,int256,address[],uint256,uint256)._trancheAmount (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1041) is not in mixedCase
+Parameter Liquidator.updateBasset(address,address,int256,address[],uint256,uint256)._minReturn (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1042) is not in mixedCase
+Parameter Liquidator.deleteLiquidation(address)._integration (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1083) is not in mixedCase
+Parameter Liquidator.triggerLiquidation(address)._integration (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#1107) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Initializable.______gap (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#84) is never used in Liquidator (noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol#925-1188)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Slither:./noloops/0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol analyzed (16 contracts with 46 detectors), 46 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x87a59a9f2c2caf9c7ec3fa62d7496d9fc7449b01.sol
+Tool Runtime = 1.3241671549985767 seconds
+#############################################

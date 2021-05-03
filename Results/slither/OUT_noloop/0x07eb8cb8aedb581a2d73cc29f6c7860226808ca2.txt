@@ -1,0 +1,628 @@
+Compilation warnings/errors on ./noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol:
+./noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol:269:31: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly {codehash := extcodehash(account)}
+                              ^------------------^
+
+INFO:Detectors:[93m
+YFVGovernanceVault.rewardPerToken() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#552-564) uses a dangerous strict equality:
+	- global.total_stake == 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#553)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in YFVGovernanceVault.checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#771-804):
+	External calls:
+	- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+	- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+	State variables written after the call(s):
+	- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#785)
+Reentrancy in YFVGovernanceVault.checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#771-804):
+	External calls:
+	- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+	- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+	- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#800)
+Reentrancy in YFVGovernanceVault.exit() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737-740):
+	External calls:
+	- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+		- yfv.burn(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#679)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- _token.burn(bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#830)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.burn(_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#832)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- currentEpoch ++ (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#787)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- currentEpochReward = epochReward (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#773)
+		- currentEpochReward = TOTAL_REWARD.sub(totalAccumulatedReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#776)
+		- currentEpochReward = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#781)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#539)
+		- lastUpdateTime = block.timestamp (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#799)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- periodFinish = block.timestamp.add(DURATION) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#800)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#538)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- rewardRate = currentEpochReward.div(DURATION) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#790)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- rewards[msg.sender] = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#746)
+		- rewards[account] = earned(account) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#541)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#785)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#542)
+Reentrancy in YFVGovernanceVault.getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742-769):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#746)
+Reentrancy in YFVGovernanceVault.stake(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608-629):
+	External calls:
+	- yfv.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#610)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- global.total_stake = global.total_stake.add(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#619)
+	- stakers[msg.sender].stake = stakers[msg.sender].stake.add(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#611)
+	- stakers[msg.sender].payout = stakers[msg.sender].payout.add(global.earnings_per_share.mul(amount).sub(1).div(magnitude).add(1)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#615-617)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#638)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#638)
+		- stakers[msg.sender].payout = global.earnings_per_share.mul(stakers[msg.sender].stake).div(magnitude) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#722)
+		- stakers[msg.sender].total_out = stakers[msg.sender].total_out.add(out) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#723)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#638)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- global.total_stake = global.total_stake.sub(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#663)
+	- stakers[msg.sender].payout = stakers[msg.sender].payout.sub(global.earnings_per_share.mul(amount).div(magnitude)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#658-660)
+	- stakers[msg.sender].stake = stakers[msg.sender].stake.sub(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#662)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+YFVGovernanceVault.discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#355-360) ignores return value by chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in YFVGovernanceVault.addValueReward(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#806-814):
+	External calls:
+	- value.safeTransferFrom(msg.sender,address(this),_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#810)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#806)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- valueRewardRateMultipler = valueLeftover.add(_amount).div(leftover) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#813)
+Reentrancy in YFVGovernanceVault.checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#771-804):
+	External calls:
+	- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+	- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+	State variables written after the call(s):
+	- currentEpoch ++ (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#787)
+	- rewardRate = currentEpochReward.div(DURATION) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#790)
+	- valueRewardRateMultipler = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#796)
+Reentrancy in YFVGovernanceVault.checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#771-804):
+	External calls:
+	- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+	- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+	- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#799)
+	- valueRewardRateMultipler = valueEpochReward.div(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#794)
+Reentrancy in YFVGovernanceVault.claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#720-735):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#720)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- stakers[msg.sender].payout = global.earnings_per_share.mul(stakers[msg.sender].stake).div(magnitude) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#722)
+	- stakers[msg.sender].total_out = stakers[msg.sender].total_out.add(out) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#723)
+Reentrancy in YFVGovernanceVault.emergencyWithdraw() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#837-849):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#837)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- global.total_stake = global.total_stake.sub(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#846)
+	- stakers[msg.sender].payout = stakers[msg.sender].payout.sub(global.earnings_per_share.mul(amount).div(magnitude)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#842-844)
+	- stakers[msg.sender].stake = stakers[msg.sender].stake.sub(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#845)
+Reentrancy in YFVGovernanceVault.exit() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737-740):
+	External calls:
+	- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+		- yfv.burn(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#679)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+		- valueRewardRateMultipler = valueEpochReward.div(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#794)
+		- valueRewardRateMultipler = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#796)
+Reentrancy in YFVGovernanceVault.getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742-769):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- accumulatedStakingPower[msg.sender] = accumulatedStakingPower[msg.sender].add(rewards[msg.sender]) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#745)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- valueRewardRateMultipler = valueEpochReward.div(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#794)
+		- valueRewardRateMultipler = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#796)
+Reentrancy in YFVGovernanceVault.getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742-769):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#539)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#538)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- rewards[account] = earned(account) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#541)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#542)
+Reentrancy in YFVGovernanceVault.make_profit(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#689-696):
+	External calls:
+	- value.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#691)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#689)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- global.earnings_per_share = global.earnings_per_share.add(amount.mul(magnitude).div(global.total_stake)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#692-694)
+	- global.total_out = global.total_out.add(amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#695)
+Reentrancy in YFVGovernanceVault.stake(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608-629):
+	External calls:
+	- yfv.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#610)
+	- doHardWork() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#622)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- yfv.safeTransfer(controller,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#602)
+		- IController(controller).doHardWork(address(yfv),_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#603)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- lastStakeTimes[msg.sender] = block.timestamp (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#625)
+Reentrancy in YFVGovernanceVault.stake(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608-629):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#539)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#538)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- rewards[account] = earned(account) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#541)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#542)
+Reentrancy in YFVGovernanceVault.stake(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608-629):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- valueRewardRateMultipler = valueEpochReward.div(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#794)
+		- valueRewardRateMultipler = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#796)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	State variables written after the call(s):
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#539)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#538)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- rewards[account] = earned(account) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#541)
+	- updateReward(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#542)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	State variables written after the call(s):
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- valueRewardRateMultipler = valueEpochReward.div(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#794)
+		- valueRewardRateMultipler = 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#796)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in YFVGovernanceVault.checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#771-804):
+	External calls:
+	- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+	- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+	- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#801)
+Reentrancy in YFVGovernanceVault.emergencyWithdraw() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#837-849):
+	External calls:
+	- safeTokenTransfer(yfv,msg.sender,amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#847)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#837)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount,amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#848)
+Reentrancy in YFVGovernanceVault.exit() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737-740):
+	External calls:
+	- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+		- yfv.burn(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#679)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	Event emitted after the call(s):
+	- Burned(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#680)
+		- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+	- RewardAdded(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#801)
+		- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+	- RewardPaid(yfvInsuranceFund,withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#677)
+		- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+	- Withdrawn(msg.sender,amount,actualWithdrawAmount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#686)
+		- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+Reentrancy in YFVGovernanceVault.exit() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737-740):
+	External calls:
+	- withdraw(stakers[msg.sender].stake) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#738)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+		- yfv.burn(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#679)
+	- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+		- _token.burn(bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#830)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.burn(_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#832)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#737)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	Event emitted after the call(s):
+	- Burned(valueCommission) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#766)
+		- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+	- RewardAdded(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#801)
+		- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+	- RewardPaid(msg.sender,reward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#750)
+		- getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#739)
+Reentrancy in YFVGovernanceVault.getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742-769):
+	External calls:
+	- safeTokenTransfer(vUSD,msg.sender,reward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#748)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- safeTokenTransfer(vETH,msg.sender,reward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#749)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#750)
+Reentrancy in YFVGovernanceVault.getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742-769):
+	External calls:
+	- safeTokenTransfer(vUSD,msg.sender,reward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#748)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- safeTokenTransfer(vETH,msg.sender,reward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#749)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- safeTokenTransfer(value,msg.sender,actualValuePaid) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#756)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- safeTokenBurn(value,valueCommission) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#765)
+		- _token.burn(bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#830)
+		- _token.burn(_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#832)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- Burned(valueCommission) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#766)
+Reentrancy in YFVGovernanceVault.getReward() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742-769):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#801)
+		- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#742)
+Reentrancy in YFVGovernanceVault.stake(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608-629):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#801)
+		- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#638)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+	- safeTokenTransfer(yfv,yfvInsuranceFund,withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#676)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- RewardPaid(yfvInsuranceFund,withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#677)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#638)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+	- yfv.burn(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#679)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- Burned(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#680)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#638)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- IController(controller).withdraw(address(yfv),_withdraw) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#647)
+	- safeTokenTransfer(yfv,yfvInsuranceFund,withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#676)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- yfv.burn(withdrawFee) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#679)
+	- safeTokenTransfer(yfv,msg.sender,actualWithdrawAmount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#685)
+		- _token.safeTransfer(_to,bal) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#820)
+		- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+		- _token.safeTransfer(_to,_amount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#822)
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount,actualWithdrawAmount) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#686)
+Reentrancy in YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687):
+	External calls:
+	- discountCHI() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- chi.freeFromUpTo(msg.sender,(gasSpent + 14154) / 41130) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#359)
+	- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+		- vUSD.mint(address(this),currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#783)
+		- vETH.mint(address(this),currentEpochReward.div(vETH_REWARD_FRACTION_RATE)) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#784)
+		- value.mint(address(this),valueEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#793)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#801)
+		- checkNextEpoch() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YFVGovernanceVault.lastTimeRewardApplicable() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#547-550) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < periodFinish (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#548)
+YFVGovernanceVault.earned(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#567-576) uses timestamp for comparisons
+	Dangerous comparisons:
+	- calculatedEarned > poolBalance (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#574)
+YFVGovernanceVault.withdraw(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#636-687) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < unfrozenStakeTime(msg.sender) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#665)
+YFVGovernanceVault.claim() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#720-735) uses timestamp for comparisons
+	Dangerous comparisons:
+	- out > 0 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#725)
+	- controller != address(0) && _stakeTime < minStakeTimeToClaimVaultReward (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#727)
+YFVGovernanceVault.addValueReward(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#806-814) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(periodFinish > 0,Pool has not started yet) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#807)
+	- require(bool,string)(remaining > 86400,Too little time to distribute. Wait for next epoch) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#809)
+YFVGovernanceVault.safeTokenTransfer(IERC20,address,uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#817-824) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _amount > bal (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#819)
+YFVGovernanceVault.emergencyWithdraw() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#837-849) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= unfrozenStakeTime(msg.sender),Wait until coin unfrozen) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#838)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#265-271) uses assembly
+	- INLINE ASM (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#269-270)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#7) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#277-285):
+	- (success) = recipient.call.value(amount)() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#283)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#317-328):
+	- (success,returndata) = address(token).call(data) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#321)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter YFVGovernanceVault.setGovernance(address)._governance (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#452) is not in mixedCase
+Parameter YFVGovernanceVault.setFundCap(uint256)._fundCap (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#463) is not in mixedCase
+Parameter YFVGovernanceVault.setController(address)._controller (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#468) is not in mixedCase
+Parameter YFVGovernanceVault.setRewardReferral(address)._rewardReferral (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#473) is not in mixedCase
+Parameter YFVGovernanceVault.setIsOpened(bool)._isOpened (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#478) is not in mixedCase
+Parameter YFVGovernanceVault.setEarnLowerlimit(uint256)._earnLowerlimit (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#483) is not in mixedCase
+Parameter YFVGovernanceVault.setYfvInsuranceFund(address)._yfvInsuranceFund (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#488) is not in mixedCase
+Parameter YFVGovernanceVault.setEpochReward(uint256)._epochReward (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#493) is not in mixedCase
+Parameter YFVGovernanceVault.setValueEpochReward(uint256)._valueEpochReward (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#499) is not in mixedCase
+Parameter YFVGovernanceVault.setMinStakingAmount(uint256)._minStakingAmount (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#504) is not in mixedCase
+Parameter YFVGovernanceVault.setUnstakingFrozenTime(uint256)._unstakingFrozenTime (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#509) is not in mixedCase
+Parameter YFVGovernanceVault.setUnlockWithdrawFee(uint256)._unlockWithdrawFee (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#514) is not in mixedCase
+Parameter YFVGovernanceVault.setMinStakeTimeToClaimVaultReward(uint256)._minStakeTimeToClaimVaultReward (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#520) is not in mixedCase
+Parameter YFVGovernanceVault.upgradeVUSDContract(address)._vUSDContract (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#526) is not in mixedCase
+Parameter YFVGovernanceVault.upgradeVETHContract(address)._vETHContract (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#532) is not in mixedCase
+Function YFVGovernanceVault.make_profit(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#689-696) is not in mixedCase
+Function YFVGovernanceVault.cal_out(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#698-705) is not in mixedCase
+Function YFVGovernanceVault.cal_out_pending(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#707-718) is not in mixedCase
+Parameter YFVGovernanceVault.cal_out_pending(uint256,address)._pendingBalance (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#707) is not in mixedCase
+Parameter YFVGovernanceVault.addValueReward(uint256)._amount (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#806) is not in mixedCase
+Parameter YFVGovernanceVault.safeTokenTransfer(IERC20,address,uint256)._token (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#817) is not in mixedCase
+Parameter YFVGovernanceVault.safeTokenTransfer(IERC20,address,uint256)._to (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#817) is not in mixedCase
+Parameter YFVGovernanceVault.safeTokenTransfer(IERC20,address,uint256)._amount (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#817) is not in mixedCase
+Parameter YFVGovernanceVault.safeTokenBurn(IERC20,uint256)._token (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#827) is not in mixedCase
+Parameter YFVGovernanceVault.safeTokenBurn(IERC20,uint256)._amount (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#827) is not in mixedCase
+Parameter YFVGovernanceVault.governanceRecoverUnsupported(IERC20,uint256,address)._token (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#855) is not in mixedCase
+Constant YFVGovernanceVault.chi (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#353) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YFVGovernanceVault.magnitude (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#391) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable YFVGovernanceVault.vETH_REWARD_FRACTION_RATE (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#395) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+YFVGovernanceVault.slitherConstructorConstantVariables() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#349-865) uses literals with too many digits:
+	- chi = IFreeFromUpTo(0x0000000000004946c0e9F43F4Dee607b0eF1fA1c) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#353)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+YFVGovernanceVault.starttime (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#405) should be constant
+YFVGovernanceVault.vETH_REWARD_FRACTION_RATE (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#395) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setGovernance(address) should be declared external:
+	- YFVGovernanceVault.setGovernance(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#452-455)
+balance() should be declared external:
+	- YFVGovernanceVault.balance() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#457-461)
+setController(address) should be declared external:
+	- YFVGovernanceVault.setController(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#468-471)
+setEarnLowerlimit(uint256) should be declared external:
+	- YFVGovernanceVault.setEarnLowerlimit(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#483-486)
+setYfvInsuranceFund(address) should be declared external:
+	- YFVGovernanceVault.setYfvInsuranceFund(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#488-491)
+setEpochReward(uint256) should be declared external:
+	- YFVGovernanceVault.setEpochReward(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#493-497)
+setValueEpochReward(uint256) should be declared external:
+	- YFVGovernanceVault.setValueEpochReward(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#499-502)
+setMinStakingAmount(uint256) should be declared external:
+	- YFVGovernanceVault.setMinStakingAmount(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#504-507)
+setUnstakingFrozenTime(uint256) should be declared external:
+	- YFVGovernanceVault.setUnstakingFrozenTime(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#509-512)
+setUnlockWithdrawFee(uint256) should be declared external:
+	- YFVGovernanceVault.setUnlockWithdrawFee(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#514-518)
+setMinStakeTimeToClaimVaultReward(uint256) should be declared external:
+	- YFVGovernanceVault.setMinStakeTimeToClaimVaultReward(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#520-523)
+upgradeVUSDContract(address) should be declared external:
+	- YFVGovernanceVault.upgradeVUSDContract(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#526-529)
+upgradeVETHContract(address) should be declared external:
+	- YFVGovernanceVault.upgradeVETHContract(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#532-535)
+stakingPower(address) should be declared external:
+	- YFVGovernanceVault.stakingPower(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#578-580)
+earnedVETH(address) should be declared external:
+	- YFVGovernanceVault.earnedVETH(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#582-584)
+earnedValue(address) should be declared external:
+	- YFVGovernanceVault.earnedValue(address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#586-588)
+stake(uint256,address) should be declared external:
+	- YFVGovernanceVault.stake(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#608-629)
+make_profit(uint256) should be declared external:
+	- YFVGovernanceVault.make_profit(uint256) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#689-696)
+cal_out_pending(uint256,address) should be declared external:
+	- YFVGovernanceVault.cal_out_pending(uint256,address) (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#707-718)
+emergencyWithdraw() should be declared external:
+	- YFVGovernanceVault.emergencyWithdraw() (noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol#837-849)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol analyzed (9 contracts with 46 detectors), 99 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x07eb8cb8aedb581a2d73cc29f6c7860226808ca2.sol
+Tool Runtime = 1.8445089339984406 seconds
+#############################################

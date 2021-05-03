@@ -1,0 +1,114 @@
+INFO:Detectors:[93m
+Vesting.noGrantExistsForUser(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#452-455) uses a dangerous strict equality:
+	- require(bool,string)(tokenGrants[_user].startTime == 0,colony-token-user-grant-exists) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#453)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475-498):
+	External calls:
+	- token.transferFrom(colonyMultiSig,address(this),_amount) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#485)
+	State variables written after the call(s):
+	- tokenGrants[_recipient] = grant (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#496)
+Reentrancy in Vesting.removeTokenGrant(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#504-524):
+	External calls:
+	- require(bool,string)(token.transfer(_recipient,amountVested),colony-token-recipient-transfer-failed) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#513)
+	- require(bool,string)(token.transfer(refundRecipient,amountNotVested),colony-token-refund-recipient-transfer-failed) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#514)
+	State variables written after the call(s):
+	- tokenGrant.startTime = 0 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#516)
+	- tokenGrant.amount = 0 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#517)
+	- tokenGrant.vestingDuration = 0 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#518)
+	- tokenGrant.vestingCliff = 0 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#519)
+	- tokenGrant.monthsClaimed = 0 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#520)
+	- tokenGrant.totalClaimed = 0 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#521)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475-498) ignores return value by token.transferFrom(colonyMultiSig,address(this),_amount) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#485)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475-498):
+	External calls:
+	- token.transferFrom(colonyMultiSig,address(this),_amount) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#485)
+	Event emitted after the call(s):
+	- GrantAdded(_recipient,grant.startTime,_amount,_vestingDuration,_vestingCliff) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#497)
+Reentrancy in Vesting.claimVestedTokens() (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#528-540):
+	External calls:
+	- require(bool,string)(token.transfer(msg.sender,amountVested),colony-token-sender-transfer-failed) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#538)
+	Event emitted after the call(s):
+	- GrantTokensClaimed(msg.sender,amountVested) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#539)
+Reentrancy in Vesting.removeTokenGrant(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#504-524):
+	External calls:
+	- require(bool,string)(token.transfer(_recipient,amountVested),colony-token-recipient-transfer-failed) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#513)
+	- require(bool,string)(token.transfer(refundRecipient,amountNotVested),colony-token-refund-recipient-transfer-failed) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#514)
+	Event emitted after the call(s):
+	- GrantRemoved(_recipient,amountVested,amountNotVested) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#523)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Vesting.calculateGrantClaim(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#545-571) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now < tokenGrant.startTime (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#549)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#21) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#89) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#127) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#218) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#251) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#324) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#389) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable DSTokenBase._supply (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#254) is not in mixedCase
+Variable DSTokenBase._balances (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#255) is not in mixedCase
+Variable DSTokenBase._approvals (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#256) is not in mixedCase
+Parameter Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16)._recipient (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475) is not in mixedCase
+Parameter Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16)._startTime (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475) is not in mixedCase
+Parameter Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16)._amount (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475) is not in mixedCase
+Parameter Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16)._vestingDuration (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475) is not in mixedCase
+Parameter Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16)._vestingCliff (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475) is not in mixedCase
+Parameter Vesting.removeTokenGrant(address)._recipient (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#504) is not in mixedCase
+Parameter Vesting.calculateGrantClaim(address)._recipient (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#545) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+canCall(address,address,bytes4) should be declared external:
+	- DSAuthority.canCall(address,address,bytes4) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#24-26)
+setOwner(address) should be declared external:
+	- DSAuth.setOwner(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#43-49)
+setAuthority(DSAuthority) should be declared external:
+	- DSAuth.setAuthority(DSAuthority) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#51-57)
+totalSupply() should be declared external:
+	- DSTokenBase.totalSupply() (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#263-265)
+	- ERC20.totalSupply() (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#97)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#98)
+	- DSTokenBase.balanceOf(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#266-268)
+allowance(address,address) should be declared external:
+	- DSTokenBase.allowance(address,address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#269-271)
+	- ERC20.allowance(address,address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#99)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#101)
+	- DSTokenBase.approve(address,uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#295-301)
+transfer(address,uint256) should be declared external:
+	- DSTokenBase.transfer(address,uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#273-275)
+	- ERC20.transfer(address,uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#102)
+mint(uint256) should be declared external:
+	- ERC20Extended.mint(uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#225)
+	- Token.mint(uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#354-356)
+burn(uint256) should be declared external:
+	- ERC20Extended.burn(uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#227)
+	- Token.burn(uint256) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#358-360)
+unlock() should be declared external:
+	- Token.unlock() (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#381-385)
+addTokenGrant(address,uint256,uint128,uint16,uint16) should be declared external:
+	- Vesting.addTokenGrant(address,uint256,uint128,uint16,uint16) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#475-498)
+removeTokenGrant(address) should be declared external:
+	- Vesting.removeTokenGrant(address) (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#504-524)
+claimVestedTokens() should be declared external:
+	- Vesting.claimVestedTokens() (loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol#528-540)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol analyzed (10 contracts with 46 detectors), 40 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xcfaf813c03838d43f133afa2a425b6a1d1b86558.sol
+Tool Runtime = 1.1205255530003342 seconds
+#############################################

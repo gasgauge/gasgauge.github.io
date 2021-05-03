@@ -1,0 +1,268 @@
+Compilation warnings/errors on ./loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol:
+./loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol:10:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol:459:5: Warning: Function state mutability can be restricted to view
+    function repay(uint, uint amount) external auth returns (uint) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+INFO:Detectors:[93m
+NAVFeed.uniqueDayTimestamp(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#638-640) performs a multiplication on the result of a division:
+	-(86400) * (timestamp / (86400)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#639)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in NAVFeed._borrow(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#665-693):
+	External calls:
+	- (fixedRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#675)
+	- fv = calcFutureValue(loan,amountIncludingFixed,maturityDate_,recoveryRatePD[risk[nftID_]].value) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#678)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+	State variables written after the call(s):
+	- borrowed[loan] = safeAdd(borrowed[loan],amount) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#689)
+Reentrancy in NAVFeed._repay(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#749-785):
+	External calls:
+	- debt = pile.debt(loan) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#764)
+	- fv = calcFutureValue(loan,debt,maturityDate_,recoveryRatePD[risk[nftID_]].value) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#772)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+	State variables written after the call(s):
+	- buckets[maturityDate_].value = safeAdd(buckets[maturityDate_].value,fv) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#773)
+	- removeBucket(maturityDate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#780)
+		- buckets[timestamp].value = 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#295)
+		- buckets[timestamp].next = 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#297)
+		- buckets[prev].next = buckets[timestamp].next (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#312)
+	- futureValue[nftID_] = fv (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#776)
+Reentrancy in NAVFeed.update(bytes32,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#703-730):
+	External calls:
+	- loan = shelf.nftlookup(nftID_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#720)
+	- futureValue[nftID_] = calcFutureValue(loan,pile.debt(loan),maturityDate[nftID_],recoveryRatePD[risk[nftID_]].value) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#728)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+	State variables written after the call(s):
+	- buckets[maturityDate_].value = safeAdd(buckets[maturityDate_].value,futureValue[nftID_]) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#729)
+	- futureValue[nftID_] = calcFutureValue(loan,pile.debt(loan),maturityDate[nftID_],recoveryRatePD[risk[nftID_]].value) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#728)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+NAVFeed.currentNAV() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#817-826) has external calls inside a loop: nav_ = safeAdd(nav_,rmul(pile.rateDebt(writeOffs[i].rateGroup),writeOffs[i].percentage.value)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#823)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in NAVFeed._borrow(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#665-693):
+	External calls:
+	- (fixedRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#675)
+	- fv = calcFutureValue(loan,amountIncludingFixed,maturityDate_,recoveryRatePD[risk[nftID_]].value) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#678)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+	State variables written after the call(s):
+	- addBucket(maturityDate_,fv) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#683)
+		- buckets[timestamp].value = value (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#264)
+		- buckets[timestamp].next = NullDate (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#268)
+		- buckets[timestamp].next = firstBucket (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#275)
+		- buckets[timestamp].next = buckets[prev].next (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#290)
+		- buckets[prev].next = timestamp (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#291)
+	- buckets[maturityDate_].value = safeAdd(buckets[maturityDate_].value,fv) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#685)
+	- addBucket(maturityDate_,fv) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#683)
+		- firstBucket = timestamp (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#267)
+		- firstBucket = timestamp (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#276)
+	- futureValue[nftID_] = safeAdd(futureValue[nftID_],fv) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#679)
+	- addBucket(maturityDate_,fv) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#683)
+		- lastBucket = firstBucket (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#269)
+		- lastBucket = timestamp (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#288)
+Reentrancy in NAVFeed._repay(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#749-785):
+	External calls:
+	- debt = pile.debt(loan) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#764)
+	- fv = calcFutureValue(loan,debt,maturityDate_,recoveryRatePD[risk[nftID_]].value) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#772)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+	State variables written after the call(s):
+	- removeBucket(maturityDate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#780)
+		- firstBucket = 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#303)
+		- firstBucket = buckets[timestamp].next (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#319)
+	- removeBucket(maturityDate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#780)
+		- lastBucket = 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#302)
+		- lastBucket = prev (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#314)
+Reentrancy in NAVFeed.borrow(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#658-662):
+	External calls:
+	- navIncrease = _borrow(loan,amount) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#659)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+		- (fixedRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#675)
+	State variables written after the call(s):
+	- approximatedNAV = safeAdd(approximatedNAV,navIncrease) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#660)
+Reentrancy in NAVFeed.file(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#625-631):
+	External calls:
+	- file(riskGroupNFT,risk_,thresholdRatio_,ceilingRatio_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#627)
+		- pile.file(rate,risk_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#422)
+	State variables written after the call(s):
+	- recoveryRatePD[risk_] = Fixed27(recoveryRatePD_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#628)
+Reentrancy in NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623):
+	External calls:
+	- file(riskGroup,0,ONE,ONE,uint256(1000000004027143581938102486),99.88 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#610)
+		- pile.file(rate,risk_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#422)
+	- setWriteOff(0,WRITE_OFF_PHASE_A,uint256(1000000004027143581938102486),ONE) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#614)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	State variables written after the call(s):
+	- setWriteOff(0,WRITE_OFF_PHASE_A,uint256(1000000004027143581938102486),ONE) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#614)
+		- writeOffs[phase_] = WriteOff(group_,Fixed27(writeOffPercentage_)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#634)
+Reentrancy in NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623):
+	External calls:
+	- file(riskGroup,0,ONE,ONE,uint256(1000000004027143581938102486),99.88 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#610)
+		- pile.file(rate,risk_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#422)
+	- setWriteOff(0,WRITE_OFF_PHASE_A,uint256(1000000004027143581938102486),ONE) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#614)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	- setWriteOff(1,WRITE_OFF_PHASE_B,uint256(1000000004027143581938102486),80 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#616)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	State variables written after the call(s):
+	- setWriteOff(1,WRITE_OFF_PHASE_B,uint256(1000000004027143581938102486),80 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#616)
+		- writeOffs[phase_] = WriteOff(group_,Fixed27(writeOffPercentage_)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#634)
+Reentrancy in NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623):
+	External calls:
+	- file(riskGroup,0,ONE,ONE,uint256(1000000004027143581938102486),99.88 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#610)
+		- pile.file(rate,risk_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#422)
+	- setWriteOff(0,WRITE_OFF_PHASE_A,uint256(1000000004027143581938102486),ONE) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#614)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	- setWriteOff(1,WRITE_OFF_PHASE_B,uint256(1000000004027143581938102486),80 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#616)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	- setWriteOff(2,WRITE_OFF_PHASE_C,ONE,20 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#618)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	State variables written after the call(s):
+	- setWriteOff(2,WRITE_OFF_PHASE_C,ONE,20 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#618)
+		- writeOffs[phase_] = WriteOff(group_,Fixed27(writeOffPercentage_)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#634)
+Reentrancy in NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623):
+	External calls:
+	- file(riskGroup,0,ONE,ONE,uint256(1000000004027143581938102486),99.88 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#610)
+		- pile.file(rate,risk_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#422)
+	- setWriteOff(0,WRITE_OFF_PHASE_A,uint256(1000000004027143581938102486),ONE) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#614)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	- setWriteOff(1,WRITE_OFF_PHASE_B,uint256(1000000004027143581938102486),80 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#616)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	- setWriteOff(2,WRITE_OFF_PHASE_C,ONE,20 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#618)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	- setWriteOff(3,WRITE_OFF_PHASE_D,ONE,0) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#620)
+		- pile.file(rate,group_,rate_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#635)
+	State variables written after the call(s):
+	- setWriteOff(3,WRITE_OFF_PHASE_D,ONE,0) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#620)
+		- writeOffs[phase_] = WriteOff(group_,Fixed27(writeOffPercentage_)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#634)
+Reentrancy in NAVFeed.repay(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#733-746):
+	External calls:
+	- navDecrease = _repay(loan,amount) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#734)
+		- (loanInterestRate) = pile.rates(pile.loanRates(loan)) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#698)
+		- debt = pile.debt(loan) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#764)
+	State variables written after the call(s):
+	- approximatedNAV = 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#736)
+	- approximatedNAV = safeSub(approximatedNAV,navDecrease) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#740)
+	- approximatedNAV = 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#744)
+Reentrancy in BaseNFTFeed.update(bytes32,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#435-447):
+	External calls:
+	- loan = shelf.nftlookup(nftID_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#441)
+	- pile.pie(loan) != 0 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#442)
+	- pile.changeRate(loan,risk_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#443)
+	State variables written after the call(s):
+	- nftValues[nftID_] = value (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#446)
+	- risk[nftID_] = risk_ (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#445)
+Reentrancy in NAVFeed.update(bytes32,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#703-730):
+	External calls:
+	- loan = shelf.nftlookup(nftID_) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#720)
+	State variables written after the call(s):
+	- buckets[maturityDate_].value = safeSub(buckets[maturityDate_].value,futureValue[nftID_]) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#726)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Interest.compounding(uint256,uint256,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#166-172) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= lastUpdated,tinlake-math/invalid-timestamp) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#167)
+Interest.chargeInterest(uint256,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#179-184) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= lastUpdated (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#180)
+NAVFeed._borrow(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#665-693) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(maturityDate_ > block.timestamp,maturity-date-is-not-in-the-future) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#672)
+NAVFeed._repay(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#749-785) uses timestamp for comparisons
+	Dangerous comparisons:
+	- maturityDate_ < uniqueDayTimestamp(block.timestamp) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#755)
+NAVFeed.calcTotalDiscount() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#793-814) uses timestamp for comparisons
+	Dangerous comparisons:
+	- currDate > lastBucket (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#799)
+	- currDate != NullDate (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#808)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Interest.rpow(uint256,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#201-223) uses assembly
+	- INLINE ASM (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#202-223)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#9) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Constant Buckets.NullDate (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#261) is not in UPPER_CASE_WITH_UNDERSCORES
+Contract ShelfLike_2 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#345-348) is not in CapWords
+Contract PileLike_2 (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#350-360) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623) uses literals with too many digits:
+	- file(riskGroup,0,ONE,ONE,uint256(1000000004027143581938102486),99.88 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#610)
+NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623) uses literals with too many digits:
+	- setWriteOff(0,WRITE_OFF_PHASE_A,uint256(1000000004027143581938102486),ONE) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#614)
+NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623) uses literals with too many digits:
+	- setWriteOff(1,WRITE_OFF_PHASE_B,uint256(1000000004027143581938102486),80 * 10 ** 25) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#616)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+rely(address) should be declared external:
+	- Auth.rely(address) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#79)
+deny(address) should be declared external:
+	- Auth.deny(address) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#80)
+safeDiv(uint256,uint256) should be declared external:
+	- Math.safeDiv(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#117-119)
+compounding(uint256,uint256,uint256,uint256) should be declared external:
+	- Interest.compounding(uint256,uint256,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#166-172)
+toAmount(uint256,uint256) should be declared external:
+	- Interest.toAmount(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#192-194)
+toPie(uint256,uint256) should be declared external:
+	- Interest.toPie(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#197-199)
+shelf(uint256) should be declared external:
+	- ShelfLike_2.shelf(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#346)
+nftlookup(bytes32) should be declared external:
+	- ShelfLike_2.nftlookup(bytes32) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#347)
+setRate(uint256,uint256) should be declared external:
+	- PileLike_2.setRate(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#351)
+debt(uint256) should be declared external:
+	- PileLike_2.debt(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#352)
+pie(uint256) should be declared external:
+	- PileLike_2.pie(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#353)
+changeRate(uint256,uint256) should be declared external:
+	- PileLike_2.changeRate(uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#354)
+loanRates(uint256) should be declared external:
+	- PileLike_2.loanRates(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#355)
+file(bytes32,uint256,uint256) should be declared external:
+	- PileLike_2.file(bytes32,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#356)
+rates(uint256) should be declared external:
+	- PileLike_2.rates(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#357)
+total() should be declared external:
+	- PileLike_2.total() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#358)
+rateDebt(uint256) should be declared external:
+	- PileLike_2.rateDebt(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#359)
+file(bytes32,uint256) should be declared external:
+	- BaseNFTFeed.file(bytes32,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#395)
+	- NAVFeed.file(bytes32,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#651-655)
+update(bytes32,uint256) should be declared external:
+	- BaseNFTFeed.update(bytes32,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#429-432)
+update(bytes32,uint256,uint256) should be declared external:
+	- BaseNFTFeed.update(bytes32,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#435-447)
+	- NAVFeed.update(bytes32,uint256,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#703-730)
+borrowEvent(uint256) should be declared external:
+	- BaseNFTFeed.borrowEvent(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#465-474)
+unlockEvent(uint256) should be declared external:
+	- BaseNFTFeed.unlockEvent(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#477)
+threshold(uint256) should be declared external:
+	- BaseNFTFeed.threshold(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#496-499)
+totalValue() should be declared external:
+	- BaseNFTFeed.totalValue() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#502-504)
+	- NAVFeed.totalValue() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#835-837)
+init() should be declared external:
+	- NAVFeed.init() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#600-623)
+file(bytes32,bytes32,uint256) should be declared external:
+	- NAVFeed.file(bytes32,bytes32,uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#643-649)
+calcUpdateNAV() should be declared external:
+	- NAVFeed.calcUpdateNAV() (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#828-832)
+dateBucket(uint256) should be declared external:
+	- NAVFeed.dateBucket(uint256) (loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol#839-841)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol analyzed (10 contracts with 46 detectors), 58 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xdB9A84e5214e03a4e5DD14cFB3782e0bcD7567a7.sol
+Tool Runtime = 2.1507129069977964 seconds
+#############################################

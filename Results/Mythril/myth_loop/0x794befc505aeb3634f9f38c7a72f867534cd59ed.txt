@@ -1,0 +1,85 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Tx2UNI
+Function name: seizeTOKEN(address)
+PC address: 5477
+Estimated Gas Usage: 5401 - 75375
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/6/0x794befc505aeb3634f9f38c7a72f867534cd59ed.sol:808
+
+_token.transfer(_teamWallet, _currentBalance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: removeBot(address), txdata: 0x5fecd926000000000000000000000000473954f0fd52f198813046716723b7822db75cbd, value: 0x0
+Caller: [CREATOR], function: seizeTOKEN(address), txdata: 0x51dd6d00acacacacacacacacacacacacdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Tx2UNI
+Function name: seizeTOKEN(address)
+PC address: 5477
+Estimated Gas Usage: 5401 - 75375
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/6/0x794befc505aeb3634f9f38c7a72f867534cd59ed.sol:808
+
+_token.transfer(_teamWallet, _currentBalance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: seizeTOKEN(address), txdata: 0x51dd6d000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Tx2UNI
+Function name: _validbots(uint256)
+PC address: 7635
+Estimated Gas Usage: 1100 - 1195
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/6/0x794befc505aeb3634f9f38c7a72f867534cd59ed.sol:659
+
+address[] public _validbots
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: _validbots(uint256), txdata: 0x9e63a3d80000000000000000000000000000000000000000000000000000000000000008, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x794befc505aeb3634f9f38c7a72f867534cd59ed.sol
+Tool Runtime = 557.3426028650065 seconds
+#############################################

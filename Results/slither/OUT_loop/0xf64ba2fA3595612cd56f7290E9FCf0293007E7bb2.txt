@@ -1,0 +1,172 @@
+Compilation warnings/errors on ./loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol:
+./loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol:7:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol:1153:9: Warning: Unused local variable.
+        uint256 supplyAfterRebase = eusd.rebase(epoch, indexDelta, positive);
+        ^-----------------------^
+
+INFO:Detectors:[93m
+EUSDRebaser.rebase() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1107-1158) performs a multiplication on the result of a division:
+	-indexDelta = indexDelta.div(rebaseLag) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1133)
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1147)
+EUSDRebaser.rebase() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1107-1158) performs a multiplication on the result of a division:
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1147)
+	-mintAmount = currSupply.mul(mintPerc).div(10 ** 18) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1149)
+EUSDRebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1293-1322) performs a multiplication on the result of a division:
+	-token0.mul(offPegPerc / 3).div(10 ** 18) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1313)
+EUSDRebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1293-1322) performs a multiplication on the result of a division:
+	-token1.mul(offPegPerc / 3).div(10 ** 18) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1319)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+EUSDRebaser.rebase().mintAmount (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1144) is a local variable never initialized
+FixedPoint.mul(FixedPoint.uq112x112,uint256).z (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#558) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203) ignores return value by eusd.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1179)
+EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203) ignores return value by eusd.mint(uniswap_pair,uniVars.eusdsToUni.sub(uniVars.amountFromReserves)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1183)
+EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203) ignores return value by eusd.mint(uniswap_pair,uniVars.eusdsToUni) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1187)
+EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203) ignores return value by eusd.mint(reservesContract,uniVars.mintToReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1192)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in EUSDRebaser.afterRebase(uint256,uint256) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1350-1378):
+	External calls:
+	- UniswapPair(uniswap_pair).sync() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1357)
+	- buyReserveAndTransfer(mintAmount,offPegPerc) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1360-1363)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1244)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1252)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1260)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1270)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1279)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1287)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1373)
+Reentrancy in EUSDRebaser.rebase() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1107-1158):
+	External calls:
+	- supplyAfterRebase = eusd.rebase(epoch,indexDelta,positive) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1153)
+	- afterRebase(mintAmount,offPegPerc) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1157)
+		- UniswapPair(uniswap_pair).sync() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1357)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1244)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1252)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1260)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1270)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1279)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1287)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1373)
+		- afterRebase(mintAmount,offPegPerc) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1157)
+Reentrancy in EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203):
+	External calls:
+	- eusd.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1179)
+	- eusd.mint(uniswap_pair,uniVars.eusdsToUni.sub(uniVars.amountFromReserves)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1183)
+	- eusd.mint(uniswap_pair,uniVars.eusdsToUni) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1187)
+	- eusd.mint(reservesContract,uniVars.mintToReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1192)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount1) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1197)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount1,uniVars.eusdsToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1198)
+Reentrancy in EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203):
+	External calls:
+	- eusd.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1179)
+	- eusd.mint(uniswap_pair,uniVars.eusdsToUni.sub(uniVars.amountFromReserves)) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1183)
+	- eusd.mint(uniswap_pair,uniVars.eusdsToUni) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1187)
+	- eusd.mint(reservesContract,uniVars.mintToReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1192)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount0) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1200)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount0,uniVars.eusdsToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1201)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniswapV2OracleLibrary.currentCumulativePrices(address,bool) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#602-631) uses timestamp for comparisons
+	Dangerous comparisons:
+	- blockTimestampLast != blockTimestamp (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#612)
+	- blockTimestampLast != blockTimestamp (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#622)
+EUSDRebaser.activate_rebasing() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1090-1098) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= timeOfTWAPInit + rebaseDelay,!end_delay) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1095)
+EUSDRebaser.rebase() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1107-1158) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(lastRebaseTimestampSec.add(minRebaseTimeIntervalSec) < now) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1116)
+EUSDRebaser._inRebaseWindow() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1513-1520) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) >= rebaseWindowOffsetSec,too early) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1518)
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) < (rebaseWindowOffsetSec.add(rebaseWindowLengthSec)),too late) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1519)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#264-273) uses assembly
+	- INLINE ASM (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#271-272)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#357-378) uses assembly
+	- INLINE ASM (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#370-374)
+EUSDRebaser.externalCall(address,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1647-1677) uses assembly
+	- INLINE ASM (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1652-1676)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#291-297):
+	- (success) = recipient.call.value(amount)() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#295)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#357-378):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#361)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function UniswapPair.DOMAIN_SEPARATOR() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#465) is not in mixedCase
+Function UniswapPair.PERMIT_TYPEHASH() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#466) is not in mixedCase
+Function UniswapPair.MINIMUM_LIQUIDITY() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#483) is not in mixedCase
+Struct FixedPoint.uq112x112 (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#525-527) is not in CapWords
+Struct FixedPoint.uq144x112 (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#531-533) is not in CapWords
+Variable EUSDTokenStorage._notEntered (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#642) is not in mixedCase
+Constant EUSDTokenStorage.internalDecimals (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#687) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable EUSDTokenStorage._eusdBalances (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#699) is not in mixedCase
+Variable EUSDTokenStorage._allowedFragments (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#701) is not in mixedCase
+Variable EUSDGovernanceStorage._delegates (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#709) is not in mixedCase
+Function EUSDTokenInterface._setRebaser(address) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#807) is not in mixedCase
+Function EUSDTokenInterface._setIncentivizer(address) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#808) is not in mixedCase
+Function EUSDTokenInterface._setPendingGov(address) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#809) is not in mixedCase
+Function EUSDTokenInterface._acceptGov() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#810) is not in mixedCase
+Function EUSDRebaser._setPendingGov(address) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1050-1057) is not in mixedCase
+Function EUSDRebaser._acceptGov() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1062-1070) is not in mixedCase
+Function EUSDRebaser.init_twap() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1075-1085) is not in mixedCase
+Function EUSDRebaser.activate_rebasing() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1090-1098) is not in mixedCase
+Constant EUSDRebaser.rebaseDelay (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#916) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable EUSDRebaser.uniswap_pair (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#931) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+EUSDTokenStorage._notEntered (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#642) should be constant
+EUSDTokenStorage.decimals (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#657) should be constant
+EUSDTokenStorage.eusdsScalingFactor (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#697) should be constant
+EUSDTokenStorage.gov (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#662) should be constant
+EUSDTokenStorage.incentivizer (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#677) should be constant
+EUSDTokenStorage.initSupply (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#703) should be constant
+EUSDTokenStorage.name (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#647) should be constant
+EUSDTokenStorage.pendingGov (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#667) should be constant
+EUSDTokenStorage.rebaser (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#672) should be constant
+EUSDTokenStorage.symbol (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#652) should be constant
+EUSDTokenStorage.totalSupply (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#682) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setMaxSlippageFactor(uint256) should be declared external:
+	- EUSDRebaser.setMaxSlippageFactor(uint256) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1008-1015)
+setRebaseMintPerc(uint256) should be declared external:
+	- EUSDRebaser.setRebaseMintPerc(uint256) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1022-1029)
+setReserveContract(address) should be declared external:
+	- EUSDRebaser.setReserveContract(address) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1037-1044)
+init_twap() should be declared external:
+	- EUSDRebaser.init_twap() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1075-1085)
+activate_rebasing() should be declared external:
+	- EUSDRebaser.activate_rebasing() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1090-1098)
+rebase() should be declared external:
+	- EUSDRebaser.rebase() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1107-1158)
+uniswapV2Call(address,uint256,uint256,bytes) should be declared external:
+	- EUSDRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1161-1203)
+getCurrentTWAP() should be declared external:
+	- EUSDRebaser.getCurrentTWAP() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1413-1429)
+inRebaseWindow() should be declared external:
+	- EUSDRebaser.inRebaseWindow() (loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol#1506-1511)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol analyzed (12 contracts with 46 detectors), 65 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf64ba2fA3595612cd56f7290E9FCf0293007E7bb2.sol
+Tool Runtime = 2.4175003150012344 seconds
+#############################################

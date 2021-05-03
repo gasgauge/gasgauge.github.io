@@ -1,0 +1,343 @@
+Compilation warnings/errors on ./noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol:
+./noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol:363:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+CompoundInteractor._supplyEtherInWETH(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1882-1891) sends eth to arbitrary user
+	Dangerous calls:
+	- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in WETHCreamNoFoldStrategy.withdrawToVault(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2490-2507):
+	External calls:
+	- redeemMaximum() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2497)
+		- ctoken.redeem(amountCTokens) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1944)
+		- weth.deposit.value(address(this).balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1900)
+	- IERC20(address(underlying)).safeTransfer(vault,transferBalance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2503)
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2506)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+		- weth.withdraw(balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1889)
+		- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+	- updateSupplyInTheEnd() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2490)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+	External calls sending eth:
+	- redeemMaximum() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2497)
+		- weth.deposit.value(address(this).balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1900)
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2506)
+		- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+	State variables written after the call(s):
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2506)
+		- _notEntered = false (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#638)
+		- _notEntered = true (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#644)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[91m
+WETHCreamNoFoldStrategy.underlying (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2410) shadows:
+	- CompoundInteractor.underlying (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1852)
+	- ProfitNotifier.underlying (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2111)
+WETHCreamNoFoldStrategy.ctoken (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2411) shadows:
+	- CompoundInteractor.ctoken (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1854)
+WETHCreamNoFoldStrategy.comptroller (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2412) shadows:
+	- CompoundInteractor.comptroller (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1855)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+CompoundInteractor._supply(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1906-1916) uses a dangerous strict equality:
+	- require(bool,string)(mintResult == 0,Supplying failed) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1914)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+CompoundInteractor.constructor(address,address,address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1857-1872) ignores return value by comptroller.enterMarkets(cTokens) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1871)
+CompoundInteractor._repay(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1932-1937) ignores return value by ctoken.repayBorrow(amountUnderlying) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1935)
+CompoundInteractor._redeemInCTokens(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1942-1946) ignores return value by ctoken.redeem(amountCTokens) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1944)
+CompoundInteractor._redeemUnderlying(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1951-1955) ignores return value by ctoken.redeemUnderlying(amountUnderlying) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1953)
+WETHCreamNoFoldStrategy.liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2536-2561) ignores return value by IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(balance,amountOutMin,path,address(this),block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2547-2553)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#293) shadows:
+	- ERC20Detailed.name() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#302-304) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#293) shadows:
+	- ERC20Detailed.symbol() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#310-312) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#293) shadows:
+	- ERC20Detailed.decimals() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#326-328) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in WETHCreamNoFoldStrategy.constructor(address,address,address,address,address,address,address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2431-2455):
+	External calls:
+	- CompoundInteractor(_underlying,_ctoken,_comptroller) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2441)
+		- comptroller.enterMarkets(cTokens) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1871)
+	State variables written after the call(s):
+	- comp = ERC20Detailed(_comp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2445)
+	- comptroller = ComptrollerInterface(_comptroller) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2443)
+	- ctoken = CompleteCToken(_ctoken) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2447)
+	- underlying = ERC20Detailed(_underlying) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2446)
+	- uniswapRouterV2 = _uniswap (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2449)
+	- unsalvagableTokens[_underlying] = true (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2452)
+	- unsalvagableTokens[_ctoken] = true (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2453)
+	- unsalvagableTokens[_comp] = true (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2454)
+	- vault = _vault (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2448)
+Reentrancy in WETHCreamNoFoldStrategy.doHardWork() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2512-2516):
+	External calls:
+	- claimComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2513)
+		- comptroller.claimComp(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1961)
+	- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2514)
+		- (success,returndata) = address(token).call(data) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#471)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2137)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2542)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2543)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2138)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2139-2142)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(balance,amountOutMin,path,address(this),block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2547-2553)
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2515)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+		- weth.withdraw(balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1889)
+		- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+	External calls sending eth:
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2515)
+		- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+	State variables written after the call(s):
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2515)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+Reentrancy in WETHCreamNoFoldStrategy.withdrawToVault(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2490-2507):
+	External calls:
+	- redeemMaximum() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2497)
+		- ctoken.redeem(amountCTokens) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1944)
+		- weth.deposit.value(address(this).balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1900)
+	- IERC20(address(underlying)).safeTransfer(vault,transferBalance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2503)
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2506)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+		- weth.withdraw(balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1889)
+		- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+	- updateSupplyInTheEnd() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2490)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+	External calls sending eth:
+	- redeemMaximum() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2497)
+		- weth.deposit.value(address(this).balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1900)
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2506)
+		- ICEther(address(ctoken)).mint.value(balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1890)
+	State variables written after the call(s):
+	- investAllUnderlying() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2506)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in WETHCreamNoFoldStrategy.doHardWork() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2512-2516):
+	External calls:
+	- claimComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2513)
+		- comptroller.claimComp(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1961)
+	- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2514)
+		- (success,returndata) = address(token).call(data) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#471)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2137)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2542)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2543)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2138)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2139-2142)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(balance,amountOutMin,path,address(this),block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2547-2553)
+	Event emitted after the call(s):
+	- ProfitLog(oldBalance,newBalance,feeAmount,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2135)
+		- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2514)
+	- ProfitLog(oldBalance,newBalance,0,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2144)
+		- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2514)
+Reentrancy in WETHCreamNoFoldStrategy.liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2536-2561):
+	External calls:
+	- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2542)
+	- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2543)
+	- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(balance,amountOutMin,path,address(this),block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2547-2553)
+	- notifyProfit(oldBalance,underlying.balanceOf(address(this))) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2558-2560)
+		- (success,returndata) = address(token).call(data) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#471)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2137)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2138)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2139-2142)
+	Event emitted after the call(s):
+	- ProfitLog(oldBalance,newBalance,feeAmount,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2135)
+		- notifyProfit(oldBalance,underlying.balanceOf(address(this))) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2558-2560)
+	- ProfitLog(oldBalance,newBalance,0,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2144)
+		- notifyProfit(oldBalance,underlying.balanceOf(address(this))) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2558-2560)
+Reentrancy in WETHCreamNoFoldStrategy.withdrawAll() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2484-2488):
+	External calls:
+	- claimComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2485)
+		- comptroller.claimComp(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1961)
+	- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2486)
+		- (success,returndata) = address(token).call(data) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#471)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2137)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2542)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2543)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2138)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2139-2142)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(balance,amountOutMin,path,address(this),block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2547-2553)
+	Event emitted after the call(s):
+	- ProfitLog(oldBalance,newBalance,feeAmount,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2135)
+		- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2486)
+	- ProfitLog(oldBalance,newBalance,0,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2144)
+		- liquidateComp() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2486)
+Reentrancy in WETHCreamNoFoldStrategy.withdrawAllToVault() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2479-2482):
+	External calls:
+	- withdrawAll() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2480)
+		- comptroller.claimComp(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1961)
+		- ctoken.redeem(amountCTokens) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1944)
+		- weth.deposit.value(address(this).balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1900)
+		- (success,returndata) = address(token).call(data) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#471)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2137)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),0) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2542)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2138)
+		- IERC20(address(comp)).safeApprove(address(uniswapRouterV2),balance) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2543)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2139-2142)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(balance,amountOutMin,path,address(this),block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2547-2553)
+	- updateSupplyInTheEnd() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2479)
+		- suppliedInWETH = ctoken.balanceOfUnderlying(address(this)) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2459)
+	External calls sending eth:
+	- withdrawAll() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2480)
+		- weth.deposit.value(address(this).balance)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1900)
+	Event emitted after the call(s):
+	- ProfitLog(oldBalance,newBalance,feeAmount,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2135)
+		- withdrawAll() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2480)
+	- ProfitLog(oldBalance,newBalance,0,block.timestamp) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2144)
+		- withdrawAll() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2480)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#356-365) uses assembly
+	- INLINE ASM (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#363-364)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#7) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#39) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#198) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#277) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#333) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#406) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#483) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#513) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#592) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#650) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#736) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#769) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1073) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1120) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1816) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1834) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1969) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1977) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2014) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2043) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2069) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2098) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2151) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2249) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2387) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#395-401):
+	- (success) = recipient.call.value(amount)() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#399)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#459-478):
+	- (success,returndata) = address(token).call(data) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#471)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Constant ComptrollerInterface.isComptroller (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#663) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant InterestRateModel.isInterestRateModel (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#744) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable CTokenStorage._notEntered (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#777) is not in mixedCase
+Constant CTokenStorage.borrowRateMaxMantissa (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#798) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CTokenStorage.reserveFactorMaxMantissa (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#803) is not in UPPER_CASE_WITH_UNDERSCORES
+Function CTokenInterface._setPendingAdmin(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1002) is not in mixedCase
+Function CTokenInterface._acceptAdmin() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1003) is not in mixedCase
+Function CTokenInterface._setComptroller(ComptrollerInterface) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1004) is not in mixedCase
+Function CTokenInterface._setReserveFactor(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1005) is not in mixedCase
+Function CTokenInterface._reduceReserves(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1006) is not in mixedCase
+Function CTokenInterface._setInterestRateModel(InterestRateModel) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1007) is not in mixedCase
+Constant CTokenInterface.isCToken (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#890) is not in UPPER_CASE_WITH_UNDERSCORES
+Function CErc20Interface._addReserves(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1032) is not in mixedCase
+Function CDelegatorInterface._setImplementation(address,bool,bytes) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1054) is not in mixedCase
+Function CDelegateInterface._becomeImplementation(bytes) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1063) is not in mixedCase
+Function CDelegateInterface._resignImplementation() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1068) is not in mixedCase
+Variable CompoundInteractor._weth (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1853) is not in mixedCase
+Parameter Storage.setGovernance(address)._governance (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1993) is not in mixedCase
+Parameter Storage.setController(address)._controller (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1998) is not in mixedCase
+Parameter Governable.setStorage(address)._store (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2031) is not in mixedCase
+Function IUniswapV2Router01.WETH() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2155) is not in mixedCase
+Function IUniswapV2Router02.WETH() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2254) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+CDelegationStorage.implementation (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1039) should be constant
+CErc20Storage.underlying (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1014) should be constant
+CTokenStorage._notEntered (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#777) should be constant
+CTokenStorage.accrualBlockNumber (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#838) should be constant
+CTokenStorage.admin (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#808) should be constant
+CTokenStorage.borrowIndex (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#843) should be constant
+CTokenStorage.decimals (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#792) should be constant
+CTokenStorage.initialExchangeRateMantissa (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#828) should be constant
+CTokenStorage.name (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#782) should be constant
+CTokenStorage.pendingAdmin (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#813) should be constant
+CTokenStorage.reserveFactorMantissa (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#833) should be constant
+CTokenStorage.symbol (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#787) should be constant
+CTokenStorage.totalBorrows (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#848) should be constant
+CTokenStorage.totalReserves (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#853) should be constant
+CTokenStorage.totalSupply (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#858) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#302-304)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#310-312)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#326-328)
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#541-543)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#567-570)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#576-578)
+borrowBalanceStored(address) should be declared external:
+	- CTokenInterface.borrowBalanceStored(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#992)
+exchangeRateCurrent() should be declared external:
+	- CTokenInterface.exchangeRateCurrent() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#993)
+exchangeRateStored() should be declared external:
+	- CTokenInterface.exchangeRateStored() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#994)
+accrueInterest() should be declared external:
+	- CTokenInterface.accrueInterest() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#996)
+_setComptroller(ComptrollerInterface) should be declared external:
+	- CTokenInterface._setComptroller(ComptrollerInterface) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1004)
+_setInterestRateModel(InterestRateModel) should be declared external:
+	- CTokenInterface._setInterestRateModel(InterestRateModel) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1007)
+_setImplementation(address,bool,bytes) should be declared external:
+	- CDelegatorInterface._setImplementation(address,bool,bytes) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1054)
+_becomeImplementation(bytes) should be declared external:
+	- CDelegateInterface._becomeImplementation(bytes) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1063)
+_resignImplementation() should be declared external:
+	- CDelegateInterface._resignImplementation() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1068)
+balanceOf(address) should be declared external:
+	- WETH9.balanceOf(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1124)
+deposit() should be declared external:
+	- WETH9.deposit() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1126)
+withdraw(uint256) should be declared external:
+	- WETH9.withdraw(uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1127)
+totalSupply() should be declared external:
+	- WETH9.totalSupply() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1128)
+approve(address,uint256) should be declared external:
+	- WETH9.approve(address,uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1129)
+transfer(address,uint256) should be declared external:
+	- WETH9.transfer(address,uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1130)
+transferFrom(address,address,uint256) should be declared external:
+	- WETH9.transferFrom(address,address,uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1131)
+setGovernance(address) should be declared external:
+	- Storage.setGovernance(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1993-1996)
+setController(address) should be declared external:
+	- Storage.setController(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#1998-2001)
+isController(address) should be declared external:
+	- Storage.isController(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2007-2009)
+setStorage(address) should be declared external:
+	- Governable.setStorage(address) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2031-2034)
+governance() should be declared external:
+	- Governable.governance() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2036-2038)
+depositArbCheck() should be declared external:
+	- WETHCreamNoFoldStrategy.depositArbCheck() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2462-2465)
+doHardWork() should be declared external:
+	- WETHCreamNoFoldStrategy.doHardWork() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2512-2516)
+salvage(address,address,uint256) should be declared external:
+	- WETHCreamNoFoldStrategy.salvage(address,address,uint256) (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2530-2534)
+investedUnderlyingBalance() should be declared external:
+	- WETHCreamNoFoldStrategy.investedUnderlyingBalance() (noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol#2566-2570)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol analyzed (31 contracts with 46 detectors), 118 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x4e015af8e1c5eb020f91063661cc5ce43719ebcf.sol
+Tool Runtime = 3.2172212849982316 seconds
+#############################################

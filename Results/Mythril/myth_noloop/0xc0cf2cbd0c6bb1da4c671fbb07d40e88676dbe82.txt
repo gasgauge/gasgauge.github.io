@@ -1,0 +1,658 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 595
+Estimated Gas Usage: 31862 - 555450
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:205
+
+sushiswapFactory.getPair(token0, token1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 871
+Estimated Gas Usage: 31862 - 555450
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:206
+
+IUniswapV2ERC20(sushiPair).transferFrom(msg.sender, address(this), value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c00400000fd3a2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1200000000000008, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswap(address,address,uint256)
+PC address: 871
+Estimated Gas Usage: 27433 - 481088
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:206
+
+IUniswapV2ERC20(sushiPair).transferFrom(msg.sender, address(this), value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswap(address,address,uint256), txdata: 0xb35f7284000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 962
+Estimated Gas Usage: 31862 - 555450
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:207
+
+sushiswapRouter
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 1128
+Estimated Gas Usage: 31862 - 555450
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:207
+
+IUniswapV2ERC20(sushiPair).approve(address(sushiswapRouter), value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c00400000fd3a2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1200000000000008, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswap(address,address,uint256)
+PC address: 1128
+Estimated Gas Usage: 27433 - 481088
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:207
+
+IUniswapV2ERC20(sushiPair).approve(address(sushiswapRouter), value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20c00c0400000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: migrateToUniswap(address,address,uint256), txdata: 0xb35f7284393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 1128
+Estimated Gas Usage: 31862 - 555450
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:207
+
+IUniswapV2ERC20(sushiPair).approve(address(sushiswapRouter), value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 1191
+Estimated Gas Usage: 31862 - 555450
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:208
+
+sushiswapRouter
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 1516
+Estimated Gas Usage: 31862 - 555450
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:208
+
+sushiswapRouter.removeLiquidity(
+            token0,
+            token1,
+            value,
+            0,
+            0,
+            address(this),
+            now + 60
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2050
+Estimated Gas Usage: 31862 - 555450
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:221
+
+router
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswap(address,address,uint256)
+PC address: 2216
+Estimated Gas Usage: 27433 - 481088
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:221
+
+IUniswapV2ERC20(token0).approve(address(router), bal0)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1c0000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswap(address,address,uint256), txdata: 0xb35f7284393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef39393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2216
+Estimated Gas Usage: 31862 - 555450
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:221
+
+IUniswapV2ERC20(token0).approve(address(router), bal0)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2307
+Estimated Gas Usage: 31862 - 555450
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:222
+
+router
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa126539000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2473
+Estimated Gas Usage: 31862 - 555450
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:222
+
+IUniswapV2ERC20(token1).approve(address(router), bal1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2180000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef39393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2473
+Estimated Gas Usage: 31862 - 555450
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:222
+
+IUniswapV2ERC20(token1).approve(address(router), bal1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa126539000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2536
+Estimated Gas Usage: 31862 - 555450
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:223
+
+router
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2870
+Estimated Gas Usage: 31862 - 555450
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:223
+
+router.addLiquidity(
+            token0,
+            token1,
+            bal0,
+            bal1,
+            0,
+            0,
+            msg.sender,
+            now + 60
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswap(address,address,uint256)
+PC address: 3326
+Estimated Gas Usage: 27433 - 481088
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:235
+
+IUniswapV2ERC20(token0).transfer(
+            msg.sender,
+            IUniswapV2ERC20(token0).balanceOf(address(this))
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1c0000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswap(address,address,uint256), txdata: 0xb35f7284393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef39393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswap(address,address,uint256)
+PC address: 3326
+Estimated Gas Usage: 27433 - 481088
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:235
+
+IUniswapV2ERC20(token0).transfer(
+            msg.sender,
+            IUniswapV2ERC20(token0).balanceOf(address(this))
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x180040000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswap(address,address,uint256), txdata: 0xb35f7284000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 3760
+Estimated Gas Usage: 31862 - 555450
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:239
+
+IUniswapV2ERC20(token1).transfer(
+            msg.sender,
+            IUniswapV2ERC20(token1).balanceOf(address(this))
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2180000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef39393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: PickleMigrator
+Function name: migrateToUniswap(address,address,uint256)
+PC address: 3760
+Estimated Gas Usage: 27433 - 481088
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:239
+
+IUniswapV2ERC20(token1).transfer(
+            msg.sender,
+            IUniswapV2ERC20(token1).balanceOf(address(this))
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x180040000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswap(address,address,uint256), txdata: 0xb35f7284000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 4383
+Estimated Gas Usage: 31862 - 555450
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:186
+
+IUniswapV2ERC20(pair).permit(
+            msg.sender,
+            address(this),
+            value,
+            deadline,
+            v,
+            r,
+            s
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c00c000002ba30, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x90800000000002, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PickleMigrator
+Function name: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 4383
+Estimated Gas Usage: 31862 - 555450
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/10/0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol:186
+
+IUniswapV2ERC20(pair).permit(
+            msg.sender,
+            address(this),
+            value,
+            deadline,
+            v,
+            r,
+            s
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: migrateToUniswapWithPermit(address,address,uint256,uint256,uint8,bytes32,bytes32), txdata: 0xfa1265390000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xc0cf2cbd0c6bb1da4c671fbb07d40e88676dbe82.sol
+Tool Runtime = 225.38841429696186 seconds
+#############################################

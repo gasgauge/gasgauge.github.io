@@ -1,0 +1,377 @@
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: LPTokenWrapper
+Function name: stake(uint256)
+PC address: 986
+Estimated Gas Usage: 1165 - 1260
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:589
+
+require(tx.origin == sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: stake(uint256), txdata: 0xa694fc3a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: exit()
+PC address: 2449
+Estimated Gas Usage: 30817 - 112808
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:700
+
+if (block.timestamp >= periodFinish) {
+            initreward = initreward.mul(50).div(100); 
+            IWEV(address(wev)).mint(address(this),initreward);
+
+            rewardRate = initreward.div(DURATION);
+            periodFinish = block.timestamp.add(DURATION);
+            emit RewardAdded(initreward);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x101000100000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: exit(), txdata: 0xe9fad8ee, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 3584
+Estimated Gas Usage: 14691 - 55116
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:720
+
+if (block.timestamp >= periodFinish) {
+            rewardRate = reward.div(DURATION);
+        } else {
+            uint256 remaining = periodFinish.sub(block.timestamp);
+            uint256 leftover = remaining.mul(rewardRate);
+            rewardRate = reward.add(leftover).div(DURATION);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 3943
+Estimated Gas Usage: 33380 - 169521
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:728
+
+lastUpdateTime = block.timestamp
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 3971
+Estimated Gas Usage: 33380 - 169521
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:729
+
+periodFinish = block.timestamp.add(DURATION)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: getReward()
+PC address: 4272
+Estimated Gas Usage: 29891 - 111692
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:700
+
+if (block.timestamp >= periodFinish) {
+            initreward = initreward.mul(50).div(100); 
+            IWEV(address(wev)).mint(address(this),initreward);
+
+            rewardRate = initreward.div(DURATION);
+            periodFinish = block.timestamp.add(DURATION);
+            emit RewardAdded(initreward);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getReward(), txdata: 0x3d18b912, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: stake(uint256)
+PC address: 5896
+Estimated Gas Usage: 29994 - 111795
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:700
+
+if (block.timestamp >= periodFinish) {
+            initreward = initreward.mul(50).div(100); 
+            IWEV(address(wev)).mint(address(this),initreward);
+
+            rewardRate = initreward.div(DURATION);
+            periodFinish = block.timestamp.add(DURATION);
+            emit RewardAdded(initreward);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: stake(uint256), txdata: 0xa694fc3a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 7107
+Estimated Gas Usage: 16593 - 57396
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:115
+
+if (a == 0) {
+            return 0;
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x12200000004000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 7133
+Estimated Gas Usage: 16644 - 57447
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:120
+
+c / a
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 7143
+Estimated Gas Usage: 16672 - 57475
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:120
+
+require(c / a == b, "SafeMath: multiplication overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 7327
+Estimated Gas Usage: 27511 - 143115
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:66
+
+require(c >= a, "SafeMath: addition overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: lastTimeRewardApplicable()
+PC address: 7956
+Estimated Gas Usage: 1067 - 1162
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:24
+
+a < b ? a : b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40140000002012010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: lastTimeRewardApplicable(), txdata: 0x80faa57d, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SeedPoolWETH
+Function name: notifyRewardAmount(uint256)
+PC address: 8783
+Estimated Gas Usage: 15646 - 56449
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/6/0xef133080d202579634ddb425a0fa43d2608e4e95.sol:96
+
+require(b <= a, errorMessage)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xef133080d202579634ddb425a0fa43d2608e4e95.sol
+Tool Runtime = 1199.0535152619996 seconds
+#############################################

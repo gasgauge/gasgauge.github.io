@@ -1,0 +1,244 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: YFMSTokenLock
+Function name: withdrawDevTokens(address,uint256)
+PC address: 993
+Estimated Gas Usage: 2921 - 3346
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:109
+
+require(now.sub(unlockDateDev) >= 21 days)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: withdrawDevTokens(address,uint256), txdata: 0x27301964000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: YFMSTokenLock
+Function name: withdrawDevTokens(address,uint256)
+PC address: 1225
+Estimated Gas Usage: 11397 - 66809
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:111
+
+YFMSToken.transfer(_to, _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20c0000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: lockRewardsTokens(address,uint256), txdata: 0x5e2462a4000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00a08231000001010101010101010100affeaffeaffeaffeaffeaffeaffeafff, value: 0x0
+Caller: [SOMEGUY], function: withdrawDevTokens(address,uint256), txdata: 0x27301964a4a4a4a4a4a4a4a4a4a4a4a4affeaffeaffeaffeaffeaffeaffeaffeaffeaffe0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: YFMSTokenLock
+Function name: lockRewardsTokens(address,uint256)
+PC address: 1938
+Estimated Gas Usage: 17127 - 127856
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:103
+
+YFMSToken.transferFrom(owner, address(this), _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 565656565656565656565656deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: lockRewardsTokens(address,uint256), txdata: 0x5e2462a4000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe02400238100202042010000404000800b7ff60feaffed28f560017feaffeb3ff, value: 0x0
+Caller: [ATTACKER], function: lockRewardsTokens(address,uint256), txdata: 0x5e2462a4565656565656565656565656affeaffeaffeaffeaffeaffeaffeaffeaffeaffe04008304080008402040020010028040affeaffee001e93f2ffeb3870fded2df, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: YFMSTokenLock
+Function name: lockRewardsTokens(address,uint256)
+PC address: 1938
+Estimated Gas Usage: 17127 - 127856
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:103
+
+YFMSToken.transferFrom(owner, address(this), _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: lockRewardsTokens(address,uint256), txdata: 0x5e2462a4000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00a08231000000000000000000000000affeaffeaffeaffeaffeaffeaffeafff, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: YFMSTokenLock
+Function name: withdrawRewardsTokens(address,uint256)
+PC address: 2215
+Estimated Gas Usage: 2920 - 3345
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:117
+
+require(now.sub(unlockDateRewards) >= 7 days)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: withdrawRewardsTokens(address,uint256), txdata: 0xb5b55e7d000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: YFMSTokenLock
+Function name: withdrawRewardsTokens(address,uint256)
+PC address: 2447
+Estimated Gas Usage: 11396 - 66808
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:119
+
+YFMSToken.transfer(_to, _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20000000000001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a4a4a4a4a4a4a4a4a4a4a4a4deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: lockRewardsTokens(address,uint256), txdata: 0x5e2462a4000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe1000000000000000000000000000000007feaffeaffeaffeaffeaffeaffeb000, value: 0x0
+Caller: [ATTACKER], function: withdrawRewardsTokens(address,uint256), txdata: 0xb5b55e7da4a4a4a4a4a4a4a4a4a4a4a4affeaffeaffeaffeaffeaffeaffeaffeaffeaffe0000000000000000000000000000000007feaffeaffeaffeaffeaffeaffeb001, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: YFMSTokenLock
+Function name: lockDevTokens(address,uint256)
+PC address: 3160
+Estimated Gas Usage: 17126 - 127855
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:94
+
+YFMSToken.transferFrom(owner, address(this), _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: lockRewardsTokens(address,uint256), txdata: 0x5e2462a4000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00a08231000001010101010101010100affeaffeaffeaffeaffeeff6befeafff, value: 0x0
+Caller: [SOMEGUY], function: lockDevTokens(address,uint256), txdata: 0xb5ddfceca4a4a4a4a4a4a4a4a4a4a4a4affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00a08231000000000000000000000000affeaffeaffeaffeaffeaffeaffeafff, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: YFMSTokenLock
+Function name: lockDevTokens(address,uint256)
+PC address: 3160
+Estimated Gas Usage: 17126 - 127855
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:94
+
+YFMSToken.transferFrom(owner, address(this), _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: lockDevTokens(address,uint256), txdata: 0xb5ddfcec000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00a08231000000000000000000000000affeaffeaffeaffeaffeaffeaffeafff, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: YFMSTokenLock
+Function name: withdrawRewardsTokens(address,uint256)
+PC address: 3251
+Estimated Gas Usage: 2848 - 3273
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/3/0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol:41
+
+require(b <= a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: withdrawRewardsTokens(address,uint256), txdata: 0xb5b55e7d000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xafd77fef1818a9d94623a8a707e0fdcefe5804f0.sol
+Tool Runtime = 148.91257292799855 seconds
+#############################################

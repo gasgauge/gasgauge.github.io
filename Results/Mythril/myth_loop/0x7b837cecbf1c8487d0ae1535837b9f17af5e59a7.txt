@@ -1,0 +1,111 @@
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: MultiMintRaffle
+Function name: mint(address[],uint256[])
+PC address: 1471
+Estimated Gas Usage: 7189 - 83789
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop8/0x7b837cecbf1c8487d0ae1535837b9f17af5e59a7.sol:72
+
+raffle
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000380, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: e0e0e0e0e0e0e0e0e0e0e0e0deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: mint(address[],uint256[]), txdata: 0xe467f7e000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: MultiMintRaffle
+Function name: mint(address[],uint256[])
+PC address: 1711
+Estimated Gas Usage: 7189 - 83789
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop8/0x7b837cecbf1c8487d0ae1535837b9f17af5e59a7.sol:72
+
+raffle.mint(_users[i], _amounts[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x120022840800d202, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38b000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: mint(address[],uint256[]), txdata: 0xe467f7e00000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000028b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: MultiMintRaffle
+Function name: mint(address[],uint256[])
+PC address: 1711
+Estimated Gas Usage: 7189 - 83789
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop8/0x7b837cecbf1c8487d0ae1535837b9f17af5e59a7.sol:72
+
+raffle.mint(_users[i], _amounts[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: mint(address[],uint256[]), txdata: 0xe467f7e000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: MultiMintRaffle
+Function name: mint(address[],uint256[])
+PC address: 1711
+Estimated Gas Usage: 7189 - 83789
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop8/0x7b837cecbf1c8487d0ae1535837b9f17af5e59a7.sol:72
+
+raffle.mint(_users[i], _amounts[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000380, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: e0e0e0e0e0e0e0e0e0e0e0e0deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: mint(address[],uint256[]), txdata: 0xe467f7e000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x7b837cecbf1c8487d0ae1535837b9f17af5e59a7.sol
+Tool Runtime = 399.36622948001605 seconds
+#############################################

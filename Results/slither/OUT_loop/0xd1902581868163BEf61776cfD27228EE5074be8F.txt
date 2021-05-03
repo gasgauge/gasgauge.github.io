@@ -1,0 +1,166 @@
+Compilation warnings/errors on ./loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol:
+./loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol:328:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+StakingRewards.rewardPerToken() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#738-756) performs a multiplication on the result of a division:
+	-rewardPerTokenStored.add(lastTimeRewardApplicable().sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply).mul(2).div(3)) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#746-755)
+StakingRewards.notifyRewardAmount(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#857-885) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(rewardsDuration) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#865)
+	-leftover = remaining.mul(rewardRate) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#868)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Accrual.updateFees() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#961-993) uses a dangerous strict equality:
+	- contractBalance == 0 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#970)
+Accrual.updateFees() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#961-993) uses a dangerous strict equality:
+	- difference == 0 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#977)
+Accrual.updateFees() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#961-993) uses a dangerous strict equality:
+	- ratio == 0 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#984)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in Accrual.claimFor(address) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1001-1038):
+	External calls:
+	- accrualToken.safeTransfer(recipient,share) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1034)
+	State variables written after the call(s):
+	- accruedBalance = accrualToken.balanceOf(address(this)) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1037)
+Reentrancy in StakingRewards.exit() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#850-853):
+	External calls:
+	- withdraw(_balances[msg.sender]) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#851)
+		- stakingToken.safeTransfer(msg.sender,amount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#829)
+		- (success,returndata) = address(token).call(data) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#430)
+	- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+		- (success,returndata) = address(token).call(data) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#430)
+		- rewardsToken.safeTransfer(msg.sender,reward.mul(2).div(3)) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#843)
+		- rewardsToken.safeTransfer(arcDAO,reward.sub(reward.mul(2).div(3))) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#844)
+	State variables written after the call(s):
+	- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+		- lastUpdateTime = lastTimeRewardApplicable() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#667)
+	- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+		- rewardPerTokenStored = actualRewardPerToken() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#666)
+	- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+		- rewards[msg.sender] = 0 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#841)
+		- rewards[account] = actualEarned(account) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#670)
+	- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#671)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+StakingRewardsAccrual.getUserBalance(address).owner (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1067) shadows:
+	- Ownable.owner() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#549-551) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+StakingRewardsAccrualCapped.isVerified(address) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1152-1167) has external calls inside a loop: kyfContract.checkVerified(_user) == true (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1161)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in StakingRewards.exit() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#850-853):
+	External calls:
+	- withdraw(_balances[msg.sender]) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#851)
+		- stakingToken.safeTransfer(msg.sender,amount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#829)
+		- (success,returndata) = address(token).call(data) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#430)
+	- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+		- (success,returndata) = address(token).call(data) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#430)
+		- rewardsToken.safeTransfer(msg.sender,reward.mul(2).div(3)) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#843)
+		- rewardsToken.safeTransfer(arcDAO,reward.sub(reward.mul(2).div(3))) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#844)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#846)
+		- getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#852)
+Reentrancy in StakingRewards.getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#834-848):
+	External calls:
+	- rewardsToken.safeTransfer(msg.sender,reward.mul(2).div(3)) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#843)
+	- rewardsToken.safeTransfer(arcDAO,reward.sub(reward.mul(2).div(3))) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#844)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#846)
+Reentrancy in StakingRewards.recoverERC20(address,uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#888-903):
+	External calls:
+	- IERC20(tokenAddress).safeTransfer(owner(),tokenAmount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#901)
+	Event emitted after the call(s):
+	- Recovered(tokenAddress,tokenAmount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#902)
+Reentrancy in StakingRewards.stake(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#796-813):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#810)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#812)
+Reentrancy in StakingRewards.withdraw(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#815-832):
+	External calls:
+	- stakingToken.safeTransfer(msg.sender,amount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#829)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#831)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+StakingRewards.getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#834-848) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#840)
+StakingRewards.notifyRewardAmount(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#857-885) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#864)
+	- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#877-880)
+StakingRewards.setRewardsDuration(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#905-917) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(periodFinish == 0 || block.timestamp > periodFinish,Prev period must be complete before changing duration for new period) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#911-914)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#321-330) uses assembly
+	- INLINE ASM (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#328-329)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+StakingRewardsAccrualCapped.isVerified(address) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1152-1167) compares to a boolean constant:
+	-kyfContract.checkVerified(_user) == true (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1161)
+StakingRewardsAccrualCapped.setApprovedKYFInstance(address,bool) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1193-1222) compares to a boolean constant:
+	-_status == true (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1200)
+StakingRewardsAccrualCapped.stake(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1226-1245) compares to a boolean constant:
+	-require(bool,string)(isVerified(msg.sender) == true,Must be KYF registered to participate) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1239-1242)
+StakingRewardsAccrualCapped.getReward() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1247-1257) compares to a boolean constant:
+	-require(bool,string)(tokensClaimable == true,Tokens cannnot be claimed yet) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1251-1254)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#63) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#155) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#360-366):
+	- (success) = recipient.call.value(amount)() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#364)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#418-437):
+	- (success,returndata) = address(token).call(data) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#430)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter RewardsDistributionRecipient.setRewardsDistribution(address)._rewardsDistribution (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#617) is not in mixedCase
+Parameter StakingRewards.setRewardsDuration(uint256)._rewardsDuration (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#906) is not in mixedCase
+Parameter StakingRewardsAccrualCapped.isVerified(address)._user (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1153) is not in mixedCase
+Parameter StakingRewardsAccrualCapped.setStakeHardCap(uint256)._hardCap (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1172) is not in mixedCase
+Parameter StakingRewardsAccrualCapped.setTokensClaimable(bool)._enabled (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1183) is not in mixedCase
+Parameter StakingRewardsAccrualCapped.setApprovedKYFInstance(address,bool)._kyfContract (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1194) is not in mixedCase
+Parameter StakingRewardsAccrualCapped.setApprovedKYFInstance(address,bool)._status (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1195) is not in mixedCase
+Parameter StakingRewardsAccrualCapped.stake(uint256)._amount (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1227) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#575-578)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#584-586)
+rewardPerToken() should be declared external:
+	- StakingRewards.rewardPerToken() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#738-756)
+earned(address) should be declared external:
+	- StakingRewards.earned(address) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#771-784)
+getRewardForDuration() should be declared external:
+	- StakingRewards.getRewardForDuration() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#786-792)
+recoverERC20(address,uint256) should be declared external:
+	- StakingRewards.recoverERC20(address,uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#888-903)
+claimFees() should be declared external:
+	- Accrual.claimFees() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#995-999)
+getApprovedKyfInstancesArray() should be declared external:
+	- StakingRewardsAccrualCapped.getApprovedKyfInstancesArray() (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1144-1150)
+setStakeHardCap(uint256) should be declared external:
+	- StakingRewardsAccrualCapped.setStakeHardCap(uint256) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1171-1180)
+setTokensClaimable(bool) should be declared external:
+	- StakingRewardsAccrualCapped.setTokensClaimable(bool) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1182-1191)
+setApprovedKYFInstance(address,bool) should be declared external:
+	- StakingRewardsAccrualCapped.setApprovedKYFInstance(address,bool) (loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol#1193-1222)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xd1902581868163BEf61776cfD27228EE5074be8F.sol analyzed (14 contracts with 46 detectors), 46 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xd1902581868163BEf61776cfD27228EE5074be8F.sol
+Tool Runtime = 3.0720347149981535 seconds
+#############################################

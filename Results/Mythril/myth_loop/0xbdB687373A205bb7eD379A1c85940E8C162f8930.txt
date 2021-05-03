@@ -1,0 +1,1117 @@
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: DeedImplementation
+Function name: setBalance(uint256,bool)
+PC address: 1412
+Estimated Gas Usage: 10256 - 65527
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:146
+
+_owner.send(address(this).balance - newValue)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x910000040008000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x207f80370002400, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x1
+Caller: [CREATOR], function: setRegistrar(address), txdata: 0xfaab9d39000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setBalance(uint256,bool), txdata: 0xb0c8097200000000000000000000000000000000000000000000000000000000000000003939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: DeedImplementation
+Function name: closeDeed(uint256)
+PC address: 1647
+Estimated Gas Usage: 13450 - 104009
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:156
+
+1000 - refundRatio
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: closeDeed(uint256), txdata: 0xbbe427714001040800020180000801400240002008102002080480012010010140014114, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DeedImplementation
+Function name: closeDeed(uint256)
+PC address: 2042
+Estimated Gas Usage: 13450 - 104009
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:190
+
+_owner.send(address(this).balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: closeDeed(uint256), txdata: 0xbbe427710000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: DeedImplementation
+Function name: closeDeed(uint256)
+PC address: 2042
+Estimated Gas Usage: 13438 - 103997
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:190
+
+_owner.send(address(this).balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x1
+Caller: [CREATOR], function: setRegistrar(address), txdata: 0xfaab9d39000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: closeDeed(uint256), txdata: 0xbbe427713939393939393939393939393939393939393939393939393939393939393939, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: HashRegistrar
+Function name: isAllowed(bytes32,uint256)
+PC address: 3477
+Estimated Gas Usage: 1345 - 2381
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:596
+
+registryStarted + ((launchLength * (uint(_hash) >> 128)) >> 128)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000040000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc, value: 0x0
+Caller: [SOMEGUY], function: isAllowed(bytes32,uint256), txdata: 0x935033370de3858d59d63c1086380000000c45cdfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: setResolver(address)
+PC address: 4878
+Estimated Gas Usage: 4461 - 39687
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1470
+
+ens.setResolver(baseNode, resolver)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc0200000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setApprovalForAll(address,bool), txdata: 0xa22cb46500000000000000000000000001082010010002020201208008400108080120000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: setResolver(address), txdata: 0x4e543b260000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: ownerOf(uint256)
+PC address: 4932
+Estimated Gas Usage: 1210 - 1495
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1452
+
+require(expiries[tokenId] > now)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80040400082204, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: ownerOf(uint256), txdata: 0x6352211e0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: available(uint256)
+PC address: 5469
+Estimated Gas Usage: 1172 - 1457
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1481
+
+if(expiries[id] + GRACE_PERIOD >= now) {
+            return false;
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: available(uint256), txdata: 0x96e494e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: available(uint256)
+PC address: 5488
+Estimated Gas Usage: 1997 - 2282
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1486
+
+now > transferPeriodEnds || previousRegistrar.state(bytes32(id)) == Registrar.Mode.Open
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: available(uint256), txdata: 0x96e494e80000000000000000000000000000000000000000000000000000001080000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: BaseRegistrarImplementation
+Function name: available(uint256)
+PC address: 5717
+Estimated Gas Usage: 4555 - 39732
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1486
+
+previousRegistrar.state(bytes32(id)) == Registrar.Mode.Open
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: available(uint256), txdata: 0x96e494e80040000408010420002080204040080104404000408000804010000800000001, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: renew(uint256,uint256)
+PC address: 6691
+Estimated Gas Usage: 5536 - 41233
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1510
+
+require(expiries[id] + GRACE_PERIOD >= now)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a7a7a7a7a7a7a7a7a7a7a7a70200010101010001010101010101010100010000a7a7a7a7a7a7a7a7a7a7a7a7010101000101010101020001000101000101010100000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: renew(uint256,uint256), txdata: 0xc475abff00000000000000000000000000000000000000000000000000000000000000000707070707070707070707070707070707070707070707070707070707070707, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: acceptRegistrarTransfer(bytes32,address,uint256)
+PC address: 7499
+Estimated Gas Usage: 6269 - 41776
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1535
+
+require(transferPeriodEnds > now)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3ff102000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 1010101010101010101010100000000000000000000000000000000000000000101010101010101010101010deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [ATTACKER], function: acceptRegistrarTransfer(bytes32,address,uint256), txdata: 0xea9e107a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: acceptRegistrarTransfer(bytes32,address,uint256)
+PC address: 7778
+Estimated Gas Usage: 8940 - 79711
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1539
+
+require(registrationDate < now - MIGRATION_LOCK_PERIOD)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400080240, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 1010101010101010101010100000000000000000000000000000000000000000101010101010101010101010deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [ATTACKER], function: acceptRegistrarTransfer(bytes32,address,uint256), txdata: 0xea9e107a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9092
+Estimated Gas Usage: 6454 - 42151
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1493
+
+require(available(id))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20101080000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 4747474747474747474747470000000000000000000000000000000000000000474747474747474747474747000000000000000000010000000100000000000000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: register(uint256,address,uint256), txdata: 0xfca247ac0000000000000000000000000000000000000000000000000000000000000000a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9103
+Estimated Gas Usage: 32609 - 166592
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1494
+
+now + GRACE_PERIOD
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c0000400000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a20201000080010100010101000100000101010001a2a2a2a2a2a2a2a2a2a2a2a2000000000000000000000000000000000000000100000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: register(uint256,address,uint256), txdata: 0xfca247ac00000000000000000000000000000000000000000000000000000000000000000707070707070707070707070000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffff7dfb9be77df81, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9110
+Estimated Gas Usage: 32609 - 166592
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1494
+
+now + duration
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2100000000040004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a20000000000000000000000000040000000000000a2a2a2a2a2a2a2a2a2a2a2a2000000000000000000000000000000000000000000000000000002000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: register(uint256,address,uint256), txdata: 0xfca247ac000000000000000000000000000000000000000000000000000000000000000007070707070707070707070700000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000080c0e, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9111
+Estimated Gas Usage: 32609 - 166592
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1494
+
+now + duration + GRACE_PERIOD
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a20440200000004000404040000000014008082010a2a2a2a2a2a2a2a2a2a2a2a2800000808004000010024008000001010080008000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: register(uint256,address,uint256), txdata: 0xfca247ac0100010408008000202008000040011000100100004080020001008000400000070707070707070707070707040004000000400004004000200000800080000200000000000000000000000000000000000000000000000000000000006f88a1, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9118
+Estimated Gas Usage: 6499 - 42196
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1494
+
+require(now + duration + GRACE_PERIOD > now + GRACE_PERIOD)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 4747474747474747474747470000000000000000000000000000000000000040474747474747474747474747404040004040808080808080808080008080018040020410200008000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: register(uint256,address,uint256), txdata: 0xfca247ac0000000000000000000000000000000000000000000000000000000000000000a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9126
+Estimated Gas Usage: 32609 - 166592
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1496
+
+now + duration
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2100000000040004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a20000000000000000000000000040000000000000a2a2a2a2a2a2a2a2a2a2a2a2000000000000000000000000000000000000000000000000000002000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: register(uint256,address,uint256), txdata: 0xfca247ac000000000000000000000000000000000000000000000000000000000000000007070707070707070707070700000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000080c0e, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9396
+Estimated Gas Usage: 32609 - 166592
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1502
+
+ens.setSubnodeOwner(baseNode, bytes32(id), owner)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a2deadbeefdeadbeefdeadbeefdeadbeefdeadbeefa2a2a2a2a2a2a2a2a2a2a2a2000000000000000000000000000000100000000800000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: register(uint256,address,uint256), txdata: 0xfca247ac000802004000800000010002008000000002000000800040040000400400018007070707070707070707070704000001200204000280008002804010044008012136850080c900810a80148844808140048900859367622b1935ffffff804040, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9396
+Estimated Gas Usage: 32609 - 166592
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1502
+
+ens.setSubnodeOwner(baseNode, bytes32(id), owner)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a20100000101000100000000000001000000010000a2a2a2a2a2a2a2a2a2a2a2a2010101010001000101000001010100010001000000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: register(uint256,address,uint256), txdata: 0xfca247ac00000000000000000000000000000000000000000000000000000000000000000707070707070707070707070000000000000000000000000000000000000001fffffffffffffffbfffffdfffffffffffffffffffffffffffffeffffff010acd, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BaseRegistrarImplementation
+Function name: register(uint256,address,uint256)
+PC address: 9501
+Estimated Gas Usage: 32609 - 166592
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:1506
+
+now + duration
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2100000000040004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a2a2a2a2a2a2a2a2a2a2a2a20000000000000000000000000040000000000000a2a2a2a2a2a2a2a2a2a2a2a2000000000000000000000000000000000000000000000000000002000901d12ebe1b195e5aa8748e62bd7734ae19b51f, value: 0x0
+Caller: [CREATOR], function: addController(address), txdata: 0xa7fc7a07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: register(uint256,address,uint256), txdata: 0xfca247ac000000000000000000000000000000000000000000000000000000000000000007070707070707070707070700000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000080c0e, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: HashRegistrar
+Function name: releaseDeed(bytes32)
+PC address: 9573
+Estimated Gas Usage: 1401 - 2346
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:557
+
+if (!isAllowed(_hash, now)) {
+            return Mode.NotYetAvailable;
+        } else if (now < entry.registrationDate) {
+            if (now < entry.registrationDate - revealPeriod) {
+                return Mode.Auction;
+            } else {
+                return Mode.Reveal;
+            }
+        } else {
+            if (entry.highestBid == 0) {
+                return Mode.Open;
+            } else {
+                return Mode.Owned;
+            }
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: releaseDeed(bytes32), txdata: 0x0230a07c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: HashRegistrar
+Function name: releaseDeed(bytes32)
+PC address: 9595
+Estimated Gas Usage: 2232 - 3177
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:559
+
+if (now < entry.registrationDate) {
+            if (now < entry.registrationDate - revealPeriod) {
+                return Mode.Auction;
+            } else {
+                return Mode.Reveal;
+            }
+        } else {
+            if (entry.highestBid == 0) {
+                return Mode.Open;
+            } else {
+                return Mode.Owned;
+            }
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1040000028220, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: releaseDeed(bytes32), txdata: 0x0230a07c0000000000000001020201010102117000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: HashRegistrar
+Function name: startAuctions(bytes32[])
+PC address: 9618
+Estimated Gas Usage: 33823 - 169369
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:560
+
+if (now < entry.registrationDate - revealPeriod) {
+                return Mode.Auction;
+            } else {
+                return Mode.Reveal;
+            }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000000000000000000000000000000000000000001048040008020100901d12ebe1b195e5aa8748e62bd7734ae19b51f0800010002, value: 0x0
+Caller: [SOMEGUY], function: startAuctions(bytes32[]), txdata: 0xe27fe50f0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000110100550040018000040200104000440020080800000401040200100200000011010055004001800004020010400044002008080000040104020010020, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 13997
+Estimated Gas Usage: 18100 - 232785
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:651
+
+ens
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x3b, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000004804004000480800000000000010280, value: 0x0
+Caller: [ATTACKER], function: eraseNode(bytes32[]), txdata: 0xde10f04b0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14222
+Estimated Gas Usage: 19763 - 234448
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:651
+
+ens.setSubnodeOwner(node, labels[idx], address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef80ac58cd0000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: eraseNode(bytes32[]), txdata: 0xde10f04b0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14222
+Estimated Gas Usage: 27426 - 347640
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:651
+
+ens.setSubnodeOwner(node, labels[idx], address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2f, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000101010101010101010101010101010101010101010101010101010180, value: 0x0
+Caller: [ATTACKER], function: eraseNode(bytes32[]), txdata: 0xde10f04b00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0000dfc7e3f901000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14222
+Estimated Gas Usage: 12100 - 121256
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:651
+
+ens.setSubnodeOwner(node, labels[idx], address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000100010101010101010101010101010101010101010101010101010402, value: 0x0
+Caller: [ATTACKER], function: eraseNode(bytes32[]), txdata: 0xde10f04b000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010037800000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14344
+Estimated Gas Usage: 10437 - 119593
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:660
+
+ens
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x464400c1cea0cc2b8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x44040081cea0442b2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000101010101010101010101010101010101010101010101010101010180, value: 0x0
+Caller: [ATTACKER], function: eraseNode(bytes32[]), txdata: 0xde10f04b000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14539
+Estimated Gas Usage: 27426 - 347640
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:660
+
+ens.setResolver(node, address(0x0))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef01ffc9a70000000000000000000000000000000000000000000000000000000020, value: 0x0
+Caller: [SOMEGUY], function: eraseNode(bytes32[]), txdata: 0xde10f04b00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14539
+Estimated Gas Usage: 12100 - 121256
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:660
+
+ens.setResolver(node, address(0x0))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000101010001010101010101010101010101010101010101010101010180, value: 0x0
+Caller: [SOMEGUY], function: eraseNode(bytes32[]), txdata: 0xde10f04b000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000011c343f58d73a4e728037fa5b8f3da3c400000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14539
+Estimated Gas Usage: 19763 - 234448
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:660
+
+ens.setResolver(node, address(0x0))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000080, value: 0x0
+Caller: [SOMEGUY], function: eraseNode(bytes32[]), txdata: 0xde10f04b0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14565
+Estimated Gas Usage: 25763 - 345977
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:661
+
+ens
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef01ffc9a70000000000000000000000000000000000000000000000000000000080, value: 0x0
+Caller: [SOMEGUY], function: eraseNode(bytes32[]), txdata: 0xde10f04b000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008c0040782c00f00000000000000000400000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14760
+Estimated Gas Usage: 27426 - 347640
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:661
+
+ens.setOwner(node, address(0x0))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef01ffc9a70000000000000000000000000000000000000000000000000000000020, value: 0x0
+Caller: [SOMEGUY], function: eraseNode(bytes32[]), txdata: 0xde10f04b00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: HashRegistrar
+Function name: eraseNode(bytes32[])
+PC address: 14760
+Estimated Gas Usage: 18100 - 232785
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:661
+
+ens.setOwner(node, address(0x0))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x3b, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000004804004000480800000000000010280, value: 0x0
+Caller: [ATTACKER], function: eraseNode(bytes32[]), txdata: 0xde10f04b0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: HashRegistrar
+Function name: startAuction(bytes32)
+PC address: 14862
+Estimated Gas Usage: 1148 - 1243
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:253
+
+now >= registryStarted && now <= registryStarted + (365 * 4) * 1 days
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2300000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002, value: 0x0
+Caller: [SOMEGUY], function: startAuction(bytes32), txdata: 0xede8acdb1010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: HashRegistrar
+Function name: startAuction(bytes32)
+PC address: 14882
+Estimated Gas Usage: 1168 - 1263
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:253
+
+now >= registryStarted && now <= registryStarted + (365 * 4) * 1 days && ens.owner(rootNode) == address(this)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: startAuction(bytes32), txdata: 0xede8acdb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: HashRegistrar
+Function name: startAuctions(bytes32[])
+PC address: 15053
+Estimated Gas Usage: 67431 - 335839
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:253
+
+ens.owner(rootNode)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80040002041322, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000040480208002000800400100000010081040000402004000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f0001800002, value: 0x0
+Caller: [SOMEGUY], function: startAuctions(bytes32[]), txdata: 0xe27fe50f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000004000001500000200218000b00294a08a40002000001010000000000040000000003e6e3d0b811c710080a2854c00010080000000000000000000000000000000003e6e3d0b811c710080a2854c00010080000000000000000000000000000000003e6e3d0b811c710080a2854c000100800000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: HashRegistrar
+Function name: startAuction(bytes32)
+PC address: 15139
+Estimated Gas Usage: 1188 - 1283
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:253
+
+require(now >= registryStarted && now <= registryStarted + (365 * 4) * 1 days && ens.owner(rootNode) == address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008, value: 0x0
+Caller: [ATTACKER], function: startAuction(bytes32), txdata: 0xede8acdb0808080808080808080808080808080808080808080808080808080808080808, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: HashRegistrar
+Function name: startAuction(bytes32)
+PC address: 15266
+Estimated Gas Usage: 25499 - 122063
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol:627
+
+now + totalAuctionLength
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x30880, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000000000000000000000000000000000000000000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f00000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffff876, value: 0x0
+Caller: [ATTACKER], function: startAuction(bytes32), txdata: 0xede8acdb00000000000000000008000108011dee01808008080802012008400010000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol
+Tool Runtime = 11884.518214790995 seconds
+#############################################

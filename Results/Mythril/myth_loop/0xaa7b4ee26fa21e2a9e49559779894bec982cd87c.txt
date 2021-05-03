@@ -1,0 +1,249 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: StakingRewardsFactory
+Function name: constructor
+PC address: 273
+Estimated Gas Usage: 8451 - 32326
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:761
+
+require(_stakingRewardsGenesis >= block.timestamp, 'StakingRewardsFactory::constructor: genesis too soon')
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: StakingRewardsFactory
+Function name: stakingTokens(uint256)
+PC address: 912
+Estimated Gas Usage: 1057 - 1152
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:746
+
+address[] public stakingTokens
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2004040000004612, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4040000000001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: stakingTokens(uint256), txdata: 0x344e5e340000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: StakingRewardsFactory
+Function name: notifyRewardAmount(address)
+PC address: 2129
+Estimated Gas Usage: 1137 - 1232
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:793
+
+require(block.timestamp >= stakingRewardsGenesis, 'StakingRewardsFactory::notifyRewardAmount: not ready')
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000002001230, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: notifyRewardAmount(address), txdata: 0x81e162980000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: StakingRewardsFactory
+Function name: notifyRewardAmounts()
+PC address: 2717
+Estimated Gas Usage: 18795 - 109858
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:803
+
+IERC20(rewardsToken).transfer(info.stakingRewards, rewardAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8400080000010004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: deploy(address,uint256), txdata: 0x4956eaf080808080808080808080808000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: notifyRewardAmounts(), txdata: 0xae741d8d, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: StakingRewardsFactory
+Function name: notifyRewardAmount(address)
+PC address: 3010
+Estimated Gas Usage: 14608 - 105246
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:806
+
+StakingRewards(info.stakingRewards).notifyRewardAmount(rewardAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: deploy(address,uint256), txdata: 0x4956eaf000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000040000, value: 0x0
+Caller: [SOMEGUY], function: notifyRewardAmount(address), txdata: 0x81e162985656565656565656565656560000000000000000000000000000000000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: StakingRewardsFactory
+Function name: notifyRewardAmount(address)
+PC address: 3010
+Estimated Gas Usage: 14608 - 105246
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:806
+
+StakingRewards(info.stakingRewards).notifyRewardAmount(rewardAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: deploy(address,uint256), txdata: 0x4956eaf0000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000004000000, value: 0x0
+Caller: [SOMEGUY], function: notifyRewardAmount(address), txdata: 0x81e16298565656565656565656565656deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: StakingRewards
+Function name: notifyRewardAmount(uint256)
+PC address: 3041
+Estimated Gas Usage: 14620 - 55045
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:688
+
+if (block.timestamp >= periodFinish) {
+            rewardRate = reward.div(rewardsDuration);
+        } else {
+            uint256 remaining = periodFinish.sub(block.timestamp);
+            uint256 leftover = remaining.mul(rewardRate);
+            rewardRate = reward.add(leftover).div(rewardsDuration);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x142040001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: notifyRewardAmount(uint256), txdata: 0x3c6b16ab0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: StakingRewardsFactory
+Function name: notifyRewardAmounts()
+PC address: 3277
+Estimated Gas Usage: 18795 - 109858
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:785
+
+stakingTokens.length
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21080008000002000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: deploy(address,uint256), txdata: 0x4956eaf000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000880801001, value: 0x0
+Caller: [ATTACKER], function: notifyRewardAmounts(), txdata: 0xae741d8d, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: StakingRewards
+Function name: lastTimeRewardApplicable()
+PC address: 7602
+Estimated Gas Usage: 1023 - 1118
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/1/0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol:184
+
+a < b ? a : b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000c0202, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: lastTimeRewardApplicable(), txdata: 0x80faa57d, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xaa7b4ee26fa21e2a9e49559779894bec982cd87c.sol
+Tool Runtime = 797.6756384769978 seconds
+#############################################

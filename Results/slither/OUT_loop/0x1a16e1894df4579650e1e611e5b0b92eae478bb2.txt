@@ -1,0 +1,258 @@
+Compilation warnings/errors on ./loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol:
+./loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol:278:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+C42LiquidityMinter.pendingC42(uint256,address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1234-1245) performs a multiplication on the result of a division:
+	-c42Reward = multiplier.mul(c42PerBlock).mul(pool.allocPoint).div(totalAllocPoint) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1241)
+	-accC42PerShare = accC42PerShare.add(c42Reward.mul(1e12).div(lpSupply)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1242)
+C42LiquidityMinter.updatePool(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1256-1272) performs a multiplication on the result of a division:
+	-c42Reward = multiplier.mul(c42PerBlock).mul(pool.allocPoint).div(totalAllocPoint) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1267)
+	-pool.accC42PerShare = pool.accC42PerShare.add(c42Reward.mul(1e12).div(lpSupply)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1270)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+C42LiquidityMinter.migrate(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1210-1219) uses a dangerous strict equality:
+	- require(bool,string)(bal == newLpToken.balanceOf(address(this)),migrate: bad) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1217)
+C42LiquidityMinter.updatePool(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1256-1272) uses a dangerous strict equality:
+	- lpSupply == 0 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1262)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in C42LiquidityMinter.add(uint256,IERC20,bool) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1182-1194):
+	External calls:
+	- massUpdatePools() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1184)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	State variables written after the call(s):
+	- poolInfo.push(PoolInfo(_allocPoint,_lpToken,lastRewardBlock,0)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1188-1193)
+	- totalAllocPoint = totalAllocPoint.add(_allocPoint) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1187)
+Reentrancy in C42LiquidityMinter.deposit(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1275-1291):
+	External calls:
+	- updatePool(_pid) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1278)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	- safeC42Transfer(msg.sender,pending) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1282)
+		- c42.transfer(_to,c42Bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1325)
+		- c42.transfer(_to,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1327)
+	- pool.lpToken.safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1286)
+	State variables written after the call(s):
+	- user.amount = user.amount.add(_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1287)
+	- user.rewardDebt = user.amount.mul(pool.accC42PerShare).div(1e12) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1289)
+Reentrancy in C42LiquidityMinter.emergencyWithdraw(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1312-1319):
+	External calls:
+	- pool.lpToken.safeTransfer(address(msg.sender),user.amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1315)
+	State variables written after the call(s):
+	- user.amount = 0 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1317)
+	- user.rewardDebt = 0 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1318)
+Reentrancy in C42LiquidityMinter.migrate(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1210-1219):
+	External calls:
+	- lpToken.safeApprove(address(migrator),bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1215)
+	- newLpToken = migrator.migrate(lpToken) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1216)
+	State variables written after the call(s):
+	- pool.lpToken = newLpToken (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1218)
+Reentrancy in C42LiquidityMinter.set(uint256,uint256,bool) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1196-1202):
+	External calls:
+	- massUpdatePools() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1198)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	State variables written after the call(s):
+	- poolInfo[_pid].allocPoint = _allocPoint (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1201)
+	- totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1200)
+Reentrancy in C42LiquidityMinter.updatePool(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1256-1272):
+	External calls:
+	- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+	- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	State variables written after the call(s):
+	- pool.accC42PerShare = pool.accC42PerShare.add(c42Reward.mul(1e12).div(lpSupply)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1270)
+	- pool.lastRewardBlock = block.number (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1271)
+Reentrancy in C42LiquidityMinter.withdraw(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1294-1309):
+	External calls:
+	- updatePool(_pid) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1298)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	- safeC42Transfer(msg.sender,pending) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1301)
+		- c42.transfer(_to,c42Bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1325)
+		- c42.transfer(_to,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1327)
+	State variables written after the call(s):
+	- user.amount = user.amount.sub(_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1304)
+Reentrancy in C42LiquidityMinter.withdraw(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1294-1309):
+	External calls:
+	- updatePool(_pid) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1298)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	- safeC42Transfer(msg.sender,pending) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1301)
+		- c42.transfer(_to,c42Bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1325)
+		- c42.transfer(_to,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1327)
+	- pool.lpToken.safeTransfer(address(msg.sender),_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1305)
+	State variables written after the call(s):
+	- user.rewardDebt = user.amount.mul(pool.accC42PerShare).div(1e12) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1307)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+EnumerableSet.enumerate(EnumerableSet.AddressSet).i (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#505) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+C42LiquidityMinter.updatePool(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1256-1272) ignores return value by c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+C42LiquidityMinter.updatePool(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1256-1272) ignores return value by c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+C42LiquidityMinter.safeC42Transfer(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1322-1329) ignores return value by c42.transfer(_to,c42Bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1325)
+C42LiquidityMinter.safeC42Transfer(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1322-1329) ignores return value by c42.transfer(_to,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1327)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#902) shadows:
+	- ERC20Detailed.name() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#911-913) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#902) shadows:
+	- ERC20Detailed.symbol() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#919-921) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#902) shadows:
+	- ERC20Detailed.decimals() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#935-937) (function)
+Clover42Token.constructor(string,string,uint8,uint256).name (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1100) shadows:
+	- ERC20Detailed.name() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#911-913) (function)
+Clover42Token.constructor(string,string,uint8,uint256).symbol (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1101) shadows:
+	- ERC20Detailed.symbol() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#919-921) (function)
+Clover42Token.constructor(string,string,uint8,uint256).decimals (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1102) shadows:
+	- ERC20Detailed.decimals() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#935-937) (function)
+Clover42Token.constructor(string,string,uint8,uint256).totalSupply (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1103) shadows:
+	- ERC20.totalSupply() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#694-696) (function)
+	- IERC20.totalSupply() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#18) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in C42LiquidityMinter.deposit(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1275-1291):
+	External calls:
+	- updatePool(_pid) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1278)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	- safeC42Transfer(msg.sender,pending) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1282)
+		- c42.transfer(_to,c42Bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1325)
+		- c42.transfer(_to,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1327)
+	- pool.lpToken.safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1286)
+	Event emitted after the call(s):
+	- Deposit(msg.sender,_pid,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1290)
+Reentrancy in C42LiquidityMinter.emergencyWithdraw(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1312-1319):
+	External calls:
+	- pool.lpToken.safeTransfer(address(msg.sender),user.amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1315)
+	Event emitted after the call(s):
+	- EmergencyWithdraw(msg.sender,_pid,user.amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1316)
+Reentrancy in C42LiquidityMinter.withdraw(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1294-1309):
+	External calls:
+	- updatePool(_pid) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1298)
+		- c42.mint(devaddr,c42Reward.div(10)) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1268)
+		- c42.mint(address(this),c42Reward) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1269)
+	- safeC42Transfer(msg.sender,pending) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1301)
+		- c42.transfer(_to,c42Bal) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1325)
+		- c42.transfer(_to,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1327)
+	- pool.lpToken.safeTransfer(address(msg.sender),_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1305)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,_pid,_amount) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1308)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#271-280) uses assembly
+	- INLINE ASM (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#278-279)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#88) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#248) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#322) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#400) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#542) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#573) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#653) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#886) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#943) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#983) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1030) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1057) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1087) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1113) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#310-316):
+	- (success) = recipient.call.value(amount)() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#314)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#375-394):
+	- (success,returndata) = address(token).call(data) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#387)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter C42LiquidityMinter.add(uint256,IERC20,bool)._allocPoint (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1182) is not in mixedCase
+Parameter C42LiquidityMinter.add(uint256,IERC20,bool)._lpToken (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1182) is not in mixedCase
+Parameter C42LiquidityMinter.add(uint256,IERC20,bool)._withUpdate (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1182) is not in mixedCase
+Parameter C42LiquidityMinter.set(uint256,uint256,bool)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1196) is not in mixedCase
+Parameter C42LiquidityMinter.set(uint256,uint256,bool)._allocPoint (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1196) is not in mixedCase
+Parameter C42LiquidityMinter.set(uint256,uint256,bool)._withUpdate (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1196) is not in mixedCase
+Parameter C42LiquidityMinter.setMigrator(IMigratorC42)._migrator (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1205) is not in mixedCase
+Parameter C42LiquidityMinter.migrate(uint256)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1210) is not in mixedCase
+Parameter C42LiquidityMinter.getMultiplier(uint256,uint256)._from (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1222) is not in mixedCase
+Parameter C42LiquidityMinter.getMultiplier(uint256,uint256)._to (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1222) is not in mixedCase
+Parameter C42LiquidityMinter.pendingC42(uint256,address)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1234) is not in mixedCase
+Parameter C42LiquidityMinter.pendingC42(uint256,address)._user (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1234) is not in mixedCase
+Parameter C42LiquidityMinter.updatePool(uint256)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1256) is not in mixedCase
+Parameter C42LiquidityMinter.deposit(uint256,uint256)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1275) is not in mixedCase
+Parameter C42LiquidityMinter.deposit(uint256,uint256)._amount (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1275) is not in mixedCase
+Parameter C42LiquidityMinter.withdraw(uint256,uint256)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1294) is not in mixedCase
+Parameter C42LiquidityMinter.withdraw(uint256,uint256)._amount (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1294) is not in mixedCase
+Parameter C42LiquidityMinter.emergencyWithdraw(uint256)._pid (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1312) is not in mixedCase
+Parameter C42LiquidityMinter.safeC42Transfer(address,uint256)._to (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1322) is not in mixedCase
+Parameter C42LiquidityMinter.safeC42Transfer(address,uint256)._amount (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1322) is not in mixedCase
+Parameter C42LiquidityMinter.dev(address)._devaddr (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1332) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#601-603)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#627-630)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#636-638)
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#694-696)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#701-703)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#713-716)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#721-723)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#732-735)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#749-753)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#767-770)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#786-789)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#911-913)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#919-921)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#935-937)
+addMinter(address) should be declared external:
+	- MinterRole.addMinter(address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1008-1010)
+renounceMinter() should be declared external:
+	- MinterRole.renounceMinter() (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1012-1014)
+mint(address,uint256) should be declared external:
+	- ERC20Mintable.mint(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1048-1051)
+burn(uint256) should be declared external:
+	- ERC20Burnable.burn(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1072-1074)
+burnFrom(address,uint256) should be declared external:
+	- ERC20Burnable.burnFrom(address,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1079-1081)
+add(uint256,IERC20,bool) should be declared external:
+	- C42LiquidityMinter.add(uint256,IERC20,bool) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1182-1194)
+set(uint256,uint256,bool) should be declared external:
+	- C42LiquidityMinter.set(uint256,uint256,bool) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1196-1202)
+setMigrator(IMigratorC42) should be declared external:
+	- C42LiquidityMinter.setMigrator(IMigratorC42) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1205-1207)
+migrate(uint256) should be declared external:
+	- C42LiquidityMinter.migrate(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1210-1219)
+deposit(uint256,uint256) should be declared external:
+	- C42LiquidityMinter.deposit(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1275-1291)
+withdraw(uint256,uint256) should be declared external:
+	- C42LiquidityMinter.withdraw(uint256,uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1294-1309)
+emergencyWithdraw(uint256) should be declared external:
+	- C42LiquidityMinter.emergencyWithdraw(uint256) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1312-1319)
+dev(address) should be declared external:
+	- C42LiquidityMinter.dev(address) (loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol#1332-1335)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol analyzed (16 contracts with 46 detectors), 94 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x1a16e1894df4579650e1e611e5b0b92eae478bb2.sol
+Tool Runtime = 2.764593740001146 seconds
+#############################################

@@ -1,0 +1,344 @@
+Compilation warnings/errors on ./loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:
+./loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:502:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+NFTReward.notifyMintAmount(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1842-1859) performs a multiplication on the result of a division:
+	-_rewardRate = reward.div(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1850)
+	-leftover = remaining.mul(_rewardRate) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1853)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in NFTReward.checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1801-1812):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _periodFinish = block.timestamp.add(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1808)
+Reentrancy in NFTReward.exit() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1761-1764):
+	External calls:
+	- withdraw() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1762)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+		- _gegoToken.safeTransferFrom(address(this),msg.sender,gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1735)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+		- fee = IPlayerBook(_playerBook).settleReward(msg.sender,reward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1771)
+		- (success,returndata) = address(token).call(data) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1360)
+		- _dego.safeTransfer(_playerBook,fee) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1773)
+		- _dego.safeTransfer(_teamWallet,teamReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1778)
+		- _dego.safeTransfer(_rewardPool,poolReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1789)
+		- _dego.safeTransfer(msg.sender,leftReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1794)
+	State variables written after the call(s):
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _initReward = _initReward.mul(50).div(100) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1803)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _lastUpdateTime = lastTimeRewardApplicable() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1541)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _periodFinish = block.timestamp.add(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1808)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _rewardPerTokenStored = rewardPerToken() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1540)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _rewardRate = _initReward.div(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1807)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _rewards[msg.sender] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1769)
+		- _rewards[account] = earned(account) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1543)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _userRewardPerTokenPaid[account] = _rewardPerTokenStored (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1544)
+Reentrancy in NFTReward.getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1766-1799):
+	External calls:
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1766)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _rewards[msg.sender] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1769)
+Reentrancy in NFTReward.notifyMintAmount(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1842-1859):
+	External calls:
+	- _dego.mint(address(this),reward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1848)
+	State variables written after the call(s):
+	- _lastUpdateTime = block.timestamp (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1856)
+	- _periodFinish = block.timestamp.add(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1857)
+	- _rewardRate = reward.div(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1850)
+	- _rewardRate = reward.add(leftover).div(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1854)
+Reentrancy in NFTReward.stakeGego(uint256,string) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1648-1692):
+	External calls:
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1651)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _totalWeight = _totalWeight.add(stakeWeight) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1681)
+	- _weightBalances[msg.sender] = _weightBalances[msg.sender].add(stakeWeight) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1675)
+Reentrancy in NFTReward.startNFTReward(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1820-1837):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1831)
+	State variables written after the call(s):
+	- _lastUpdateTime = _startTime (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1833)
+	- _periodFinish = _startTime.add(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1834)
+Reentrancy in NFTReward.withdrawGego(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1703-1741):
+	External calls:
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1706)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _totalWeight = _totalWeight.sub(stakeWeight) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1727)
+	- _weightBalances[msg.sender] = _weightBalances[msg.sender].sub(stakeWeight) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1726)
+Reentrancy in NFTReward.withdrawGego(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1703-1741):
+	External calls:
+	- _gegoToken.safeTransferFrom(address(this),msg.sender,gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1735)
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1706)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _stakeBalances[gegoId] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1737)
+	- _stakeWeightes[gegoId] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1738)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+NFTReward.stakeGego(uint256,string) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1648-1692) ignores return value by IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1687)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in NFTReward.checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1801-1812):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _rewardRate = _initReward.div(DURATION) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1807)
+Reentrancy in NFTReward.stakeGego(uint256,string) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1648-1692):
+	External calls:
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1651)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _degoBalances[msg.sender] = _degoBalances[msg.sender].add(stakingDegoAmount) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1673)
+	- _gegoMapIndex[0] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1658)
+	- _gegoMapIndex[gegoId] = gegoIds.length - 1 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1661)
+	- gegoIds.push(0) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1657)
+	- gegoIds.push(gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1660)
+	- _stakeBalances[gegoId] = stakingDegoAmount (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1677)
+	- _stakeWeightes[gegoId] = stakeWeight (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1678)
+	- _totalBalance = _totalBalance.add(stakingDegoAmount) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1680)
+Reentrancy in NFTReward.stakeGego(uint256,string) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1648-1692):
+	External calls:
+	- _gegoToken.safeTransferFrom(msg.sender,address(this),gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1684)
+	- ! IPlayerBook(_playerBook).hasRefer(msg.sender) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1686)
+	- IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1687)
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1651)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _lastStakedTime[msg.sender] = now (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1689)
+Reentrancy in NFTReward.withdrawGego(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1703-1741):
+	External calls:
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1706)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	State variables written after the call(s):
+	- _degoBalances[msg.sender] = _degoBalances[msg.sender].sub(stakeBalance) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1730)
+	- _gegoMapIndex[tailId] = gegoIndex (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1722)
+	- _gegoMapIndex[gegoId] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1723)
+	- _playerGego[msg.sender][gegoIndex] = tailId (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1719)
+	- _playerGego[msg.sender][gegoArrayLength] = 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1720)
+	- _playerGego[msg.sender].length -- (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1721)
+	- _totalBalance = _totalBalance.sub(stakeBalance) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1731)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in NFTReward.checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1801-1812):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	Event emitted after the call(s):
+	- RewardAdded(_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1809)
+Reentrancy in NFTReward.exit() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1761-1764):
+	External calls:
+	- withdraw() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1762)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+		- _gegoToken.safeTransferFrom(address(this),msg.sender,gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1735)
+	- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+		- fee = IPlayerBook(_playerBook).settleReward(msg.sender,reward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1771)
+		- (success,returndata) = address(token).call(data) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1360)
+		- _dego.safeTransfer(_playerBook,fee) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1773)
+		- _dego.safeTransfer(_teamWallet,teamReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1778)
+		- _dego.safeTransfer(_rewardPool,poolReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1789)
+		- _dego.safeTransfer(msg.sender,leftReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1794)
+	Event emitted after the call(s):
+	- RewardAdded(_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1809)
+		- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+	- RewardPaid(msg.sender,leftReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1797)
+		- getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1763)
+Reentrancy in NFTReward.getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1766-1799):
+	External calls:
+	- fee = IPlayerBook(_playerBook).settleReward(msg.sender,reward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1771)
+	- _dego.safeTransfer(_playerBook,fee) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1773)
+	- _dego.safeTransfer(_teamWallet,teamReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1778)
+	- _dego.safeTransfer(_rewardPool,poolReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1789)
+	- _dego.safeTransfer(msg.sender,leftReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1794)
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1766)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,leftReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1797)
+Reentrancy in NFTReward.notifyMintAmount(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1842-1859):
+	External calls:
+	- _dego.mint(address(this),reward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1848)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1858)
+Reentrancy in NFTReward.stakeGego(uint256,string) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1648-1692):
+	External calls:
+	- _gegoToken.safeTransferFrom(msg.sender,address(this),gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1684)
+	- ! IPlayerBook(_playerBook).hasRefer(msg.sender) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1686)
+	- IPlayerBook(_playerBook).bindRefer(msg.sender,affCode) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1687)
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1651)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	Event emitted after the call(s):
+	- StakedGEGO(msg.sender,gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1690)
+Reentrancy in NFTReward.startNFTReward(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1820-1837):
+	External calls:
+	- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1831)
+	Event emitted after the call(s):
+	- RewardAdded(_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1836)
+Reentrancy in NFTReward.withdrawGego(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1703-1741):
+	External calls:
+	- _gegoToken.safeTransferFrom(address(this),msg.sender,gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1735)
+	- checkHalve() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1706)
+		- _dego.mint(address(this),_initReward) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1805)
+	Event emitted after the call(s):
+	- WithdrawnGego(msg.sender,gegoId) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1740)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+NFTReward.getReward() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1766-1799) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1768)
+	- fee > 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1772)
+	- teamReward > 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1777)
+	- now < (_lastStakedTime[msg.sender] + _punishTime) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1785)
+	- poolReward > 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1788)
+	- leftReward > 0 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1793)
+NFTReward.notifyMintAmount(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1842-1859) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= _periodFinish (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1849)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#495-504) uses assembly
+	- INLINE ASM (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#502-503)
+ERC721._checkOnERC721Received(address,address,uint256,bytes) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#967-995) uses assembly
+	- INLINE ASM (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#984-988)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+NFTReward.onERC721Received(address,address,uint256,bytes) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1694-1701) compares to a boolean constant:
+	-_hasStart == false (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1695)
+NFTReward.startNFTReward(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1820-1837) compares to a boolean constant:
+	-require(bool,string)(_hasStart == false,has started) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1825)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#40) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#73) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#264) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#344) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#370) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#426) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#443) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#472) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#546) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#587) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#642) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1011) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1214) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1294) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1373) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1403) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1414) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1427) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1450) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1462) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#534-540):
+	- (success) = recipient.call.value(amount)() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#538)
+Low level call in ERC721._checkOnERC721Received(address,address,uint256,bytes) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#967-995):
+	- (success,returndata) = to.call(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,_msgSender(),from,tokenId,_data)) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#974-980)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1348-1367):
+	- (success,returndata) = address(token).call(data) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1360)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter ERC721.safeTransferFrom(address,address,uint256,bytes)._data (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#817) is not in mixedCase
+Variable Governance._governance (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1377) is not in mixedCase
+Variable NFTReward._dego (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1483) is not in mixedCase
+Variable NFTReward._gegoFactory (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1484) is not in mixedCase
+Variable NFTReward._gegoToken (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1485) is not in mixedCase
+Variable NFTReward._playerBook (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1486) is not in mixedCase
+Variable NFTReward._teamWallet (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1488) is not in mixedCase
+Variable NFTReward._rewardPool (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1489) is not in mixedCase
+Variable NFTReward._initReward (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1492) is not in mixedCase
+Variable NFTReward._startTime (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1493) is not in mixedCase
+Variable NFTReward._periodFinish (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1494) is not in mixedCase
+Variable NFTReward._rewardRate (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1495) is not in mixedCase
+Variable NFTReward._lastUpdateTime (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1496) is not in mixedCase
+Variable NFTReward._rewardPerTokenStored (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1497) is not in mixedCase
+Variable NFTReward._teamRewardRate (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1499) is not in mixedCase
+Variable NFTReward._poolRewardRate (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1500) is not in mixedCase
+Variable NFTReward._baseRate (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1501) is not in mixedCase
+Variable NFTReward._punishTime (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1502) is not in mixedCase
+Variable NFTReward._userRewardPerTokenPaid (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1504) is not in mixedCase
+Variable NFTReward._rewards (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1505) is not in mixedCase
+Variable NFTReward._lastStakedTime (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1506) is not in mixedCase
+Variable NFTReward._hasStart (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1508) is not in mixedCase
+Variable NFTReward._fixRateBase (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1509) is not in mixedCase
+Variable NFTReward._totalWeight (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1511) is not in mixedCase
+Variable NFTReward._weightBalances (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1512) is not in mixedCase
+Variable NFTReward._stakeWeightes (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1513) is not in mixedCase
+Variable NFTReward._stakeBalances (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1514) is not in mixedCase
+Variable NFTReward._totalBalance (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1516) is not in mixedCase
+Variable NFTReward._degoBalances (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1517) is not in mixedCase
+Variable NFTReward._maxStakedDego (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1518) is not in mixedCase
+Variable NFTReward._playerGego (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1520) is not in mixedCase
+Variable NFTReward._gegoMapIndex (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1521) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+NFTReward.slitherConstructorVariables() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1479-1881) uses literals with too many digits:
+	- _fixRateBase = 100000 (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1509)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+NFTReward._baseRate (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1501) should be constant
+NFTReward._fixRateBase (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1509) should be constant
+NFTReward._rewardPool (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1489) should be constant
+NFTReward._teamWallet (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1488) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#292-294)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#318-321)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#327-329)
+safeTransferFrom(address,address,uint256) should be declared external:
+	- IERC721.safeTransferFrom(address,address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#403)
+	- ERC721.safeTransferFrom(address,address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#801-803)
+transferFrom(address,address,uint256) should be declared external:
+	- IERC721.transferFrom(address,address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#412)
+	- ERC721.transferFrom(address,address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#783-788)
+approve(address,uint256) should be declared external:
+	- ERC721.approve(address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#728-738)
+	- IERC721.approve(address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#413)
+setApprovalForAll(address,bool) should be declared external:
+	- ERC721.setApprovalForAll(address,bool) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#758-763)
+	- IERC721.setApprovalForAll(address,bool) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#416)
+tokenOfOwnerByIndex(address,uint256) should be declared external:
+	- IERC721Enumerable.tokenOfOwnerByIndex(address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#435)
+	- ERC721Enumerable.tokenOfOwnerByIndex(address,uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1057-1060)
+tokenByIndex(uint256) should be declared external:
+	- ERC721Enumerable.tokenByIndex(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1076-1079)
+	- IERC721Enumerable.tokenByIndex(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#437)
+onERC721Received(address,address,uint256,bytes) should be declared external:
+	- IERC721Receiver.onERC721Received(address,address,uint256,bytes) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#465-466)
+setGovernance(address) should be declared external:
+	- Governance.setGovernance(address) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1390-1395)
+stakeGego(uint256,string) should be declared external:
+	- NFTReward.stakeGego(uint256,string) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1648-1692)
+onERC721Received(address,address,uint256,bytes) should be declared external:
+	- NFTReward.onERC721Received(address,address,uint256,bytes) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1694-1701)
+getPlayerIds(address) should be declared external:
+	- NFTReward.getPlayerIds(address) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1756-1759)
+setTeamRewardRate(uint256) should be declared external:
+	- NFTReward.setTeamRewardRate(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1861-1863)
+setPoolRewardRate(uint256) should be declared external:
+	- NFTReward.setPoolRewardRate(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1865-1867)
+setWithDrawPunishTime(uint256) should be declared external:
+	- NFTReward.setWithDrawPunishTime(uint256) (loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol#1877-1879)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol analyzed (21 contracts with 46 detectors), 106 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol
+Tool Runtime = 3.1948168039998563 seconds
+#############################################

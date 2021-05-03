@@ -1,0 +1,245 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Control
+Function name: withdrawToken(uint256,address)
+PC address: 2926
+Estimated Gas Usage: 5594 - 41856
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:140
+
+erc20Token.transfer(withdrawalAddress,amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8200000000000600, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setWithdrawalAddress(address), txdata: 0x21b8092e0000000000000000000000000000000000020000000000000000000000000180, value: 0x0
+Caller: [CREATOR], function: withdrawToken(uint256,address), txdata: 0xbe4b17722e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2edeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 11094
+Estimated Gas Usage: 26715 - 277735
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:300
+
+ratToken.ownerOf(_tokenID)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 11301
+Estimated Gas Usage: 26715 - 277735
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:303
+
+ratToken.getRatDetail(_tokenID)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x3, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c6289c0c0c0c0c0c0c0c00000000000000000000000000000000000000000c0c0c0c0, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 12009
+Estimated Gas Usage: 26715 - 277735
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:313
+
+balance[_to]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 12089
+Estimated Gas Usage: 26715 - 277735
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:313
+
+balance[_to] = balance[_to].add(amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 12098
+Estimated Gas Usage: 26715 - 277735
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:314
+
+_totalSupply += amount
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x201800a000541, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c62894848484848484848040000000000000000000000000000000000000048484848, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 12099
+Estimated Gas Usage: 26715 - 277735
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:314
+
+_totalSupply += amount
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c62898989898989898989000000000000000000000000000000000000000089898989, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CAT
+Function name: mintFromRATToken(uint256)
+PC address: 12105
+Estimated Gas Usage: 26715 - 277735
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:314
+
+_totalSupply += amount
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: mintFromRATToken(uint256), txdata: 0xb98c62890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CAT
+Function name: withdrawToken(uint256,address)
+PC address: 13069
+Estimated Gas Usage: 5573 - 41835
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop8/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol:140
+
+erc20Token.transfer(withdrawalAddress,amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setWithdrawalAddress(address), txdata: 0x21b8092e0000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: withdrawToken(uint256,address), txdata: 0xbe4b17720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol
+Tool Runtime = 8606.290703331993 seconds
+#############################################

@@ -1,0 +1,86 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: IcbPurchase
+Function name: getIcbFromContractAllowance(uint256)
+PC address: 438
+Estimated Gas Usage: 14449 - 190786
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/8/0x70806c363c8f9ba2b5dbb9947767c9c6918ea15e.sol:84
+
+_amount * 10 ** 4
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getLatestJpyUsdPrice(), txdata: 0xbfdb0ccc, value: 0x0
+Caller: [CREATOR], function: getIcbFromContractAllowance(uint256), txdata: 0x1b94059e0010e103100204101082a0022202400001727505200610809a00004864000002, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: IcbPurchase
+Function name: getEstimatedEthFromJpy(uint256)
+PC address: 1565
+Estimated Gas Usage: 5995 - 77087
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/8/0x70806c363c8f9ba2b5dbb9947767c9c6918ea15e.sol:63
+
+priceFeedEthUsd.latestRoundData()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8414c0800000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: getEstimatedEthFromJpy(uint256), txdata: 0x594bef410000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: IcbPurchase
+Function name: getIcbFromContractAllowance(uint256)
+PC address: 1904
+Estimated Gas Usage: 14449 - 190786
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/8/0x70806c363c8f9ba2b5dbb9947767c9c6918ea15e.sol:74
+
+priceFeedJpyUsd.latestRoundData()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2908091c24c40494, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: getLatestJpyUsdPrice(), txdata: 0xbfdb0ccc, value: 0x0
+Caller: [ATTACKER], function: getIcbFromContractAllowance(uint256), txdata: 0x1b94059e0b7b0700410c600238000201002394580a04488150100028c00e03c0003ac71e, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x70806c363c8f9ba2b5dbb9947767c9c6918ea15e.sol
+Tool Runtime = 763.6202833279967 seconds
+#############################################

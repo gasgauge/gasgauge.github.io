@@ -1,0 +1,192 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: SCARCEsale
+Function name: fallback
+PC address: 1064
+Estimated Gas Usage: 966 - 1391
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:71
+
+assert(isActive())
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: unknown, txdata: 0x, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SCARCEsale
+Function name: fallback
+PC address: 1525
+Estimated Gas Usage: 11519 - 101542
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:103
+
+token.transferFrom(address(this), msg.sender, tokens)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startSale(address), txdata: 0x3f2916d9000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: unknown, txdata: 0x41000000, value: 0x16345785d8a0000
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: SCARCEsale
+Function name: fallback
+PC address: 1525
+Estimated Gas Usage: 11519 - 101542
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:103
+
+token.transferFrom(address(this), msg.sender, tokens)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startSale(address), txdata: 0x3f2916d90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: unknown, txdata: 0x41000000, value: 0x16345785d8a0000
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SCARCEsale
+Function name: endSale()
+PC address: 2242
+Estimated Gas Usage: 7795 - 78854
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:110
+
+token.transferFrom(address(this), owner, tokenBalance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startSale(address), txdata: 0x3f2916d9000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: endSale(), txdata: 0x380d831b, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SCARCEsale
+Function name: endSale()
+PC address: 2305
+Estimated Gas Usage: 7795 - 78854
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:111
+
+ownerPayable
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: endSale(), txdata: 0x380d831b, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SCARCEsale
+Function name: startSale(address)
+PC address: 2780
+Estimated Gas Usage: 16317 - 92719
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:79
+
+token.approve(address(this), 115792089237316195423570985008687907853269984665640564039457584007913129639935)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000100000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38b000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: startSale(address), txdata: 0x3f2916d98b8b8b8b8b8b8b8b8b8b8b8bdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: SCARCEsale
+Function name: startSale(address)
+PC address: 2863
+Estimated Gas Usage: 16317 - 92719
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol:80
+
+initialized = true
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startSale(address), txdata: 0x3f2916d9000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xfa8411cf1ccb93df20707ee3bbc051ce9b3171c5.sol
+Tool Runtime = 725.281579891016 seconds
+#############################################

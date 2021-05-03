@@ -1,0 +1,94 @@
+Compilation warnings/errors on ./loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol:
+./loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol:418:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+MStableStrat.depositMTAInStaking() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#884-894) uses a dangerous strict equality:
+	- mtaBal == 0 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#886)
+MStableStrat.depositMTAInStaking() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#884-894) uses a dangerous strict equality:
+	- mtaGov.balanceOf(address(this)) == 0 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#887)
+MStableStrat.exchangeRewardForWant(bool) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#860-882) uses a dangerous strict equality:
+	- swapAmt == 0 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#863)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in MStableStrat.harvest() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#774-835):
+	External calls:
+	- mPool.claimReward() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#775)
+	- mtaGov.claimReward() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#776)
+	- (success) = address(this).call(abi.encodeWithSignature(exchangeRewardForWant(bool),false)) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#780-785)
+	- want.safeTransfer(msg.sender,harvestFee) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#808)
+	State variables written after the call(s):
+	- strategistCollectedFee = strategistCollectedFee.add(fee) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#814)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+MStableStrat.harvest().fee (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#810) is a local variable never initialized
+MStableStrat.harvest().epochTime (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#793) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+MStableStrat.withdraw(uint256) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#728-742) ignores return value by musdcBpt.exitswapExternAmountOut(address(want),amount,uint256(- 1)) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#735)
+MStableStrat.withdrawAll() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#744-772) ignores return value by musdcBpt.exitswapPoolAmountIn(address(want),musdcBpt.balanceOf(address(this)),0) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#762-766)
+MStableStrat.exchangeRewardForWant(bool) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#860-882) ignores return value by balProxy.smartSwapExactIn(musd,want,swapAmt,0,numPools) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#875-881)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in MStableStrat.harvest() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#774-835):
+	External calls:
+	- mPool.claimReward() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#775)
+	- mtaGov.claimReward() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#776)
+	- (success) = address(this).call(abi.encodeWithSignature(exchangeRewardForWant(bool),false)) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#780-785)
+	State variables written after the call(s):
+	- harvestAmountThisEpoch = 0 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#800)
+	- harvestAmountThisEpoch = harvestAmountThisEpoch.add(amount) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#804)
+	- hurdleLastUpdateTime = block.timestamp (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#803)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+MStableStrat.harvest() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#774-835) uses timestamp for comparisons
+	Dangerous comparisons:
+	- hurdleLastUpdateTime < epochTime (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#798)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#407-420) uses assembly
+	- INLINE ASM (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#418-419)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#20) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#37) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#118) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#131) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#144) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#156) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#185) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#389) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#462) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#563) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#450-456):
+	- (success) = recipient.call.value(amount)() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#454)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#515-534):
+	- (success,returndata) = address(token).call(data) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#527)
+Low level call in MStableStrat.withdrawAll() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#744-772):
+	- (success) = address(this).call(abi.encodeWithSignature(exchangeRewardForWant(bool),true)) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#752-757)
+Low level call in MStableStrat.harvest() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#774-835):
+	- (success) = address(this).call(abi.encodeWithSignature(exchangeRewardForWant(bool),false)) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#780-785)
+Low level call in MStableStrat.exitMGov() (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#842-858):
+	- (success) = address(this).call(abi.encodeWithSignature(exchangeRewardForWant(bool),true)) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#846-851)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter MStableStrat.setStrategist(address)._strategist (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#659) is not in mixedCase
+Parameter MStableStrat.setNumPoolsForSwap(uint256)._numPools (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#664) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+deposit(uint256) should be declared external:
+	- MStableStrat.deposit(uint256) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#685-698)
+exchangeRewardForWant(bool) should be declared external:
+	- MStableStrat.exchangeRewardForWant(bool) (loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol#860-882)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol analyzed (15 contracts with 46 detectors), 32 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xcda1fdce80d324f3f4a5de323d51428bd402d41c.sol
+Tool Runtime = 1.1624993209989043 seconds
+#############################################

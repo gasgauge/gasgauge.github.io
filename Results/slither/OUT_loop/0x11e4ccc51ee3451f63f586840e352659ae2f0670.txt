@@ -1,0 +1,99 @@
+INFO:Detectors:[93m
+Reentrancy in OtenSafeDeposit.lockToken(address,uint256,uint256) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#565-580):
+	External calls:
+	- _tokenList[i].token.safeTransferFrom(msg.sender,address(this),_amount) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#574)
+	State variables written after the call(s):
+	- _tokenList[i].Amount[msg.sender] = _tokenList[i].Amount[msg.sender].add(_amount) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#575)
+	- _tokenList[i].periodFinish[msg.sender] = _periodFinish (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#576)
+	- _tokenList[i].durationLock[msg.sender] = _periodFinish - now (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#577)
+Reentrancy in OtenSafeDeposit.unlockToken(address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#582-597):
+	External calls:
+	- _tokenList[i].token.safeTransfer(msg.sender,_amount) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#591)
+	State variables written after the call(s):
+	- _tokenList[i].Amount[msg.sender] = 0 (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#595)
+	- _tokenList[i].periodFinish[msg.sender] = 0 (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#596)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#252) shadows:
+	- ERC20Detailed.name() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#261-263) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#252) shadows:
+	- ERC20Detailed.symbol() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#269-271) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#252) shadows:
+	- ERC20Detailed.decimals() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#285-287) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in OtenSafeDeposit.lockToken(address,uint256,uint256) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#565-580):
+	External calls:
+	- _tokenList[i].token.safeTransferFrom(msg.sender,address(this),_amount) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#574)
+	Event emitted after the call(s):
+	- LockToken(msg.sender,_tokenAddress,_amount,_periodFinish) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#579)
+Reentrancy in OtenSafeDeposit.unlockToken(address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#582-597):
+	External calls:
+	- _tokenList[i].token.safeTransfer(msg.sender,_amount) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#591)
+	Event emitted after the call(s):
+	- UnlockToken(msg.sender,_tokenAddress,_amount) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#593)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+OtenSafeDeposit.lockToken(address,uint256,uint256) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#565-580) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now < _periodFinish,Please Input valid period !) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#566)
+	- require(bool,string)(_tokenList[i].Amount[msg.sender] == 0 && (_tokenList[i].periodFinish[msg.sender] == 0 || now > _tokenList[i].periodFinish[msg.sender]),You must withdraw the previous amount before lock new amount!) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#571-572)
+OtenSafeDeposit.unlockToken(address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#582-597) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now > _tokenList[i].periodFinish[msg.sender],Cannot unlock until period finished!) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#587)
+OtenSafeDeposit.durationRemaining(address,address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#607-619) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (_tokenList[i].periodFinish[account] - now) < _tokenList[i].durationLock[account] (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#613)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#304-313) uses assembly
+	- INLINE ASM (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#311-312)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#365-384):
+	- (success,returndata) = address(token).call(data) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#377)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Struct OtenSafeDeposit.tokenList (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#525-533) is not in CapWords
+Parameter OtenSafeDeposit.addNewToken(address)._tokenAddress (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#548) is not in mixedCase
+Parameter OtenSafeDeposit.lockToken(address,uint256,uint256)._tokenAddress (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#565) is not in mixedCase
+Parameter OtenSafeDeposit.lockToken(address,uint256,uint256)._amount (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#565) is not in mixedCase
+Parameter OtenSafeDeposit.lockToken(address,uint256,uint256)._periodFinish (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#565) is not in mixedCase
+Parameter OtenSafeDeposit.unlockToken(address)._tokenAddress (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#582) is not in mixedCase
+Parameter OtenSafeDeposit.balanceOf(address,address)._tokenAddress (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#599) is not in mixedCase
+Parameter OtenSafeDeposit.durationRemaining(address,address)._tokenAddress (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#607) is not in mixedCase
+Parameter OtenSafeDeposit.tokenListIndex(address)._tokenAddress (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#621) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+OtenSafeDeposit._defaultDecimal (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#523) is never used in OtenSafeDeposit (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#518-631)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+OtenSafeDeposit._defaultDecimal (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#523) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#261-263)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#269-271)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#285-287)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#469-471)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#495-498)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#504-506)
+unlockToken(address) should be declared external:
+	- OtenSafeDeposit.unlockToken(address) (loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol#582-597)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol analyzed (8 contracts with 46 detectors), 32 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x11e4ccc51ee3451f63f586840e352659ae2f0670.sol
+Tool Runtime = 0.8354997700007516 seconds
+#############################################

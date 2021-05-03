@@ -1,0 +1,74 @@
+Compilation warnings/errors on ./loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol:
+./loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol:272:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+Core.dusd (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#501) is never initialized. It is used in:
+	- Core.mint(uint256,address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#540-556)
+	- Core.redeem(uint256,address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#564-577)
+	- Core.harvest() (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#579-585)
+	- Core.earned() (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#593-600)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[92m
+Core.harvest().earned (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#581) shadows:
+	- Core.earned() (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#593-600) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Core.totalSystemAssets() (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#602-612) has external calls inside a loop: _totalAssets = _totalAssets.add(IPeak(peaksAddresses[i]).portfolioValue()) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#608-610)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in Core.mint(uint256,address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#540-556):
+	External calls:
+	- dusd.mint(account,dusdAmount) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#553)
+	Event emitted after the call(s):
+	- Mint(account,dusdAmount) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#554)
+Reentrancy in Core.redeem(uint256,address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#564-577):
+	External calls:
+	- dusd.burn(account,dusdAmount) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#574)
+	Event emitted after the call(s):
+	- Redeem(account,dusdAmount) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#575)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#265-274) uses assembly
+	- INLINE ASM (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#272-273)
+OwnableProxy.owner() (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#461-466) uses assembly
+	- INLINE ASM (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#463-466)
+OwnableProxy._transferOwnership(address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#484-491) uses assembly
+	- INLINE ASM (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#488-491)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#304-310):
+	- (success) = recipient.call.value(amount)() (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#308)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#352-371):
+	- (success,returndata) = address(token).call(data) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#364)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Core.dusdToUsd(uint256,bool)._dusd (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#617) is not in mixedCase
+Parameter Core.authorizeController(address)._controller (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#627) is not in mixedCase
+Parameter Core.whitelistPeak(address,uint256[],uint256,bool)._systemCoins (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#659) is not in mixedCase
+Parameter Core.setFee(uint256,uint256)._redeemFactor (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#693) is not in mixedCase
+Parameter Core.setFee(uint256,uint256)._colBuffer (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#693) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Core.inDeficit (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#509) should be constant
+Core.totalAssets (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#507) should be constant
+Core.unclaimedRewards (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#508) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- OwnableProxy.transferOwnership(address) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#480-482)
+dusdToUsd(uint256,bool) should be declared external:
+	- Core.dusdToUsd(uint256,bool) (loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol#617-623)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x05977619e19fbc2f94bde352a78353b54dd918df.sol analyzed (13 contracts with 46 detectors), 22 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x05977619e19fbc2f94bde352a78353b54dd918df.sol
+Tool Runtime = 0.9256059379986254 seconds
+#############################################

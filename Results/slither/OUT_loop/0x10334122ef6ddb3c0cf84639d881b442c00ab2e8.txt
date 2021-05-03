@@ -1,0 +1,247 @@
+INFO:Detectors:[93m
+MasterChef_pizzas.pendingPizza(uint256,address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#473-487) performs a multiplication on the result of a division:
+	-pizzaReward = multiplier.mul(getRewardRate()).mul(pool.allocPoint).div(totalAllocPoint) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#481)
+	-accPizzaPerShare = pool.accPizzaPerShare.add(pizzaReward.mul(1e18).div(lpSupply)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#482)
+MasterChef_pizzas.updatePool(uint256,address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#539-566) performs a multiplication on the result of a division:
+	-pizzaReward = multiplier.mul(getRewardRate()).mul(pool.allocPoint).div(totalAllocPoint) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#554)
+	-pool.accPizzaPerShare = pool.accPizzaPerShare.add(pizzaReward.mul(1e18).div(lpSupply)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#559)
+MasterChef_pizzas.getReward(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#597-618) performs a multiplication on the result of a division:
+	-pizzaReward = multiplier.mul(getRewardRate()).mul(pool.allocPoint).div(totalAllocPoint) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#605)
+	-accPizzaPerShare = pool.accPizzaPerShare.add(pizzaReward.mul(1e18).div(lpSupply)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#606)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+MasterChef_pizzas.updatePool(uint256,address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#539-566) uses a dangerous strict equality:
+	- block.timestamp == pool.lastRewardTime (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#543)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in MasterChef_pizzas.deposit(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#570-594):
+	External calls:
+	- pool.lpToken.safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#578)
+	State variables written after the call(s):
+	- pool.totalPool = pool.totalPool.add(_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#581)
+	- user.amount = user.amount.add(_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#579)
+	- user.pid = _pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#580)
+Reentrancy in MasterChef_pizzas.getReward(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#597-618):
+	External calls:
+	- safePizzaTransfer(msg.sender,reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#611)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#612)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	State variables written after the call(s):
+	- user.rewardPaid = user.rewardPaid.add(reward) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#613)
+	- user.reward = 0 (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#614)
+	- user.userRewardPerTokenPaid = accPizzaPerShare (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#617)
+Reentrancy in MasterChef_pizzas.withdraw(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623-664):
+	External calls:
+	- safePizzaTransfer(msg.sender,user.reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#633)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,user.reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#635)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	State variables written after the call(s):
+	- user.rewardPaid = user.rewardPaid.add(user.reward) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#639)
+	- user.amount = user.amount.sub(_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#642)
+Reentrancy in MasterChef_pizzas.withdraw(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623-664):
+	External calls:
+	- safePizzaTransfer(msg.sender,user.reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#633)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,user.reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#635)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- pool.lpToken.safeTransfer(address(msg.sender),_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#643)
+	State variables written after the call(s):
+	- pool.totalPool = pool.totalPool.sub(_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#644)
+	- user.reward = 0 (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#662)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+MasterChef_pizzas.safePizzaTransfer(address,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#676-683) ignores return value by pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+MasterChef_pizzas.safePizzaTransfer(address,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#676-683) ignores return value by pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in MasterChef_pizzas.deposit(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#570-594):
+	External calls:
+	- pool.lpToken.safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#578)
+	State variables written after the call(s):
+	- users[_referrer].referAmount[i] = _amount.add(users[_referrer].referAmount[i]) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#587)
+Reentrancy in MasterChef_pizzas.withdraw(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623-664):
+	External calls:
+	- safePizzaTransfer(msg.sender,user.reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#633)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,user.reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#635)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- pool.lpToken.safeTransfer(address(msg.sender),_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#643)
+	State variables written after the call(s):
+	- users[_referrer].referAmount[i] = users[_referrer].referAmount[i].sub(_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#649)
+	- users[_referrer].referReward = users[_referrer].referReward.add(user.reward.mul(10).div(100).div(i + 1)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#650)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in MasterChef_pizzas.deposit(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#570-594):
+	External calls:
+	- pool.lpToken.safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#578)
+	Event emitted after the call(s):
+	- Deposit(msg.sender,_pid,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#593)
+Reentrancy in MasterChef_pizzas.getReward(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#597-618):
+	External calls:
+	- safePizzaTransfer(msg.sender,reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#611)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#612)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#615)
+Reentrancy in MasterChef_pizzas.withdraw(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623-664):
+	External calls:
+	- safePizzaTransfer(msg.sender,user.reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#633)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,user.reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#635)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,user.rewardPaid) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#640)
+Reentrancy in MasterChef_pizzas.withdraw(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623-664):
+	External calls:
+	- safePizzaTransfer(msg.sender,user.reward.mul(90).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#633)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- safePizzaTransfer(projectAddress,user.reward.mul(10).div(100)) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#635)
+		- pizzas.transfer(_to,pizzaBal) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#679)
+		- pizzas.transfer(_to,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#681)
+	- pool.lpToken.safeTransfer(address(msg.sender),_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#643)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,_pid,_amount) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#663)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+MasterChef_pizzas.addLp(uint256,IERC20) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#412-422) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > starttime (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#413)
+MasterChef_pizzas.getMultiplier(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#446-456) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _to <= periodFinish (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#447)
+MasterChef_pizzas.pendingPizza(uint256,address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#473-487) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > pool.lastRewardTime && lpSupply != 0 (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#479)
+MasterChef_pizzas.pendingAllPizza(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#490-496) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < poolInfo.length (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#492)
+MasterChef_pizzas.allPizzaAmount(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#499-506) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < poolInfo.length (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#501)
+MasterChef_pizzas.getAllDeposit(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#509-516) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < poolInfo.length (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#511)
+MasterChef_pizzas.updatePool(uint256,address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#539-566) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < pool.lastRewardTime (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#541)
+	- block.timestamp == pool.lastRewardTime (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#543)
+MasterChef_pizzas.getReward(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#597-618) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > pool.lastRewardTime && lpSupply != 0 (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#603)
+	- reward > 0 (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#610)
+MasterChef_pizzas.safePizzaTransfer(address,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#676-683) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _amount > pizzaBal (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#678)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#152-161) uses assembly
+	- INLINE ASM (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#159-160)
+Address._verifyCallResult(bool,bytes,string) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#222-239) uses assembly
+	- INLINE ASM (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#231-235)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+MasterChef_pizzas.constructor(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#377-398) compares to a boolean constant:
+	-require(bool,string)(initialized == false,has initialized) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#378)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#164-170):
+	- (success) = recipient.call.value(amount)() (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#168)
+Low level call in Address.functionCallWithValue(address,bytes,uint256,string) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#187-194):
+	- (success,returndata) = target.call.value(value)(data) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#192)
+Low level call in Address.functionStaticCall(address,bytes,string) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#201-207):
+	- (success,returndata) = target.staticcall(data) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#205)
+Low level call in Address.functionDelegateCall(address,bytes,string) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#214-220):
+	- (success,returndata) = target.delegatecall(data) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#218)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Contract MasterChef_pizzas (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#290-704) is not in CapWords
+Parameter MasterChef_pizzas.addLp(uint256,IERC20)._allocPoint (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#412) is not in mixedCase
+Parameter MasterChef_pizzas.addLp(uint256,IERC20)._lpToken (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#412) is not in mixedCase
+Parameter MasterChef_pizzas.set(uint256,uint256)._pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#428) is not in mixedCase
+Parameter MasterChef_pizzas.set(uint256,uint256)._allocPoint (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#428) is not in mixedCase
+Parameter MasterChef_pizzas.setTotalAllocPoint(uint256)._totalAllocPoint (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#434) is not in mixedCase
+Parameter MasterChef_pizzas.setRewardRate(uint256)._rewardRate (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#438) is not in mixedCase
+Parameter MasterChef_pizzas.getMultiplier(uint256,uint256)._from (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#446) is not in mixedCase
+Parameter MasterChef_pizzas.getMultiplier(uint256,uint256)._to (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#446) is not in mixedCase
+Parameter MasterChef_pizzas.pendingPizza(uint256,address)._pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#473) is not in mixedCase
+Parameter MasterChef_pizzas.pendingPizza(uint256,address)._user (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#473) is not in mixedCase
+Parameter MasterChef_pizzas.pendingAllPizza(address)._user (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#490) is not in mixedCase
+Parameter MasterChef_pizzas.allPizzaAmount(address)._user (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#499) is not in mixedCase
+Parameter MasterChef_pizzas.getAllDeposit(address)._user (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#509) is not in mixedCase
+Parameter MasterChef_pizzas.getReferAmount(address,uint256)._user (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#531) is not in mixedCase
+Parameter MasterChef_pizzas.getReferAmount(address,uint256)._index (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#531) is not in mixedCase
+Parameter MasterChef_pizzas.updatePool(uint256,address)._pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#539) is not in mixedCase
+Parameter MasterChef_pizzas.updatePool(uint256,address)._user (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#539) is not in mixedCase
+Parameter MasterChef_pizzas.deposit(uint256,uint256)._pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#570) is not in mixedCase
+Parameter MasterChef_pizzas.deposit(uint256,uint256)._amount (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#570) is not in mixedCase
+Parameter MasterChef_pizzas.getReward(uint256)._pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#597) is not in mixedCase
+Parameter MasterChef_pizzas.withdraw(uint256,uint256)._pid (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623) is not in mixedCase
+Parameter MasterChef_pizzas.withdraw(uint256,uint256)._amount (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623) is not in mixedCase
+Parameter MasterChef_pizzas.safePizzaTransfer(address,uint256)._to (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#676) is not in mixedCase
+Parameter MasterChef_pizzas.safePizzaTransfer(address,uint256)._amount (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#676) is not in mixedCase
+Variable MasterChef_pizzas._masterChef (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#357) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+MasterChef_pizzas.defaultReferAddr (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#361) should be constant
+MasterChef_pizzas.lastUserId (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#338) should be constant
+MasterChef_pizzas.projectAddress (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#363) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#126-128)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#136-139)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#141-145)
+addLp(uint256,IERC20) should be declared external:
+	- MasterChef_pizzas.addLp(uint256,IERC20) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#412-422)
+set(uint256,uint256) should be declared external:
+	- MasterChef_pizzas.set(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#428-432)
+setTotalAllocPoint(uint256) should be declared external:
+	- MasterChef_pizzas.setTotalAllocPoint(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#434-436)
+setRewardRate(uint256) should be declared external:
+	- MasterChef_pizzas.setRewardRate(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#438-440)
+pendingAllPizza(address) should be declared external:
+	- MasterChef_pizzas.pendingAllPizza(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#490-496)
+allPizzaAmount(address) should be declared external:
+	- MasterChef_pizzas.allPizzaAmount(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#499-506)
+getAllDeposit(address) should be declared external:
+	- MasterChef_pizzas.getAllDeposit(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#509-516)
+getReferCount(address) should be declared external:
+	- MasterChef_pizzas.getReferCount(address) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#520-527)
+getReferAmount(address,uint256) should be declared external:
+	- MasterChef_pizzas.getReferAmount(address,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#531-536)
+deposit(uint256,uint256) should be declared external:
+	- MasterChef_pizzas.deposit(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#570-594)
+getReward(uint256) should be declared external:
+	- MasterChef_pizzas.getReward(uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#597-618)
+withdraw(uint256,uint256) should be declared external:
+	- MasterChef_pizzas.withdraw(uint256,uint256) (loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol#623-664)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol analyzed (8 contracts with 46 detectors), 78 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x10334122ef6ddb3c0cf84639d881b442c00ab2e8.sol
+Tool Runtime = 1.3110831960002542 seconds
+#############################################

@@ -1,0 +1,144 @@
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: WinOrLose
+Function name: withdraw(uint256)
+PC address: 2322
+Estimated Gas Usage: 2817 - 37758
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x7fb5a3990662608df45bcce313feec7219a728ae.sol:123
+
+owner.transfer(val)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1090100023441242, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20200010000080025, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 7d7d7d7d7d7d7d7d7d7d7d7ddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: createBet(uint256,uint8), txdata: 0x19b5f20900000000000000000000000000000000000000000000000000b1a2bc2ec500000000000000000000000000000000000000000000000000000000000000000000, value: 0xb1a2bc2ec50000
+Caller: [ATTACKER], function: withdraw(uint256), txdata: 0x2e1a7d4d000000000000000000000000000000000000000000000000004400c100000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: WinOrLose
+Function name: joinBet(uint256)
+PC address: 4428
+Estimated Gas Usage: 13328 - 36443
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x7fb5a3990662608df45bcce313feec7219a728ae.sol:101
+
+if(now%2==1){
+            bet.b1=msg.sender;
+            bet.coinSide=bet.coinSide==1?2:1;
+            emit Win(1);
+        }else{
+            emit Win(0);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40001b6bdfef30000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: createBet(uint256,uint8), txdata: 0x19b5f20900000000000000000000000000000000000000000000000000b1a2bc2ec500000000000000000000000000000000000000000000000000000000000000000000, value: 0xb1a2bc2ec50000
+Caller: [CREATOR], function: joinBet(uint256), txdata: 0x39fb3f450000000000000000000000000000000000000000000000000000000000000001, value: 0xb1a2bc2ec50000
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: WinOrLose
+Function name: getWinner(uint256)
+PC address: 5680
+Estimated Gas Usage: 1113 - 1208
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x7fb5a3990662608df45bcce313feec7219a728ae.sol:73
+
+winners[index]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: getWinner(uint256), txdata: 0x4129b2c90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Selfdestruct ====
+SWC ID: 106
+Severity: High
+Contract: WinOrLose
+Function name: kill()
+PC address: 6212
+Estimated Gas Usage: 2765 - 3520
+Any sender can cause the contract to self-destruct.
+Any sender can trigger execution of the SELFDESTRUCT instruction to destroy this contract account and withdraw its balance to an arbitrary address. Review the transaction trace generated for this issue and make sure that appropriate security controls are in place to prevent unrestricted access.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x7fb5a3990662608df45bcce313feec7219a728ae.sol:129
+
+selfdestruct(owner)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x40000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: kill(), txdata: 0x41c0e1b5, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: WinOrLose
+Function name: activeBets(uint256)
+PC address: 6479
+Estimated Gas Usage: 1145 - 1240
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x7fb5a3990662608df45bcce313feec7219a728ae.sol:9
+
+Bet[] public activeBets
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: activeBets(uint256), txdata: 0xaf768ee30000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x7fb5a3990662608df45bcce313feec7219a728ae.sol
+Tool Runtime = 373.0754641250096 seconds
+#############################################

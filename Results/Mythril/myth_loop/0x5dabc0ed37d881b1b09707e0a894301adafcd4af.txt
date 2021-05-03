@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: DefFinance
+Function name: transferAndCall(address,uint256,bytes)
+PC address: 4507
+Estimated Gas Usage: 20637 - 100076
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops2/0x5dabc0ed37d881b1b09707e0a894301adafcd4af.sol:234
+
+Callable(_to).tokenCallback(msg.sender, _transferred, _data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000208, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notPausable(), txdata: 0x4be8b05e, value: 0x0
+Caller: [ATTACKER], function: transferAndCall(address,uint256,bytes), txdata: 0x4000aea0b0b0b0b0b0b0b0b0b0b0b0b0deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: DefFinance
+Function name: unstake(uint256)
+PC address: 8575
+Estimated Gas Usage: 2220 - 2505
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops2/0x5dabc0ed37d881b1b09707e0a894301adafcd4af.sol:322
+
+_burnedAmount * FLOAT_SCALAR / info.totalStaked
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400400000400088a8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: unstake(uint256), txdata: 0x2e17de780000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x5dabc0ed37d881b1b09707e0a894301adafcd4af.sol
+Tool Runtime = 3336.2586491279944 seconds
+#############################################

@@ -1,0 +1,268 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenVesting
+Function name: constructor
+PC address: 430
+Estimated Gas Usage: 8007 - 31831
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:1292
+
+require(start.add(duration) > block.timestamp)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000002002044001200110022002010402010801010101082102010066806c308670428e390029b0e0080850d9598d2ad7dd46cad2058401f5078000200c240402a00a1aea81b22d2431c02301d80ee6ffffffffffff5202, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TokenVesting
+Function name: revoke(address)
+PC address: 3992
+Estimated Gas Usage: 22604 - 152486
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:1508
+
+token.balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42080081003280002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000000000000010000000120000000000000100000001114864a4971c140b255b951ee1884246720586331caa26b56b512a12495a4a01004043a40468f03600022b100e7bd0c2421c79d03188ec64020366500ad2189300126c65a00436f6454219328ed9ce44c1fc00ea10c869a1420f06f1bac818008, value: 0x0
+Caller: [CREATOR], function: revoke(address), txdata: 0x74a8f103c0c0c0c0c0c0c0c0c0c0c0c00000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenVesting
+Function name: release(address)
+PC address: 4146
+Estimated Gas Usage: 4710 - 39747
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:1514
+
+if (block.timestamp < _cliff) {
+
+            return 0;
+
+        } else if (
+
+            block.timestamp >= _start.add(_duration) || _revoked[address(token)]
+
+        ) {
+
+            return totalBalance;
+
+        } else {
+
+            return totalBalance.mul(block.timestamp.sub(_start)).div(_duration);
+
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000000000000000000000000000000000000000120780866ecb8cb029221a96900001302555500e3de13369026a23e96003a80050040086249938000040004000006803fc000650070f0d10035904202004ae0012a, value: 0x0
+Caller: [ATTACKER], function: release(address), txdata: 0x191655870202020202020202020202020000000000000000000000000000000000000080, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenVesting
+Function name: release(address)
+PC address: 4188
+Estimated Gas Usage: 6452 - 41489
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:1520
+
+block.timestamp >= _start.add(_duration) || _revoked[address(token)]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000001023e3f82018d484e0c180984c1555916410854c114b6fcc488e6dbe14819808033d0201e00012e20002d76859f44d50c4138014104842184112030410873004245, value: 0x0
+Caller: [CREATOR], function: release(address), txdata: 0x191655870000000000000000000000000000000000000000000000000000000000000040, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenVesting
+Function name: release(address)
+PC address: 4272
+Estimated Gas Usage: 6469 - 41506
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:1518
+
+if (
+
+            block.timestamp >= _start.add(_duration) || _revoked[address(token)]
+
+        ) {
+
+            return totalBalance;
+
+        } else {
+
+            return totalBalance.mul(block.timestamp.sub(_start)).div(_duration);
+
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80102041c24, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000000000000000000000000000000000000000000012fdb15460dfff70549b98eb001685a286f3a7713d0a4c2a7f6e7e1d733f599dd3fc9114ebd7bdf2338e27c54fea82dedfffe5d1082a8c13f767fff1df37f99df40, value: 0x0
+Caller: [ATTACKER], function: release(address), txdata: 0x19165587f5f5f5f5f5f5f5f5f5f5f5f50000000000000000000000000000000000000080, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenVesting
+Function name: release(address)
+PC address: 4606
+Estimated Gas Usage: 9162 - 45097
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:295
+
+require(b <= a, errorMessage)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4040000094a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000000000000000000000000000000000000000000017682a82402fa357c412ae3442bd236073766efd7a6c9cc8c7870c687c021fdff2fc1d00bf0f67f9b38115dfe742a1501d56c51d4fff8cf8c107f7ca04961896c32, value: 0x0
+Caller: [ATTACKER], function: release(address), txdata: 0x19165587c0c0c0c0c0c0c0c0c0c0c0c00000000000000000000000000000000000000080, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenVesting
+Function name: release(address)
+PC address: 4832
+Estimated Gas Usage: 9374 - 45309
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:345
+
+require(c / a == b, "SafeMath: multiplication overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000004000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000400000000000000000000000802001408032cd284478c245492cb88922900615a0802cd1004541502418a4912ace600080c802e7ec085ecc196653881e30892c3880e152014c1113ec108454ea002060, value: 0x0
+Caller: [SOMEGUY], function: release(address), txdata: 0x191655870202020202020202020202020000000000000080000000000000000004000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: TokenVesting
+Function name: revoke(address)
+PC address: 5597
+Estimated Gas Usage: 22604 - 152486
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:736
+
+target.call.value(value)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000210800001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000008000200000020000000000000800000000000192f89834ced8734099280f081430492242044c5b0a3991662451c32c52884a101d0eac01b032842118028469046402e6801d413025e48164e10e9cd4501a40585820905198082667896924a7f401c90c0e01c40110013939e0c10100a001c2f80, value: 0x0
+Caller: [CREATOR], function: revoke(address), txdata: 0x74a8f1034343434343434343434343430000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: revoke(address), txdata: 0x74a8f103434343434343434343434343deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TokenVesting
+Function name: release(address)
+PC address: 5597
+Estimated Gas Usage: 18077 - 111794
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/11/0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol:736
+
+target.call.value(value)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1c04004004228a5c0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000000000000000000000000000000000000000100e9531393272e6ba4a128618a28aa422c090564b0464134c74110c84c16b03a49901110810212c8044068290208aa10a04b09e109fa20001040088bb3f00fd681, value: 0x0
+Caller: [ATTACKER], function: release(address), txdata: 0x191655870202020202020202020202020000000000000000000000000000000000010000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xf9ba953ba63c43696eec85b18179af5c5734ec8b.sol
+Tool Runtime = 2182.810952055035 seconds
+#############################################

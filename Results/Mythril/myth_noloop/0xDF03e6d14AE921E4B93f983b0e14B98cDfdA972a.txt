@@ -1,0 +1,59 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: LiquidityPool
+Function name: give(uint256,address)
+PC address: 791
+Estimated Gas Usage: 2840 - 71588
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0xDF03e6d14AE921E4B93f983b0e14B98cDfdA972a.sol:34
+
+to.transfer(amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xebffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: give(uint256,address), txdata: 0xfcafcc6800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: LiquidityPool
+Function name: give(uint256,address)
+PC address: 791
+Estimated Gas Usage: 2840 - 71588
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/1/0xDF03e6d14AE921E4B93f983b0e14B98cDfdA972a.sol:34
+
+to.transfer(amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21a8000224867858, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x7ff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: receive(), txdata: 0xa3e76c0f, value: 0x1
+Caller: [ATTACKER], function: give(uint256,address), txdata: 0xfcafcc680000000000000000000000000000000000000000000000000000000000000001000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xDF03e6d14AE921E4B93f983b0e14B98cDfdA972a.sol
+Tool Runtime = 50.86016314200242 seconds
+#############################################

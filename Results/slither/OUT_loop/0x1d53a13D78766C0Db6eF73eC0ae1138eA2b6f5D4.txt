@@ -1,0 +1,97 @@
+INFO:Detectors:[93m
+Exchanger._internalSettle(address,bytes32) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1935-1979) uses a dangerous strict equality:
+	- require(bool,string)(maxSecsLeftInWaitingPeriod(from,currencyKey) == 0,Cannot settle during waiting period) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1943)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Exchanger._settlementOwing(address,bytes32).rebate (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1550) is a local variable never initialized
+Exchanger._settlementOwing(address,bytes32).reclaim (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1549) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+Exchanger._settlementOwing(address,bytes32).reclaim (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1549) shadows:
+	- Exchanger.reclaim(address,bytes32,uint256) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1981-1989) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Exchanger._settlementOwing(address,bytes32) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1533-1596) has external calls inside a loop: destinationAmount = exchangeRates().effectiveValueAtRound(exchangeEntry.src,exchangeEntry.amount,exchangeEntry.dest,srcRoundIdAtPeriodEnd,destRoundIdAtPeriodEnd) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1558-1564)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in Exchanger._exchange(address,bytes32,uint256,bytes32,address) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1756-1852):
+	External calls:
+	- (refunded,numEntriesSettled) = _internalSettle(from,sourceCurrencyKey) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1765)
+		- issuer().synths(currencyKey).issue(from,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1997)
+		- issuer().synths(currencyKey).burn(from,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1987)
+		- ISynthetixInternal(address(synthetix())).emitExchangeRebate(from,currencyKey,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1998)
+		- ISynthetixInternal(address(synthetix())).emitExchangeReclaim(from,currencyKey,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1988)
+		- exchangeState().removeEntries(from,currencyKey) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1978)
+	State variables written after the call(s):
+	- lastExchangeRate[sourceCurrencyKey] = sourceRate (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1797)
+	- lastExchangeRate[destinationCurrencyKey] = destinationRate (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1804)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Exchanger._exchange(address,bytes32,uint256,bytes32,address) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1756-1852):
+	External calls:
+	- (refunded,numEntriesSettled) = _internalSettle(from,sourceCurrencyKey) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1765)
+		- issuer().synths(currencyKey).issue(from,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1997)
+		- issuer().synths(currencyKey).burn(from,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1987)
+		- ISynthetixInternal(address(synthetix())).emitExchangeRebate(from,currencyKey,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1998)
+		- ISynthetixInternal(address(synthetix())).emitExchangeReclaim(from,currencyKey,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1988)
+		- exchangeState().removeEntries(from,currencyKey) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1978)
+	- issuer().synths(sourceCurrencyKey).burn(from,sourceAmountAfterSettlement) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1811)
+	- issuer().synths(destinationCurrencyKey).issue(destinationAddress,amountReceived) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1814)
+	- issuer().synths(sUSD).issue(feePool().FEE_ADDRESS(),fee) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1823)
+	- feePool().recordFeePaid(fee) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1826)
+	- ISynthetixInternal(address(synthetix())).emitSynthExchange(from,sourceCurrencyKey,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,destinationAddress) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1834-1841)
+	- appendExchange(destinationAddress,sourceCurrencyKey,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,exchangeFeeRate) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1844-1851)
+		- exchangeState().appendExchangeEntry(account,src,amount,dest,amountReceived,exchangeFeeRate,now,roundIdForSrc,roundIdForDest) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2090-2100)
+	Event emitted after the call(s):
+	- ExchangeEntryAppended(account,src,amount,dest,amountReceived,exchangeFeeRate,roundIdForSrc,roundIdForDest) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2102-2111)
+		- appendExchange(destinationAddress,sourceCurrencyKey,sourceAmountAfterSettlement,destinationCurrencyKey,amountReceived,exchangeFeeRate) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1844-1851)
+Reentrancy in Exchanger._internalSettle(address,bytes32) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1935-1979):
+	External calls:
+	- reclaim(from,currencyKey,reclaimed) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1954)
+		- issuer().synths(currencyKey).burn(from,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1987)
+		- ISynthetixInternal(address(synthetix())).emitExchangeReclaim(from,currencyKey,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1988)
+	- refund(from,currencyKey,refunded) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1957)
+		- issuer().synths(currencyKey).issue(from,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1997)
+		- ISynthetixInternal(address(synthetix())).emitExchangeRebate(from,currencyKey,amount) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1998)
+	Event emitted after the call(s):
+	- ExchangeEntrySettled(from,settlements[i].src,settlements[i].amount,settlements[i].dest,settlements[i].reclaim,settlements[i].rebate,settlements[i].srcRoundIdAtPeriodEnd,settlements[i].destRoundIdAtPeriodEnd,settlements[i].timestamp) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1962-1972)
+Reentrancy in Exchanger.appendExchange(address,bytes32,uint256,bytes32,uint256,uint256) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2079-2112):
+	External calls:
+	- exchangeState().appendExchangeEntry(account,src,amount,dest,amountReceived,exchangeFeeRate,now,roundIdForSrc,roundIdForDest) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2090-2100)
+	Event emitted after the call(s):
+	- ExchangeEntryAppended(account,src,amount,dest,amountReceived,exchangeFeeRate,roundIdForSrc,roundIdForDest) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2102-2111)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Exchanger.hasWaitingPeriodOrSettlementOwing(address,bytes32) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1627-1635) uses timestamp for comparisons
+	Dangerous comparisons:
+	- maxSecsLeftInWaitingPeriod(account,currencyKey) != 0 (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1628)
+Exchanger._internalSettle(address,bytes32) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1935-1979) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(maxSecsLeftInWaitingPeriod(from,currencyKey) == 0,Cannot settle during waiting period) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1943)
+Exchanger.secsLeftInWaitingPeriodForExchange(uint256) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2001-2008) uses timestamp for comparisons
+	Dangerous comparisons:
+	- timestamp == 0 || now >= timestamp.add(_waitingPeriodSecs) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#2003)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#53) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.nominateNewOwner(address)._owner (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#67) is not in mixedCase
+Parameter MixinResolver.setResolverAndSyncCache(AddressResolver)._resolver (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#277) is not in mixedCase
+Parameter MixinResolver.isResolverCached(AddressResolver)._resolver (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#297) is not in mixedCase
+Constant SafeDecimalMath.highPrecisionDecimals (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#735) is not in UPPER_CASE_WITH_UNDERSCORES
+Function IFeePool.FEE_ADDRESS() (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1255) is not in mixedCase
+Constant Exchanger.sUSD (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1434) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+settlementOwing(address,bytes32) should be declared external:
+	- Exchanger.settlementOwing(address,bytes32) (loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol#1520-1530)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol analyzed (21 contracts with 46 detectors), 21 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x1d53a13D78766C0Db6eF73eC0ae1138eA2b6f5D4.sol
+Tool Runtime = 3.510024382001575 seconds
+#############################################

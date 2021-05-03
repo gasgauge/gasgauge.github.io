@@ -1,0 +1,198 @@
+Compilation warnings/errors on ./noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:
+./noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:307:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+CRVStrategySwerve.investedUnderlyingBalance() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1288-1298) uses a dangerous strict equality:
+	- gaugeBalance == 0 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1291)
+CRVStrategySwerve.mixToWBTC(uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1186-1211) uses a dangerous strict equality:
+	- wbtcMaximumAmount == 0 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1191)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+CRVStrategySwerve.claimAndLiquidateCrv() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1317-1339) ignores return value by IUniswapV2Router02(uni).swapExactTokensForTokens(crvBalance,1,uniswap_CRV2WBTC,address(this),block.timestamp) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1332-1334)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#443) shadows:
+	- ERC20Detailed.name() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#452-454) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#443) shadows:
+	- ERC20Detailed.symbol() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#460-462) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#443) shadows:
+	- ERC20Detailed.decimals() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#476-478) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in CRVStrategySwerve.doHardWork() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1269-1273):
+	External calls:
+	- claimAndLiquidateCrv() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1270)
+		- (success,returndata) = address(token).call(data) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#415)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#714)
+		- Mintr(mintr).mint(gauge) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1323)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#715)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#716-719)
+		- IERC20(crv).safeApprove(uni,0) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1329)
+		- IERC20(crv).safeApprove(uni,crvBalance) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1330)
+		- IUniswapV2Router02(uni).swapExactTokensForTokens(crvBalance,1,uniswap_CRV2WBTC,address(this),block.timestamp) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1332-1334)
+	- investAllUnderlying() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1271)
+		- IERC20(wbtc).safeApprove(curve,0) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1170)
+		- (success,returndata) = address(token).call(data) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#415)
+		- IERC20(wbtc).safeApprove(curve,wbtcBalance) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1171)
+		- IERC20(mixToken).safeApprove(gauge,0) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1259)
+		- IERC20(mixToken).safeApprove(gauge,mixTokenBalance) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1260)
+		- Gauge(gauge).deposit(mixTokenBalance) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1261)
+		- ISwerveFi(curve).add_liquidity(coinAmounts,minimum) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1175-1177)
+	State variables written after the call(s):
+	- wbtcPriceCheckpoint = wbtcValueFromMixToken(mixTokenUnit) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1272)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in CRVStrategySwerve.claimAndLiquidateCrv() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1317-1339):
+	External calls:
+	- Mintr(mintr).mint(gauge) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1323)
+	Event emitted after the call(s):
+	- Liquidating(crvBalance) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1326)
+Reentrancy in CRVStrategySwerve.claimAndLiquidateCrv() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1317-1339):
+	External calls:
+	- Mintr(mintr).mint(gauge) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1323)
+	- IERC20(crv).safeApprove(uni,0) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1329)
+	- IERC20(crv).safeApprove(uni,crvBalance) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1330)
+	- IUniswapV2Router02(uni).swapExactTokensForTokens(crvBalance,1,uniswap_CRV2WBTC,address(this),block.timestamp) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1332-1334)
+	- notifyProfit(wbtcBalanceBefore,IERC20(wbtc).balanceOf(address(this))) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1337)
+		- (success,returndata) = address(token).call(data) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#415)
+		- IERC20(underlying).safeApprove(controller(),0) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#714)
+		- IERC20(underlying).safeApprove(controller(),feeAmount) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#715)
+		- IController(controller()).notifyFee(underlying,feeAmount) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#716-719)
+	Event emitted after the call(s):
+	- ProfitLog(oldBalance,newBalance,feeAmount,block.timestamp) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#712)
+		- notifyProfit(wbtcBalanceBefore,IERC20(wbtc).balanceOf(address(this))) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1337)
+	- ProfitLog(oldBalance,newBalance,0,block.timestamp) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#721)
+		- notifyProfit(wbtcBalanceBefore,IERC20(wbtc).balanceOf(address(this))) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1337)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#300-309) uses assembly
+	- INLINE ASM (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#307-308)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#7) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#39) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#198) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#277) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#350) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#427) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#483) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#505) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#536) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#546) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#554) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#583) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#620) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#649) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#675) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#728) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#761) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#787) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#885) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1023) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1404) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1430) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#339-345):
+	- (success) = recipient.call.value(amount)() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#343)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#403-422):
+	- (success,returndata) = address(token).call(data) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#415)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function Gauge.user_checkpoint(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#489) is not in mixedCase
+Function VotingEscrow.create_lock(uint256,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#493) is not in mixedCase
+Function VotingEscrow.increase_amount(uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#494) is not in mixedCase
+Function VotingEscrow.increase_unlock_time(uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#495) is not in mixedCase
+Parameter VotingEscrow.increase_unlock_time(uint256)._unlock_time (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#495) is not in mixedCase
+Function ISwerveFi.get_virtual_price() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#508) is not in mixedCase
+Function ISwerveFi.add_liquidity(uint256[4],uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#509-512) is not in mixedCase
+Parameter ISwerveFi.add_liquidity(uint256[4],uint256).min_mint_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#511) is not in mixedCase
+Function ISwerveFi.remove_liquidity_imbalance(uint256[4],uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#513-516) is not in mixedCase
+Parameter ISwerveFi.remove_liquidity_imbalance(uint256[4],uint256).max_burn_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#515) is not in mixedCase
+Function ISwerveFi.remove_liquidity(uint256,uint256[4]) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#517-520) is not in mixedCase
+Parameter ISwerveFi.exchange(int128,int128,uint256,uint256)._from_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#522) is not in mixedCase
+Parameter ISwerveFi.exchange(int128,int128,uint256,uint256)._min_to_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#522) is not in mixedCase
+Function ISwerveFi.calc_token_amount(uint256[4],bool) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#524-527) is not in mixedCase
+Function ISwerveFi.calc_withdraw_one_coin(uint256,int128) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#528-529) is not in mixedCase
+Parameter ISwerveFi.calc_withdraw_one_coin(uint256,int128)._token_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#529) is not in mixedCase
+Function ISwerveFi.remove_liquidity_one_coin(uint256,int128,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#530-531) is not in mixedCase
+Parameter ISwerveFi.remove_liquidity_one_coin(uint256,int128,uint256)._token_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#530) is not in mixedCase
+Parameter ISwerveFi.remove_liquidity_one_coin(uint256,int128,uint256).min_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#531) is not in mixedCase
+Contract yERC20 (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#538-542) is not in CapWords
+Parameter IPriceConvertor.yCrvToUnderlying(uint256,uint256)._token_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#549) is not in mixedCase
+Parameter Storage.setGovernance(address)._governance (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#599) is not in mixedCase
+Parameter Storage.setController(address)._controller (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#604) is not in mixedCase
+Parameter Governable.setStorage(address)._store (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#637) is not in mixedCase
+Function IUniswapV2Router01.WETH() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#791) is not in mixedCase
+Function IUniswapV2Router02.WETH() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#890) is not in mixedCase
+Parameter CRVStrategySwerve.checkpoint(address)._gauge (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1369) is not in mixedCase
+Parameter CRVStrategySwerve.increaseUnlockTime(address,uint256).unlock_time (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1385) is not in mixedCase
+Variable CRVStrategySwerve.uniswap_CRV2WBTC (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1094) is not in mixedCase
+Function IConvertor.calc_withdraw_one_coin(uint256,int128) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1408) is not in mixedCase
+Parameter IConvertor.calc_withdraw_one_coin(uint256,int128)._token_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1408) is not in mixedCase
+Parameter PriceConvertor.yCrvToUnderlying(uint256,uint256)._token_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1415) is not in mixedCase
+Parameter MockPriceConvertor.yCrvToUnderlying(uint256,uint256)._token_amount (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1422) is not in mixedCase
+Constant CRVStrategySwerveDAIMainnet.__dai (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1441) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__stableMix (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1443) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__swrv (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1445) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__weth (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1446) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__gauge (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1448) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__mintr (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1450) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__poolZap (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1454) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__uniswap (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1455) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CRVStrategySwerveDAIMainnet.__tokenIndex (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1457) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+CRVStrategySwerve.mixVault (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1061) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#452-454)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#460-462)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#476-478)
+setGovernance(address) should be declared external:
+	- Storage.setGovernance(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#599-602)
+setController(address) should be declared external:
+	- Storage.setController(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#604-607)
+isController(address) should be declared external:
+	- Storage.isController(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#613-615)
+setStorage(address) should be declared external:
+	- Governable.setStorage(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#637-640)
+depositArbCheck() should be declared external:
+	- CRVStrategySwerve.depositArbCheck() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1150-1157)
+doHardWork() should be declared external:
+	- CRVStrategySwerve.doHardWork() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1269-1273)
+salvage(address,address,uint256) should be declared external:
+	- CRVStrategySwerve.salvage(address,address,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1278-1282)
+investedUnderlyingBalance() should be declared external:
+	- CRVStrategySwerve.investedUnderlyingBalance() (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1288-1298)
+setSell(bool) should be declared external:
+	- CRVStrategySwerve.setSell(bool) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1345-1347)
+setSellFloor(uint256) should be declared external:
+	- CRVStrategySwerve.setSellFloor(uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1352-1354)
+createLock(address,address,uint256,uint256) should be declared external:
+	- CRVStrategySwerve.createLock(address,address,uint256,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1359-1364)
+checkpoint(address) should be declared external:
+	- CRVStrategySwerve.checkpoint(address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1369-1371)
+increaseAmount(address,address,uint256) should be declared external:
+	- CRVStrategySwerve.increaseAmount(address,address,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1376-1380)
+increaseUnlockTime(address,uint256) should be declared external:
+	- CRVStrategySwerve.increaseUnlockTime(address,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1385-1387)
+withdrawLock(address,address) should be declared external:
+	- CRVStrategySwerve.withdrawLock(address,address) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1392-1399)
+yCrvToUnderlying(uint256,uint256) should be declared external:
+	- MockPriceConvertor.yCrvToUnderlying(uint256,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1422-1425)
+	- PriceConvertor.yCrvToUnderlying(uint256,uint256) (noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol#1415-1418)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol analyzed (26 contracts with 46 detectors), 97 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol
+Tool Runtime = 2.8805083139995986 seconds
+#############################################

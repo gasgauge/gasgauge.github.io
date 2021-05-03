@@ -1,0 +1,255 @@
+Compilation warnings/errors on ./loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol:
+./loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol:604:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[93m
+Collateral.accrueInterest(ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2161-2194) uses a dangerous strict equality:
+	- loan.interestIndex == 0 (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2183)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+CollateralErc20.open(uint256,uint256,bytes32) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2316-2330) ignores return value by IERC20(underlyingContract).transferFrom(msg.sender,address(this),collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2324)
+CollateralErc20.close(uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2332-2339) ignores return value by IERC20(underlyingContract).transfer(msg.sender,scaledCollateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2338)
+CollateralErc20.deposit(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2341-2354) ignores return value by IERC20(underlyingContract).transferFrom(msg.sender,address(this),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2348)
+CollateralErc20.withdraw(uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2356-2366) ignores return value by IERC20(underlyingContract).transfer(msg.sender,scaledWithdraw) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2365)
+CollateralErc20.liquidate(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2380-2391) ignores return value by IERC20(underlyingContract).transfer(msg.sender,scaledCollateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2390)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Collateral.constructor(CollateralState,address,address,address,bytes32,uint256,uint256)._manager (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1543) shadows:
+	- Collateral._manager() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1598-1600) (function)
+CollateralErc20.constructor(CollateralState,address,address,address,bytes32,uint256,uint256,address,uint256)._manager (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2303) shadows:
+	- Collateral._manager() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1598-1600) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+AddressResolver.rebuildCaches(MixinResolver[]) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#247-251) has external calls inside a loop: destinations[i].rebuildCache() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#249)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in Collateral.closeByLiquidationInternal(address,address,ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1883-1925):
+	External calls:
+	- _synth(synthsByKey[loan.currency]).burn(liquidator,total) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1899)
+	- _manager().decrementShorts(loan.currency,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1903)
+	- IShortingRewards(shortingRewards[loan.currency]).withdraw(borrower,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1906)
+	- _manager().decrementLongs(loan.currency,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1909)
+	- _payFees(loan.accruedInterest,loan.currency) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1913)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1921)
+	Event emitted after the call(s):
+	- LoanClosedByLiquidation(borrower,loan.id,liquidator,amount,collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1924)
+Reentrancy in Collateral.closeInternal(address,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1825-1881):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1839)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- _synth(synthsByKey[loan.currency]).burn(borrower,total) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1852)
+	- _manager().decrementShorts(loan.currency,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1856)
+	- IShortingRewards(shortingRewards[loan.currency]).withdraw(borrower,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1859)
+	- _manager().decrementLongs(loan.currency,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1862)
+	- _payFees(loan.accruedInterest,loan.currency) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1869)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1877)
+	Event emitted after the call(s):
+	- LoanClosed(borrower,id) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1880)
+Reentrancy in CollateralErc20.deposit(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2341-2354):
+	External calls:
+	- IERC20(underlyingContract).transferFrom(msg.sender,address(this),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2348)
+	- depositInternal(borrower,id,scaledAmount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2353)
+		- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1957)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	Event emitted after the call(s):
+	- CollateralDeposited(account,id,amount,loan.collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1960)
+		- depositInternal(borrower,id,scaledAmount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2353)
+Reentrancy in Collateral.depositInternal(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1927-1961):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1948)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1957)
+	Event emitted after the call(s):
+	- CollateralDeposited(account,id,amount,loan.collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1960)
+Reentrancy in Collateral.drawInternal(uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2106-2158):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2120)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- _manager().incrementShorts(loan.currency,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2136)
+	- _synthsUSD().issue(msg.sender,_exchangeRates().effectiveValue(loan.currency,amountMinusFee,sUSD)) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2137)
+	- IShortingRewards(shortingRewards[loan.currency]).enrol(msg.sender,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2140)
+	- _manager().incrementLongs(loan.currency,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2143)
+	- _synth(synthsByKey[loan.currency]).issue(msg.sender,amountMinusFee) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2144)
+	- _payFees(issueFee,loan.currency) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2148)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2154)
+	Event emitted after the call(s):
+	- LoanDrawnDown(msg.sender,id,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2157)
+Reentrancy in Collateral.liquidateInternal(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1998-2060):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2019)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- closeByLiquidationInternal(borrower,msg.sender,loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2038)
+		- _synth(synthsByKey[loan.currency]).burn(liquidator,total) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1899)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+		- _manager().decrementShorts(loan.currency,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1903)
+		- IShortingRewards(shortingRewards[loan.currency]).withdraw(borrower,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1906)
+		- _manager().decrementLongs(loan.currency,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1909)
+		- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1921)
+	Event emitted after the call(s):
+	- LoanClosedByLiquidation(borrower,loan.id,liquidator,amount,collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1924)
+		- closeByLiquidationInternal(borrower,msg.sender,loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2038)
+Reentrancy in Collateral.liquidateInternal(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1998-2060):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2019)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- loan = _processPayment(loan,amountToLiquidate) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2042)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+		- _manager().decrementShorts(loanAfter.currency,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2214)
+		- IShortingRewards(shortingRewards[loanAfter.currency]).withdraw(loanAfter.account,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2217)
+		- _manager().decrementLongs(loanAfter.currency,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2220)
+	- _synth(synthsByKey[loan.currency]).burn(msg.sender,amountToLiquidate) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2053)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2056)
+	Event emitted after the call(s):
+	- LoanPartiallyLiquidated(borrower,id,msg.sender,amountToLiquidate,collateralLiquidated) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2059)
+Reentrancy in CollateralErc20.open(uint256,uint256,bytes32) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2316-2330):
+	External calls:
+	- IERC20(underlyingContract).transferFrom(msg.sender,address(this),collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2324)
+	- openInternal(scaledCollateral,amount,currency,false) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2329)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+		- id = _manager().getNewLoanId() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1784)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- state.createLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1803)
+		- _synthsUSD().issue(msg.sender,_exchangeRates().effectiveValue(currency,loanAmountMinusFee,sUSD)) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1810)
+		- _manager().incrementShorts(currency,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1811)
+		- IShortingRewards(shortingRewards[currency]).enrol(msg.sender,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1814)
+		- _synth(synthsByKey[currency]).issue(msg.sender,loanAmountMinusFee) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1817)
+		- _manager().incrementLongs(currency,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1818)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	Event emitted after the call(s):
+	- LoanCreated(msg.sender,id,amount,collateral,currency,issueFee) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1822)
+		- openInternal(scaledCollateral,amount,currency,false) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2329)
+Reentrancy in Collateral.openInternal(uint256,uint256,bytes32,bool) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1743-1823):
+	External calls:
+	- id = _manager().getNewLoanId() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1784)
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1800)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- state.createLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1803)
+	- _payFees(issueFee,currency) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1806)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+	- _synthsUSD().issue(msg.sender,_exchangeRates().effectiveValue(currency,loanAmountMinusFee,sUSD)) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1810)
+	- _manager().incrementShorts(currency,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1811)
+	- IShortingRewards(shortingRewards[currency]).enrol(msg.sender,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1814)
+	- _synth(synthsByKey[currency]).issue(msg.sender,loanAmountMinusFee) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1817)
+	- _manager().incrementLongs(currency,amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1818)
+	Event emitted after the call(s):
+	- LoanCreated(msg.sender,id,amount,collateral,currency,issueFee) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1822)
+Reentrancy in Collateral.repayInternal(address,address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2062-2104):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2084)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- loan = _processPayment(loan,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2090)
+		- _synthsUSD().issue(_feePool().FEE_ADDRESS(),amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2231)
+		- _feePool().recordFeePaid(amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2232)
+		- _manager().decrementShorts(loanAfter.currency,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2214)
+		- IShortingRewards(shortingRewards[loanAfter.currency]).withdraw(loanAfter.account,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2217)
+		- _manager().decrementLongs(loanAfter.currency,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2220)
+	- _synth(synthsByKey[loan.currency]).burn(repayer,payment) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2097)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2100)
+	Event emitted after the call(s):
+	- LoanRepaymentMade(borrower,repayer,id,payment,loan.amount) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2103)
+Reentrancy in Collateral.withdrawInternal(uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1963-1996):
+	External calls:
+	- loan = accrueInterest(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1977)
+		- state.updateLoan(loanAfter) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2193)
+		- _manager().updateShortRates(loan.currency,latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+		- _manager().updateBorrowRates(latestCumulative) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2186-2188)
+	- state.updateLoan(loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1989)
+	Event emitted after the call(s):
+	- CollateralWithdrawn(msg.sender,id,amount,loan.collateral) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1995)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Collateral._checkLoanAvailable(ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1680-1683) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_loan.lastInteraction.add(interactionDelay) <= block.timestamp,Loan recently interacted with) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1682)
+Collateral.closeInternal(address,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1825-1881) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(! _exchanger().hasWaitingPeriodOrSettlementOwing(borrower,loan.currency),Waiting secs or settlement owing) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1848-1851)
+Collateral.closeByLiquidationInternal(address,address,ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1883-1925) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(! _exchanger().hasWaitingPeriodOrSettlementOwing(liquidator,loan.currency),Waiting or settlement owing) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1898)
+Collateral.withdrawInternal(uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1963-1996) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(collateralRatio(loan) > minCratio,Cratio too low) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1986)
+Collateral.liquidateInternal(address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1998-2060) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(collateralRatio(loan) < minCratio,Cratio above liquidation ratio) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2025)
+	- require(bool,string)(! _exchanger().hasWaitingPeriodOrSettlementOwing(msg.sender,loan.currency),Waiting or settlement owing) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2052)
+Collateral.repayInternal(address,address,uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2062-2104) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(! _exchanger().hasWaitingPeriodOrSettlementOwing(repayer,loan.currency),Waiting or settlement owing) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2096)
+Collateral.drawInternal(uint256,uint256) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2106-2158) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(collateralRatio(loan) > minCratio,Cannot draw this much) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2126)
+Collateral.accrueInterest(ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2161-2194) uses timestamp for comparisons
+	Dangerous comparisons:
+	- loan.interestIndex == 0 (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#2183)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+ReadProxy.fallback() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#299-314) uses assembly
+	- INLINE ASM (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#302-314)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#60) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.nominateNewOwner(address)._owner (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#74) is not in mixedCase
+Parameter ReadProxy.setTarget(address)._target (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#294) is not in mixedCase
+Constant SafeDecimalMath.highPrecisionDecimals (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#746) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter State.setAssociatedContract(address)._associatedContract (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#944) is not in mixedCase
+Function IFeePool.FEE_ADDRESS() (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1137) is not in mixedCase
+Parameter Collateral.areSynthsAndCurrenciesSet(bytes32[],bytes32[])._synthNamesInResolver (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1646) is not in mixedCase
+Parameter Collateral.areSynthsAndCurrenciesSet(bytes32[],bytes32[])._synthKeys (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1646) is not in mixedCase
+Parameter Collateral.addSynths(bytes32[],bytes32[])._synthNamesInResolver (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1693) is not in mixedCase
+Parameter Collateral.addSynths(bytes32[],bytes32[])._synthKeys (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1693) is not in mixedCase
+Parameter Collateral.setMinCratio(uint256)._minCratio (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1714) is not in mixedCase
+Parameter Collateral.setIssueFeeRate(uint256)._issueFeeRate (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1720) is not in mixedCase
+Parameter Collateral.setInteractionDelay(uint256)._interactionDelay (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1725) is not in mixedCase
+Parameter Collateral.setManager(address)._newManager (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1731) is not in mixedCase
+Parameter Collateral.setCanOpenLoans(bool)._canOpenLoans (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1736) is not in mixedCase
+Constant Collateral.sUSD (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1489) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Collateral.maxLoansPerAccount (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#1522) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+createLoan(ICollateralLoan.Loan) should be declared external:
+	- CollateralState.createLoan(ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#993-995)
+updateLoan(ICollateralLoan.Loan) should be declared external:
+	- CollateralState.updateLoan(ICollateralLoan.Loan) (loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol#997-1004)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol analyzed (25 contracts with 46 detectors), 49 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x3B3812BB9f6151bEb6fa10783F1ae848a77a0d46.sol
+Tool Runtime = 8.261830282997835 seconds
+#############################################

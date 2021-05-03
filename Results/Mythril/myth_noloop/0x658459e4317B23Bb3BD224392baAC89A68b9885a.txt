@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: YvsTaxCollector
+Function name: salvage(address)
+PC address: 6106
+Estimated Gas Usage: 8113 - 81352
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/10/0x658459e4317B23Bb3BD224392baAC89A68b9885a.sol:447
+
+target.call.value(weiValue)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38b000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: salvage(address), txdata: 0x863a03e08b8b8b8b8b8b8b8b8b8b8b8bdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: YvsTaxCollector
+Function name: salvage(address)
+PC address: 6106
+Estimated Gas Usage: 8113 - 81352
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/10/0x658459e4317B23Bb3BD224392baAC89A68b9885a.sol:447
+
+target.call.value(weiValue)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: salvage(address), txdata: 0x863a03e00000000000000000000000000101010101010101010101010102010101010101, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x658459e4317B23Bb3BD224392baAC89A68b9885a.sol
+Tool Runtime = 479.97817845095415 seconds
+#############################################

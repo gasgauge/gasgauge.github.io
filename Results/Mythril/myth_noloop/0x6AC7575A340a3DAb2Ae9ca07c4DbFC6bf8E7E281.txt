@@ -1,0 +1,1273 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: CRVStrategySwerve
+Function name: constructor
+PC address: 800
+Estimated Gas Usage: 51550 - 236810
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1129
+
+TokenIndex(_tokenIndex)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: investedUnderlyingBalance()
+PC address: 5322
+Estimated Gas Usage: 8939 - 114416
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1290
+
+IERC20(wbtc).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: investedUnderlyingBalance(), txdata: 0x45d01e4a, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 5752
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1272
+
+mixTokenUnit
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 5762
+Estimated Gas Usage: 23694 - 220015
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1272
+
+wbtcPriceCheckpoint = wbtcValueFromMixToken(mixTokenUnit)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 5843
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1301
+
+curve
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080808001040000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 5906
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1302
+
+tokenIndex
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: investedUnderlyingBalance()
+PC address: 6023
+Estimated Gas Usage: 8939 - 114416
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1301
+
+ISwerveFi(curve).calc_withdraw_one_coin(mixTokenBalance,
+      int128(tokenIndex))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40040002092108, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x80, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008004080000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: investedUnderlyingBalance(), txdata: 0x45d01e4a, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: withdrawLock(address,address)
+PC address: 6142
+Estimated Gas Usage: 7759 - 146151
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1393
+
+IERC20(lockToken).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000080, value: 0x0
+Caller: [SOMEGUY], function: withdrawLock(address,address), txdata: 0x7221636780808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: withdrawLock(address,address)
+PC address: 6303
+Estimated Gas Usage: 7759 - 146151
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1394
+
+VotingEscrow(escrow).withdraw()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x70, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000080, value: 0x0
+Caller: [SOMEGUY], function: withdrawLock(address,address), txdata: 0x7221636780808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [CREATOR], function: withdrawLock(address,address), txdata: 0x722163678080808080808080808080808080808080808080808080808080808080808080808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: withdrawLock(address,address)
+PC address: 6303
+Estimated Gas Usage: 7759 - 146151
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1394
+
+VotingEscrow(escrow).withdraw()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: withdrawLock(address,address), txdata: 0x7221636710101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [CREATOR], function: withdrawLock(address,address), txdata: 0x7221636700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawLock(address,address)
+PC address: 6916
+Estimated Gas Usage: 7759 - 146151
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1393
+
+IERC20(lockToken).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: withdrawLock(address,address), txdata: 0x7221636700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawLock(address,address)
+PC address: 7077
+Estimated Gas Usage: 7759 - 146151
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1394
+
+VotingEscrow(escrow).withdraw()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101800000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: withdrawLock(address,address), txdata: 0x722163678080808080808080808080808080808080808080808080808080808080808080808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawLock(address,address)
+PC address: 7077
+Estimated Gas Usage: 7759 - 146151
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1394
+
+VotingEscrow(escrow).withdraw()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008080010000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: withdrawLock(address,address), txdata: 0x7221636780808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawLock(address,address)
+PC address: 7256
+Estimated Gas Usage: 7759 - 146151
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1395
+
+IERC20(lockToken).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000070884, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x808, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: depositArbCheck(), txdata: 0xc2a2a07b, value: 0x0
+Caller: [SOMEGUY], function: withdrawLock(address,address), txdata: 0x7221636703030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: checkpoint(address)
+PC address: 8403
+Estimated Gas Usage: 4373 - 73736
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1370
+
+Gauge(_gauge).user_checkpoint(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: withdrawLock(address,address), txdata: 0x7221636780808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [CREATOR], function: checkpoint(address), txdata: 0xa972985e808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: checkpoint(address)
+PC address: 8403
+Estimated Gas Usage: 4373 - 73736
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1370
+
+Gauge(_gauge).user_checkpoint(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000008, value: 0x0
+Caller: [SOMEGUY], function: checkpoint(address), txdata: 0xa972985e8080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: checkpoint(address)
+PC address: 9273
+Estimated Gas Usage: 4395 - 73758
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1370
+
+Gauge(_gauge).user_checkpoint(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000001001010000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e81010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [SOMEGUY], function: checkpoint(address), txdata: 0xa972985e101010101010101010101010deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: checkpoint(address)
+PC address: 9273
+Estimated Gas Usage: 4395 - 73758
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1370
+
+Gauge(_gauge).user_checkpoint(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000004, value: 0x0
+Caller: [SOMEGUY], function: checkpoint(address), txdata: 0xa972985e0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawAllToVault()
+PC address: 10785
+Estimated Gas Usage: 14508 - 189632
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1239
+
+Gauge(gauge).withdraw(Gauge(gauge).balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400c0100001080, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008001200000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawAllToVault(), txdata: 0xbfd131f1, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: increaseUnlockTime(address,uint256)
+PC address: 10961
+Estimated Gas Usage: 4435 - 73798
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1386
+
+VotingEscrow(escrow).increase_unlock_time(unlock_time)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000040, value: 0x0
+Caller: [SOMEGUY], function: withdrawLock(address,address), txdata: 0x7221636780808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [CREATOR], function: increaseUnlockTime(address,uint256), txdata: 0xcb5f06cd808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef8080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerve
+Function name: increaseUnlockTime(address,uint256)
+PC address: 10961
+Estimated Gas Usage: 4435 - 73798
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1386
+
+VotingEscrow(escrow).increase_unlock_time(unlock_time)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [ATTACKER], function: increaseUnlockTime(address,uint256), txdata: 0xcb5f06cd80808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawAllToVault()
+PC address: 11115
+Estimated Gas Usage: 14508 - 189632
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1245
+
+vault
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42040000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000120010000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawAllToVault(), txdata: 0xbfd131f1, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: increaseUnlockTime(address,uint256)
+PC address: 11831
+Estimated Gas Usage: 4435 - 73798
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1386
+
+VotingEscrow(escrow).increase_unlock_time(unlock_time)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008020400000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: increaseUnlockTime(address,uint256), txdata: 0xcb5f06cd808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef8080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: increaseUnlockTime(address,uint256)
+PC address: 11831
+Estimated Gas Usage: 4435 - 73798
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1386
+
+VotingEscrow(escrow).increase_unlock_time(unlock_time)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: increaseUnlockTime(address,uint256), txdata: 0xcb5f06cd00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: CRVStrategySwerve
+Function name: uniswap_CRV2WBTC(uint256)
+PC address: 12181
+Estimated Gas Usage: 1122 - 1217
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1094
+
+address[] public uniswap_CRV2WBTC
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000080, value: 0x0
+Caller: [ATTACKER], function: uniswap_CRV2WBTC(uint256), txdata: 0xf03312ff8000000000000000000000000000000000000000000000000000000000000002, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 12539
+Estimated Gas Usage: 19750 - 264658
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1221
+
+Gauge(gauge).withdraw(Gauge(gauge).balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3fffffffffffffffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 12837
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1227
+
+vault
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 12882
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1227
+
+wbtc
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: CRVStrategySwerveDAIMainnet
+Function name: uniswap_CRV2WBTC(uint256)
+PC address: 13099
+Estimated Gas Usage: 1144 - 1239
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1094
+
+address[] public uniswap_CRV2WBTC
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42100080000000022, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: uniswap_CRV2WBTC(uint256), txdata: 0xf03312ff0000000000000000000000000000000000000000000000000000000000000004, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 14680
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1325
+
+crv
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 14864
+Estimated Gas Usage: 23694 - 220015
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1325
+
+IERC20(crv).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3fffffffffffffffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101000000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 14980
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1327
+
+sellFloor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10021, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008001010000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 14995
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1328
+
+wbtc
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 15246
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1329
+
+uni
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 15283
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1329
+
+crv
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10021, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008001010000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 16222
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1257
+
+mixToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080808001040000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 16406
+Estimated Gas Usage: 17107 - 143405
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1257
+
+IERC20(mixToken).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101400000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [ATTACKER], function: setSell(bool), txdata: 0xb076a53a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 16482
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1259
+
+gauge
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 16519
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1259
+
+mixToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 17553
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1187
+
+mixToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 17737
+Estimated Gas Usage: 19750 - 264658
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1187
+
+IERC20(mixToken).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101800000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 17897
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1199
+
+mixToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 18306
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1206
+
+curve
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000000000002000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: withdrawToVault(uint256), txdata: 0xce8c42e80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: withdrawToVault(uint256)
+PC address: 18343
+Estimated Gas Usage: 19750 - 264658
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1206
+
+mixToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080808001040000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 20229
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1168
+
+wbtc
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000008001010000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: setSell(bool), txdata: 0xb076a53a0101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 20413
+Estimated Gas Usage: 23694 - 220015
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1168
+
+IERC20(wbtc).balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x210, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000180800000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawToVault(uint256), txdata: 0xce8c42e88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [ATTACKER], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 20489
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1170
+
+curve
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CRVStrategySwerveDAIMainnet
+Function name: doHardWork()
+PC address: 20526
+Estimated Gas Usage: 23694 - 220015
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/1/0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol:1170
+
+wbtc
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80042000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000101010000000000000000000000000001000001000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x6AC7575A340a3DAb2Ae9ca07c4DbFC6bf8E7E281.sol
+Tool Runtime = 17410.456901313995 seconds
+#############################################

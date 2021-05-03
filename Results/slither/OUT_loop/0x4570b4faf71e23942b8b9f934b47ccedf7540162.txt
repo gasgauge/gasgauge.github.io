@@ -1,0 +1,246 @@
+Compilation warnings/errors on ./loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol:
+./loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol:833:57: Warning: This declaration shadows an existing declaration.
+    function fairShare(uint256 balance, uint256 shares, uint256 totalShares) internal pure returns (uint256) {
+                                                        ^-----------------^
+./loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol:186:5: The shadowed declaration is here:
+    uint256 public totalShares = 0; // total shares across all members
+    ^----------------------------^
+./loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol:627:5: Warning: Function state mutability can be restricted to view
+    function _didPass(uint256 proposalIndex) internal returns (bool didPass) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+INFO:Detectors:[93m
+Moloch.fairShare(uint256,uint256,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#833-845) performs a multiplication on the result of a division:
+	-(balance / totalShares) * shares (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#844)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Moloch._validateProposalForProcessing(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#647-654) uses a dangerous strict equality:
+	- require(bool,string)(proposal.flags[1] == false,proposal has already been processed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#652)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract ClaimsTokenERC20Extension (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1387-1435) has payable functions:
+	 - IClaimsToken.withdrawFunds() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1235)
+	 - ClaimsTokenERC20Extension.withdrawFunds() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1409-1418)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+Reentrancy in Moloch.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#309-338):
+	External calls:
+	- require(bool,string)(IERC20(tributeToken).transferFrom(msg.sender,address(this),tributeOffered),tribute token transfer failed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#331)
+	State variables written after the call(s):
+	- unsafeAddToBalance(ESCROW,tributeToken,tributeOffered) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#332)
+		- userTokenBalances[user][token] += amount (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#819)
+		- userTokenBalances[TOTAL][token] += amount (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#820)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Moloch.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string).flags (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#334) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+Moloch.withdrawBalances(address[],uint256[],bool).max (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#710) shadows:
+	- Moloch.max(uint256,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#785-787) (function)
+Moloch.fairShare(uint256,uint256,uint256).totalShares (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#833) shadows:
+	- Moloch.totalShares (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#186) (state variable)
+ERC20Detailed.constructor(string,string,uint8).name (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1178) shadows:
+	- ERC20Detailed.name() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1187-1189) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1178) shadows:
+	- ERC20Detailed.symbol() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1195-1197) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1178) shadows:
+	- ERC20Detailed.decimals() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1211-1213) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Moloch.sponsorProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#401-447):
+	External calls:
+	- require(bool,string)(IERC20(depositToken).transferFrom(msg.sender,address(this),proposalDeposit),proposal deposit token transfer failed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#403)
+	State variables written after the call(s):
+	- proposalQueue.push(proposalId) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#444)
+	- proposal.startingPeriod = startingPeriod (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#436)
+	- proposal.sponsor = memberAddress (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#439)
+	- proposal.flags[0] = true (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#441)
+	- proposedToKick[proposal.applicant] = true (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#427)
+	- proposedToWhitelist[address(proposal.tributeToken)] = true (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#422)
+	- unsafeAddToBalance(ESCROW,depositToken,proposalDeposit) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#404)
+		- userTokenBalances[user][token] += amount (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#819)
+		- userTokenBalances[TOTAL][token] += amount (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#820)
+Reentrancy in Moloch.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#309-338):
+	External calls:
+	- require(bool,string)(IERC20(tributeToken).transferFrom(msg.sender,address(this),tributeOffered),tribute token transfer failed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#331)
+	State variables written after the call(s):
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#336)
+		- proposalCount += 1 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#398)
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#336)
+		- proposals[proposalCount] = proposal (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#394)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Moloch._withdrawBalance(address,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#723-728):
+	External calls:
+	- require(bool,string)(IERC20(token).transfer(msg.sender,amount),transfer failed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#726)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,token,amount) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#727)
+Reentrancy in Moloch.sponsorProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#401-447):
+	External calls:
+	- require(bool,string)(IERC20(depositToken).transferFrom(msg.sender,address(this),proposalDeposit),proposal deposit token transfer failed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#403)
+	Event emitted after the call(s):
+	- SponsorProposal(msg.sender,memberAddress,proposalId,proposalQueue.length.sub(1),startingPeriod) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#446)
+Reentrancy in Submitter.submitGuildKickProposal(address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1143-1153):
+	External calls:
+	- proposalId = moloch.submitGuildKickProposal(memberToKick,details) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1147-1150)
+	Event emitted after the call(s):
+	- Submit(proposalId) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1152)
+Reentrancy in Moloch.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#309-338):
+	External calls:
+	- require(bool,string)(IERC20(tributeToken).transferFrom(msg.sender,address(this),tributeOffered),tribute token transfer failed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#331)
+	Event emitted after the call(s):
+	- SubmitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,proposalCount,msg.sender,memberAddress) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#397)
+		- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#336)
+Reentrancy in Submitter.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1107-1129):
+	External calls:
+	- proposalId = moloch.submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1117-1126)
+	Event emitted after the call(s):
+	- Submit(proposalId) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1128)
+Reentrancy in Submitter.submitWhitelistProposal(address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1131-1141):
+	External calls:
+	- proposalId = moloch.submitWhitelistProposal(tokenToWhitelist,details) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1135-1138)
+	Event emitted after the call(s):
+	- Submit(proposalId) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1140)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Moloch.sponsorProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#401-447) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(proposal.proposer != address(0),proposal must have been proposed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#408)
+	- require(bool,string)(! proposal.flags[0],proposal has already been sponsored) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#409)
+	- require(bool,string)(! proposal.flags[3],proposal has been cancelled) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#410)
+	- require(bool,string)(members[proposal.applicant].jailed == 0,proposal applicant must not be jailed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#411)
+	- require(bool,string)(! tokenWhitelist[address(proposal.tributeToken)],cannot already have whitelisted the token) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#419)
+	- require(bool,string)(! proposedToWhitelist[address(proposal.tributeToken)],already proposed to whitelist) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#420)
+	- require(bool,string)(! proposedToKick[proposal.applicant],already proposed to kick) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#426)
+Moloch.submitVote(uint256,uint8) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#450-486) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(getCurrentPeriod() >= proposal.startingPeriod,voting period has not started) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#460)
+Moloch._didPass(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#627-645) uses timestamp for comparisons
+	Dangerous comparisons:
+	- didPass = proposal.yesVotes > proposal.noVotes (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#630)
+	- (totalShares.add(totalLoot)).mul(dilutionBound) < proposal.maxTotalSharesAndLootAtYesVote (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#633)
+Moloch._validateProposalForProcessing(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#647-654) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(getCurrentPeriod() >= proposal.startingPeriod.add(votingPeriodLength).add(gracePeriodLength),proposal is not ready to be processed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#651)
+	- require(bool,string)(proposal.flags[1] == false,proposal has already been processed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#652)
+	- require(bool,string)(proposalIndex == 0 || proposals[proposalQueue[proposalIndex.sub(1)]].flags[1],previous proposal must be processed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#653)
+Moloch.hasVotingPeriodExpired(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#777-779) uses timestamp for comparisons
+	Dangerous comparisons:
+	- getCurrentPeriod() >= startingPeriod.add(votingPeriodLength) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#778)
+Moloch.max(uint256,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#785-787) uses timestamp for comparisons
+	Dangerous comparisons:
+	- x >= y (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#786)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Moloch._validateProposalForProcessing(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#647-654) compares to a boolean constant:
+	-require(bool,string)(proposal.flags[1] == false,proposal has already been processed) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#652)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#14) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#55) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#79) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#135) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#852) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#898) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1094) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1160) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1441) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._summoner (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#864) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._approvedTokens (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#865) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._periodDuration (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#866) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._votingPeriodLength (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#867) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._gracePeriodLength (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#868) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._proposalDeposit (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#869) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._dilutionBound (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#870) is not in mixedCase
+Parameter MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256)._processingReward (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#871) is not in mixedCase
+Variable MolochSummoner.M (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#857) is not in mixedCase
+Variable MolochSummoner.Molochs (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#859) is not in mixedCase
+Parameter ClaimsToken.transfer(address,uint256)._to (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1279) is not in mixedCase
+Parameter ClaimsToken.transfer(address,uint256)._value (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1279) is not in mixedCase
+Parameter ClaimsToken.transferFrom(address,address,uint256)._from (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1298) is not in mixedCase
+Parameter ClaimsToken.transferFrom(address,address,uint256)._to (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1298) is not in mixedCase
+Parameter ClaimsToken.transferFrom(address,address,uint256)._value (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1298) is not in mixedCase
+Parameter ClaimsToken.availableFunds(address)._forAddress (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1325) is not in mixedCase
+Parameter ClaimsTokenERC20Extension.tokenFallback(address,uint256,bytes)._sender (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1426) is not in mixedCase
+Parameter ClaimsTokenERC20Extension.tokenFallback(address,uint256,bytes)._value (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1426) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) should be declared external:
+	- Moloch.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#309-338)
+submitWhitelistProposal(address,string) should be declared external:
+	- Moloch.submitWhitelistProposal(address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#340-350)
+submitGuildKickProposal(address,string) should be declared external:
+	- Moloch.submitGuildKickProposal(address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#352-363)
+sponsorProposal(uint256) should be declared external:
+	- Moloch.sponsorProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#401-447)
+submitVote(uint256,uint8) should be declared external:
+	- Moloch.submitVote(uint256,uint8) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#450-486)
+processProposal(uint256) should be declared external:
+	- Moloch.processProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#488-564)
+processWhitelistProposal(uint256) should be declared external:
+	- Moloch.processWhitelistProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#566-594)
+processGuildKickProposal(uint256) should be declared external:
+	- Moloch.processGuildKickProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#596-625)
+ragequit(uint256,uint256) should be declared external:
+	- Moloch.ragequit(uint256,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#661-663)
+ragekick(address) should be declared external:
+	- Moloch.ragekick(address) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#696-704)
+withdrawBalance(address,uint256) should be declared external:
+	- Moloch.withdrawBalance(address,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#706-708)
+withdrawBalances(address[],uint256[],bool) should be declared external:
+	- Moloch.withdrawBalances(address[],uint256[],bool) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#710-721)
+collectTokens(address) should be declared external:
+	- Moloch.collectTokens(address) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#730-739)
+cancelProposal(uint256) should be declared external:
+	- Moloch.cancelProposal(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#742-752)
+updateDelegateKey(address) should be declared external:
+	- Moloch.updateDelegateKey(address) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#754-769)
+getProposalQueueLength() should be declared external:
+	- Moloch.getProposalQueueLength() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#793-795)
+getProposalFlags(uint256) should be declared external:
+	- Moloch.getProposalFlags(uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#797-799)
+getUserTokenBalance(address,address) should be declared external:
+	- Moloch.getUserTokenBalance(address,address) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#801-803)
+getMemberProposalVote(address,uint256) should be declared external:
+	- Moloch.getMemberProposalVote(address,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#805-809)
+getTokenCount() should be declared external:
+	- Moloch.getTokenCount() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#811-813)
+summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256) should be declared external:
+	- MolochSummoner.summonMoloch(address,address[],uint256,uint256,uint256,uint256,uint256,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#863-887)
+getMolochCount() should be declared external:
+	- MolochSummoner.getMolochCount() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#889-891)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#945-947)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#968-971)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#997-1000)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1012-1015)
+submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) should be declared external:
+	- Submitter.submitProposal(address,uint256,uint256,uint256,address,uint256,address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1107-1129)
+submitWhitelistProposal(address,string) should be declared external:
+	- Submitter.submitWhitelistProposal(address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1131-1141)
+submitGuildKickProposal(address,string) should be declared external:
+	- Submitter.submitGuildKickProposal(address,string) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1143-1153)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1187-1189)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1195-1197)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1211-1213)
+tokenFallback(address,uint256,bytes) should be declared external:
+	- ClaimsTokenERC20Extension.tokenFallback(address,uint256,bytes) (loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol#1426-1434)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol analyzed (12 contracts with 46 detectors), 86 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x4570b4faf71e23942b8b9f934b47ccedf7540162.sol
+Tool Runtime = 3.2910690360004082 seconds
+#############################################

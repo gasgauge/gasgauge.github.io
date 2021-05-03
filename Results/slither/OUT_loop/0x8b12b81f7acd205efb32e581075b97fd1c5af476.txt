@@ -1,0 +1,195 @@
+Compilation warnings/errors on ./loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol:
+./loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol:478:31: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly {codehash := extcodehash(account)}
+                              ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in ULURewards.checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#833-853):
+	External calls:
+	- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#849)
+	- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#843)
+Reentrancy in ULURewards.getReward() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804-831):
+	External calls:
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#808)
+Reentrancy in ULURewards.notifyRewardAmount(uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#861-876):
+	External calls:
+	- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#870)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#873)
+	- periodFinish = block.timestamp.add(DURATION) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#874)
+	- totalAccumulatedReward = totalAccumulatedReward.add(currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#871)
+Reentrancy in ULURewards.stake(address,uint256,address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#776-785):
+	External calls:
+	- super.tokenStake(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#780)
+		- (success,returndata) = address(token).call(data) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#587)
+		- IERC20(tokenAddress).safeTransferFrom(sender,address(this),amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#641)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#776)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	State variables written after the call(s):
+	- super.tokenStake(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#780)
+		- _balances[tokenAddress][sender] = _balances[tokenAddress][sender].add(amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#640)
+	- super.tokenStake(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#780)
+		- _totalSupply[tokenAddress] = _totalSupply[tokenAddress].add(amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#639)
+Reentrancy in ULURewards.withdraw(address,uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#787-792):
+	External calls:
+	- super.tokenWithdraw(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#790)
+		- IERC20(tokenAddress).safeTransfer(msg.sender,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#647)
+		- (success,returndata) = address(token).call(data) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#587)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#787)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	State variables written after the call(s):
+	- super.tokenWithdraw(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#790)
+		- _balances[tokenAddress][msg.sender] = _balances[tokenAddress][msg.sender].sub(amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#646)
+	- super.tokenWithdraw(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#790)
+		- _totalSupply[tokenAddress] = _totalSupply[tokenAddress].sub(amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#645)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LPTokenWrapper.tokenStake(address,uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#635-642) uses tx.origin for authorization: require(bool,string)(tx.origin == sender,Andre, stahp.) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#638)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-usage-of-txorigin[0m
+INFO:Detectors:[92m
+Reentrancy in ULURewards.checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#833-853):
+	External calls:
+	- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	State variables written after the call(s):
+	- currentEpoch ++ (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#844)
+	- lastUpdateTime = block.timestamp (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#848)
+	- rewardRate = currentEpochReward.div(DURATION) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#847)
+Reentrancy in ULURewards.getReward() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804-831):
+	External calls:
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	State variables written after the call(s):
+	- accumulatedStakingPower[msg.sender] = accumulatedStakingPower[msg.sender].add(rewards[msg.sender]) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#807)
+Reentrancy in ULURewards.notifyRewardAmount(uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#861-876):
+	External calls:
+	- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#870)
+	State variables written after the call(s):
+	- currentEpoch ++ (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#872)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in ULURewards.checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#833-853):
+	External calls:
+	- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#850)
+Reentrancy in ULURewards.getReward() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804-831):
+	External calls:
+	- yfv.safeTransfer(msg.sender,actualPaid) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#813)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,actualPaid) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#814)
+Reentrancy in ULURewards.getReward() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804-831):
+	External calls:
+	- yfv.safeTransfer(msg.sender,actualPaid) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#813)
+	- yfv.safeTransfer(referrer,commission) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#821)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	Event emitted after the call(s):
+	- CommissionPaid(referrer,commission) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#822)
+Reentrancy in ULURewards.getReward() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804-831):
+	External calls:
+	- yfv.safeTransfer(msg.sender,actualPaid) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#813)
+	- yfv.burn(commission) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#824)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	Event emitted after the call(s):
+	- Burned(commission) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#825)
+Reentrancy in ULURewards.notifyRewardAmount(uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#861-876):
+	External calls:
+	- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#870)
+	Event emitted after the call(s):
+	- RewardAdded(currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#875)
+Reentrancy in ULURewards.stake(address,uint256,address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#776-785):
+	External calls:
+	- super.tokenStake(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#780)
+		- (success,returndata) = address(token).call(data) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#587)
+		- IERC20(tokenAddress).safeTransferFrom(sender,address(this),amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#641)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#776)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	Event emitted after the call(s):
+	- Staked(msg.sender,tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#781)
+Reentrancy in ULURewards.withdraw(address,uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#787-792):
+	External calls:
+	- super.tokenWithdraw(tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#790)
+		- IERC20(tokenAddress).safeTransfer(msg.sender,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#647)
+		- (success,returndata) = address(token).call(data) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#587)
+	- checkNextEpoch() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#787)
+		- yfv.mint(address(this),currentEpochReward) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#842)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,tokenAddress,amount) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#791)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+ULURewards.earned(address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#761-770) uses timestamp for comparisons
+	Dangerous comparisons:
+	- calculatedEarned > poolBalance (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#768)
+ULURewards.getReward() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#804-831) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 1 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#806)
+ULURewards.notifyRewardAmount(uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#861-876) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(periodFinish == 0,Only can call once to start staking) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#862)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#467-480) uses assembly
+	- INLINE ASM (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#478-479)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#62) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#95) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#255) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#287) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#366) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#450) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#522) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#600) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#616) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#510-516):
+	- (success) = recipient.call.value(amount)() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#514)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#575-594):
+	- (success,returndata) = address(token).call(data) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#587)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardReferral(address)._rewardReferral (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#608) is not in mixedCase
+Parameter ULURewards.setNextRewardMultiplier(uint256)._nextRewardMultiplier (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#719) is not in mixedCase
+Variable ULURewards.SUPPORTED_STAKING_COIN_ADDRESSES (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#688) is not in mixedCase
+Variable ULURewards.SUPPORTED_STAKING_COIN_WEI_MULTIPLE (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#689) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ULURewards.slitherConstructorVariables() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#656-877) uses literals with too many digits:
+	- SUPPORTED_STAKING_COIN_WEI_MULTIPLE = (1000000000000,1000000000000,1,1,1) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#689)
+ULURewards.slitherConstructorConstantVariables() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#656-877) uses literals with too many digits:
+	- TUSD_TOKEN_ADDRESS = 0x0000000000085d4780B73119b644AE5ecd22b376 (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#684)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+ULURewards.starttime (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#670) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#314-316)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#340-343)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#349-351)
+setNextRewardMultiplier(uint256) should be declared external:
+	- ULURewards.setNextRewardMultiplier(uint256) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#719-722)
+stakingPower(address) should be declared external:
+	- ULURewards.stakingPower(address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#772-774)
+stake(address,uint256,address) should be declared external:
+	- ULURewards.stake(address,uint256,address) (loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol#776-785)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol analyzed (11 contracts with 46 detectors), 45 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8b12b81f7acd205efb32e581075b97fd1c5af476.sol
+Tool Runtime = 1.3602565180008241 seconds
+#############################################

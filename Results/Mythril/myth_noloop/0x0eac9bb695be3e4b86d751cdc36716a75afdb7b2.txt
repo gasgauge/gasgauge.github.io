@@ -1,0 +1,59 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: YFG
+Function name: permit(address,address,uint256,uint256,bool,uint8,bytes32,bytes32)
+PC address: 4434
+Estimated Gas Usage: 5886 - 42809
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x0eac9bb695be3e4b86d751cdc36716a75afdb7b2.sol:133
+
+require(expiry == 0 || now <= expiry, "permit-expired")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: permit(address,address,uint256,uint256,bool,uint8,bytes32,bytes32), txdata: 0x8fcbaf0c00000000000000000000000080808080808080808080808080808080808080800000000000000000000000000000202001802002200202010800021080000820010000000000201000402000001000000040002000201000080802000000000840040804080220010101004080400101401002400280100180010801040101040440802008040404001020000020804008042020040180018080010410040410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: YFG
+Function name: approveAndCall(address,uint256,bytes)
+PC address: 6543
+Estimated Gas Usage: 9143 - 67591
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x0eac9bb695be3e4b86d751cdc36716a75afdb7b2.sol:111
+
+ApproveAndCallFallBack(spender).receiveApproval(msg.sender, amount, address(this), data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800800000008c4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x22280000000000644, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: permit(address,address,uint256,uint256,bool,uint8,bytes32,bytes32), txdata: 0x8fcbaf0c10101010101010101010101001010101010101010101010101010101010101011010101010101010101010100101040101020101020101020200800000080001000000000000000000000000000000000000000000000000000000000000000040044000200202080000000000000000000000000000000020200008000001020000000000000000000000000000000000000000000000000000000000000000101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [CREATOR], function: approveAndCall(address,uint256,bytes), txdata: 0xcae9ca51808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x0eac9bb695be3e4b86d751cdc36716a75afdb7b2.sol
+Tool Runtime = 4062.718919643001 seconds
+#############################################

@@ -1,0 +1,298 @@
+INFO:Detectors:[91m
+DeedImplementation._destroyDeed() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#184-193) sends eth to arbitrary user
+	Dangerous calls:
+	- _owner.send(address(this).balance) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#190)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+HashRegistrar.onlyOwner(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#247-250) uses a dangerous strict equality:
+	- require(bool)(state(_hash) == Mode.Owned && msg.sender == _entries[_hash].deed.owner()) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#248)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in BaseRegistrarImplementation.acceptRegistrarTransfer(bytes32,Deed,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1530-1554):
+	External calls:
+	- deed.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1544)
+	State variables written after the call(s):
+	- expiries[id] = transferPeriodEnds (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1547)
+Reentrancy in HashRegistrar.cancelBid(address,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#384-400):
+	External calls:
+	- bid.setOwner(msg.sender) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#396)
+	- bid.closeDeed(5) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#397)
+	State variables written after the call(s):
+	- sealedBids[bidder][seal] = Deed(0) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#398)
+Reentrancy in HashRegistrar.invalidateName(string) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#462-487):
+	External calls:
+	- _tryEraseSingleNode(hash) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#471)
+		- ens.setSubnodeOwner(rootNode,label,address(this)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#614)
+		- ens.setResolver(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#616)
+		- ens.setOwner(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#617)
+	State variables written after the call(s):
+	- h.value = max(h.value,minPrice) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#476)
+Reentrancy in HashRegistrar.invalidateName(string) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#462-487):
+	External calls:
+	- _tryEraseSingleNode(hash) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#471)
+		- ens.setSubnodeOwner(rootNode,label,address(this)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#614)
+		- ens.setResolver(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#616)
+		- ens.setOwner(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#617)
+	- h.deed.setBalance(h.value / 2,false) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#477)
+	- h.deed.setOwner(msg.sender) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#478)
+	- h.deed.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#479)
+	State variables written after the call(s):
+	- h.value = 0 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#484)
+	- h.highestBid = 0 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#485)
+	- h.deed = Deed(0) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#486)
+Reentrancy in HashRegistrar.transferRegistrars(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#513-529):
+	External calls:
+	- h.deed.setRegistrar(registrar) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#519)
+	- Registrar(registrar).acceptRegistrarTransfer(_hash,h.deed,h.registrationDate) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#522)
+	State variables written after the call(s):
+	- h.deed = Deed(0) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#525)
+	- h.registrationDate = 0 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#526)
+	- h.value = 0 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#527)
+	- h.highestBid = 0 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#528)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	- previousWinner.closeDeed(995) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#358)
+	State variables written after the call(s):
+	- h.value = h.highestBid (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#363)
+	- h.highestBid = value (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#364)
+	- h.deed = bid (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#365)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	State variables written after the call(s):
+	- h.value = value (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#369)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ENS.setSubnodeOwner(bytes32,bytes32,address).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#23) shadows:
+	- ENS.owner(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#27) (function)
+ENS.setResolver(bytes32,address).resolver (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#24) shadows:
+	- ENS.resolver(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#28) (function)
+ENS.setOwner(bytes32,address).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#25) shadows:
+	- ENS.owner(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#27) (function)
+ENS.setTTL(bytes32,uint64).ttl (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#26) shadows:
+	- ENS.ttl(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#29) (function)
+BaseRegistrar.register(uint256,address,uint256).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1380) shadows:
+	- Ownable.owner() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1280-1282) (function)
+BaseRegistrar.reclaim(uint256,address).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1387) shadows:
+	- Ownable.owner() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1280-1282) (function)
+BaseRegistrarImplementation.register(uint256,address,uint256).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1492) shadows:
+	- Ownable.owner() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1280-1282) (function)
+BaseRegistrarImplementation.reclaim(uint256,address).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1521) shadows:
+	- Ownable.owner() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1280-1282) (function)
+BaseRegistrarImplementation.acceptRegistrarTransfer(bytes32,Deed,uint256).owner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1541) shadows:
+	- Ownable.owner() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1280-1282) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in BaseRegistrarImplementation.acceptRegistrarTransfer(bytes32,Deed,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1530-1554):
+	External calls:
+	- deed.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1544)
+	State variables written after the call(s):
+	- _mint(owner,id) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1548)
+		- _ownedTokensCount[to] = _ownedTokensCount[to].add(1) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1169)
+	- _mint(owner,id) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1548)
+		- _tokenOwner[tokenId] = to (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1168)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in BaseRegistrarImplementation.acceptRegistrarTransfer(bytes32,Deed,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1530-1554):
+	External calls:
+	- deed.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1544)
+	Event emitted after the call(s):
+	- Transfer(address(0),to,tokenId) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1171)
+		- _mint(owner,id) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1548)
+Reentrancy in BaseRegistrarImplementation.acceptRegistrarTransfer(bytes32,Deed,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1530-1554):
+	External calls:
+	- deed.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1544)
+	- ens.setSubnodeOwner(baseNode,label,owner) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1550)
+	Event emitted after the call(s):
+	- NameMigrated(id,owner,transferPeriodEnds) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1552)
+	- NameRegistered(id,owner,transferPeriodEnds) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1553)
+Reentrancy in HashRegistrar.cancelBid(address,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#384-400):
+	External calls:
+	- bid.setOwner(msg.sender) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#396)
+	- bid.closeDeed(5) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#397)
+	Event emitted after the call(s):
+	- BidRevealed(seal,bidder,0,5) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#399)
+Reentrancy in HashRegistrar.finalizeAuction(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#407-416):
+	External calls:
+	- h.deed.setBalance(h.value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#412)
+	- trySetSubnodeOwner(_hash,h.deed.owner()) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#414)
+		- ens.setSubnodeOwner(rootNode,_hash,_newOwner) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#672)
+	Event emitted after the call(s):
+	- HashRegistered(_hash,h.deed.owner(),h.value,h.registrationDate) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#415)
+Reentrancy in HashRegistrar.invalidateName(string) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#462-487):
+	External calls:
+	- _tryEraseSingleNode(hash) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#471)
+		- ens.setSubnodeOwner(rootNode,label,address(this)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#614)
+		- ens.setResolver(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#616)
+		- ens.setOwner(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#617)
+	- h.deed.setBalance(h.value / 2,false) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#477)
+	- h.deed.setOwner(msg.sender) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#478)
+	- h.deed.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#479)
+	Event emitted after the call(s):
+	- HashInvalidated(hash,unhashedName,h.value,h.registrationDate) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#482)
+Reentrancy in BaseRegistrarImplementation.register(uint256,address,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1492-1507):
+	External calls:
+	- ens.setSubnodeOwner(baseNode,bytes32(id),owner) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1502)
+	Event emitted after the call(s):
+	- NameRegistered(id,owner,now + duration) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1504)
+Reentrancy in HashRegistrar.releaseDeed(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#438-451):
+	External calls:
+	- _tryEraseSingleNode(_hash) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#448)
+		- ens.setSubnodeOwner(rootNode,label,address(this)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#614)
+		- ens.setResolver(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#616)
+		- ens.setOwner(node,address(0x0)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#617)
+	- deedContract.closeDeed(1000) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#449)
+	Event emitted after the call(s):
+	- HashReleased(_hash,h.value) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#450)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	- bid.closeDeed(5) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#344)
+	Event emitted after the call(s):
+	- BidRevealed(_hash,msg.sender,value,1) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#345)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	- bid.closeDeed(995) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#351)
+	Event emitted after the call(s):
+	- BidRevealed(_hash,msg.sender,value,0) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#352)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	- previousWinner.closeDeed(995) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#358)
+	Event emitted after the call(s):
+	- BidRevealed(_hash,msg.sender,value,2) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#366)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	- bid.closeDeed(995) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#370)
+	Event emitted after the call(s):
+	- BidRevealed(_hash,msg.sender,value,3) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#371)
+Reentrancy in HashRegistrar.unsealBid(bytes32,uint256,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331-377):
+	External calls:
+	- bid.setBalance(value,true) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#339)
+	- bid.closeDeed(995) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#374)
+	Event emitted after the call(s):
+	- BidRevealed(_hash,msg.sender,value,4) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#375)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+HashRegistrar.cancelBid(address,bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#384-400) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(address(bid) != address(0x0) && now >= bid.creationDate() + totalAuctionLength + 1209600) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#393)
+HashRegistrar.releaseDeed(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#438-451) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(now >= h.registrationDate + 31536000 || ens.owner(rootNode) != address(this)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#442)
+HashRegistrar.state(bytes32) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#554-572) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now < entry.registrationDate (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#559)
+	- now < entry.registrationDate - revealPeriod (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#560)
+HashRegistrar.isAllowed(bytes32,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#583-585) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _timestamp > getAllowedTime(_hash) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#584)
+BaseRegistrarImplementation.ownerOf(uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1451-1454) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(expiries[tokenId] > now) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1452)
+BaseRegistrarImplementation.available(uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1479-1487) uses timestamp for comparisons
+	Dangerous comparisons:
+	- expiries[id] + GRACE_PERIOD >= now (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1481)
+	- now > transferPeriodEnds || previousRegistrar.state(bytes32(id)) == Registrar.Mode.Open (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1486)
+BaseRegistrarImplementation.register(uint256,address,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1492-1507) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(now + duration + GRACE_PERIOD > now + GRACE_PERIOD) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1494)
+BaseRegistrarImplementation.renew(uint256,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1509-1516) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(expiries[id] + GRACE_PERIOD >= now) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1510)
+	- require(bool)(expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1511)
+BaseRegistrarImplementation.acceptRegistrarTransfer(bytes32,Deed,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1530-1554) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(expiries[id] == 0) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1534)
+	- require(bool)(transferPeriodEnds > now) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1535)
+	- require(bool)(registrationDate < now - MIGRATION_LOCK_PERIOD) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1539)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+HashRegistrar.strlen(string) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#709-737) uses assembly
+	- INLINE ASM (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#714-718)
+	- INLINE ASM (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#721-722)
+Address.isContract(address) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#904-915) uses assembly
+	- INLINE ASM (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#913-914)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#36) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#56) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#89) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#199) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#744) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#763) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#793) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#822) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#891) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#921) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#968) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1256) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1332) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1399) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Constant DeedImplementation.burn (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#98) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter HashRegistrar.startAuction(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#274) is not in mixedCase
+Parameter HashRegistrar.startAuctions(bytes32[])._hashes (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#289) is not in mixedCase
+Parameter HashRegistrar.unsealBid(bytes32,uint256,bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331) is not in mixedCase
+Parameter HashRegistrar.unsealBid(bytes32,uint256,bytes32)._value (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331) is not in mixedCase
+Parameter HashRegistrar.unsealBid(bytes32,uint256,bytes32)._salt (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#331) is not in mixedCase
+Parameter HashRegistrar.finalizeAuction(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#407) is not in mixedCase
+Parameter HashRegistrar.transfer(bytes32,address)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#424) is not in mixedCase
+Parameter HashRegistrar.releaseDeed(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#438) is not in mixedCase
+Parameter HashRegistrar.transferRegistrars(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#513) is not in mixedCase
+Parameter HashRegistrar.entries(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#543) is not in mixedCase
+Parameter HashRegistrar.state(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#554) is not in mixedCase
+Parameter HashRegistrar.isAllowed(bytes32,uint256)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#583) is not in mixedCase
+Parameter HashRegistrar.isAllowed(bytes32,uint256)._timestamp (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#583) is not in mixedCase
+Parameter HashRegistrar.getAllowedTime(bytes32)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#595) is not in mixedCase
+Parameter HashRegistrar.trySetSubnodeOwner(bytes32,address)._hash (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#670) is not in mixedCase
+Parameter HashRegistrar.trySetSubnodeOwner(bytes32,address)._newOwner (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#670) is not in mixedCase
+Variable HashRegistrar._entries (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#225) is not in mixedCase
+Constant HashRegistrar.totalAuctionLength (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#228) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant HashRegistrar.revealPeriod (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#229) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant HashRegistrar.launchLength (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#230) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant HashRegistrar.minPrice (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#232) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter ERC721.safeTransferFrom(address,address,uint256,bytes)._data (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1131) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in DeedImplementation.closeDeed(uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#154-159):
+	External calls:
+	- require(bool)(burn.send(((1000 - refundRatio) * address(this).balance) / 1000)) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#156)
+	Event emitted after the call(s):
+	- DeedClosed() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#157)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- ERC721.balanceOf(address) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1023-1026)
+	- IERC721.balanceOf(address) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#775)
+approve(address,uint256) should be declared external:
+	- IERC721.approve(address,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#778)
+	- ERC721.approve(address,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1047-1054)
+setApprovalForAll(address,bool) should be declared external:
+	- IERC721.setApprovalForAll(address,bool) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#781)
+	- ERC721.setApprovalForAll(address,bool) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1073-1077)
+safeTransferFrom(address,address,uint256) should be declared external:
+	- ERC721.safeTransferFrom(address,address,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1115-1117)
+	- IERC721.safeTransferFrom(address,address,uint256) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#785)
+onERC721Received(address,address,uint256,bytes) should be declared external:
+	- IERC721Receiver.onERC721Received(address,address,uint256,bytes) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#815-816)
+owner() should be declared external:
+	- Ownable.owner() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1280-1282)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1305-1308)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol#1314-1316)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol analyzed (15 contracts with 46 detectors), 90 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xbdB687373A205bb7eD379A1c85940E8C162f8930.sol
+Tool Runtime = 3.160722838998481 seconds
+#############################################

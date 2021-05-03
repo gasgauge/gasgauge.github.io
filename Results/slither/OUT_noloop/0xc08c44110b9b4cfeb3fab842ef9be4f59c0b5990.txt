@@ -1,0 +1,112 @@
+Compilation warnings/errors on ./noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol:
+./noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol:40:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+Ownable.______gap (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#384) shadows:
+	- Initializable.______gap (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#282)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+TokenVesting._vestedAmount(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#708-721) uses a dangerous strict equality:
+	- block.timestamp >= _start.add(_duration) && _revoked[address(token)] == 0 (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#714)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[92m
+TokenVesting.constructor(address,uint256,uint256,uint256,bool).beneficiary (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#586) shadows:
+	- TokenVesting.beneficiary() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#604-606) (function)
+TokenVesting.constructor(address,uint256,uint256,uint256,bool).start (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#586) shadows:
+	- TokenVesting.start() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#618-620) (function)
+TokenVesting.constructor(address,uint256,uint256,uint256,bool).duration (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#586) shadows:
+	- TokenVesting.duration() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#625-627) (function)
+TokenVesting.constructor(address,uint256,uint256,uint256,bool).revocable (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#586) shadows:
+	- TokenVesting.revocable() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#632-634) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in TokenVesting.release(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#654-664):
+	External calls:
+	- token.safeTransfer(_beneficiary,unreleased) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#661)
+	Event emitted after the call(s):
+	- TokensReleased(address(token),unreleased) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#663)
+Reentrancy in TokenVesting.revoke(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#671-687):
+	External calls:
+	- token.safeTransfer(owner(),refund) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#684)
+	Event emitted after the call(s):
+	- TokenVestingRevoked(address(token)) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#686)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+TokenVesting.constructor(address,uint256,uint256,uint256,bool) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#586-599) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(start.add(duration) > block.timestamp,TokenVesting: final time is before current time) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#592)
+TokenVesting.revoked(address) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#646-648) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (_revoked[token] != 0) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#647)
+TokenVesting.release(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#654-664) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(unreleased > 0,TokenVesting: no tokens are due) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#657)
+TokenVesting.revoke(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#671-687) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_revoked[address(token)] == 0,TokenVesting: token already revoked) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#673)
+TokenVesting._vestedAmount(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#708-721) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < _cliff (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#712)
+	- block.timestamp >= _start.add(_duration) && _revoked[address(token)] == 0 (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#714)
+	- _revoked[address(token)] > 0 (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#716)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#33-42) uses assembly
+	- INLINE ASM (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#40-41)
+Initializable.isConstructor() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#269-279) uses assembly
+	- INLINE ASM (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#277-278)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#72-78):
+	- (success) = recipient.call.value(amount)() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#76)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#204-223):
+	- (success,returndata) = address(token).call(data) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#216)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#282) is not in mixedCase
+Variable Ownable.______gap (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#384) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Ownable.______gap (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#384) is never used in TokenVesting (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#549-722)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+initialize(address) should be declared external:
+	- Ownable.initialize(address) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#328-331)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#362-365)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#371-373)
+beneficiary() should be declared external:
+	- TokenVesting.beneficiary() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#604-606)
+cliff() should be declared external:
+	- TokenVesting.cliff() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#611-613)
+start() should be declared external:
+	- TokenVesting.start() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#618-620)
+duration() should be declared external:
+	- TokenVesting.duration() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#625-627)
+revocable() should be declared external:
+	- TokenVesting.revocable() (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#632-634)
+released(address) should be declared external:
+	- TokenVesting.released(address) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#639-641)
+revoked(address) should be declared external:
+	- TokenVesting.revoked(address) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#646-648)
+release(IERC20) should be declared external:
+	- TokenVesting.release(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#654-664)
+revoke(IERC20) should be declared external:
+	- TokenVesting.revoke(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#671-687)
+vested(IERC20) should be declared external:
+	- TokenVesting.vested(IERC20) (noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol#692-694)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol analyzed (8 contracts with 46 detectors), 35 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xc08c44110b9b4cfeb3fab842ef9be4f59c0b5990.sol
+Tool Runtime = 0.9380627710015688 seconds
+#############################################

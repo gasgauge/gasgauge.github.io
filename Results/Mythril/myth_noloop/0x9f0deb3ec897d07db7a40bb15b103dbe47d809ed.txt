@@ -1,0 +1,139 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DeWETHer
+Function name: unwrapAllWETHFor(address)
+PC address: 675
+Estimated Gas Usage: 10181 - 150057
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x9f0deb3ec897d07db7a40bb15b103dbe47d809ed.sol:31
+
+_WETH.transferFrom(account, address(this), wethBalance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: unwrapAllWETHFor(address), txdata: 0x6d8267720000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DeWETHer
+Function name: unwrapAllWETHFor(address)
+PC address: 823
+Estimated Gas Usage: 10181 - 150057
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x9f0deb3ec897d07db7a40bb15b103dbe47d809ed.sol:34
+
+_WETH
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: unwrapAllWETHFor(address), txdata: 0x6d8267720000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DeWETHer
+Function name: unwrapAllWETHFor(address)
+PC address: 965
+Estimated Gas Usage: 10181 - 150057
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x9f0deb3ec897d07db7a40bb15b103dbe47d809ed.sol:34
+
+_WETH.withdraw(wethBalance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: unwrapAllWETHFor(address), txdata: 0x6d8267720000000000000000000000000004000400000000000000000004000000000000, value: 0x0
+Caller: [ATTACKER], function: unwrapAllWETHFor(address), txdata: 0x6d8267726d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: DeWETHer
+Function name: unwrapAllWETHFor(address)
+PC address: 1062
+Estimated Gas Usage: 10181 - 150057
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x9f0deb3ec897d07db7a40bb15b103dbe47d809ed.sol:38
+
+account.call.value(ethBalance)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: unwrapAllWETHFor(address), txdata: 0x6d8267720000000000000000000000001001800200022001040004202004012001000440, value: 0x0
+Caller: [ATTACKER], function: unwrapAllWETHFor(address), txdata: 0x6d8267726d6d6d6d6d6d6d6d6d6d6d6ddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DeWETHer
+Function name: unwrapAllWETHFor(address)
+PC address: 1062
+Estimated Gas Usage: 10181 - 150057
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x9f0deb3ec897d07db7a40bb15b103dbe47d809ed.sol:38
+
+account.call.value(ethBalance)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: receive(), txdata: 0xa3e76c0f, value: 0x0
+Caller: [ATTACKER], function: unwrapAllWETHFor(address), txdata: 0x6d8267720000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x9f0deb3ec897d07db7a40bb15b103dbe47d809ed.sol
+Tool Runtime = 60.37973294800031 seconds
+#############################################

@@ -1,0 +1,97 @@
+INFO:Detectors:[93m
+Unipool.notifyRewardAmount(uint256) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#622-637) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#628)
+	-leftover = remaining.mul(rewardRate) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#631)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in Unipool.exit() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#608-611):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#609)
+		- uni.safeTransfer(msg.sender,amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#539)
+		- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+	- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+		- rwi.safeTransfer(msg.sender,reward) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#617)
+		- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+	State variables written after the call(s):
+	- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#561)
+	- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#560)
+	- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+		- rewards[msg.sender] = 0 (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#616)
+		- rewards[account] = earned(account) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#563)
+	- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#564)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in Unipool.exit() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#608-611):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#609)
+		- uni.safeTransfer(msg.sender,amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#539)
+		- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+	- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+		- rwi.safeTransfer(msg.sender,reward) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#617)
+		- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#618)
+		- getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#610)
+Reentrancy in Unipool.getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#613-620):
+	External calls:
+	- rwi.safeTransfer(msg.sender,reward) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#617)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#618)
+Reentrancy in Unipool.stake(uint256) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#596-600):
+	External calls:
+	- super.stake(amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#598)
+		- uni.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#533)
+		- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#599)
+Reentrancy in Unipool.withdraw(uint256) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#602-606):
+	External calls:
+	- super.withdraw(amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#604)
+		- uni.safeTransfer(msg.sender,amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#539)
+		- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#605)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Unipool.getReward() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#613-620) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#615)
+Unipool.notifyRewardAmount(uint256) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#622-637) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#627)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#381-390) uses assembly
+	- INLINE ASM (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#388-389)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#408-414):
+	- (success) = recipient.call.value(amount)() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#412)
+Low level call in SafeERC20._callOptionalReturn(IERC20,bytes) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#472-491):
+	- (success,returndata) = address(token).call(data) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#484)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#504) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#251-253)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#270-273)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol#279-283)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol analyzed (10 contracts with 46 detectors), 17 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x7e72e907bb7e85e7b7a829aabd86b7d3132b2b77.sol
+Tool Runtime = 0.9554225710016908 seconds
+#############################################

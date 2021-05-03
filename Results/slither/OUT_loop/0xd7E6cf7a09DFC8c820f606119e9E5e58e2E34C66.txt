@@ -1,0 +1,95 @@
+Compilation warnings/errors on ./loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol:
+./loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol:241:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+BoostGovV2.resolveProposal(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#658-686) uses a dangerous strict equality:
+	- require(bool,string)(proposals[id].totalSupply == 0,already resolved) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#661)
+BoostGovV2.voteAgainst(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#637-647) uses a dangerous strict equality:
+	- require(bool,string)(proposals[id].forVotes[msg.sender] == 0,cannot switch votes) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#640)
+BoostGovV2.voteFor(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#625-635) uses a dangerous strict equality:
+	- require(bool,string)(proposals[id].againstVotes[msg.sender] == 0,cannot switch votes) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#628)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[92m
+Reentrancy in BoostGovV2.constructor(IERC20,ITreasury,SwapRouter) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#592-601):
+	External calls:
+	- stablecoin.safeApprove(address(treasury),uint256(- 1)) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#598)
+	- stakeToken.safeApprove(address(_swapRouter),uint256(- 1)) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#599)
+	State variables written after the call(s):
+	- swapRouter = _swapRouter (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#600)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+BoostGovV2.voteFor(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#625-635) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(proposals[id].start < block.timestamp,<start) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#626)
+	- require(bool,string)(proposals[id].end > block.timestamp,>end) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#627)
+	- require(bool,string)(proposals[id].againstVotes[msg.sender] == 0,cannot switch votes) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#628)
+BoostGovV2.voteAgainst(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#637-647) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(proposals[id].start < block.timestamp,<start) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#638)
+	- require(bool,string)(proposals[id].end > block.timestamp,>end) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#639)
+	- require(bool,string)(proposals[id].forVotes[msg.sender] == 0,cannot switch votes) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#640)
+BoostGovV2.withdraw(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#653-656) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(voteLock[msg.sender] < block.timestamp,tokens locked) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#654)
+BoostGovV2.resolveProposal(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#658-686) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(proposals[id].proposer != address(0),non-existent proposal) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#659)
+	- require(bool,string)(proposals[id].end < block.timestamp,ongoing proposal) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#660)
+	- require(bool,string)(proposals[id].totalSupply == 0,already resolved) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#661)
+	- (quorum < MIN_QUORUM_PUNISHMENT) && proposals[id].withdrawAmount > WITHDRAW_THRESHOLD (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#672)
+	- (quorum > MIN_QUORUM_THRESHOLD) && (proposals[id].totalForVotes > proposals[id].totalAgainstVotes) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#677-678)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#230-243) uses assembly
+	- INLINE ASM (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#241-242)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#212) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#287) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#368) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#446) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#461) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#478) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#549) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#273-279):
+	- (success) = recipient.call.value(amount)() (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#277)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#421-440):
+	- (success,returndata) = address(token).call(data) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#433)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function SwapRouter.WETH() (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#465) is not in mixedCase
+Parameter BoostGovV2.propose(string,string,uint256,address)._url (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#604) is not in mixedCase
+Parameter BoostGovV2.propose(string,string,uint256,address)._title (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#605) is not in mixedCase
+Parameter BoostGovV2.propose(string,string,uint256,address)._withdrawAmount (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#606) is not in mixedCase
+Parameter BoostGovV2.propose(string,string,uint256,address)._withdrawAddress (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#607) is not in mixedCase
+Variable BoostGovV2.WITHDRAW_THRESHOLD (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#567) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+BoostGovV2.WITHDRAW_THRESHOLD (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#567) should be constant
+BoostGovV2.lockPeriod (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#589) should be constant
+BoostGovV2.minimum (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#590) should be constant
+BoostGovV2.proposalPeriod (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#588) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+propose(string,string,uint256,address) should be declared external:
+	- BoostGovV2.propose(string,string,uint256,address) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#603-623)
+voteFor(uint256) should be declared external:
+	- BoostGovV2.voteFor(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#625-635)
+voteAgainst(uint256) should be declared external:
+	- BoostGovV2.voteAgainst(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#637-647)
+resolveProposal(uint256) should be declared external:
+	- BoostGovV2.resolveProposal(uint256) (loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol#658-686)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol analyzed (9 contracts with 46 detectors), 34 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xd7E6cf7a09DFC8c820f606119e9E5e58e2E34C66.sol
+Tool Runtime = 0.9167511080013355 seconds
+#############################################

@@ -1,0 +1,136 @@
+INFO:Detectors:[91m
+BaseWallet.invoke(address,uint256,bytes) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430-454) sends eth to arbitrary user
+	Dangerous calls:
+	- (success,_result) = _target.call.value(_value)(_data) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#436)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+ModuleRegistry.recoverToken(address) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#648-654) ignores return value by ERC20(_token).transfer(msg.sender,total) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#652)
+BaseModule.recoverToken(address) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1436-1442) ignores return value by ERC20(_token).transfer(address(registry),total) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1440)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+BaseWallet.init(address,address[]) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#302-330) has external calls inside a loop: Module(_modules[i]).init(this) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#318)
+SimpleUpgrader.init(BaseWallet) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1578-1602) has external calls inside a loop: BaseWallet(_wallet).authoriseModule(toEnable[i],true) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1586)
+SimpleUpgrader.init(BaseWallet) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1578-1602) has external calls inside a loop: BaseWallet(_wallet).authoriseModule(toDisable[i],false) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1594)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in BaseWallet.init(address,address[]) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#302-330):
+	External calls:
+	- Module(_modules[i]).init(this) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#318)
+	Event emitted after the call(s):
+	- AuthorisedModule(_modules[i],true) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#320)
+Reentrancy in BaseWallet.invoke(address,uint256,bytes) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430-454):
+	External calls:
+	- (success,_result) = _target.call.value(_value)(_data) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#436)
+	Event emitted after the call(s):
+	- Invoked(msg.sender,_target,_value,_data) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#452)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+GuardianStorage.isLocked(BaseWallet) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1010-1014) uses timestamp for comparisons
+	Dangerous comparisons:
+	- configs[address(_wallet)].lock > now (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1012)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+BaseWallet.invoke(address,uint256,bytes) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430-454) uses assembly
+	- INLINE ASM (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#442-450)
+BaseWallet.fallback() (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#468-504) uses assembly
+	- INLINE ASM (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#484-500)
+BaseModule.invokeWallet(address,address,uint256,bytes) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1478-1508) uses assembly
+	- INLINE ASM (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1494-1502)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+BaseWallet.init(address,address[]) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#302-330) compares to a boolean constant:
+	-require(bool,string)(authorised[_modules[i]] == false,BW: module is already added) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#314)
+BaseWallet.authoriseModule(address,bool) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#344-370) compares to a boolean constant:
+	-_value == true (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#350)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#40) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in BaseWallet.invoke(address,uint256,bytes) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430-454):
+	- (success,_result) = _target.call.value(_value)(_data) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#436)
+Low level call in BaseModule.invokeWallet(address,address,uint256,bytes) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1478-1508):
+	- (success,_res) = _wallet.call(abi.encodeWithSignature(invoke(address,uint256,bytes),_to,_value,_data)) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1484)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Owned.changeOwner(address)._newOwner (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#214) is not in mixedCase
+Parameter BaseWallet.init(address,address[])._owner (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#302) is not in mixedCase
+Parameter BaseWallet.init(address,address[])._modules (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#302) is not in mixedCase
+Parameter BaseWallet.authoriseModule(address,bool)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#344) is not in mixedCase
+Parameter BaseWallet.authoriseModule(address,bool)._value (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#344) is not in mixedCase
+Parameter BaseWallet.enableStaticCall(address,bytes4)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#386) is not in mixedCase
+Parameter BaseWallet.enableStaticCall(address,bytes4)._method (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#386) is not in mixedCase
+Parameter BaseWallet.setOwner(address)._newOwner (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#406) is not in mixedCase
+Parameter BaseWallet.invoke(address,uint256,bytes)._target (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430) is not in mixedCase
+Parameter BaseWallet.invoke(address,uint256,bytes)._value (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430) is not in mixedCase
+Parameter BaseWallet.invoke(address,uint256,bytes)._data (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#430) is not in mixedCase
+Parameter ModuleRegistry.registerModule(address,bytes32)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#564) is not in mixedCase
+Parameter ModuleRegistry.registerModule(address,bytes32)._name (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#564) is not in mixedCase
+Parameter ModuleRegistry.deregisterModule(address)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#584) is not in mixedCase
+Parameter ModuleRegistry.registerUpgrader(address,bytes32)._upgrader (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#606) is not in mixedCase
+Parameter ModuleRegistry.registerUpgrader(address,bytes32)._name (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#606) is not in mixedCase
+Parameter ModuleRegistry.deregisterUpgrader(address)._upgrader (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#626) is not in mixedCase
+Parameter ModuleRegistry.recoverToken(address)._token (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#648) is not in mixedCase
+Parameter ModuleRegistry.moduleInfo(address)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#668) is not in mixedCase
+Parameter ModuleRegistry.upgraderInfo(address)._upgrader (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#686) is not in mixedCase
+Parameter ModuleRegistry.isRegisteredModule(address)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#704) is not in mixedCase
+Parameter ModuleRegistry.isRegisteredModule(address[])._modules (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#722) is not in mixedCase
+Parameter ModuleRegistry.isRegisteredUpgrader(address)._upgrader (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#750) is not in mixedCase
+Parameter GuardianStorage.addGuardian(BaseWallet,address)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#864) is not in mixedCase
+Parameter GuardianStorage.addGuardian(BaseWallet,address)._guardian (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#864) is not in mixedCase
+Parameter GuardianStorage.revokeGuardian(BaseWallet,address)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#886) is not in mixedCase
+Parameter GuardianStorage.revokeGuardian(BaseWallet,address)._guardian (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#886) is not in mixedCase
+Parameter GuardianStorage.guardianCount(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#920) is not in mixedCase
+Parameter GuardianStorage.getGuardians(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#938) is not in mixedCase
+Parameter GuardianStorage.isGuardian(BaseWallet,address)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#968) is not in mixedCase
+Parameter GuardianStorage.isGuardian(BaseWallet,address)._guardian (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#968) is not in mixedCase
+Parameter GuardianStorage.setLock(BaseWallet,uint256)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#986) is not in mixedCase
+Parameter GuardianStorage.setLock(BaseWallet,uint256)._releaseAfter (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#986) is not in mixedCase
+Parameter GuardianStorage.isLocked(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1010) is not in mixedCase
+Parameter GuardianStorage.getLock(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1028) is not in mixedCase
+Parameter GuardianStorage.getLocker(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1046) is not in mixedCase
+Parameter BaseModule.init(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1398) is not in mixedCase
+Parameter BaseModule.addModule(BaseWallet,Module)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1416) is not in mixedCase
+Parameter BaseModule.addModule(BaseWallet,Module)._module (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1416) is not in mixedCase
+Parameter BaseModule.recoverToken(address)._token (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1436) is not in mixedCase
+Parameter BaseModule.isOwner(BaseWallet,address)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1456) is not in mixedCase
+Parameter BaseModule.isOwner(BaseWallet,address)._addr (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1456) is not in mixedCase
+Parameter BaseModule.invokeWallet(address,address,uint256,bytes)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1478) is not in mixedCase
+Parameter BaseModule.invokeWallet(address,address,uint256,bytes)._to (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1478) is not in mixedCase
+Parameter BaseModule.invokeWallet(address,address,uint256,bytes)._value (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1478) is not in mixedCase
+Parameter BaseModule.invokeWallet(address,address,uint256,bytes)._data (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1478) is not in mixedCase
+Parameter SimpleUpgrader.init(BaseWallet)._wallet (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1578) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+BaseModule.EMPTY_BYTES (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1290) is never used in SimpleUpgrader (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1524-1604)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+BaseWallet.implementation (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#244) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1064)
+decimals() should be declared external:
+	- ERC20.decimals() (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1066)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1068)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1070)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1072)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1074)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1076)
+init(BaseWallet) should be declared external:
+	- SimpleUpgrader.init(BaseWallet) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1578-1602)
+	- BaseModule.init(BaseWallet) (loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol#1398-1402)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol analyzed (11 contracts with 46 detectors), 75 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xc0b6eed9589380c3e3258e3a00a15c898541da5c.sol
+Tool Runtime = 1.3234926819968678 seconds
+#############################################

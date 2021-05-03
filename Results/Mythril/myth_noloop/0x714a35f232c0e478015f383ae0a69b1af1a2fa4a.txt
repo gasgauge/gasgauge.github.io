@@ -1,0 +1,191 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 1185
+Estimated Gas Usage: 17108 - 362910
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:144
+
+badger_wBTC_UniV2.getReserves()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 1453
+Estimated Gas Usage: 17108 - 362910
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:150
+
+geyser_badger_wBTC_UniV2.totalStakedFor(_voter)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1810000020d97ba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: balanceOf(address), txdata: 0x70a082317070707070707070707070707070707070707070707070707070707070707070, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 1510
+Estimated Gas Usage: 17108 - 362910
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:150
+
+geyser_badger_wBTC_UniV2.totalStakedFor(_voter) * bUniV2PricePerShare
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8000202a2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: balanceOf(address), txdata: 0x70a082317070707070707070707070707070707070707070707070707070707070707070, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 1763
+Estimated Gas Usage: 17108 - 362910
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:148
+
+sett_badger_wBTC_UniV2.balanceOf(_voter) * bUniV2PricePerShare
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000040018843, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 2213
+Estimated Gas Usage: 10299 - 217667
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:152
+
+totalUniBalance * reserve1 / badger_wBTC_UniV2.totalSupply()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000a2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 2650
+Estimated Gas Usage: 17108 - 362910
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:178
+
+geyser_badger.totalStakedFor(_voter) * bBadgerPricePerShare
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: balanceOf(address), txdata: 0x70a082310101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BadgerVotingShare
+Function name: balanceOf(address)
+PC address: 2903
+Estimated Gas Usage: 17108 - 362910
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/11/0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol:176
+
+sett_badger.balanceOf(_voter) * bBadgerPricePerShare
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: balanceOf(address), txdata: 0x70a082310000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x714a35f232c0e478015f383ae0a69b1af1a2fa4a.sol
+Tool Runtime = 280.41073473601136 seconds
+#############################################

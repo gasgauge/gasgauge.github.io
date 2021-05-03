@@ -1,0 +1,89 @@
+INFO:Detectors:[91m
+SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448) sends eth to arbitrary user
+	Dangerous calls:
+	- msg.sender.transfer(wethDust) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#436)
+	- msg.sender.transfer(remain) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#442)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448) ignores return value by IERC20(weth).approve(address(router),uint256(- 1)) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#427)
+SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448) ignores return value by IERC20(token).approve(address(router),uint256(- 1)) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#428)
+SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448) ignores return value by IERC20(token).transfer(msg.sender,IERC20(token).balanceOf(address(this))) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#438)
+SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448) ignores return value by IERC20(stoken).transfer(msg.sender,stokenAmount) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#446)
+SakeSwapBatchTrade._swapExactTokensForTokens(address,address,uint8) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#480-497) ignores return value by router.swapExactTokensForTokens(amountA,0,pathForward,address(this),now + 60,true) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#493)
+SakeSwapBatchTrade._swapExactTokensForTokens(address,address,uint8) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#480-497) ignores return value by router.swapExactTokensForTokens(amountB,0,pathBackward,address(this),now + 60,true) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#495)
+SakeSwapBatchTrade._addLiquidity(address,address,uint256) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#499-520) ignores return value by router.swapExactTokensForTokens(swapAmount,0,path,address(this),now + 60,false) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#509)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+SakeSwapBatchTrade.receive() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#405-407) (function) shadows built-in symbol"
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#builtin-symbol-shadowing[0m
+INFO:Detectors:[92m
+SakeSwapBatchTrade._swapExactTokensForTokens(address,address,uint8) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#480-497) has external calls inside a loop: amountA = IERC20(tokenA).balanceOf(address(this)) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#492)
+SakeSwapBatchTrade._swapExactTokensForTokens(address,address,uint8) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#480-497) has external calls inside a loop: router.swapExactTokensForTokens(amountA,0,pathForward,address(this),now + 60,true) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#493)
+SakeSwapBatchTrade._swapExactTokensForTokens(address,address,uint8) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#480-497) has external calls inside a loop: amountB = IERC20(tokenB).balanceOf(address(this)) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#494)
+SakeSwapBatchTrade._swapExactTokensForTokens(address,address,uint8) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#480-497) has external calls inside a loop: router.swapExactTokensForTokens(amountB,0,pathBackward,address(this),now + 60,true) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#495)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448):
+	External calls:
+	- IWETH(weth).deposit.value(msg.value)() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#426)
+	- IERC20(weth).approve(address(router),uint256(- 1)) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#427)
+	- IERC20(token).approve(address(router),uint256(- 1)) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#428)
+	- _swapExactTokensForTokens(weth,token,swapTimes) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#429)
+		- router.swapExactTokensForTokens(amountA,0,pathForward,address(this),now + 60,true) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#493)
+		- router.swapExactTokensForTokens(amountB,0,pathBackward,address(this),now + 60,true) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#495)
+	- lptokenAmount = _addLiquidity(weth,token,remain) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#432)
+		- router.swapExactTokensForTokens(swapAmount,0,path,address(this),now + 60,false) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#509)
+		- (None,None,liquidity) = router.addLiquidity(tokenA,tokenB,half,IERC20(tokenB).balanceOf(address(this)),0,0,msg.sender,now + 60) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#510-519)
+	- IWETH(weth).withdraw(wethDust) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#435)
+	- IERC20(token).transfer(msg.sender,IERC20(token).balanceOf(address(this))) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#438)
+	- IWETH(weth).withdraw(remain) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#441)
+	- IERC20(stoken).transfer(msg.sender,stokenAmount) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#446)
+	External calls sending eth:
+	- IWETH(weth).deposit.value(msg.value)() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#426)
+	- msg.sender.transfer(wethDust) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#436)
+	- msg.sender.transfer(remain) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#442)
+	Event emitted after the call(s):
+	- MultiSwap(msg.sender,consumeAmount,stokenAmount,lptokenAmount) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#447)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448) compares to a boolean constant:
+	-require(bool,string)(msg.value > 0 && (swapTimes > 0 || addLiquidity == true),invalid params) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#422)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#9) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#241) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#264) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#275) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#298) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#362) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#383) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Function ISakeSwapRouter.WETH() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#14) is not in mixedCase
+Function ISakeSwapPair.DOMAIN_SEPARATOR() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#315) is not in mixedCase
+Function ISakeSwapPair.PERMIT_TYPEHASH() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#316) is not in mixedCase
+Function ISakeSwapPair.MINIMUM_LIQUIDITY() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#333) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in SakeSwapBatchTrade.swapExactETHForTokens(address,uint8,bool) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#409-448):
+	External calls:
+	- msg.sender.transfer(wethDust) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#436)
+	- msg.sender.transfer(remain) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#442)
+	External calls sending eth:
+	- IWETH(weth).deposit.value(msg.value)() (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#426)
+	- msg.sender.transfer(wethDust) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#436)
+	- msg.sender.transfer(remain) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#442)
+	Event emitted after the call(s):
+	- MultiSwap(msg.sender,consumeAmount,stokenAmount,lptokenAmount) (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#447)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+SakeSwapBatchTrade.weth (loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol#395) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Slither:./loops/0xc8b227ae84a162744465007c38240b367928d5f8.sol analyzed (7 contracts with 46 detectors), 29 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xc8b227ae84a162744465007c38240b367928d5f8.sol
+Tool Runtime = 0.7069004349978059 seconds
+#############################################

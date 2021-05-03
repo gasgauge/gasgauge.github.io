@@ -1,0 +1,102 @@
+Compilation warnings/errors on ./loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol:
+./loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol:57:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+Reentrancy in LexGuildLocker.confirmLocker(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#211-232):
+	External calls:
+	- IWETH(wETH).deposit() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#221)
+	- (success) = wETH.call.value(msg.value)() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#222)
+	- IWETH(wETH).transfer(address(this),msg.value) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#224)
+	- IERC20(locker.token).safeTransferFrom(msg.sender,address(this),sum) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#226)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#222)
+	State variables written after the call(s):
+	- locker.confirmed = 1 (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#229)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+Reentrancy in LexGuildLocker.release(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#234-250):
+	External calls:
+	- IERC20(locker.token).safeTransfer(locker.provider[i],milestone[i]) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#245)
+	State variables written after the call(s):
+	- locker.released = locker.released.add(milestone[i]) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#246)
+Reentrancy in LexGuildLocker.resolve(uint256,uint256,uint256[],bytes32) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#285-308):
+	External calls:
+	- IERC20(locker.token).safeTransfer(locker.client,clientAward) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#302)
+	- IERC20(locker.token).safeTransfer(locker.resolver,resolutionFee) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#303)
+	State variables written after the call(s):
+	- locker.released = locker.released.add(remainder) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#305)
+Reentrancy in LexGuildLocker.withdraw(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#252-267):
+	External calls:
+	- IERC20(locker.token).safeTransfer(locker.client,remainder) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#262)
+	State variables written after the call(s):
+	- locker.released = locker.released.add(remainder) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#264)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LexGuildLocker.confirmLocker(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#211-232) ignores return value by IWETH(wETH).transfer(address(this),msg.value) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#224)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in LexGuildLocker.confirmLocker(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#211-232):
+	External calls:
+	- IWETH(wETH).deposit() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#221)
+	- (success) = wETH.call.value(msg.value)() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#222)
+	- IWETH(wETH).transfer(address(this),msg.value) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#224)
+	- IERC20(locker.token).safeTransferFrom(msg.sender,address(this),sum) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#226)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#222)
+	Event emitted after the call(s):
+	- ConfirmLocker(index,sum) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#231)
+Reentrancy in LexGuildLocker.resolve(uint256,uint256,uint256[],bytes32) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#285-308):
+	External calls:
+	- IERC20(locker.token).safeTransfer(locker.client,clientAward) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#302)
+	- IERC20(locker.token).safeTransfer(locker.resolver,resolutionFee) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#303)
+	Event emitted after the call(s):
+	- Resolve(_msgSender(),clientAward,providerAward,index,resolutionFee,details) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#307)
+Reentrancy in LexGuildLocker.withdraw(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#252-267):
+	External calls:
+	- IERC20(locker.token).safeTransfer(locker.client,remainder) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#262)
+	Event emitted after the call(s):
+	- Withdraw(index,remainder) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#266)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+LexGuildLocker.registerLocker(address,address[],address,address,uint256[],uint256,uint256,uint256,bytes32) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#173-209) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(termination <= now.add(MAX_DURATION),duration maxed) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#189)
+LexGuildLocker.withdraw(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#252-267) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now > locker.termination,!terminated) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#258)
+LexGuildLocker.lock(uint256,bytes32) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#272-283) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now < locker.termination,terminated) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#277)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#51-59) uses assembly
+	- INLINE ASM (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#57-58)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#36) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20._callOptionalReturn(IERC20,bytes) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#73-82):
+	- (success,returndata) = address(token).call(data) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#76)
+Low level call in LexGuildLocker.confirmLocker(uint256) (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#211-232):
+	- (success) = wETH.call.value(msg.value)() (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#222)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter LexGuildLocker.updateLockerSettings(address,uint256,uint256,bytes32)._lexDAO (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#313) is not in mixedCase
+Parameter LexGuildLocker.updateLockerSettings(address,uint256,uint256,bytes32)._MAX_DURATION (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#313) is not in mixedCase
+Parameter LexGuildLocker.updateLockerSettings(address,uint256,uint256,bytes32)._resolutionRate (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#313) is not in mixedCase
+Variable LexGuildLocker.MAX_DURATION (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#138) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+LexGuildLocker.wETH (loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol#136) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Slither:./loops/0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol analyzed (7 contracts with 46 detectors), 21 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xd1400d2c740d061434fa46c9e0f818bd14147e61.sol
+Tool Runtime = 0.6994815440011735 seconds
+#############################################

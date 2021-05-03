@@ -1,0 +1,280 @@
+Compilation warnings/errors on ./loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol:
+./loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol:459:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+yNFTETHPool.notifyRewardAmount(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#895-911) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#901)
+	-leftover = remaining.mul(rewardRate) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#904)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+yNFT (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#608-621) has incorrect ERC20 function interface:yNFT.transferFrom(address,address,uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#620)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-erc20-interface[0m
+INFO:Detectors:[93m
+yNFTETHPool.rewardPerToken() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#807-819) uses a dangerous strict equality:
+	- totalSupply() == 0 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#808)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in yNFTETHPool.checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#879-889):
+	External calls:
+	- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#885)
+Reentrancy in yNFTETHPool.exit() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#865-868):
+	External calls:
+	- withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#866)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,_owned[msg.sender][i].tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#767)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+		- safe.safeTransfer(msg.sender,reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#874)
+		- (success,returndata) = address(token).call(data) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#568)
+	State variables written after the call(s):
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- initreward = initreward.mul(50).div(100) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#881)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- lastUpdateTime = lastTimeRewardApplicable() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#795)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- periodFinish = block.timestamp.add(DURATION) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#885)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- rewardPerTokenStored = rewardPerToken() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#794)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- rewardRate = initreward.div(DURATION) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#884)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- rewards[msg.sender] = 0 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#873)
+		- rewards[account] = earned(account) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#797)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#798)
+Reentrancy in yNFTETHPool.getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#870-877):
+	External calls:
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#870)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#873)
+Reentrancy in yNFTETHPool.notifyRewardAmount(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#895-911):
+	External calls:
+	- safe.mint(address(this),reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#907)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#908)
+	- periodFinish = block.timestamp.add(DURATION) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#909)
+Reentrancy in yNFTETHPool.stake(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#830-834):
+	External calls:
+	- super.stake(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#832)
+		- yNFT(yinsure).transferFrom(msg.sender,address(this),tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#742)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#830)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- super.stake(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#832)
+		- _adjustedTotalCover = _adjustedTotalCover.add(adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#739)
+	- super.stake(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#832)
+		- _myCover[msg.sender] = _myCover[msg.sender].add(adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#741)
+Reentrancy in yNFTETHPool.stakeMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#836-842):
+	External calls:
+	- super.stake(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#839)
+		- yNFT(yinsure).transferFrom(msg.sender,address(this),tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#742)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#836)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- super.stake(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#839)
+		- _adjustedTotalCover = _adjustedTotalCover.add(adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#739)
+	- super.stake(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#839)
+		- _myCover[msg.sender] = _myCover[msg.sender].add(adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#741)
+Reentrancy in yNFTETHPool.withdraw(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#844-849):
+	External calls:
+	- super.withdraw(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#847)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#753)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#844)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- super.withdraw(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#847)
+		- _adjustedTotalCover = _adjustedTotalCover.sub(_owned[msg.sender][i].adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#750)
+	- super.withdraw(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#847)
+		- _myCover[msg.sender] = _myCover[msg.sender].sub(_owned[msg.sender][i].adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#751)
+Reentrancy in yNFTETHPool.withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#859-863):
+	External calls:
+	- super.withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#861)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,_owned[msg.sender][i].tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#767)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#859)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- super.withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#861)
+		- _adjustedTotalCover = _adjustedTotalCover.sub(_owned[msg.sender][i].adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#764)
+	- super.withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#861)
+		- _myCover[msg.sender] = _myCover[msg.sender].sub(_owned[msg.sender][i].adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#765)
+Reentrancy in yNFTETHPool.withdrawMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#851-857):
+	External calls:
+	- super.withdraw(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#854)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#753)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#851)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- super.withdraw(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#854)
+		- _adjustedTotalCover = _adjustedTotalCover.sub(_owned[msg.sender][i].adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#750)
+	- super.withdraw(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#854)
+		- _myCover[msg.sender] = _myCover[msg.sender].sub(_owned[msg.sender][i].adjCoverAmount) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#751)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+yNFTETHPool.stake(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#830-834) contains a tautology or contradiction:
+	- require(bool,string)(tokenId >= 0,token id must be >= 0) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#831)
+yNFTETHPool.stakeMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#836-842) contains a tautology or contradiction:
+	- require(bool,string)(tokenIds[i] >= 0,token id must be >= 0) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#838)
+yNFTETHPool.withdraw(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#844-849) contains a tautology or contradiction:
+	- require(bool,string)(tokenId >= 0,token id must be >= 0) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#845)
+yNFTETHPool.withdrawMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#851-857) contains a tautology or contradiction:
+	- require(bool,string)(tokenIds[i] >= 0,token id must be >= 0) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#853)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#tautology-or-contradiction[0m
+INFO:Detectors:[92m
+Reentrancy in yNFTETHPool.checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#879-889):
+	External calls:
+	- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	State variables written after the call(s):
+	- rewardRate = initreward.div(DURATION) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#884)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in yNFTETHPool.checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#879-889):
+	External calls:
+	- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#886)
+Reentrancy in yNFTETHPool.exit() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#865-868):
+	External calls:
+	- withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#866)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,_owned[msg.sender][i].tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#767)
+	- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+		- safe.safeTransfer(msg.sender,reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#874)
+		- (success,returndata) = address(token).call(data) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#568)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#886)
+		- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+	- RewardPaid(msg.sender,reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#875)
+		- getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#867)
+Reentrancy in yNFTETHPool.getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#870-877):
+	External calls:
+	- safe.safeTransfer(msg.sender,reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#874)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#870)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#875)
+Reentrancy in yNFTETHPool.notifyRewardAmount(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#895-911):
+	External calls:
+	- safe.mint(address(this),reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#907)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#910)
+Reentrancy in yNFTETHPool.stake(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#830-834):
+	External calls:
+	- super.stake(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#832)
+		- yNFT(yinsure).transferFrom(msg.sender,address(this),tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#742)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#830)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- Staked(msg.sender,tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#833)
+Reentrancy in yNFTETHPool.stakeMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#836-842):
+	External calls:
+	- super.stake(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#839)
+		- yNFT(yinsure).transferFrom(msg.sender,address(this),tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#742)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#836)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- Staked(msg.sender,tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#840)
+Reentrancy in yNFTETHPool.withdraw(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#844-849):
+	External calls:
+	- super.withdraw(tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#847)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#753)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#844)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#848)
+Reentrancy in yNFTETHPool.withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#859-863):
+	External calls:
+	- super.withdrawAll() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#861)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,_owned[msg.sender][i].tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#767)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#859)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- WithdrawnAll(msg.sender) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#862)
+Reentrancy in yNFTETHPool.withdrawMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#851-857):
+	External calls:
+	- super.withdraw(tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#854)
+		- yNFT(yinsure).transferFrom(address(this),msg.sender,tokenId) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#753)
+	- checkhalve() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#851)
+		- safe.mint(address(this),initreward) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#882)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,tokenIds[i]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#855)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+LPTokenWrapper.stake(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#709-743) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(expirationTimestamp - 86400 > block.timestamp,cover has expired or is 24 hours away from expiring!) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#722)
+yNFTETHPool.rewardPerToken() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#807-819) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalSupply() == 0 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#808)
+yNFTETHPool.getReward() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#870-877) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#872)
+yNFTETHPool.notifyRewardAmount(uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#895-911) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#900)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#448-461) uses assembly
+	- INLINE ASM (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#459-460)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#47) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#80) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#240) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#271) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#350) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#431) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#503) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#582) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#606) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#491-497):
+	- (success) = recipient.call.value(amount)() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#495)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#556-575):
+	- (success,returndata) = address(token).call(data) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#568)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#596) is not in mixedCase
+Contract yNFT (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#608-621) is not in CapWords
+Constant LPTokenWrapper.yinsure (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#626) is not in UPPER_CASE_WITH_UNDERSCORES
+Contract yNFTETHPool (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#773-912) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+LPTokenWrapper.calculateCoverValue(uint256,uint256,uint256) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#675-682) uses literals with too many digits:
+	- multiplier = 100000 (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#679)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+yNFTETHPool.starttime (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#779) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#298-300)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#324-327)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#333-335)
+totalStaked() should be declared external:
+	- LPTokenWrapper.totalStaked() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#649-651)
+totalCover() should be declared external:
+	- LPTokenWrapper.totalCover() (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#657-659)
+idsStaked(address) should be declared external:
+	- LPTokenWrapper.idsStaked(address) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#684-694)
+stakeMultiple(uint256[]) should be declared external:
+	- yNFTETHPool.stakeMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#836-842)
+withdrawMultiple(uint256[]) should be declared external:
+	- yNFTETHPool.withdrawMultiple(uint256[]) (loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol#851-857)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol analyzed (11 contracts with 46 detectors), 57 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf03abaada6f3069aaf3a923769b8d931154c2dd4.sol
+Tool Runtime = 1.7329947069993068 seconds
+#############################################

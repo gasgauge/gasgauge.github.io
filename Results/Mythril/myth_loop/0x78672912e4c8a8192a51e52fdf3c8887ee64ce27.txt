@@ -1,0 +1,90 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: LOG
+Function name: timelockList(address,uint256)
+PC address: 7444
+Estimated Gas Usage: 1241 - 1526
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/2/0x78672912e4c8a8192a51e52fdf3c8887ee64ce27.sol:514
+
+mapping (address => LockInfo[]) public timelockList
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: timelockList(address,uint256), txdata: 0xd26c4a7600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: LOG
+Function name: transfer(address,uint256)
+PC address: 8503
+Estimated Gas Usage: 4944 - 6224
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0x78672912e4c8a8192a51e52fdf3c8887ee64ce27.sol:611
+
+if (timelockList[holder][idx]._releaseTime <= now) {
+                // If lockupinfo was deleted, loop restart at same position.
+                if( _unlock(holder, idx) ) {
+                    idx -=1;
+                }
+            }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x880, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferWithLock(address,uint256,uint256), txdata: 0xde6baccb000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000080000000080000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb08080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: LOG
+Function name: transferWithLock(address,uint256,uint256)
+PC address: 11100
+Estimated Gas Usage: 15393 - 57305
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0x78672912e4c8a8192a51e52fdf3c8887ee64ce27.sol:587
+
+require(releaseTime > now, "Release time must be greater than now time")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferWithLock(address,uint256,uint256), txdata: 0xde6baccb00000000000000000000000000000000000000000000000102000000000000000000000000000000000000000000000000000000033b2e2800000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x78672912e4c8a8192a51e52fdf3c8887ee64ce27.sol
+Tool Runtime = 6520.583424263983 seconds
+#############################################

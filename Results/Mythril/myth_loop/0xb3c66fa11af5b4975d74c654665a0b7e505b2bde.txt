@@ -1,0 +1,59 @@
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CarInsurancePolicyManager
+Function name: updateValidator(address)
+PC address: 781
+Estimated Gas Usage: 6138 - 41364
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop7/0xb3c66fa11af5b4975d74c654665a0b7e505b2bde.sol:202
+
+allPolicies_.length
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100001001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: CreatePolicy(bytes32), txdata: 0x481276690000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: updateValidator(address), txdata: 0x635b27706969696969696969696969696969696969696969696969696969696969696969, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: CarInsurancePolicy
+Function name: certifyClaim()
+PC address: 939
+Estimated Gas Usage: 1858 - 2283
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/m_loop/loop7/0xb3c66fa11af5b4975d74c654665a0b7e505b2bde.sol:110
+
+require(block.number >= validAfterBlock_, "Policy not active yet")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf9fba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: certifyClaim(), txdata: 0x8f4dc7eb, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xb3c66fa11af5b4975d74c654665a0b7e505b2bde.sol
+Tool Runtime = 49.86029102199245 seconds
+#############################################

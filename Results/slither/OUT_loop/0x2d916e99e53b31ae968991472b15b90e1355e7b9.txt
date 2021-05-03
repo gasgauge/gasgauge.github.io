@@ -1,0 +1,226 @@
+INFO:Detectors:[91m
+Control.withdrawBalance() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#131-134) sends eth to arbitrary user
+	Dangerous calls:
+	- withdrawalAddress.transfer(address(this).balance) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#133)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+CAT.blacklist (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#203) is never initialized. It is used in:
+	- CAT.approve(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#329-334)
+	- CAT.transfer(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#340-348)
+	- CAT.transferFrom(address,address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#350-362)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+SafeMath.div(uint256,uint256,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#39-45) performs a multiplication on the result of a division:
+	-c = a / b (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#41)
+	-c = c * (10 ** decimal) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#43)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in Control.setS1Global(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#105-110):
+	External calls:
+	- i < s1.getAllMaxAddr() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#107)
+	- addPermit(s1.getAddress(i)) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#108)
+	State variables written after the call(s):
+	- addPermit(s1.getAddress(i)) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#108)
+		- permits[_addr] = true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#114)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Control.withdrawToken(uint256,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#136-141) ignores return value by erc20Token.transfer(withdrawalAddress,amount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#140)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in CAT.mintFromRATToken(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#298-318):
+	External calls:
+	- checkToken.setAlreadyMint(_tokenID) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#312)
+	State variables written after the call(s):
+	- _totalSupply += amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#314)
+	- balance[_to] = balance[_to].add(amount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#313)
+Reentrancy in CAT.mintFromWarpToken(address,uint256,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#267-290):
+	External calls:
+	- token.intTransfer(to,address(this),_amount) == true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#280)
+	State variables written after the call(s):
+	- _totalSupply += catAmount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#281)
+	- balance[to] = balance[to].add(catAmount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#282)
+Reentrancy in CAT.mintToken(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#243-265):
+	External calls:
+	- token.transferFrom(msg.sender,address(this),_amount) == true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#256)
+	State variables written after the call(s):
+	- _totalSupply += catAmount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#257)
+	- balance[msg.sender] = balance[msg.sender].add(catAmount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#258)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in CAT.mintFromRATToken(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#298-318):
+	External calls:
+	- checkToken.setAlreadyMint(_tokenID) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#312)
+	Event emitted after the call(s):
+	- Transfer(address(this),_to,amount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#315)
+Reentrancy in CAT.mintFromWarpToken(address,uint256,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#267-290):
+	External calls:
+	- token.intTransfer(to,address(this),_amount) == true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#280)
+	Event emitted after the call(s):
+	- MintFromToken(to,_amount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#284)
+	- Transfer(address(this),to,catAmount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#283)
+Reentrancy in CAT.mintToken(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#243-265):
+	External calls:
+	- token.transferFrom(msg.sender,address(this),_amount) == true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#256)
+	Event emitted after the call(s):
+	- MintFromToken(msg.sender,_amount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#260)
+	- Transfer(address(this),msg.sender,catAmount) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#259)
+Reentrancy in Control.setS1Global(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#105-110):
+	External calls:
+	- i < s1.getAllMaxAddr() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#107)
+	- addPermit(s1.getAddress(i)) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#108)
+	Event emitted after the call(s):
+	- AddPermit(_addr) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#115)
+		- addPermit(s1.getAddress(i)) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#108)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Permissions.onlyPermits() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#84-87) compares to a boolean constant:
+	-require(bool)(permits[msg.sender] == true) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#85)
+Control.addPermit(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#112-116) compares to a boolean constant:
+	-require(bool)(permits[_addr] == false) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#113)
+Control.withdrawToken(uint256,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#136-141) compares to a boolean constant:
+	-require(bool)(pause == false) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#137)
+CAT.mintToken(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#243-265) compares to a boolean constant:
+	-token.transferFrom(msg.sender,address(this),_amount) == true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#256)
+CAT.mintToken(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#243-265) compares to a boolean constant:
+	-require(bool,string)(allowDeposit[_token] == true,DEPOSIT ERROR This token not allow) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#244)
+CAT.mintFromWarpToken(address,uint256,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#267-290) compares to a boolean constant:
+	-token.intTransfer(to,address(this),_amount) == true (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#280)
+CAT.mintFromWarpToken(address,uint256,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#267-290) compares to a boolean constant:
+	-require(bool,string)(allowDeposit[_token] == true,DEPOSIT ERROR This token not allow) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#268)
+CAT.mintFromRATToken(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#298-318) compares to a boolean constant:
+	-require(bool,string)(ratToken.isValidToken(_tokenID) == true,Token Invalid) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#299)
+CAT.mintFromRATToken(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#298-318) compares to a boolean constant:
+	-checkToken.canMintCat(_tokenID) == false (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#306)
+CAT.approve(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#329-334) compares to a boolean constant:
+	-require(bool,string)(blacklist[msg.sender] == false,Approve:have blacklist) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#330)
+CAT.transfer(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#340-348) compares to a boolean constant:
+	-require(bool,string)(blacklist[msg.sender] == false,Transfer blacklist) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#343)
+CAT.transferFrom(address,address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#350-362) compares to a boolean constant:
+	-require(bool,string)(blacklist[_from] == false,transferFrom blacklist) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#354)
+CAT.intTransfer(address,address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#368-378) compares to a boolean constant:
+	-require(bool,string)(notAllowControl[_from] == false,This Address not Allow) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#369)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Permissions.isPermit(address)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#93) is not in mixedCase
+Parameter Control.setS1Global(address)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#105) is not in mixedCase
+Parameter Control.addPermit(address)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#112) is not in mixedCase
+Parameter Control.removePermit(address)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#119) is not in mixedCase
+Parameter Control.setWithdrawalAddress(address)._newWithdrawalAddress (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#125) is not in mixedCase
+Parameter CAT.addDepositToken(address,string,uint256)._conAddr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#209) is not in mixedCase
+Parameter CAT.addDepositToken(address,string,uint256)._symbol (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#209) is not in mixedCase
+Parameter CAT.removeDepositToken(address)._conAddr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#216) is not in mixedCase
+Parameter CAT.setColdWallet(address)._coldWallet (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#221) is not in mixedCase
+Parameter CAT.setDepositRate(address,uint256)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#225) is not in mixedCase
+Parameter CAT.setDepositRate(address,uint256)._newRate (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#225) is not in mixedCase
+Parameter CAT.setRatToken(address)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#239) is not in mixedCase
+Parameter CAT.mintToken(address,uint256)._token (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#243) is not in mixedCase
+Parameter CAT.mintToken(address,uint256)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#243) is not in mixedCase
+Parameter CAT.mintFromWarpToken(address,uint256,address)._token (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#267) is not in mixedCase
+Parameter CAT.mintFromWarpToken(address,uint256,address)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#267) is not in mixedCase
+Parameter CAT.mintFromRATToken(uint256)._tokenID (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#298) is not in mixedCase
+Parameter CAT.balanceOf(address)._addr (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#321) is not in mixedCase
+Parameter CAT.approve(address,uint256)._spender (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#329) is not in mixedCase
+Parameter CAT.approve(address,uint256)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#329) is not in mixedCase
+Parameter CAT.allowance(address,address)._owner (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#336) is not in mixedCase
+Parameter CAT.allowance(address,address)._spender (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#336) is not in mixedCase
+Parameter CAT.transfer(address,uint256)._to (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#340) is not in mixedCase
+Parameter CAT.transfer(address,uint256)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#340) is not in mixedCase
+Parameter CAT.transferFrom(address,address,uint256)._from (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#350) is not in mixedCase
+Parameter CAT.transferFrom(address,address,uint256)._to (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#350) is not in mixedCase
+Parameter CAT.transferFrom(address,address,uint256)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#350) is not in mixedCase
+Parameter CAT.setNotAllow(bool)._set (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#364) is not in mixedCase
+Parameter CAT.intTransfer(address,address,uint256)._from (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#368) is not in mixedCase
+Parameter CAT.intTransfer(address,address,uint256)._to (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#368) is not in mixedCase
+Parameter CAT.intTransfer(address,address,uint256)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#368) is not in mixedCase
+Parameter CAT.burnToken(address,uint256)._from (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#380) is not in mixedCase
+Parameter CAT.burnToken(address,uint256)._amount (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#380) is not in mixedCase
+Variable CAT._totalSupply (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#204) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+CAT.constructor() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#230-237) uses literals with too many digits:
+	- depositExRate[0xF2e2F3B79545F2EE6d2414C7463Ea2Dd740FafC0] = 1000000000000000000 (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#233)
+CAT.constructor() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#230-237) uses literals with too many digits:
+	- DepositToken(0xF2e2F3B79545F2EE6d2414C7463Ea2Dd740FafC0,1000000000000000000,SWDAI) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#234)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+CAT.company (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#182) should be constant
+CAT.decimals (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#181) should be constant
+CAT.name (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#179) should be constant
+CAT.symbol (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#180) should be constant
+CAT.version (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#183) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#13)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#14)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#15)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#17)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#19)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#20)
+decimals() should be declared external:
+	- ERC20.decimals() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#22)
+intTransfer(address,address,uint256) should be declared external:
+	- ERC20.intTransfer(address,address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#23)
+isPermit(address) should be declared external:
+	- Permissions.isPermit(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#93-95)
+removePermit(address) should be declared external:
+	- Control.removePermit(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#119-123)
+getAllMaxAddr() should be declared external:
+	- S1Global.getAllMaxAddr() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#151)
+getAddress(uint256) should be declared external:
+	- S1Global.getAddress(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#152)
+isValidToken(uint256) should be declared external:
+	- RatToken.isValidToken(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#157)
+ownerOf(uint256) should be declared external:
+	- RatToken.ownerOf(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#158)
+getRatDetail(uint256) should be declared external:
+	- RatToken.getRatDetail(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#159)
+canMintCat(uint256) should be declared external:
+	- CheckMint.canMintCat(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#166)
+setAlreadyMint(uint256) should be declared external:
+	- CheckMint.setAlreadyMint(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#167)
+getMintAmount(uint256) should be declared external:
+	- CheckMint.getMintAmount(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#168)
+addDepositToken(address,string,uint256) should be declared external:
+	- CAT.addDepositToken(address,string,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#209-214)
+removeDepositToken(address) should be declared external:
+	- CAT.removeDepositToken(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#216-219)
+setColdWallet(address) should be declared external:
+	- CAT.setColdWallet(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#221-223)
+setDepositRate(address,uint256) should be declared external:
+	- CAT.setDepositRate(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#225-228)
+setRatToken(address) should be declared external:
+	- CAT.setRatToken(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#239-241)
+mintFromRATToken(uint256) should be declared external:
+	- CAT.mintFromRATToken(uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#298-318)
+balanceOf(address) should be declared external:
+	- CAT.balanceOf(address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#321-323)
+totalSupply() should be declared external:
+	- CAT.totalSupply() (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#325-327)
+approve(address,uint256) should be declared external:
+	- CAT.approve(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#329-334)
+allowance(address,address) should be declared external:
+	- CAT.allowance(address,address) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#336-338)
+transfer(address,uint256) should be declared external:
+	- CAT.transfer(address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#340-348)
+transferFrom(address,address,uint256) should be declared external:
+	- CAT.transferFrom(address,address,uint256) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#350-362)
+setNotAllow(bool) should be declared external:
+	- CAT.setNotAllow(bool) (loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol#364-366)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol analyzed (8 contracts with 46 detectors), 99 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x2d916e99e53b31ae968991472b15b90e1355e7b9.sol
+Tool Runtime = 0.9241105369983416 seconds
+#############################################

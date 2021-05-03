@@ -1,0 +1,220 @@
+Compilation warnings/errors on ./loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol:
+./loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol:75:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+DFKToken.name (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#767) shadows:
+	- BasicToken.name (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#682)
+DFKToken.symbol (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#768) shadows:
+	- BasicToken.symbol (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#683)
+DFKToken.decimals (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#769) shadows:
+	- BasicToken.decimals (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#684)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+DFKImplement.addMinerStaking(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#516-558) performs a multiplication on the result of a division:
+	-profit_times = now.sub(slog.profit_time).div(profit_period) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#530)
+	-profit = period_bonus.mul(stakings[miner].staking_value).mul(profit_times).div(_totalStaking) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#540)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract DFKProxy (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#341-434) has payable functions:
+	 - DFK.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#300)
+	 - DFKProxy.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#358-360)
+	But does not have a function to withdraw the ether
+Contract locking ether found in :
+	Contract DFKImplement (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#436-676) has payable functions:
+	 - DFK.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#300)
+	 - DFKImplement.addMinePool(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#491-500)
+	 - DFKImplement.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#504-513)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+DFKImplement.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#504-513) ignores return value by dfkToken.transferFrom(msg.sender,address(this),stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#508)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in DFKImplement.addMinePool(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#491-500):
+	External calls:
+	- dfkToken.safeTransferFrom(msg.sender,address(this),stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#495)
+	State variables written after the call(s):
+	- minePoolBalance = minePoolBalance.add(stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#497)
+Reentrancy in DFKImplement.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#504-513):
+	External calls:
+	- dfkToken.transferFrom(msg.sender,address(this),stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#508)
+	State variables written after the call(s):
+	- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+		- _totalMiners = _totalMiners.add(1) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#528)
+	- _totalStaking = _totalStaking.add(stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#510)
+	- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+		- balanceProfit[miner] = balanceProfit[miner].add(profit) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#546)
+	- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+		- balanceStaking[miner] = balanceStaking[miner].add(stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#517)
+	- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+		- minePoolBalance = minePoolBalance.sub(profit) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#543)
+	- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+		- stakings[miner] = StakingLog(now,now,0,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#522-527)
+		- stakings[miner] = StakingLog(now,now,slog.staking_value.add(slog.unstaking_value),stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#532-537)
+		- stakings[miner] = StakingLog(now,slog.profit_time,slog.staking_value,slog.unstaking_value.add(stakevalue)) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#550-555)
+	- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+		- totalProfit = totalProfit.add(profit) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#547)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in DFKImplement.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#504-513):
+	External calls:
+	- dfkToken.transferFrom(msg.sender,address(this),stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#508)
+	Event emitted after the call(s):
+	- ProfitLog(miner,stakings[miner].profit_time,stakings[miner].staking_value,stakings[miner].unstaking_value,profit_times,profit) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#541)
+		- addMinerStaking(msg.sender,stakevalue) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#512)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+DFKImplement.addMinerStaking(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#516-558) uses timestamp for comparisons
+	Dangerous comparisons:
+	- slog.profit_time < cleanup_time (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#521)
+	- now.sub(slog.profit_time) >= profit_period (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#529)
+	- require(bool,string)(minePoolBalance >= profit,minePoolBalance lt profit) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#542)
+DFKImplement.profit2Staking(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#562-568) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(balanceProfit[msg.sender] >= value) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#564)
+DFKImplement.withdrawProfit(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#571-584) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(dfkToken.transfer(to,profit)) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#580)
+DFKImplement.withdrawAll(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#612-634) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(dfkToken.transfer(to,total)) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#631)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#64-77) uses assembly
+	- INLINE ASM (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#75-76)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#107-113):
+	- (success) = recipient.call.value(amount)() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#111)
+Low level call in SafeERC20.callOptionalReturn(ERC20,bytes) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#164-183):
+	- (success,returndata) = address(token).call(data) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#176)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter ManagerUpgradeable.requestChange(address,address)._new (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#222) is not in mixedCase
+Parameter ManagerUpgradeable.requestChange(address,address)._clear (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#222) is not in mixedCase
+Parameter ManagerUpgradeable.confirmChange(bytes32)._lockId (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#244) is not in mixedCase
+Parameter ManagerUpgradeable.sweepChange(bytes32)._lockId (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#266) is not in mixedCase
+Parameter DFKProxy.requestImplChange(address)._newDFK (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#351) is not in mixedCase
+Variable DFKImplement.cleanup_time (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#451) is not in mixedCase
+Variable DFKImplement.profit_period (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#453) is not in mixedCase
+Variable DFKImplement.period_bonus (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#455) is not in mixedCase
+Variable DFKImplement._totalMiners (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#462) is not in mixedCase
+Variable DFKImplement._totalStaking (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#463) is not in mixedCase
+Variable BasicToken._totalSupply (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#687) is not in mixedCase
+Variable BasicToken._balances (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#688) is not in mixedCase
+Variable StandardToken._allowances (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#719) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+DFKImplement.constructor(address,int256,address[]) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#481-488) uses literals with too many digits:
+	- period_bonus = 100000 * (10 ** uint256(decimals)) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#485)
+DFKToken.constructor() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#776-782) uses literals with too many digits:
+	- _totalSupply = 1000000000 * (10 ** uint256(decimals)) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#778)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+BasicToken.decimals (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#684) should be constant
+BasicToken.name (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#682) should be constant
+BasicToken.symbol (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#683) should be constant
+DFKToken.decimals (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#769) should be constant
+DFKToken.name (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#767) should be constant
+DFKToken.symbol (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#768) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+requestChange(address,address) should be declared external:
+	- ManagerUpgradeable.requestChange(address,address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#222-235)
+confirmChange(bytes32) should be declared external:
+	- ManagerUpgradeable.confirmChange(bytes32) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#244-263)
+sweepChange(bytes32) should be declared external:
+	- ManagerUpgradeable.sweepChange(bytes32) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#266-271)
+totalSupply() should be declared external:
+	- BasicToken.totalSupply() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#693-695)
+	- ERC20Basic.totalSupply() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#281)
+balanceOf(address) should be declared external:
+	- BasicToken.balanceOf(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#697-699)
+	- ERC20Basic.balanceOf(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#282)
+transfer(address,uint256) should be declared external:
+	- BasicToken.transfer(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#701-709)
+	- ERC20Basic.transfer(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#283)
+allowance(address,address) should be declared external:
+	- StandardToken.allowance(address,address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#742-744)
+	- ERC20.allowance(address,address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#291)
+transferFrom(address,address,uint256) should be declared external:
+	- StandardToken.transferFrom(address,address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#724-734)
+	- ERC20.transferFrom(address,address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#292)
+approve(address,uint256) should be declared external:
+	- StandardToken.approve(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#736-740)
+	- ERC20.approve(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#293)
+stakingDeposit(uint256) should be declared external:
+	- DFKProxy.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#358-360)
+	- DFKImplement.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#504-513)
+	- DFK.stakingDeposit(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#300)
+profit2Staking(uint256) should be declared external:
+	- DFKImplement.profit2Staking(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#562-568)
+	- DFKProxy.profit2Staking(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#364-366)
+	- DFK.profit2Staking(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#303)
+withdrawProfit(address) should be declared external:
+	- DFKProxy.withdrawProfit(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#369-371)
+	- DFK.withdrawProfit(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#306)
+	- DFKImplement.withdrawProfit(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#571-584)
+withdrawStaking(address,uint256) should be declared external:
+	- DFKImplement.withdrawStaking(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#587-609)
+	- DFKProxy.withdrawStaking(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#374-376)
+	- DFK.withdrawStaking(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#309)
+withdrawAll(address) should be declared external:
+	- DFKProxy.withdrawAll(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#379-381)
+	- DFK.withdrawAll(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#312)
+	- DFKImplement.withdrawAll(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#612-634)
+totalMiners() should be declared external:
+	- DFKProxy.totalMiners() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#385-388)
+	- DFK.totalMiners() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#316)
+	- DFKImplement.totalMiners() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#637-639)
+totalStaking() should be declared external:
+	- DFKProxy.totalStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#391-394)
+	- DFK.totalStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#318)
+	- DFKImplement.totalStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#642-645)
+poolBalance() should be declared external:
+	- DFKProxy.poolBalance() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#397-400)
+	- DFK.poolBalance() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#321)
+	- DFKImplement.poolBalance() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#647-649)
+minedBalance() should be declared external:
+	- DFKImplement.minedBalance() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#652-654)
+	- DFKProxy.minedBalance() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#403-406)
+	- DFK.minedBalance() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#324)
+stakingBalance(address) should be declared external:
+	- DFKProxy.stakingBalance(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#409-412)
+	- DFK.stakingBalance(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#327)
+	- DFKImplement.stakingBalance(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#657-659)
+profitBalance(address) should be declared external:
+	- DFKImplement.profitBalance(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#663-665)
+	- DFKProxy.profitBalance(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#416-419)
+	- DFK.profitBalance(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#330)
+pauseStaking() should be declared external:
+	- DFKProxy.pauseStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#423-426)
+	- DFK.pauseStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#334)
+	- DFKImplement.pauseStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#668-670)
+resumeStaking() should be declared external:
+	- DFKImplement.resumeStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#673-675)
+	- DFKProxy.resumeStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#429-432)
+	- DFK.resumeStaking() (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#337)
+requestImplChange(address) should be declared external:
+	- DFKProxy.requestImplChange(address) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#351-354)
+addMinePool(uint256) should be declared external:
+	- DFKImplement.addMinePool(uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#491-500)
+increaseApproval(address,uint256) should be declared external:
+	- StandardToken.increaseApproval(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#746-750)
+decreaseApproval(address,uint256) should be declared external:
+	- StandardToken.decreaseApproval(address,uint256) (loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol#752-761)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x8d4192005ed871056f53df7840c3b6d5866e3339.sol analyzed (13 contracts with 46 detectors), 66 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8d4192005ed871056f53df7840c3b6d5866e3339.sol
+Tool Runtime = 1.904487589999917 seconds
+#############################################

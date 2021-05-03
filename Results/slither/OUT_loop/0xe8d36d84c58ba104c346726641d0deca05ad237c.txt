@@ -1,0 +1,84 @@
+Compilation warnings/errors on ./loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol:
+./loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol:787:9: Warning: This declaration shadows an existing declaration.
+        address dmg = _dmg;
+        ^---------^
+./loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol:747:5: The shadowed declaration is here:
+    function dmg() public view returns (address) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol:325:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in DMGBurnerV1.enableToken(address) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#759-769):
+	External calls:
+	- IERC20(token).safeApprove(_uniswapV2Router,uint256(- 1)) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#767)
+	State variables written after the call(s):
+	- _tokenToIsSetup[token] = true (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#768)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+DMGBurnerV1.burnDmg(address,uint256,address[]) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#780-817) ignores return value by IDMGToken(dmg).burn(burnAmount) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#812)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+DMGBurnerV1.burnDmg(address,uint256,address[]).dmg (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#787) shadows:
+	- DMGBurnerV1.dmg() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#747-749) (function)
+	- IDMGBurnerV1.dmg() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#661) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in DMGBurnerV1.burnDmg(address,uint256,address[]) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#780-817):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),amount) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#801)
+	- amounts = IUniswapV2Router01(_uniswapV2Router).swapExactTokensForTokens(amount,1e18,path,address(this),block.timestamp + 1) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#803-809)
+	- IDMGToken(dmg).burn(burnAmount) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#812)
+	Event emitted after the call(s):
+	- DmgBurned(msg.sender,burnAmount) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#814)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#53-63) uses assembly
+	- INLINE ASM (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#61-62)
+Address.isContract(address) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#314-327) uses assembly
+	- INLINE ASM (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#325-326)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#357-363):
+	- (success) = recipient.call.value(amount)() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#361)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#414-433):
+	- (success,returndata) = address(token).call(data) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#426)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#66) is not in mixedCase
+Function IUniswapV2Router01.WETH() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#480) is not in mixedCase
+Variable DMGBurnerData._uniswapV2Router (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#626) is not in mixedCase
+Variable DMGBurnerData._dmg (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#627) is not in mixedCase
+Variable DMGBurnerData._tokenToIsSetup (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#628) is not in mixedCase
+Parameter DMGBurnerV1.initialize(address,address).__uniswapV2Router (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#734) is not in mixedCase
+Parameter DMGBurnerV1.initialize(address,address).__dmg (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#735) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Initializable.______gap (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#66) is never used in DMGBurnerV1 (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#727-819)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+initialize(address,address) should be declared external:
+	- DMGBurnerV1.initialize(address,address) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#733-741)
+uniswapV2Router() should be declared external:
+	- DMGBurnerV1.uniswapV2Router() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#743-745)
+dmg() should be declared external:
+	- DMGBurnerV1.dmg() (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#747-749)
+isTokenEnabled(address) should be declared external:
+	- DMGBurnerV1.isTokenEnabled(address) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#751-757)
+enableTokens(address[]) should be declared external:
+	- DMGBurnerV1.enableTokens(address[]) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#771-778)
+burnDmg(address,uint256,address[]) should be declared external:
+	- DMGBurnerV1.burnDmg(address,uint256,address[]) (loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol#780-817)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xe8d36d84c58ba104c346726641d0deca05ad237c.sol analyzed (11 contracts with 46 detectors), 24 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xe8d36d84c58ba104c346726641d0deca05ad237c.sol
+Tool Runtime = 0.768769041998894 seconds
+#############################################

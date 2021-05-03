@@ -1,0 +1,139 @@
+Compilation warnings/errors on ./loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol:
+./loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol:466:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+BEELINKPool.notifyRewardAmount(uint256) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#791-813) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#798)
+	-leftover = remaining.mul(rewardRate) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#801)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in BEELINKPool.exit() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#751-754):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#752)
+		- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+		- link.safeTransfer(msg.sender,amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#651)
+	- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+		- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+		- bee.safeTransfer(msg.sender,reward) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#761)
+	State variables written after the call(s):
+	- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+		- lastUpdateTime = lastTimeRewardApplicable() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#704)
+	- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+		- rewardPerTokenStored = rewardPerToken() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#703)
+	- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+		- rewards[msg.sender] = 0 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#760)
+		- rewards[account] = earned(account) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#706)
+	- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#707)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in BEELINKPool.exit() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#751-754):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#752)
+		- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+		- link.safeTransfer(msg.sender,amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#651)
+	- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+		- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+		- bee.safeTransfer(msg.sender,reward) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#761)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#762)
+		- getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#753)
+Reentrancy in BEELINKPool.getHoney() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#779-789):
+	External calls:
+	- honey.safeTransfer(msg.sender,needPayHoney) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#786)
+	Event emitted after the call(s):
+	- HoneyPaid(msg.sender,needPayHoney) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#787)
+Reentrancy in BEELINKPool.getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#756-764):
+	External calls:
+	- bee.safeTransfer(msg.sender,reward) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#761)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#762)
+Reentrancy in BEELINKPool.stake(uint256) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#739-743):
+	External calls:
+	- super.stake(amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#741)
+		- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+		- link.safeTransferFrom(msg.sender,address(this),amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#643)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#742)
+Reentrancy in BEELINKPool.withdraw(uint256) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#745-749):
+	External calls:
+	- super.withdraw(amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#747)
+		- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+		- link.safeTransfer(msg.sender,amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#651)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#748)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+BEELINKPool.getReward() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#756-764) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#758)
+BEELINKPool.earnedHoney(address) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#772-778) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= starttime.add(HONEYWAIT) && maxSupply() >= EPOCH_REWARD.mul(DECIMALS) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#773)
+BEELINKPool.getHoney() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#779-789) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(beeAmount > 1e18,bee amount need > 1) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#781)
+	- needPayHoney > 0 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#784)
+BEELINKPool.notifyRewardAmount(uint256) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#791-813) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > starttime (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#796)
+	- block.timestamp >= periodFinish (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#797)
+BEELINKPool.burnHoney(uint256) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#814-817) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > starttime.add(DURATION),not finish) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#815)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#455-468) uses assembly
+	- INLINE ASM (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#466-467)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#47) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#88) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#248) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#279) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#358) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#438) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#510) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#588) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#613) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#498-504):
+	- (success) = recipient.call.value(amount)() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#502)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#563-582):
+	- (success,returndata) = address(token).call(data) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#575)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#602) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+BEELINKPool.slitherConstructorConstantVariables() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#669-818) uses literals with too many digits:
+	- EPOCH_REWARD = 500000 (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#674)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+BEELINKPool.starttime (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#676) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#306-308)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#332-335)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#341-343)
+totalSupply() should be declared external:
+	- LPTokenWrapper.totalSupply() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#629-631)
+earnedHoney(address) should be declared external:
+	- BEELINKPool.earnedHoney(address) (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#772-778)
+getHoney() should be declared external:
+	- BEELINKPool.getHoney() (loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol#779-789)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol analyzed (10 contracts with 46 detectors), 34 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x633992502d7c13E8f95A8B8E44f17BA17EB2Db6D2.sol
+Tool Runtime = 1.2750730650004698 seconds
+#############################################

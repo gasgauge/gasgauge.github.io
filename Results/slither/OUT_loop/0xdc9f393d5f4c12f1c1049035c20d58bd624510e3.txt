@@ -1,0 +1,63 @@
+INFO:Detectors:[91m
+ImportResolver.ctokenBorrowPaybackBehalf(address,CTokenInterface[],uint256[]) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#193-202) sends eth to arbitrary user
+	Dangerous calls:
+	- CETHInterface(address(ctokenContracts[i])).repayBorrowBehalf.value(amts[i])(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#197-199)
+ImportResolver.importPaybackBehalf(address,address,uint256,uint256,uint256) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#293-323) sends eth to arbitrary user
+	Dangerous calls:
+	- CETHInterface(cToken).repayBorrowBehalf.value(_amt)(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#314)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+TokenInterface (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#17-23) has incorrect ERC20 function interface:TokenInterface.approve(address,uint256) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#20)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-erc20-interface[0m
+INFO:Detectors:[93m
+ImportHelper.enterMarket(address[]) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#163-165) ignores return value by ComptrollerInterface(getComptrollerAddress()).enterMarkets(cErc20) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#164)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in ImportResolver.importCompound(address,address[],uint256) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#236-288):
+	External calls:
+	- enterMarket(ctokens) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#269)
+		- ComptrollerInterface(getComptrollerAddress()).enterMarkets(cErc20) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#164)
+	- _import(userAccount,ctokenContracts,splitBorrowAmts,splitCtokensBal,borrowAmts,ctokensBal,_length,_times) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#273-282)
+		- require(bool,string)(CTokenInterface(ctokenContracts[i]).borrow(amts[i]) == 0,enough-supply?) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#196)
+		- require(bool,string)(ctokenContracts[i].transferFrom(userAccount,address(this),amts[i]),allowance?) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#188)
+		- require(bool,string)(CTokenInterface(ctokenContracts[i]).repayBorrowBehalf(userAccount,amts[i]) == 0,borrowed?-balance?) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#197-199)
+		- CETHInterface(address(ctokenContracts[i])).repayBorrowBehalf.value(amts[i])(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#197-199)
+		- _borrowAmts[j] = ctokenContracts[j].borrowBalanceCurrent(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#222-223)
+	- ctokenImport(userAccount,ctokenContracts,ctokensBal) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#270)
+		- require(bool,string)(ctokenContracts[i].transferFrom(userAccount,address(this),amts[i]),allowance?) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#188)
+	- ctokenImport(userAccount,ctokenContracts,splitCtokensBal) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#270)
+		- require(bool,string)(ctokenContracts[i].transferFrom(userAccount,address(this),amts[i]),allowance?) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#188)
+	External calls sending eth:
+	- _import(userAccount,ctokenContracts,splitBorrowAmts,splitCtokensBal,borrowAmts,ctokensBal,_length,_times) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#273-282)
+		- CETHInterface(address(ctokenContracts[i])).repayBorrowBehalf.value(amts[i])(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#197-199)
+	Event emitted after the call(s):
+	- LogImport(userAccount,times,ctokens,ctokensBal,borrowAmts) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#284)
+Reentrancy in ImportResolver.importPaybackBehalf(address,address,uint256,uint256,uint256) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#293-323):
+	External calls:
+	- _amt = getUint(getId,amt) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#302)
+		- returnVal = MemoryInterface(getMemoryAddr()).getUint(getId) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#112)
+	- TokenInterface(token).approve(cToken,_amt) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#311)
+	- require(bool,string)(ctokenContract.repayBorrowBehalf(userAccount,_amt) == 0,borrowed?-balance?) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#312)
+	- CETHInterface(cToken).repayBorrowBehalf.value(_amt)(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#314)
+	- setUint(setId,_amt) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#317)
+		- MemoryInterface(getMemoryAddr()).setUint(setId,val) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#119)
+	- _amt = ctokenContract.borrowBalanceCurrent(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#308-309)
+	External calls sending eth:
+	- CETHInterface(cToken).repayBorrowBehalf.value(_amt)(userAccount) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#314)
+	Event emitted after the call(s):
+	- LogImportPayback(userAccount,token,_amt,getId,setId) (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#319)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+ConnectCompoundImport.name (loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol#328) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Slither:./loops/0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol analyzed (13 contracts with 46 detectors), 9 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xdc9f393d5f4c12f1c1049035c20d58bd624510e3.sol
+Tool Runtime = 1.1343335439996736 seconds
+#############################################

@@ -1,0 +1,32 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: SmartKeyCrowdsale
+Function name: remainingTokens()
+PC address: 2901
+Estimated Gas Usage: 7059 - 77974
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/11/0x5863c92b31f777ebd4f7d79a54a7dc6348a19972.sol:987
+
+token().allowance(_tokenWallet, address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 01010801080101010101080101010101040401010101020101010801010101080000000000000000000000000101010404040101020402040101040404040101000000000000000000000000010104010101020101010408080110011002020100000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: remainingTokens(), txdata: 0xbf583903, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x5863c92b31f777ebd4f7d79a54a7dc6348a19972.sol
+Tool Runtime = 792.9438788939733 seconds
+#############################################

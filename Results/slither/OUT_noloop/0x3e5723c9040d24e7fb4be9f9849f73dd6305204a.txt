@@ -1,0 +1,295 @@
+Compilation warnings/errors on ./noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol:
+./noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol:6:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol:224:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+yeldDAI.extractETHIfStuck() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#427-429) sends eth to arbitrary user
+	Dangerous calls:
+	- owner().transfer(address(this).balance) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#428)
+yDAI.extractETHIfStuck() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#577-579) sends eth to arbitrary user
+	Dangerous calls:
+	- owner().transfer(address(this).balance) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#578)
+yDAI.buyNBurn(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#645-652) sends eth to arbitrary user
+	Dangerous calls:
+	- amounts = Uniswap(uniswapRouter).swapExactETHForTokens.value(_ethToSwap)(uint256(0),path,address(0),now.add(1800)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#650)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in yDAI.withdraw(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#655-700):
+	External calls:
+	- _withdrawSome(r.sub(b)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#669)
+		- AToken(aaveToken).redeem(amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#934)
+		- require(bool,string)(Compound(compound).redeem(amount) == 0,COMPOUND: withdraw failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#940)
+		- require(bool,string)(Fulcrum(fulcrum).burn(address(this),amount) > 0,FULCRUM: withdraw failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#937)
+		- DyDx(dydx).operate(infos,args) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#958)
+	- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#673)
+	- redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#674)
+		- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#618)
+		- yeldDAIInstance.burn(msg.sender,deposited[msg.sender]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#622)
+		- yeldToken.transfer(msg.sender,yeldToRedeem) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#624)
+	- stakingProfits = daiToETH(halfProfits) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#678)
+		- IERC20(dai).safeApprove(uniswapRouter,0) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#630)
+		- IERC20(dai).safeApprove(uniswapRouter,_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#631)
+		- (success,returndata) = address(token).call(data) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#271)
+		- amounts = Uniswap(uniswapRouter).swapExactTokensForETH(_amount,uint256(0),path,address(this),now.add(1800)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#639)
+	- buyNBurn(ethToSwap) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#685)
+		- amounts = Uniswap(uniswapRouter).swapExactETHForTokens.value(_ethToSwap)(uint256(0),path,address(0),now.add(1800)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#650)
+	- IERC20(token).safeTransfer(msg.sender,r) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#698)
+	External calls sending eth:
+	- buyNBurn(ethToSwap) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#685)
+		- amounts = Uniswap(uniswapRouter).swapExactETHForTokens.value(_ethToSwap)(uint256(0),path,address(0),now.add(1800)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#650)
+	- retirementYeldTreasury.transfer(retirementYeld) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#689)
+	- retirementYeldTreasury.transfer(retirementYeld_scope_0) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#694)
+	State variables written after the call(s):
+	- pool = calcPoolValueInToken() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#699)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+RetirementYeldTreasury.redeemETH() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#486-495) performs a multiplication on the result of a division:
+	-userPercentage = yeld.balanceOf(msg.sender).mul(1e18).div(yeld.totalSupply().sub(burnedTokens)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#491)
+	-earnings = address(this).balance.mul(userPercentage).div(1e16) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#492)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+yDAI._supplyCompound(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#930-932) uses a dangerous strict equality:
+	- require(bool,string)(Compound(compound).mint(amount) == 0,COMPOUND: supply failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#931)
+yDAI._withdrawCompound(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#939-941) uses a dangerous strict equality:
+	- require(bool,string)(Compound(compound).redeem(amount) == 0,COMPOUND: withdraw failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#940)
+yDAI.deposit(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#581-609) uses a dangerous strict equality:
+	- pool == 0 (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#601)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in yDAI.deposit(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#581-609):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#587)
+	- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#590)
+	- redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#591)
+		- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#618)
+		- yeldDAIInstance.burn(msg.sender,deposited[msg.sender]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#622)
+		- yeldToken.transfer(msg.sender,yeldToRedeem) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#624)
+	State variables written after the call(s):
+	- deposited[msg.sender] = deposited[msg.sender].add(yeldDAIToReceive) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#595)
+Reentrancy in yDAI.rebalance() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#786-806):
+	External calls:
+	- _withdrawAll() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#790)
+		- AToken(aaveToken).redeem(amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#934)
+		- require(bool,string)(Compound(compound).redeem(amount) == 0,COMPOUND: withdraw failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#940)
+		- require(bool,string)(Fulcrum(fulcrum).burn(address(this),amount) > 0,FULCRUM: withdraw failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#937)
+		- DyDx(dydx).operate(infos,args) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#958)
+	- _supplyDydx(balance()) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#795)
+		- DyDx(dydx).operate(infos,args) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#921)
+	- _supplyFulcrum(balance()) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#797)
+		- require(bool,string)(Fulcrum(fulcrum).mint(address(this),amount) > 0,FULCRUM: supply failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#928)
+	- _supplyCompound(balance()) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#799)
+		- require(bool,string)(Compound(compound).mint(amount) == 0,COMPOUND: supply failed) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#931)
+	- _supplyAave(balance()) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#801)
+		- Aave(getAave()).deposit(token,amount,0) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#925)
+	State variables written after the call(s):
+	- provider = newProvider (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#805)
+Reentrancy in yDAI.redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#617-626):
+	External calls:
+	- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#618)
+	- yeldDAIInstance.burn(msg.sender,deposited[msg.sender]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#622)
+	State variables written after the call(s):
+	- deposited[msg.sender] = 0 (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#623)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+yDAI._withdrawDydx(uint256).act (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#948) is a local variable never initialized
+yDAI._supplyDydx(uint256).act (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#911) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+yeldDAI.extractTokensIfStuck(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#423-425) ignores return value by IERC20(_token).transfer(msg.sender,_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#424)
+RetirementYeldTreasury.extractTokensIfStuck(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#501-503) ignores return value by IERC20(_token).transfer(msg.sender,_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#502)
+yDAI.extractTokensIfStuck(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#573-575) ignores return value by IERC20(_token).transfer(msg.sender,_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#574)
+yDAI.redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#617-626) ignores return value by yeldToken.transfer(msg.sender,yeldToRedeem) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#624)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#143) shadows:
+	- ERC20Detailed.name() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#148-150) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#143) shadows:
+	- ERC20Detailed.symbol() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#151-153) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#143) shadows:
+	- ERC20Detailed.decimals() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#154-156) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in yDAI.deposit(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#581-609):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#587)
+	- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#590)
+	- redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#591)
+		- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#618)
+		- yeldDAIInstance.burn(msg.sender,deposited[msg.sender]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#622)
+		- yeldToken.transfer(msg.sender,yeldToRedeem) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#624)
+	State variables written after the call(s):
+	- staked[msg.sender] = staked[msg.sender].add(_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#593)
+Reentrancy in yDAI.deposit(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#581-609):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#587)
+	- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#590)
+	- redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#591)
+		- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#618)
+		- yeldDAIInstance.burn(msg.sender,deposited[msg.sender]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#622)
+		- yeldToken.transfer(msg.sender,yeldToRedeem) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#624)
+	- yeldDAIInstance.mint(msg.sender,yeldDAIToReceive) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#596)
+	State variables written after the call(s):
+	- _mint(msg.sender,shares) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#608)
+		- _balances[account] = _balances[account].add(amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#115)
+	- _mint(msg.sender,shares) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#608)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#114)
+	- pool = _amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#603)
+	- pool = calcPoolValueInToken() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#607)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in yDAI.deposit(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#581-609):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),_amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#587)
+	- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#590)
+	- redeemYeld() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#591)
+		- yeldDAIInstance.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#618)
+		- yeldDAIInstance.burn(msg.sender,deposited[msg.sender]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#622)
+		- yeldToken.transfer(msg.sender,yeldToRedeem) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#624)
+	- yeldDAIInstance.mint(msg.sender,yeldDAIToReceive) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#596)
+	Event emitted after the call(s):
+	- Transfer(address(0),account,amount) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#116)
+		- _mint(msg.sender,shares) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#608)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+yeldDAI.checkIfPriceNeedsUpdating() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#407-409) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now >= lastPriceUpdate + priceUpdatePeriod (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#408)
+RetirementYeldTreasury.redeemETH() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#486-495) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= snapshots[msg.sender].timestamp + timeBetweenRedeems,You must wait at least a day after the snapshot to redeem your earnings) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#487)
+	- require(bool,string)(yeld.balanceOf(msg.sender) >= snapshots[msg.sender].yeldBalance,Your balance must be equal or higher the snapshoted balance) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#488)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#220-226) uses assembly
+	- INLINE ASM (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#224-225)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#5) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#230-236):
+	- (success) = recipient.call.value(amount)() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#234)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#267-278):
+	- (success,returndata) = address(token).call(data) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#271)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable ERC20._balances (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#68) is not in mixedCase
+Variable ERC20._totalSupply (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#72) is not in mixedCase
+Contract yeldDAI (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#372-430) is not in CapWords
+Parameter yeldDAI.setYDAI(address)._yDAIAddress (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#389) is not in mixedCase
+Parameter yeldDAI.mint(address,uint256)._to (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#393) is not in mixedCase
+Parameter yeldDAI.mint(address,uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#393) is not in mixedCase
+Parameter yeldDAI.burn(address,uint256)._to (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#397) is not in mixedCase
+Parameter yeldDAI.burn(address,uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#397) is not in mixedCase
+Parameter yeldDAI.changePriceRatio(uint256)._price (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#403) is not in mixedCase
+Parameter yeldDAI.extractTokensIfStuck(address,uint256)._token (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#423) is not in mixedCase
+Parameter yeldDAI.extractTokensIfStuck(address,uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#423) is not in mixedCase
+Parameter RetirementYeldTreasury.setYeld(address)._yeld (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#497) is not in mixedCase
+Parameter RetirementYeldTreasury.extractTokensIfStuck(address,uint256)._token (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#501) is not in mixedCase
+Parameter RetirementYeldTreasury.extractTokensIfStuck(address,uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#501) is not in mixedCase
+Contract yDAI (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#506-973) is not in CapWords
+Parameter yDAI.setUniswapRouter(address)._uniswapRouter (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#569) is not in mixedCase
+Parameter yDAI.extractTokensIfStuck(address,uint256)._token (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#573) is not in mixedCase
+Parameter yDAI.extractTokensIfStuck(address,uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#573) is not in mixedCase
+Parameter yDAI.deposit(uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#581) is not in mixedCase
+Parameter yDAI.daiToETH(uint256)._amount (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#629) is not in mixedCase
+Parameter yDAI.buyNBurn(uint256)._ethToSwap (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#645) is not in mixedCase
+Parameter yDAI.withdraw(uint256)._shares (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#655) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in yDAI.withdraw(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#655-700):
+	External calls:
+	- retirementYeldTreasury.transfer(retirementYeld) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#689)
+	- retirementYeldTreasury.transfer(retirementYeld_scope_0) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#694)
+	External calls sending eth:
+	- buyNBurn(ethToSwap) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#685)
+		- amounts = Uniswap(uniswapRouter).swapExactETHForTokens.value(_ethToSwap)(uint256(0),path,address(0),now.add(1800)) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#650)
+	- retirementYeldTreasury.transfer(retirementYeld) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#689)
+	- retirementYeldTreasury.transfer(retirementYeld_scope_0) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#694)
+	State variables written after the call(s):
+	- pool = calcPoolValueInToken() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#699)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+RetirementYeldTreasury.timeBetweenRedeems (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#462) should be constant
+yDAI.dai (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#524) should be constant
+yDAI.maximumTokensToBurn (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#529) should be constant
+yDAI.weth (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#525) should be constant
+yeldDAI.priceUpdatePeriod (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#380) should be constant
+yeldDAI.yeldDAIDecimals (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#378) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#51-54)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#55-57)
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#73-75)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#79-82)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#83-85)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#86-89)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#90-94)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#95-98)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#99-102)
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#148-150)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#151-153)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#154-156)
+getAccountWei(Structs.Info,uint256) should be declared external:
+	- DyDx.getAccountWei(Structs.Info,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#363)
+operate(Structs.Info[],Structs.ActionArgs[]) should be declared external:
+	- DyDx.operate(Structs.Info[],Structs.ActionArgs[]) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#364)
+setYDAI(address) should be declared external:
+	- yeldDAI.setYDAI(address) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#389-391)
+mint(address,uint256) should be declared external:
+	- yeldDAI.mint(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#393-395)
+burn(address,uint256) should be declared external:
+	- yeldDAI.burn(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#397-399)
+changePriceRatio(uint256) should be declared external:
+	- yeldDAI.changePriceRatio(uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#403-405)
+updatePrice() should be declared external:
+	- yeldDAI.updatePrice() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#415-421)
+extractTokensIfStuck(address,uint256) should be declared external:
+	- yeldDAI.extractTokensIfStuck(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#423-425)
+extractETHIfStuck() should be declared external:
+	- yeldDAI.extractETHIfStuck() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#427-429)
+addETH() should be declared external:
+	- RetirementYeldTreasury.addETH() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#479)
+takeSnapshot() should be declared external:
+	- RetirementYeldTreasury.takeSnapshot() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#481-483)
+redeemETH() should be declared external:
+	- RetirementYeldTreasury.redeemETH() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#486-495)
+setYeld(address) should be declared external:
+	- RetirementYeldTreasury.setYeld(address) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#497-499)
+extractTokensIfStuck(address,uint256) should be declared external:
+	- RetirementYeldTreasury.extractTokensIfStuck(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#501-503)
+setUniswapRouter(address) should be declared external:
+	- yDAI.setUniswapRouter(address) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#569-571)
+extractTokensIfStuck(address,uint256) should be declared external:
+	- yDAI.extractTokensIfStuck(address,uint256) (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#573-575)
+extractETHIfStuck() should be declared external:
+	- yDAI.extractETHIfStuck() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#577-579)
+rebalance() should be declared external:
+	- yDAI.rebalance() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#786-806)
+getPricePerFullShare() should be declared external:
+	- yDAI.getPricePerFullShare() (noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol#969-972)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol analyzed (24 contracts with 46 detectors), 90 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x3e5723c9040d24e7fb4be9f9849f73dd6305204a.sol
+Tool Runtime = 3.5885162079976 seconds
+#############################################

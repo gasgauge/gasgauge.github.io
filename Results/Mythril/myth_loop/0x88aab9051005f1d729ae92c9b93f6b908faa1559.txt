@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: TENSv1Router
+Function name: initialize(address,address,address,address,address,address)
+PC address: 4601
+Estimated Gas Usage: 72976 - 315100
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop6/0x88aab9051005f1d729ae92c9b93f6b908faa1559.sol:2227
+
+IUniswapV2Pair(_tensWETHPair).approve(address(_tensVault), uint(-1))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: refreshApproval(), txdata: 0xbf33a1f5, value: 0x0
+Caller: [SOMEGUY], function: initialize(address,address,address,address,address,address), txdata: 0xcc2a9a5b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: TENSv1Router
+Function name: initialize(address,address,address,address,address,address)
+PC address: 5318
+Estimated Gas Usage: 72976 - 315100
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop6/0x88aab9051005f1d729ae92c9b93f6b908faa1559.sol:46
+
+initializing = false
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1040000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: initialize(address,address,address,address,address,address), txdata: 0xcc2a9a5b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x88aab9051005f1d729ae92c9b93f6b908faa1559.sol
+Tool Runtime = 569.8298284140001 seconds
+#############################################

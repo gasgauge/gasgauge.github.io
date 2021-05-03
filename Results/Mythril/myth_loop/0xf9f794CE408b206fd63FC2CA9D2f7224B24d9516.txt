@@ -1,0 +1,84 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: DssSpell
+Function name: schedule()
+PC address: 1767
+Estimated Gas Usage: 1026 - 1121
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/m_loop/loop1/0xf9f794CE408b206fd63FC2CA9D2f7224B24d9516.sol:181
+
+require(now <= expiration, "This contract has expired")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: DssSpell
+Function name: schedule()
+PC address: 2162
+Estimated Gas Usage: 16883 - 107286
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/m_loop/loop1/0xf9f794CE408b206fd63FC2CA9D2f7224B24d9516.sol:183
+
+now + pause.delay()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf30000007fe07c76, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DssSpell
+Function name: schedule()
+PC address: 2552
+Estimated Gas Usage: 16883 - 107286
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop1/0xf9f794CE408b206fd63FC2CA9D2f7224B24d9516.sol:184
+
+pause.plot(action, tag, sig, eta)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xf9f794CE408b206fd63FC2CA9D2f7224B24d9516.sol
+Tool Runtime = 44.42442194800242 seconds
+#############################################

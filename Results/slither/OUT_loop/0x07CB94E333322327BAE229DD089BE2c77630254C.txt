@@ -1,0 +1,221 @@
+Compilation warnings/errors on ./loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol:
+./loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol:404:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+ERC20Detailed.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#208) shadows:
+	- Initializable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#148)
+Ownable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#771) shadows:
+	- Initializable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#148)
+CompoundProtocol.MAX_UINT256 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1332) shadows:
+	- ProtocolBase.MAX_UINT256 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1226)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+ProtocolBase.claimRewards().j (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1276) is a local variable never initialized
+ProtocolBase.claimRewards().receivedRewardTokensCount (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1261) is a local variable never initialized
+RewardVestingModule._claimRewards(address,address).claimAmount (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1117) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+CompoundProtocol.handleDeposit(address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1353-1356) ignores return value by cToken.mint(amount) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1355)
+CompoundProtocol.withdraw(address,address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1363-1368) ignores return value by cToken.redeemUnderlying(amount) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1366)
+CompoundProtocol.withdraw(address,uint256[]) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1370-1375) ignores return value by cToken.redeemUnderlying(amounts[0]) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1373)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.initialize(string,string,uint8).name (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#171) shadows:
+	- ERC20Detailed.name() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#180-182) (function)
+ERC20Detailed.initialize(string,string,uint8).symbol (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#171) shadows:
+	- ERC20Detailed.symbol() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#188-190) (function)
+ERC20Detailed.initialize(string,string,uint8).decimals (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#171) shadows:
+	- ERC20Detailed.decimals() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#204-206) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in ProtocolBase.claimRewards() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1254-1285):
+	External calls:
+	- claimDefaultRewards() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1256)
+		- rv.claimRewards() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1295)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#846)
+	- rewardTokens = supportedRewardTokens() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1259)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#846)
+	State variables written after the call(s):
+	- rewardBalances[rtkn] = newBalance (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1268)
+Reentrancy in CompoundProtocol.initialize(address,address,address,address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1343-1351):
+	External calls:
+	- baseToken.safeApprove(_cToken,MAX_UINT256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1348)
+	State variables written after the call(s):
+	- compToken = IERC20(comptroller.getCompAddress()) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1350)
+	- comptroller = IComptroller(_comptroller) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1349)
+Reentrancy in ProtocolBase.withdrawReward(address,address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1287-1291):
+	External calls:
+	- require(bool,string)(isSupportedRewardToken(token),ProtocolBase: not reward token) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1288)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#846)
+	State variables written after the call(s):
+	- rewardBalances[token] = rewardBalances[token].sub(amount) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1289)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in RewardVestingModule._claimRewards(address,address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1101-1146):
+	External calls:
+	- IERC20(token).safeTransfer(protocol,claimAmount) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1144)
+	Event emitted after the call(s):
+	- RewardClaimed(protocol,token,previousClaim,ri.lastClaim,claimAmount) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1145)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+RewardVestingModule.registerRewardToken(address,address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1047-1059) uses timestamp for comparisons
+	Dangerous comparisons:
+	- firstEpochStart == 0 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1048)
+RewardVestingModule._claimRewards(address,address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1101-1146) uses timestamp for comparisons
+	Dangerous comparisons:
+	- lastEpoch.end < block.timestamp (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1111)
+	- ep.end >= block.timestamp (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1123)
+	- ep.end > block.timestamp (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1127)
+RewardVestingModule._addReward(address,address,uint256,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1184-1205) uses timestamp for comparisons
+	Dangerous comparisons:
+	- epochEnd < block.timestamp (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1192)
+	- require(bool,string)(ep.end > block.timestamp,RewardVesting: epoch already finished) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1200)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#135-145) uses assembly
+	- INLINE ASM (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#143-144)
+Address.isContract(address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#397-406) uses assembly
+	- INLINE ASM (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#404-405)
+Module.getModuleAddress(string) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#844-858) uses assembly
+	- INLINE ASM (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#849-853)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#88) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#154) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#214) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#374) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#448) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#526) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#615) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#651) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#662) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#694) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#777) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#797) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#822) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#865) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#905) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#956) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1007) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1213) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1316) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1453) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#436-442):
+	- (success) = recipient.call.value(amount)() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#440)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#501-520):
+	- (success,returndata) = address(token).call(data) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#513)
+Low level call in Module.getModuleAddress(string) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#844-858):
+	- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#846)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#148) is not in mixedCase
+Variable ERC20Detailed.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#208) is not in mixedCase
+Variable Ownable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#771) is not in mixedCase
+Parameter Module.initialize(address)._pool (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#833) is not in mixedCase
+Parameter Module.setPool(address)._pool (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#838) is not in mixedCase
+Parameter RewardVestingModule.initialize(address)._pool (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1041) is not in mixedCase
+Parameter RewardVestingModule.setDefaultEpochLength(uint256)._defaultEpochLength (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1061) is not in mixedCase
+Parameter ProtocolBase.initialize(address)._pool (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1235) is not in mixedCase
+Parameter CompoundProtocol.initialize(address,address,address,address)._pool (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1343) is not in mixedCase
+Parameter CompoundProtocol.initialize(address,address,address,address)._token (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1343) is not in mixedCase
+Parameter CompoundProtocol.initialize(address,address,address,address)._cToken (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1343) is not in mixedCase
+Parameter CompoundProtocol.initialize(address,address,address,address)._comptroller (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1343) is not in mixedCase
+Contract CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465) is not in CapWords
+Parameter CompoundProtocol_USDC.initialize(address,address,address,address)._pool (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1457) is not in mixedCase
+Parameter CompoundProtocol_USDC.initialize(address,address,address,address)._token (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1457) is not in mixedCase
+Parameter CompoundProtocol_USDC.initialize(address,address,address,address)._cToken (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1457) is not in mixedCase
+Parameter CompoundProtocol_USDC.initialize(address,address,address,address)._comptroller (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1457) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ERC20Detailed.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#208) is never used in ERC20Detailed (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#161-209)
+Initializable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#148) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.MODULE_ACCESS (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#804) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.MODULE_SAVINGS (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#805) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.MODULE_INVESTING (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#806) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.MODULE_STAKING (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#807) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.MODULE_DCA (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#808) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.MODULE_REWARD (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#809) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.TOKEN_AKRO (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#812) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.TOKEN_ADEL (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#813) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+ModuleNames.CONTRACT_RAY (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#816) is never used in RewardVestingModule (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1015-1208)
+Initializable.______gap (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#148) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+ModuleNames.MODULE_ACCESS (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#804) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+ModuleNames.MODULE_SAVINGS (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#805) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+ModuleNames.MODULE_INVESTING (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#806) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+ModuleNames.MODULE_STAKING (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#807) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+ModuleNames.MODULE_DCA (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#808) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+ModuleNames.CONTRACT_RAY (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#816) is never used in CompoundProtocol_USDC (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1456-1465)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+initialize(string,string,uint8) should be declared external:
+	- ERC20Detailed.initialize(string,string,uint8) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#171-175)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#180-182)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#188-190)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#204-206)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#723-725)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#749-752)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#758-760)
+addDefiOperator(address) should be declared external:
+	- DefiOperatorRole.addDefiOperator(address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#929-931)
+renounceDefiOperator() should be declared external:
+	- DefiOperatorRole.renounceDefiOperator() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#933-935)
+addRewardManager(address) should be declared external:
+	- RewardManagerRole.addRewardManager(address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#980-982)
+renounceRewardManager() should be declared external:
+	- RewardManagerRole.renounceRewardManager() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#984-986)
+setDefaultEpochLength(uint256) should be declared external:
+	- RewardVestingModule.setDefaultEpochLength(uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1061-1063)
+getEpochInfo(address,address,uint256) should be declared external:
+	- RewardVestingModule.getEpochInfo(address,address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1065-1078)
+getLastCreatedEpoch(address,address) should be declared external:
+	- RewardVestingModule.getLastCreatedEpoch(address,address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1080-1085)
+claimRewards() should be declared external:
+	- RewardVestingModule.claimRewards() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1087-1095)
+claimRewards(address,address) should be declared external:
+	- RewardVestingModule.claimRewards(address,address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1097-1099)
+createEpoch(address,address,uint256,uint256) should be declared external:
+	- RewardVestingModule.createEpoch(address,address,uint256,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1148-1160)
+addReward(address,address,uint256,uint256) should be declared external:
+	- RewardVestingModule.addReward(address,address,uint256,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1162-1164)
+claimRewards() should be declared external:
+	- ProtocolBase.claimRewards() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1254-1285)
+withdrawReward(address,address,uint256) should be declared external:
+	- ProtocolBase.withdrawReward(address,address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1287-1291)
+handleDeposit(address[],uint256[]) should be declared external:
+	- CompoundProtocol.handleDeposit(address[],uint256[]) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1358-1361)
+withdraw(address,address,uint256) should be declared external:
+	- CompoundProtocol.withdraw(address,address,uint256) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1363-1368)
+withdraw(address,uint256[]) should be declared external:
+	- CompoundProtocol.withdraw(address,uint256[]) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1370-1375)
+balanceOfAll() should be declared external:
+	- CompoundProtocol.balanceOfAll() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1382-1386)
+normalizedBalance() should be declared external:
+	- CompoundProtocol.normalizedBalance() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1388-1390)
+optimalProportions() should be declared external:
+	- CompoundProtocol.optimalProportions() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1392-1396)
+canSwapToToken(address) should be declared external:
+	- CompoundProtocol.canSwapToToken(address) (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1398-1400)
+supportedTokens() should be declared external:
+	- CompoundProtocol.supportedTokens() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1402-1406)
+supportedTokensCount() should be declared external:
+	- CompoundProtocol.supportedTokensCount() (loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol#1408-1410)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x07CB94E333322327BAE229DD089BE2c77630254C.sol analyzed (21 contracts with 46 detectors), 111 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x07CB94E333322327BAE229DD089BE2c77630254C.sol
+Tool Runtime = 7.183048622002389 seconds
+#############################################

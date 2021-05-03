@@ -1,0 +1,96 @@
+Compilation warnings/errors on ./loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol:
+./loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol:347:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+BoostRewardsV2.getBoosterPrice(address) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#775-807) performs a multiplication on the result of a division:
+	-boosterPrice = globalBoosterPrice.mul(boostersBought.mul(5).add(100)).div(100) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#782)
+	-boosterPrice = boosterPrice.mul((boostersBought.sub(boostThreshold)).mul(boostScaleFactor).add(100)).div(100) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#789-791)
+BoostRewardsV2.getBoosterPrice(address) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#775-807) performs a multiplication on the result of a division:
+	-boosterPrice = boosterPrice.mul((boostersBought.sub(boostThreshold)).mul(boostScaleFactor).add(100)).div(100) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#789-791)
+	-boosterPrice = boosterPrice.mul(boostBalanceIncrease).mul(scaleFactor).div(boostedTotalSupply) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#803-806)
+BoostRewardsV2.pow(uint256,uint256,uint256,uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#970-986) performs a multiplication on the result of a division:
+	-z = a.mul(b).div(c) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#981)
+	-z = z.mul(b).div(c) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#983)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+BoostRewardsV2.pow(uint256,uint256,uint256,uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#970-986) uses a dangerous strict equality:
+	- exponent == 0 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#971)
+BoostRewardsV2.pow(uint256,uint256,uint256,uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#970-986) uses a dangerous strict equality:
+	- exponent == 1 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#974)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[92m
+Reentrancy in BoostRewardsV2._getReward(address) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#958-965):
+	External calls:
+	- boostToken.safeTransfer(user,reward) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#962)
+	Event emitted after the call(s):
+	- RewardPaid(user,reward) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#963)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+BoostRewardsV2.stake(uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#810-828) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(balanceOf(msg.sender) <= tokenCapAmount || block.timestamp >= starttime.add(86400),token cap exceeded) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#815-818)
+BoostRewardsV2.boost() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#873-912) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > nextBoostPurchaseTime[msg.sender],early boost purchase) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#874-877)
+BoostRewardsV2._getReward(address) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#958-965) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#960)
+BoostRewardsV2.pow(uint256,uint256,uint256,uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#970-986) uses timestamp for comparisons
+	Dangerous comparisons:
+	- exponent == 0 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#971)
+	- exponent == 1 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#974)
+	- a == 0 && exponent != 0 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#977)
+	- i < exponent (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#982)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#336-349) uses assembly
+	- INLINE ASM (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#347-348)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#212) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#318) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#393) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#474) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#554) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#572) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#587) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#607) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#672) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#379-385):
+	- (success) = recipient.call.value(amount)() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#383)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#527-546):
+	- (success,returndata) = address(token).call(data) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#539)
+Low level call in BoostRewardsV2.withdraw(uint256) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#830-852):
+	- (success) = address(this).call(abi.encodeWithSignature(_getReward(address),msg.sender)) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#841-846)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function SwapRouter.WETH() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#591) is not in mixedCase
+Parameter BoostRewardsV2.setScaleFactorsAndThreshold(uint256,uint256,uint256)._boostThreshold (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#863) is not in mixedCase
+Parameter BoostRewardsV2.setScaleFactorsAndThreshold(uint256,uint256,uint256)._boostScaleFactor (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#864) is not in mixedCase
+Parameter BoostRewardsV2.setScaleFactorsAndThreshold(uint256,uint256,uint256)._scaleFactor (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#865) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#266-268)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#292-295)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#301-303)
+totalSupply() should be declared external:
+	- LPTokenWrapper.totalSupply() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#625-627)
+getReward() should be declared external:
+	- BoostRewardsV2.getReward() (loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol#854-856)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol analyzed (12 contracts with 46 detectors), 34 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x80128f108922482C5d2dfe745AF1d89D7Cf39BDC.sol
+Tool Runtime = 1.3232259630021872 seconds
+#############################################

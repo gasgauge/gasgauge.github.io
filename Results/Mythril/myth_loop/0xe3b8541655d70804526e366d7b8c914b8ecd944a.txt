@@ -1,0 +1,925 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3292
+Estimated Gas Usage: 15961 - 160521
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:445
+
+muse.transferFrom(msg.sender, address(this), museCost)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a08400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000101010101018000400000000000000000000000000000000000000080cccccccc, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3292
+Estimated Gas Usage: 21118 - 235371
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:445
+
+muse.transferFrom(msg.sender, address(this), museCost)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40100000000004001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000011080808001004000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3479
+Estimated Gas Usage: 15961 - 160521
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:449
+
+fee
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000004001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010410802008100840024004080101000440000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3516
+Estimated Gas Usage: 13176 - 122565
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:451
+
+muse
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x5, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8484848484848484848484848484848484848484848484848484848484848484848484848484848484848484deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3579
+Estimated Gas Usage: 15961 - 160521
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:451
+
+feeRecipient
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000004001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010410802008100840024004080101000440000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3796
+Estimated Gas Usage: 15961 - 160521
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:451
+
+muse.transferFrom(msg.sender, feeRecipient, feeAmt)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+Caller: [ATTACKER], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3796
+Estimated Gas Usage: 13176 - 122565
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:451
+
+muse.transferFrom(msg.sender, feeRecipient, feeAmt)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a08400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 3974
+Estimated Gas Usage: 15961 - 160521
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:455
+
+muse
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000004001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010410802008100840024004080101000440000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4036
+Estimated Gas Usage: 21118 - 235371
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:455
+
+vnft
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010802004080020240aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4202
+Estimated Gas Usage: 15961 - 160521
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:455
+
+muse.approve(address(vnft), museCost)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a08400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000101010101018000400000000000000000000000000000000000000080cccccccc, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4202
+Estimated Gas Usage: 15961 - 160521
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:455
+
+muse.approve(address(vnft), museCost)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000, value: 0x0
+Caller: [CREATOR], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4202
+Estimated Gas Usage: 13176 - 122565
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:455
+
+muse.approve(address(vnft), museCost)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x5, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8484848484848484848484848484848484848484848484848484848484848484848484848484848484848484deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4420
+Estimated Gas Usage: 21118 - 235371
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:458
+
+vnft
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010802004080020240aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4676
+Estimated Gas Usage: 21118 - 235371
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:459
+
+vnft
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010802004080020240aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4766
+Estimated Gas Usage: 16660 - 161271
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:459
+
+itemIds[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a084000000000000000000000000000000000000000000000000000000000000004100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000010000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 4866
+Estimated Gas Usage: 21118 - 235371
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:459
+
+vnft.buyAccesory(ids[i], itemIds[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5254
+Estimated Gas Usage: 24455 - 304542
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:411
+
+vnft
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5510
+Estimated Gas Usage: 19372 - 229861
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:412
+
+vnft
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1c0000002000012, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5672
+Estimated Gas Usage: 19372 - 229861
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:412
+
+vnft.claimMiningRewards(ids[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 010101010101010101010101deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010200080080008001000000100800080208100010200000000200000100000000, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce900000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001b4b4b4b4b4b4b4b4aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab4b4b4b4, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5672
+Estimated Gas Usage: 24455 - 304542
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:412
+
+vnft.claimMiningRewards(ids[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5672
+Estimated Gas Usage: 24455 - 304542
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:412
+
+vnft.claimMiningRewards(ids[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5722
+Estimated Gas Usage: 19372 - 229861
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:416
+
+fee
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1c0000002000012, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5728
+Estimated Gas Usage: 24455 - 304542
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:416
+
+muse
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 5912
+Estimated Gas Usage: 19372 - 229861
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:416
+
+muse.balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce900000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001ccccccccccccccccaffeaffeaffeaffeaffeaffeaffeaffeaffeaffecccccccc, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6004
+Estimated Gas Usage: 14289 - 155180
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:417
+
+muse
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000080001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 515151515151515151515151deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: claimMultiple(uint256[]), txdata: 0x9051cce90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6066
+Estimated Gas Usage: 19372 - 229861
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:417
+
+feeRecipient
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1c0000002000012, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6232
+Estimated Gas Usage: 19372 - 229861
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:417
+
+muse.transfer(feeRecipient, feeAmt)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce900000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001ccccccccccccccccaffeaffeaffeaffeaffeaffeaffeaffeaffeaffecccccccc, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6232
+Estimated Gas Usage: 14289 - 155180
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:417
+
+muse.transfer(feeRecipient, feeAmt)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42000000000000020, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: claimMultiple(uint256[]), txdata: 0x9051cce90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6232
+Estimated Gas Usage: 24455 - 304542
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:417
+
+muse.transfer(feeRecipient, feeAmt)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6305
+Estimated Gas Usage: 14289 - 155180
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:420
+
+muse
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 5151515151515151515151515151515151515151515151515151515151515151515151515151515151515151deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: claimMultiple(uint256[]), txdata: 0x9051cce90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6368
+Estimated Gas Usage: 24455 - 304542
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:420
+
+muse
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6552
+Estimated Gas Usage: 14289 - 155180
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:420
+
+muse.balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000040400008001affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+Caller: [ATTACKER], function: claimMultiple(uint256[]), txdata: 0x9051cce90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6744
+Estimated Gas Usage: 19372 - 229861
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:420
+
+muse.transfer(msg.sender, muse.balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce900000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001ccccccccccccccccaffeaffeaffeaffeaffeaffeaffeaffeaffeaffecccccccc, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NiftyTools
+Function name: claimMultiple(uint256[])
+PC address: 6744
+Estimated Gas Usage: 24455 - 304542
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:420
+
+muse.transfer(msg.sender, muse.balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: ccccccccccccccccccccccccdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: claimMultiple(uint256[]), txdata: 0x9051cce9000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NiftyTools
+Function name: feedMultiple(uint256[],uint256[])
+PC address: 8459
+Estimated Gas Usage: 21118 - 235371
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops9/0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol:136
+
+a + b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x168018014c2082091, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: feedMultiple(uint256[],uint256[]), txdata: 0x82b4a0840000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000011200343627a91219aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xe3b8541655d70804526e366d7b8c914b8ecd944a.sol
+Tool Runtime = 10816.493659986008 seconds
+#############################################

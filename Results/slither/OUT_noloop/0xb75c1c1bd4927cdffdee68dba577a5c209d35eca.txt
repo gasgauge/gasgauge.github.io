@@ -1,0 +1,119 @@
+Compilation warnings/errors on ./noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol:
+./noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol:452:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in TestPool.exit() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#692-695):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#693)
+		- token.safeTransfer(msg.sender,amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#607)
+		- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+	- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+		- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+		- rewardToken.safeTransfer(msg.sender,reward) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#702)
+	State variables written after the call(s):
+	- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#632)
+	- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#631)
+	- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+		- rewards[msg.sender] = 0 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#701)
+		- rewards[account] = earned(account) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#634)
+	- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#635)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in TestPool.exit() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#692-695):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#693)
+		- token.safeTransfer(msg.sender,amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#607)
+		- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+	- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+		- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+		- rewardToken.safeTransfer(msg.sender,reward) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#702)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#703)
+		- getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#694)
+Reentrancy in TestPool.getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#697-705):
+	External calls:
+	- rewardToken.safeTransfer(msg.sender,reward) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#702)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#703)
+Reentrancy in TestPool.stake(uint256) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#678-683):
+	External calls:
+	- super.stake(amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#681)
+		- token.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#601)
+		- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#682)
+Reentrancy in TestPool.withdraw(uint256) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#685-690):
+	External calls:
+	- super.withdraw(amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#688)
+		- token.safeTransfer(msg.sender,amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#607)
+		- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#689)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+TestPool.getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#697-705) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#700)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#441-454) uses assembly
+	- INLINE ASM (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#452-453)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+TestPool.stake(uint256) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#678-683) compares to a boolean constant:
+	-require(bool,string)(locked == false,pool is locked) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#679)
+TestPool.withdraw(uint256) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#685-690) compares to a boolean constant:
+	-require(bool,string)(locked == false,pool is locked) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#686)
+TestPool.getReward() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#697-705) compares to a boolean constant:
+	-require(bool,string)(locked == false,pool is locked) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#698)
+TestPool.unlockPool() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#707-719) compares to a boolean constant:
+	-require(bool,string)(locked == true,pool already unlocked) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#712)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#46) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#78) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#237) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#267) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#345) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#424) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#495) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#573) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#484-490):
+	- (success) = recipient.call.value(amount)() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#488)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#548-567):
+	- (success,returndata) = address(token).call(data) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#560)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter TestPool.withdrawTokens(address)._token (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#721) is not in mixedCase
+Parameter TestPool.setGovernance(address)._governance (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#726) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+TestPool.duration (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#616) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#294-296)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#320-323)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#329-331)
+withdrawTokens(address) should be declared external:
+	- TestPool.withdrawTokens(address) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#721-724)
+setGovernance(address) should be declared external:
+	- TestPool.setGovernance(address) (noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol#726-728)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol analyzed (9 contracts with 46 detectors), 30 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xb75c1c1bd4927cdffdee68dba577a5c209d35eca.sol
+Tool Runtime = 0.9553141409996897 seconds
+#############################################

@@ -1,0 +1,59 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AetherianLand
+Function name: setManyUpdateOperator(address,uint256[])
+PC address: 7594
+Estimated Gas Usage: 4035 - 73072
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/5/0xc4749f416c7dc27e09f67ac02f23a90e0ba6ad21.sol:2216
+
+this.setUpdateOperator(newOperator, plotIds[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: setManyUpdateOperator(address,uint256[]), txdata: 0xf564baa4000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: AetherianLand
+Function name: deleteTokens(uint256[])
+PC address: 8052
+Estimated Gas Usage: 5073 - 43357
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/5/0xc4749f416c7dc27e09f67ac02f23a90e0ba6ad21.sol:2142
+
+estateContract.setManyLandUpdateOperator(estateId, plotIds, newOperator)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: a4a4a4a4a4a4a4a4a4a4a4a40000000000000000000000000000000000000000a4a4a4a4a4a4a4a4a4a4a4a4deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: setManyUpdateOperator(address,uint256[]), txdata: 0xf564baa4000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: deleteTokens(uint256[]), txdata: 0x20f6fdc20000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xc4749f416c7dc27e09f67ac02f23a90e0ba6ad21.sol
+Tool Runtime = 1212.844158464999 seconds
+#############################################

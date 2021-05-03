@@ -1,0 +1,393 @@
+Compilation warnings/errors on ./loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol:
+./loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol:980:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[93m
+Subscriptions.floor(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#457-459) performs a multiplication on the result of a division:
+	-((a) / m) * m (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#458)
+Subscriptions.ceil(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#461-463) performs a multiplication on the result of a division:
+	-((a + m + 1) / m) * m (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#462)
+Subscriptions._get_available_payout(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#705-720) performs a multiplication on the result of a division:
+	-debit = subscription.subscription.sub(subscription.redemption).div(subscription.total_periods - subscription.lockout_period).mul(periods_passed - subscription.lockout_period).add(subscription.deposit) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#715-716)
+Subscriptions._get_partners_payout(uint256,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#733-746) performs a multiplication on the result of a division:
+	-partners_payout = floor(amount.mul(subscription.certificate_partners_rate).div(subscription.total_periods - subscription.lockout_period).mul(periods_passed - subscription.lockout_period),ROUNDING) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#742-744)
+Cert.getDepositNiwixValue(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1071-1073) performs a multiplication on the result of a division:
+	-euron_amount.div(_subscription_unit_rate).mul(depositNiwixRate()) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1072)
+Cert._get_subscription_change(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1088-1092) performs a multiplication on the result of a division:
+	-units = value.div(_subscription_unit_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1089)
+	-subscription = units.mul(_subscription_unit_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1090)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Cert.tokenFallback(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1017-1026) ignores return value by _euron.transfer(address(_niwix),value) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1021)
+Cert.tokenFallback(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1017-1026) ignores return value by INIWIX(address(_niwix)).tokenFallback(from,value) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1022)
+Cert._deposit(address,uint256,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1101-1120) ignores return value by _euron.transferFrom(euron_address,address(this),euron_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1102)
+Cert._deposit(address,uint256,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1101-1120) ignores return value by _niwix.transferFrom(niwix_address,address(this),niwix_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1109)
+Cert._deposit(address,uint256,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1101-1120) ignores return value by _euron.transfer(niwix_address,subscription_change) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1112)
+Cert.withdraw(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1142-1153) ignores return value by _niwix.transfer(msg.sender,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1150)
+Cert.topup(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1188-1192) ignores return value by _niwix.transferFrom(msg.sender,address(this),amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1189)
+Cert.reclaimToken(IERC20,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1226-1229) ignores return value by token.transfer(_to,balance) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1228)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in Cert._deposit(address,uint256,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1101-1120):
+	External calls:
+	- _euron.transferFrom(euron_address,address(this),euron_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1102)
+	- _niwix.transferFrom(niwix_address,address(this),niwix_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1109)
+	- _euron.transfer(niwix_address,subscription_change) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1112)
+	State variables written after the call(s):
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers[subscriber] = subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#540)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers[subscriber] = subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#540)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers_counter ++ (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#542)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers_counter ++ (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#542)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers_id[subscriber_id] = subscriber (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#541)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers_id[subscriber_id] = subscriber (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#541)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers_subscriptions[subscriber_id][subscribers_subscriptions_counter] = subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#525)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers_subscriptions[subscriber_id][subscribers_subscriptions_counter] = subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#525)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers_subscriptions_by_period[subscriber_id][period] = subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#526)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers_subscriptions_by_period[subscriber_id][period] = subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#526)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers_subscriptions_counter[subscriber_id] ++ (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#530)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers_subscriptions_counter[subscriber_id] ++ (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#530)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscribers_subscriptions_recent[subscriber_id] = period (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#528)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscribers_subscriptions_recent[subscriber_id] = period (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#528)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscriptions[subscription_id] = subscription (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#523)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscriptions[subscription_id] = subscription (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#523)
+	- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+		- _subscriptions_counter ++ (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#531)
+	- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+		- _subscriptions_counter ++ (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#531)
+Reentrancy in Cert.topup(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1188-1192):
+	External calls:
+	- _niwix.transferFrom(msg.sender,address(this),amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1189)
+	State variables written after the call(s):
+	- top(msg.sender,subscription_id,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1190)
+		- subscription.deposit = subscription.deposit.add(amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#814)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Cert._deposit(address,uint256,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1101-1120):
+	External calls:
+	- _euron.transferFrom(euron_address,address(this),euron_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1102)
+	- _niwix.transferFrom(niwix_address,address(this),niwix_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1109)
+	- _euron.transfer(niwix_address,subscription_change) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1112)
+	Event emitted after the call(s):
+	- Subscribe(subscriber,amount,units) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#560)
+		- subscribe(niwix_address,subscription_units.mul(_subscription_niwix_rate),subscription_units,_subscription_niwix_rate,_subscription_partner_rate) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1119)
+	- Subscribe(subscriber,amount,units) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#560)
+		- subscribe(partner,subscription_units.mul(_subscription_partner_rate),0,0,0) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1116)
+Reentrancy in Cert.deposit(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1131-1140):
+	External calls:
+	- _deposit(msg.sender,amount,msg.sender) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1138)
+		- _euron.transferFrom(euron_address,address(this),euron_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1102)
+		- _niwix.transferFrom(niwix_address,address(this),niwix_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1109)
+		- _euron.transfer(niwix_address,subscription_change) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1112)
+	Event emitted after the call(s):
+	- Deposit(msg.sender,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1139)
+Reentrancy in Cert.depositTo(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1122-1129):
+	External calls:
+	- _deposit(msg.sender,value,address_to) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1126)
+		- _euron.transferFrom(euron_address,address(this),euron_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1102)
+		- _niwix.transferFrom(niwix_address,address(this),niwix_amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1109)
+		- _euron.transfer(niwix_address,subscription_change) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1112)
+	Event emitted after the call(s):
+	- Deposit(address_to,value) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1127)
+Reentrancy in Cert.topup(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1188-1192):
+	External calls:
+	- _niwix.transferFrom(msg.sender,address(this),amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1189)
+	Event emitted after the call(s):
+	- Topup(subscriber,subscription_id,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#823)
+		- top(msg.sender,subscription_id,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1190)
+Reentrancy in Cert.withdraw(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1142-1153):
+	External calls:
+	- _niwix.transfer(msg.sender,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1150)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,subscription_id,amount) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1151)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Periods._checkCurrentPeriod() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#347-356) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now < _periods[current_period] (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#350)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#35) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#112) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#181) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#297) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#393) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#969) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#979) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Function Whitelist._add_partner(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#202-209) is not in mixedCase
+Parameter Whitelist.setPartnersAddress(uint256,address).partner_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#279) is not in mixedCase
+Parameter Whitelist.setPartnersAddress(uint256,address).new_partner (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#279) is not in mixedCase
+Parameter Whitelist.bulkWhitelist(address[]).address_list (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#285) is not in mixedCase
+Variable Whitelist._partner_ids (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#186) is not in mixedCase
+Variable Whitelist._partner_address (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#187) is not in mixedCase
+Variable Whitelist.partners_counter (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#188) is not in mixedCase
+Variable Whitelist._partners_referrals (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#191) is not in mixedCase
+Variable Whitelist._partners_referrals_counter (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#192) is not in mixedCase
+Variable Periods._current_period (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#301) is not in mixedCase
+Variable Periods._total_periods (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#302) is not in mixedCase
+Variable Periods._periods (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#303) is not in mixedCase
+Variable Periods._adjustable (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#304) is not in mixedCase
+Function Subscriptions.get_subscriber_id(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#466-468) is not in mixedCase
+Parameter Subscriptions.get_subscriber_id(address).subscriber_address (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#466) is not in mixedCase
+Function Subscriptions.get_subscriber_address(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#470-472) is not in mixedCase
+Parameter Subscriptions.get_subscriber_address(uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#470) is not in mixedCase
+Function Subscriptions._new_subscription(uint256,uint16,uint256,uint256,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#502-532) is not in mixedCase
+Parameter Subscriptions._new_subscription(uint256,uint16,uint256,uint256,uint256,uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#502) is not in mixedCase
+Parameter Subscriptions._new_subscription(uint256,uint16,uint256,uint256,uint256,uint256).unit_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#502) is not in mixedCase
+Parameter Subscriptions._new_subscription(uint256,uint16,uint256,uint256,uint256,uint256).partners_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#502) is not in mixedCase
+Function Subscriptions._return_payout(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#575-583) is not in mixedCase
+Parameter Subscriptions._return_payout(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#575) is not in mixedCase
+Function Subscriptions._partners_redeem(uint256,uint256,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#612-621) is not in mixedCase
+Parameter Subscriptions._partners_redeem(uint256,uint256,uint256,uint256).partners_subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#612) is not in mixedCase
+Parameter Subscriptions._partners_redeem(uint256,uint256,uint256,uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#612) is not in mixedCase
+Parameter Subscriptions._partners_redeem(uint256,uint256,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#612) is not in mixedCase
+Function Subscriptions._get_subscriptions_count(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#623-625) is not in mixedCase
+Parameter Subscriptions._get_subscriptions_count(uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#623) is not in mixedCase
+Parameter Subscriptions.subscribe(address,uint256,uint256,uint256,uint256).unit_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#660) is not in mixedCase
+Parameter Subscriptions.subscribe(address,uint256,uint256,uint256,uint256).partner_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#660) is not in mixedCase
+Function Subscriptions._get_available_payout(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#705-720) is not in mixedCase
+Parameter Subscriptions._get_available_payout(uint256,uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#705) is not in mixedCase
+Parameter Subscriptions._get_available_payout(uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#705) is not in mixedCase
+Function Subscriptions.get_available(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#722-726) is not in mixedCase
+Parameter Subscriptions.get_available(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#722) is not in mixedCase
+Function Subscriptions.get_available_certs(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#728-732) is not in mixedCase
+Parameter Subscriptions.get_available_certs(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#728) is not in mixedCase
+Function Subscriptions._get_partners_payout(uint256,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#733-746) is not in mixedCase
+Parameter Subscriptions._get_partners_payout(uint256,uint256,uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#733) is not in mixedCase
+Parameter Subscriptions._get_partners_payout(uint256,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#733) is not in mixedCase
+Function Subscriptions.get_partners_payout(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#748-752) is not in mixedCase
+Parameter Subscriptions.get_partners_payout(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#748) is not in mixedCase
+Parameter Subscriptions.payout(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#754) is not in mixedCase
+Parameter Subscriptions.redeem(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#762) is not in mixedCase
+Function Subscriptions.partners_redeem(address,address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#769-776) is not in mixedCase
+Parameter Subscriptions.partners_redeem(address,address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#769) is not in mixedCase
+Function Subscriptions.return_payout(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#778-781) is not in mixedCase
+Parameter Subscriptions.return_payout(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#778) is not in mixedCase
+Parameter Subscriptions.getAvailable(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#783) is not in mixedCase
+Function Subscriptions._get_subscription(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#795-797) is not in mixedCase
+Parameter Subscriptions._get_subscription(uint256,uint256).subscriber_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#795) is not in mixedCase
+Parameter Subscriptions._get_subscription(uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#795) is not in mixedCase
+Function Subscriptions.get_subscription(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#801-805) is not in mixedCase
+Parameter Subscriptions.get_subscription(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#801) is not in mixedCase
+Function Subscriptions.get_global_subscription(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#807-809) is not in mixedCase
+Parameter Subscriptions.get_global_subscription(uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#807) is not in mixedCase
+Parameter Subscriptions.top(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#819) is not in mixedCase
+Parameter Subscriptions.getCertSubscriptionStartDate(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#827) is not in mixedCase
+Parameter Subscriptions.getNWXgrantedToInvestor(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#832) is not in mixedCase
+Parameter Subscriptions.getNWXgrantedToPartner(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#837) is not in mixedCase
+Parameter Subscriptions.getNWXpayedToInvestor(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#843) is not in mixedCase
+Parameter Subscriptions.getNWXpayedToPartner(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#848) is not in mixedCase
+Parameter Subscriptions.getAmountCertRedemptionRequested(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#854) is not in mixedCase
+Parameter Subscriptions.getAmountCertNickelWireReceived(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#859) is not in mixedCase
+Parameter Subscriptions.setAmountCertNickelWireReceived(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#864) is not in mixedCase
+Parameter Subscriptions.getTopupAmount(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#891) is not in mixedCase
+Parameter Subscriptions.getSubscription(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#898) is not in mixedCase
+Parameter Subscriptions.getPayout(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#904) is not in mixedCase
+Parameter Subscriptions.getCertificatesRedeemedQty(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#922) is not in mixedCase
+Parameter Subscriptions.getCertificatesQty(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#928) is not in mixedCase
+Parameter Subscriptions.getCertificatesQtyAvailable(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#947) is not in mixedCase
+Variable Subscriptions.STATE_MISSING (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#401) is not in mixedCase
+Variable Subscriptions.STATE_ACTIVE (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#402) is not in mixedCase
+Variable Subscriptions.STATE_WITHDRAWN (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#403) is not in mixedCase
+Variable Subscriptions.STATE_PAID (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#404) is not in mixedCase
+Variable Subscriptions.ROUNDING (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#406) is not in mixedCase
+Variable Subscriptions._subscribers_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#428) is not in mixedCase
+Variable Subscriptions._subscribers_counter (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#429) is not in mixedCase
+Variable Subscriptions._subscribers_subscriptions (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#432) is not in mixedCase
+Variable Subscriptions._subscribers_subscriptions_by_period (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#433) is not in mixedCase
+Variable Subscriptions._subscribers_subscriptions_recent (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#434) is not in mixedCase
+Variable Subscriptions._subscriptions_counter (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#435) is not in mixedCase
+Variable Subscriptions._subscribers_subscriptions_counter (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#436) is not in mixedCase
+Variable Subscriptions._total_subscription (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#440) is not in mixedCase
+Variable Subscriptions._lockout_period (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#441) is not in mixedCase
+Variable Subscriptions._max_period (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#442) is not in mixedCase
+Parameter Cert.setNiwix(address).contract_address (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1040) is not in mixedCase
+Parameter Cert.setEURON(address).contract_address (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1045) is not in mixedCase
+Parameter Cert.getDepositNiwixValue(uint256).euron_amount (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1071) is not in mixedCase
+Function Cert._get_subscription_units(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1084-1086) is not in mixedCase
+Function Cert._get_subscription_change(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1088-1092) is not in mixedCase
+Function Cert.get_subscription_value(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1094-1098) is not in mixedCase
+Parameter Cert.depositTo(address,uint256).address_to (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1122) is not in mixedCase
+Parameter Cert.withdraw(uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1142) is not in mixedCase
+Function Cert.change_subscribers_address(address,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1162-1168) is not in mixedCase
+Function Cert.change_address(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1170-1175) is not in mixedCase
+Parameter Cert.redemption(uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1178) is not in mixedCase
+Parameter Cert.topup(uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1188) is not in mixedCase
+Parameter Cert.topupOwner(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1194) is not in mixedCase
+Parameter Cert.transfer(address,uint256,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1200) is not in mixedCase
+Parameter Cert.viewSubscription(address,uint256).subscription_id (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1213) is not in mixedCase
+Parameter Cert.reclaimEther(address)._to (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1222) is not in mixedCase
+Parameter Cert.reclaimToken(IERC20,address)._to (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1226) is not in mixedCase
+Variable Cert._niwix (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#994) is not in mixedCase
+Variable Cert._euron (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#995) is not in mixedCase
+Variable Cert._deposit_niwix_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#997) is not in mixedCase
+Variable Cert._subscription_niwix_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#998) is not in mixedCase
+Variable Cert._subscription_partner_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#999) is not in mixedCase
+Variable Cert._subscription_unit_rate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1000) is not in mixedCase
+Variable Cert.paper_certificate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1015) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Subscriptions.STATE_MISSING (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#401) is never used in Cert (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#989-1231)
+Subscriptions.STATE_ACTIVE (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#402) is never used in Cert (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#989-1231)
+Subscriptions.STATE_WITHDRAWN (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#403) is never used in Cert (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#989-1231)
+Subscriptions.STATE_PAID (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#404) is never used in Cert (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#989-1231)
+Subscriptions._total_subscription (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#440) is never used in Cert (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#989-1231)
+Cert.paper_certificate (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1015) is never used in Cert (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#989-1231)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+Cert.n (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1002) should be constant
+Cert.sender (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1003) should be constant
+Subscriptions.ROUNDING (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#406) should be constant
+Subscriptions.STATE_ACTIVE (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#402) should be constant
+Subscriptions.STATE_MISSING (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#401) should be constant
+Subscriptions.STATE_PAID (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#404) should be constant
+Subscriptions.STATE_WITHDRAWN (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#403) should be constant
+Subscriptions._total_subscription (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#440) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#59-61)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#85-88)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#94-96)
+setPartnerState(address,uint8) should be declared external:
+	- Whitelist.setPartnerState(address,uint8) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#238-246)
+addPartner(address) should be declared external:
+	- Whitelist.addPartner(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#249-252)
+setWhitelistState(address,uint8) should be declared external:
+	- Whitelist.setWhitelistState(address,uint8) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#266-269)
+setPartnersAddress(uint256,address) should be declared external:
+	- Whitelist.setPartnersAddress(uint256,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#279-283)
+bulkWhitelist(address[]) should be declared external:
+	- Whitelist.bulkWhitelist(address[]) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#285-290)
+getPeriodsCounter() should be declared external:
+	- Periods.getPeriodsCounter() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#310-312)
+getCurrentTime() should be declared external:
+	- Periods.getCurrentTime() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#318-320)
+getCurrentPeriodTimestamp() should be declared external:
+	- Periods.getCurrentPeriodTimestamp() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#323-325)
+setCurrentPeriod(uint16) should be declared external:
+	- Periods.setCurrentPeriod(uint16) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#332-336)
+adjustCurrentPeriod() should be declared external:
+	- Periods.adjustCurrentPeriod() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#358-370)
+addPeriodTimestamps(uint256[]) should be declared external:
+	- Periods.addPeriodTimestamps(uint256[]) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#372-378)
+setLastPeriod(uint16) should be declared external:
+	- Periods.setLastPeriod(uint16) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#380-385)
+get_subscriber_address(uint256) should be declared external:
+	- Subscriptions.get_subscriber_address(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#470-472)
+lockoutPeriod() should be declared external:
+	- Subscriptions.lockoutPeriod() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#474-476)
+setLockoutPeriod(uint16) should be declared external:
+	- Subscriptions.setLockoutPeriod(uint16) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#478-481)
+maxPeriod() should be declared external:
+	- Subscriptions.maxPeriod() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#483-485)
+setMaxPeriod(uint16) should be declared external:
+	- Subscriptions.setMaxPeriod(uint16) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#487-490)
+setCommission(uint256) should be declared external:
+	- Subscriptions.setCommission(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#496-499)
+getSubscriptionsCountAll() should be declared external:
+	- Subscriptions.getSubscriptionsCountAll() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#628-630)
+getCertSubscriptionStartDate(address,uint256) should be declared external:
+	- Subscriptions.getCertSubscriptionStartDate(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#827-830)
+getNWXgrantedToInvestor(address,uint256) should be declared external:
+	- Subscriptions.getNWXgrantedToInvestor(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#832-835)
+getNWXgrantedToPartner(address,uint256) should be declared external:
+	- Subscriptions.getNWXgrantedToPartner(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#837-841)
+getNWXpayedToInvestor(address,uint256) should be declared external:
+	- Subscriptions.getNWXpayedToInvestor(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#843-846)
+getNWXpayedToPartner(address,uint256) should be declared external:
+	- Subscriptions.getNWXpayedToPartner(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#848-851)
+getAmountCertRedemptionRequested(address,uint256) should be declared external:
+	- Subscriptions.getAmountCertRedemptionRequested(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#854-857)
+getAmountCertNickelWireReceived(address,uint256) should be declared external:
+	- Subscriptions.getAmountCertNickelWireReceived(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#859-862)
+setAmountCertNickelWireReceived(address,uint256,uint256) should be declared external:
+	- Subscriptions.setAmountCertNickelWireReceived(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#864-871)
+getTopupAmount(address,uint256,uint256) should be declared external:
+	- Subscriptions.getTopupAmount(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#891-895)
+getSubscription(address,uint256) should be declared external:
+	- Subscriptions.getSubscription(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#898-902)
+getPayout(address,uint256) should be declared external:
+	- Subscriptions.getPayout(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#904-908)
+getSubscriptionAll(address) should be declared external:
+	- Subscriptions.getSubscriptionAll(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#911-919)
+getCertificatesRedeemedQty(address,uint256) should be declared external:
+	- Subscriptions.getCertificatesRedeemedQty(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#922-925)
+getCertificatesQty(address,uint256) should be declared external:
+	- Subscriptions.getCertificatesQty(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#928-932)
+getCertificatesQtyAll(address) should be declared external:
+	- Subscriptions.getCertificatesQtyAll(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#935-943)
+getCertificatesQtyAvailable(address,uint256) should be declared external:
+	- Subscriptions.getCertificatesQtyAvailable(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#947-951)
+getCertificatesQtyAvailableAll(address) should be declared external:
+	- Subscriptions.getCertificatesQtyAvailableAll(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#953-961)
+tokenFallback(address,uint256) should be declared external:
+	- Cert.tokenFallback(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1017-1026)
+name() should be declared external:
+	- Cert.name() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1036-1038)
+setNiwix(address) should be declared external:
+	- Cert.setNiwix(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1040-1043)
+setEURON(address) should be declared external:
+	- Cert.setEURON(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1045-1048)
+setDepositNiwixRate(uint256) should be declared external:
+	- Cert.setDepositNiwixRate(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1054-1056)
+setSubscriptionUnitRate(uint256) should be declared external:
+	- Cert.setSubscriptionUnitRate(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1058-1060)
+setSubscriptionNiwixRate(uint256) should be declared external:
+	- Cert.setSubscriptionNiwixRate(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1062-1064)
+getSubscriptionUnitRate() should be declared external:
+	- Cert.getSubscriptionUnitRate() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1066-1068)
+setSubscriptionParnerRate(uint256) should be declared external:
+	- Cert.setSubscriptionParnerRate(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1076-1078)
+subscriptionPartnerRate() should be declared external:
+	- Cert.subscriptionPartnerRate() (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1080-1082)
+_get_subscription_change(uint256) should be declared external:
+	- Cert._get_subscription_change(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1088-1092)
+depositTo(address,uint256) should be declared external:
+	- Cert.depositTo(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1122-1129)
+deposit(uint256) should be declared external:
+	- Cert.deposit(uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1131-1140)
+withdraw(uint256,uint256) should be declared external:
+	- Cert.withdraw(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1142-1153)
+change_subscribers_address(address,address) should be declared external:
+	- Cert.change_subscribers_address(address,address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1162-1168)
+change_address(address) should be declared external:
+	- Cert.change_address(address) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1170-1175)
+topup(uint256,uint256) should be declared external:
+	- Cert.topup(uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1188-1192)
+topupOwner(address,uint256,uint256) should be declared external:
+	- Cert.topupOwner(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1194-1197)
+transfer(address,uint256,uint256) should be declared external:
+	- Cert.transfer(address,uint256,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1200-1211)
+viewSubscription(address,uint256) should be declared external:
+	- Cert.viewSubscription(address,uint256) (loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol#1213-1219)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol analyzed (8 contracts with 46 detectors), 215 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x0eab6f04d173d055676e68876c22fab00ad9fe83.sol
+Tool Runtime = 10.983369790999859 seconds
+#############################################

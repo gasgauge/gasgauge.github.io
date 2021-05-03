@@ -1,0 +1,297 @@
+Compilation warnings/errors on ./loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol:
+./loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol:2266:98: Warning: Result of exponentiation has type uint64 and thus might overflow. Silence this warning by converting the literal to the expected type.
+      uint64 _minValue = uint64((ceil(currentPrice.sub(_optionRangePerc).div(_roundOfToNearest), 10**_decimals)).mul(_roundOfToNearest));
+                                                                                                 ^-----------^
+./loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol:2268:98: Warning: Result of exponentiation has type uint64 and thus might overflow. Silence this warning by converting the literal to the expected type.
+      uint64 _maxValue = uint64((ceil(currentPrice.add(_optionRangePerc).div(_roundOfToNearest), 10**_decimals)).mul(_roundOfToNearest));
+                                                                                                 ^-----------^
+
+INFO:Detectors:[91m
+MarketRegistry._transferAsset(address,address,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2536-2552) sends eth to arbitrary user
+	Dangerous calls:
+	- _recipient.transfer(_amount) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2542)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+MarketRegistry.createMarket(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2234-2274) performs a multiplication on the result of a division:
+	-_optionRangePerc = uint64(currentPrice.mul(_optionRangePerc.div(2)).div(10000)) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2262)
+MarketRegistry.calculateStartTimeForMarket(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2300-2324) performs a multiplication on the result of a division:
+	-noOfMarketsSkipped = ((now).sub(_marketStartTime)).div(predictionTime) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2318)
+	-_marketStartTime = uint64(_marketStartTime.add(noOfMarketsSkipped.mul(predictionTime))) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2320)
+MarketRegistry.ceil(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2862-2866) performs a multiplication on the result of a division:
+	-((a + m - 1) / m) * m (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2864)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract OwnedUpgradeabilityProxy (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1087-1217) has payable functions:
+	 - Proxy.fallback() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#899-929)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+Reentrancy in MarketRegistry.addInitialMarketTypesAndStart(uint64,address,address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1990-2020):
+	External calls:
+	- createMarket(i,0) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2014)
+		- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+		- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	- createMarket(i,1) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2016)
+		- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+		- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	State variables written after the call(s):
+	- createMarket(i,1) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2016)
+		- (marketCreationData[_marketType][_marketCurrencyIndex].penultimateMarket,marketCreationData[_marketType][_marketCurrencyIndex].marketAddress) = (marketCreationData[_marketType][_marketCurrencyIndex].marketAddress,_market) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2216-2218)
+	- createMarket(i,1) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2016)
+		- marketData[_market].isMarket = true (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2210)
+	- createMarket(i,1) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2016)
+		- userData[msg.sender].marketsCreated ++ (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2272)
+Reentrancy in MarketRegistry.createMarket(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2234-2274):
+	External calls:
+	- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+	- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	- _createMarket(_marketType,_marketCurrencyIndex,_minValue,_maxValue,_marketStartTime,_currencyName) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2270)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+	State variables written after the call(s):
+	- _createMarket(_marketType,_marketCurrencyIndex,_minValue,_maxValue,_marketStartTime,_currencyName) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2270)
+		- (marketCreationData[_marketType][_marketCurrencyIndex].penultimateMarket,marketCreationData[_marketType][_marketCurrencyIndex].marketAddress) = (marketCreationData[_marketType][_marketCurrencyIndex].marketAddress,_market) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2216-2218)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+MarketRegistry.claimPendingReturn(uint256).count (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2470) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+MarketRegistry.updateMarketImplementations(uint256[],address[]) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2124-2138) has external calls inside a loop: (_priceFeed) = IMarket(_marketImplementations[i]).getMarketFeedData() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2130)
+MarketRegistry.updateMarketImplementations(uint256[],address[]) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2124-2138) has external calls inside a loop: _decimals = marketUtility.getPriceFeedDecimals(_priceFeed) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2132)
+MarketRegistry.claimPendingReturn(uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2462-2498) has external calls inside a loop: IMarket(userData[msg.sender].marketsParticipated[i]).claimReturn(msg.sender) > 0 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2474)
+MarketRegistry.getMarketDetailsUser(address,uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2784-2814) has external calls inside a loop: (_winnigOption[i],None) = IMarket(_market[i]).marketSettleData() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2808)
+MarketRegistry.getOpenMarkets() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2828-2858) has external calls inside a loop: _marketCurrencies[count] = IMarket(marketCurrencies[j].marketImplementation).marketCurrency() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2850)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in MarketRegistry._createMarket(uint256,uint256,uint64,uint64,uint64,bytes32) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2202-2220):
+	External calls:
+	- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+	State variables written after the call(s):
+	- (marketCreationData[_marketType][_marketCurrencyIndex].penultimateMarket,marketCreationData[_marketType][_marketCurrencyIndex].marketAddress) = (marketCreationData[_marketType][_marketCurrencyIndex].marketAddress,_market) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2216-2218)
+Reentrancy in MarketRegistry.createMarket(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2234-2274):
+	External calls:
+	- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+	- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	- _createMarket(_marketType,_marketCurrencyIndex,_minValue,_maxValue,_marketStartTime,_currencyName) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2270)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+	State variables written after the call(s):
+	- userData[msg.sender].marketsCreated ++ (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2272)
+Reentrancy in MarketRegistry.initiate(address,address,address,address[]) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1962-1980):
+	External calls:
+	- marketUtility.initialize(_configParams,_defaultAddress) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1976)
+	State variables written after the call(s):
+	- marketInitiater = _defaultAddress (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1978)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in MarketRegistry._createMarket(uint256,uint256,uint64,uint64,uint64,bytes32) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2202-2220):
+	External calls:
+	- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+	Event emitted after the call(s):
+	- MarketQuestion(_market,_currencyName,_marketType,_marketStartTime) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2214)
+Reentrancy in MarketRegistry.addInitialMarketTypesAndStart(uint64,address,address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1990-2020):
+	External calls:
+	- createMarket(i,0) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2014)
+		- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+		- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	- createMarket(i,1) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2016)
+		- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+		- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	Event emitted after the call(s):
+	- MarketQuestion(_market,_currencyName,_marketType,_marketStartTime) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2214)
+		- createMarket(i,1) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2016)
+Reentrancy in MarketRegistry.burnDisputedProposalTokens(uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2438-2450):
+	External calls:
+	- IMarket(disputedMarket).resolveDispute(false,0) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2442)
+	Event emitted after the call(s):
+	- DisputeResolved(disputedMarket,false) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2444)
+Reentrancy in MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378-2392):
+	External calls:
+	- governance.createProposalwithSolution(proposalTitle,proposalTitle,description,10,solutionHash,action) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2388)
+	Event emitted after the call(s):
+	- DisputeRaised(msg.sender,_user,proposalId,_proposedValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2390)
+Reentrancy in MarketRegistry.createMarket(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2234-2274):
+	External calls:
+	- IMarket(penultimateMarket).settleMarket() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2240)
+	- marketUtility.update() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2254)
+	- _createMarket(_marketType,_marketCurrencyIndex,_minValue,_maxValue,_marketStartTime,_currencyName) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2270)
+		- IMarket(_market).initiate(_marketStartTime,_marketTypeData.predictionTime,_minValue,_maxValue) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2212)
+	Event emitted after the call(s):
+	- MarketQuestion(_market,_currencyName,_marketType,_marketStartTime) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2214)
+		- _createMarket(_marketType,_marketCurrencyIndex,_minValue,_maxValue,_marketStartTime,_currencyName) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2270)
+Reentrancy in MarketRegistry.resolveDispute(address,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2406-2426):
+	External calls:
+	- _transferAsset(plotTokenAddress,_marketAddress,plotDepositedInPool) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2418)
+		- require(bool)(IToken(_asset).transfer(_recipient,_amount)) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2546)
+	- IMarket(_marketAddress).resolveDispute.value(ethDepositedInPool)(true,_result) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2420)
+	External calls sending eth:
+	- _transferAsset(plotTokenAddress,_marketAddress,plotDepositedInPool) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2418)
+		- _recipient.transfer(_amount) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2542)
+	- IMarket(_marketAddress).resolveDispute.value(ethDepositedInPool)(true,_result) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2420)
+	Event emitted after the call(s):
+	- DisputeResolved(_marketAddress,true) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2422)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+MarketRegistry.addNewMarketType(uint64,uint64,uint64) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2036-2052) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(_marketStartTime > now) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2038)
+MarketRegistry.calculateStartTimeForMarket(uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2300-2324) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now > _marketStartTime.add(predictionTime) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2316)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Proxy.fallback() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#899-929) uses assembly
+	- INLINE ASM (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#907-929)
+UpgradeabilityProxy.implementation() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1006-1016) uses assembly
+	- INLINE ASM (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1010-1016)
+UpgradeabilityProxy._setImplementation(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1028-1038) uses assembly
+	- INLINE ASM (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1032-1038)
+OwnedUpgradeabilityProxy.proxyOwner() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1149-1159) uses assembly
+	- INLINE ASM (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1153-1159)
+OwnedUpgradeabilityProxy._setUpgradeabilityOwner(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1205-1215) uses assembly
+	- INLINE ASM (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1209-1215)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#14) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#523) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#808) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#875) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#952) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1071) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1226) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1361) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1544) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1569) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1750) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Governed.isAuthorizedToGovern(address)._toCheck (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#856) is not in mixedCase
+Parameter OwnedUpgradeabilityProxy.transferProxyOwnership(address)._newOwner (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1171) is not in mixedCase
+Parameter OwnedUpgradeabilityProxy.upgradeTo(address)._implementation (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1191) is not in mixedCase
+Function IMarket.WinningOption() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1417) is not in mixedCase
+Parameter MarketRegistry.isMarket(address)._address (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1934) is not in mixedCase
+Parameter MarketRegistry.isWhitelistedSponsor(address)._address (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1942) is not in mixedCase
+Parameter MarketRegistry.initiate(address,address,address,address[])._defaultAddress (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1962) is not in mixedCase
+Parameter MarketRegistry.initiate(address,address,address,address[])._marketUtility (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1962) is not in mixedCase
+Parameter MarketRegistry.initiate(address,address,address,address[])._plotToken (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1962) is not in mixedCase
+Parameter MarketRegistry.initiate(address,address,address,address[])._configParams (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1962) is not in mixedCase
+Parameter MarketRegistry.addInitialMarketTypesAndStart(uint64,address,address)._marketStartTime (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1990) is not in mixedCase
+Parameter MarketRegistry.addInitialMarketTypesAndStart(uint64,address,address)._ethMarketImplementation (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1990) is not in mixedCase
+Parameter MarketRegistry.addInitialMarketTypesAndStart(uint64,address,address)._btcMarketImplementation (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1990) is not in mixedCase
+Parameter MarketRegistry.addNewMarketType(uint64,uint64,uint64)._predictionTime (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2036) is not in mixedCase
+Parameter MarketRegistry.addNewMarketType(uint64,uint64,uint64)._marketStartTime (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2036) is not in mixedCase
+Parameter MarketRegistry.addNewMarketType(uint64,uint64,uint64)._optionRangePerc (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2036) is not in mixedCase
+Parameter MarketRegistry.addNewMarketCurrency(address,uint64)._marketImplementation (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2084) is not in mixedCase
+Parameter MarketRegistry.addNewMarketCurrency(address,uint64)._marketStartTime (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2084) is not in mixedCase
+Parameter MarketRegistry.updateMarketImplementations(uint256[],address[])._currencyIndexes (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2124) is not in mixedCase
+Parameter MarketRegistry.updateMarketImplementations(uint256[],address[])._marketImplementations (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2124) is not in mixedCase
+Parameter MarketRegistry.upgradeContractImplementation(address,address)._proxyAddress (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2152) is not in mixedCase
+Parameter MarketRegistry.upgradeContractImplementation(address,address)._newImplementation (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2152) is not in mixedCase
+Parameter MarketRegistry.createMarket(uint256,uint256)._marketType (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2234) is not in mixedCase
+Parameter MarketRegistry.createMarket(uint256,uint256)._marketCurrencyIndex (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2234) is not in mixedCase
+Parameter MarketRegistry.calculateStartTimeForMarket(uint256,uint256)._marketType (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2300) is not in mixedCase
+Parameter MarketRegistry.calculateStartTimeForMarket(uint256,uint256)._marketCurrencyIndex (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2300) is not in mixedCase
+Parameter MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256)._stakeForDispute (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378) is not in mixedCase
+Parameter MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256)._user (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378) is not in mixedCase
+Parameter MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256)._ethSentToPool (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378) is not in mixedCase
+Parameter MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256)._tokenSentToPool (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378) is not in mixedCase
+Parameter MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256)._proposedValue (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378) is not in mixedCase
+Parameter MarketRegistry.resolveDispute(address,uint256)._marketAddress (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2406) is not in mixedCase
+Parameter MarketRegistry.resolveDispute(address,uint256)._result (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2406) is not in mixedCase
+Parameter MarketRegistry.burnDisputedProposalTokens(uint256)._proposalId (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2438) is not in mixedCase
+Parameter MarketRegistry.transferAssets(address,address,uint256)._asset (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2516) is not in mixedCase
+Parameter MarketRegistry.transferAssets(address,address,uint256)._to (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2516) is not in mixedCase
+Parameter MarketRegistry.transferAssets(address,address,uint256)._amount (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2516) is not in mixedCase
+Parameter MarketRegistry.callMarketResultEvent(uint256[],uint256,uint256,uint256)._totalReward (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2610) is not in mixedCase
+Parameter MarketRegistry.callMarketResultEvent(uint256[],uint256,uint256,uint256)._roundId (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2610) is not in mixedCase
+Parameter MarketRegistry.setUserGlobalPredictionData(address,uint256,uint256,address,uint256,uint256)._user (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2638) is not in mixedCase
+Parameter MarketRegistry.setUserGlobalPredictionData(address,uint256,uint256,address,uint256,uint256)._value (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2638) is not in mixedCase
+Parameter MarketRegistry.setUserGlobalPredictionData(address,uint256,uint256,address,uint256,uint256)._predictionPoints (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2638) is not in mixedCase
+Parameter MarketRegistry.setUserGlobalPredictionData(address,uint256,uint256,address,uint256,uint256)._predictionAsset (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2638) is not in mixedCase
+Parameter MarketRegistry.setUserGlobalPredictionData(address,uint256,uint256,address,uint256,uint256)._prediction (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2638) is not in mixedCase
+Parameter MarketRegistry.setUserGlobalPredictionData(address,uint256,uint256,address,uint256,uint256)._leverage (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2638) is not in mixedCase
+Parameter MarketRegistry.callClaimedEvent(address,uint256[],address[],uint256,address)._user (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2682) is not in mixedCase
+Parameter MarketRegistry.callClaimedEvent(address,uint256[],address[],uint256,address)._reward (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2682) is not in mixedCase
+Parameter MarketRegistry.getMarketDetails(address)._marketAdd (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2738) is not in mixedCase
+Parameter MarketRegistry.getTotalAssetStakedByUser(address)._user (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2760) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in MarketRegistry.resolveDispute(address,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2406-2426):
+	External calls:
+	- _transferAsset(plotTokenAddress,_marketAddress,plotDepositedInPool) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2418)
+		- _recipient.transfer(_amount) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2542)
+	External calls sending eth:
+	- _transferAsset(plotTokenAddress,_marketAddress,plotDepositedInPool) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2418)
+		- _recipient.transfer(_amount) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2542)
+	- IMarket(_marketAddress).resolveDispute.value(ethDepositedInPool)(true,_result) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2420)
+	Event emitted after the call(s):
+	- DisputeResolved(_marketAddress,true) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2422)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+canCloseProposal(uint256) should be declared external:
+	- IGovernance.canCloseProposal(uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#755)
+allowedToCatgorize() should be declared external:
+	- IGovernance.allowedToCatgorize() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#759)
+dAppToken() should be declared external:
+	- IMaster.dAppToken() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#818)
+isInternal(address) should be declared external:
+	- IMaster.isInternal(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#820)
+getLatestAddress(bytes2) should be declared external:
+	- IMaster.getLatestAddress(bytes2) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#822)
+isAuthorizedToGovern(address) should be declared external:
+	- IMaster.isAuthorizedToGovern(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#824)
+isAuthorizedToGovern(address) should be declared external:
+	- Governed.isAuthorizedToGovern(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#856-862)
+transferProxyOwnership(address) should be declared external:
+	- OwnedUpgradeabilityProxy.transferProxyOwnership(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1171-1179)
+upgradeTo(address) should be declared external:
+	- OwnedUpgradeabilityProxy.upgradeTo(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1191-1195)
+WinningOption() should be declared external:
+	- IMarket.WinningOption() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1417)
+marketCurrency() should be declared external:
+	- IMarket.marketCurrency() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1421)
+getMarketFeedData() should be declared external:
+	- IMarket.getMarketFeedData() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1425)
+initiate(uint64,uint64,uint64,uint64) should be declared external:
+	- IMarket.initiate(uint64,uint64,uint64,uint64) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1451)
+claimReturn(address) should be declared external:
+	- IMarket.claimReturn(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1531)
+setMasterAddress() should be declared external:
+	- Iupgradable.setMasterAddress() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1558)
+	- MarketRegistry.setMasterAddress() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2176-2188)
+setAuthorizedAddres() should be declared external:
+	- IMarketUtility.setAuthorizedAddres() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1585)
+getMarketInitialParams() should be declared external:
+	- IMarketUtility.getMarketInitialParams() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1625)
+getPriceFeedDecimals(address) should be declared external:
+	- IMarketUtility.getPriceFeedDecimals(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1633)
+getValueAndMultiplierParameters(address,uint256) should be declared external:
+	- IMarketUtility.getValueAndMultiplierParameters(address,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1637-1643)
+calculatePredictionValue(uint256[],address,address,address,bool) should be declared external:
+	- IMarketUtility.calculatePredictionValue(uint256[],address,address,address,bool) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1651)
+getBasicMarketDetails() should be declared external:
+	- IMarketUtility.getBasicMarketDetails() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1667-1683)
+getDisputeResolutionParams() should be declared external:
+	- IMarketUtility.getDisputeResolutionParams() (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1687)
+calculateOptionPrice(uint256[],address) should be declared external:
+	- IMarketUtility.calculateOptionPrice(uint256[],address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1689)
+getSettlemetPrice(address,uint256) should be declared external:
+	- IMarketUtility.getSettlemetPrice(address,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1703-1709)
+isWhitelistedSponsor(address) should be declared external:
+	- MarketRegistry.isWhitelistedSponsor(address) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1942-1946)
+initiate(address,address,address,address[]) should be declared external:
+	- MarketRegistry.initiate(address,address,address,address[]) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#1962-1980)
+createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256) should be declared external:
+	- MarketRegistry.createGovernanceProposal(string,string,string,bytes,uint256,address,uint256,uint256,uint256) (loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol#2378-2392)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x495d3a0530367ed4331833eae74b32d4848401f0.sol analyzed (13 contracts with 46 detectors), 118 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x495d3a0530367ed4331833eae74b32d4848401f0.sol
+Tool Runtime = 2.536107574000198 seconds
+#############################################

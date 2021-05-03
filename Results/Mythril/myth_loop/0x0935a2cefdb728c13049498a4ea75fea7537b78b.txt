@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: TokenRecover
+Function name: recoverERC20(address,uint256)
+PC address: 1110
+Estimated Gas Usage: 3738 - 39150
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/3/0x0935a2cefdb728c13049498a4ea75fea7537b78b.sol:1937
+
+IERC20(tokenAddress).transfer(owner(), tokenAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20040000000104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: recoverERC20(address,uint256), txdata: 0x8980f11f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: recoverERC20(address,uint256), txdata: 0x8980f11f808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef8080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: LiquidLottery
+Function name: draw()
+PC address: 2288
+Estimated Gas Usage: 1864 - 1959
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0x0935a2cefdb728c13049498a4ea75fea7537b78b.sol:2178
+
+require(nextDrawTime > drawDelay, "draw: not enough time elapsed since last draw")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: draw(), txdata: 0x0eecae21, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x0935a2cefdb728c13049498a4ea75fea7537b78b.sol
+Tool Runtime = 707.7302314090193 seconds
+#############################################

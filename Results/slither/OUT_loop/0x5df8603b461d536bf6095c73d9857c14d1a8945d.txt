@@ -1,0 +1,133 @@
+Compilation warnings/errors on ./loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol:
+./loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol:16:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[93m
+DODOMine.claimAll() (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#598-614) uses a dangerous strict equality:
+	- userInfo[pid][msg.sender].amount == 0 || poolInfos[pid].allocPoint == 0 (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#602)
+DODOMine.getAllPendingReward(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#468-493) uses a dangerous strict equality:
+	- userInfo[pid][_user].amount == 0 || poolInfos[pid].allocPoint == 0 (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#472)
+DODOMine.lpTokenNotExist(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#388-391) uses a dangerous strict equality:
+	- require(bool,string)(lpTokenRegistry[lpToken] == 0,LP Token Already Exist) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#389)
+DODOMine.updatePool(uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#516-534) uses a dangerous strict equality:
+	- lpSupply == 0 (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#522)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in DODOMine.deposit(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#539-554):
+	External calls:
+	- safeDODOTransfer(msg.sender,pending) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#548)
+		- IERC20(dodoToken).safeTransfer(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#618)
+		- (success,returndata) = address(token).call(data) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#307)
+	- IERC20(pool.lpToken).safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#550)
+	State variables written after the call(s):
+	- user.amount = user.amount.add(_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#551)
+	- user.rewardDebt = DecimalMath.mul(user.amount,pool.accDODOPerShare) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#552)
+Reentrancy in DODOMine.emergencyWithdraw(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#576-583):
+	External calls:
+	- IERC20(pool.lpToken).safeTransfer(address(msg.sender),user.amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#580)
+	State variables written after the call(s):
+	- user.amount = 0 (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#581)
+	- user.rewardDebt = 0 (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#582)
+Reentrancy in DODOMine.withdraw(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#556-568):
+	External calls:
+	- safeDODOTransfer(msg.sender,pending) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#563)
+		- IERC20(dodoToken).safeTransfer(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#618)
+		- (success,returndata) = address(token).call(data) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#307)
+	State variables written after the call(s):
+	- user.amount = user.amount.sub(_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#564)
+	- user.rewardDebt = DecimalMath.mul(user.amount,pool.accDODOPerShare) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#565)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+DODOMine.getAllPendingReward(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#468-493) has external calls inside a loop: lpSupply = IERC20(pool.lpToken).balanceOf(address(this)) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#478)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in DODOMine.safeDODOTransfer(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#617-621):
+	External calls:
+	- IERC20(dodoToken).safeTransfer(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#618)
+	State variables written after the call(s):
+	- realizedReward[_to] = realizedReward[_to].add(_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#619)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in DODOMine.deposit(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#539-554):
+	External calls:
+	- safeDODOTransfer(msg.sender,pending) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#548)
+		- IERC20(dodoToken).safeTransfer(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#618)
+		- (success,returndata) = address(token).call(data) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#307)
+	- IERC20(pool.lpToken).safeTransferFrom(address(msg.sender),address(this),_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#550)
+	Event emitted after the call(s):
+	- Deposit(msg.sender,pid,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#553)
+Reentrancy in DODOMine.safeDODOTransfer(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#617-621):
+	External calls:
+	- IERC20(dodoToken).safeTransfer(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#618)
+	Event emitted after the call(s):
+	- Claim(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#620)
+Reentrancy in DODOMine.withdraw(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#556-568):
+	External calls:
+	- safeDODOTransfer(msg.sender,pending) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#563)
+		- IERC20(dodoToken).safeTransfer(_to,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#618)
+		- (success,returndata) = address(token).call(data) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#307)
+	- IERC20(pool.lpToken).safeTransfer(address(msg.sender),_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#566)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,pid,_amount) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#567)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#15) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20._callOptionalReturn(IERC20,bytes) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#296-315):
+	- (success,returndata) = address(token).call(data) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#307)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Ownable._OWNER_ (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#26) is not in mixedCase
+Variable Ownable._NEW_OWNER_ (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#27) is not in mixedCase
+Parameter DODOMine.getPid(address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#399) is not in mixedCase
+Parameter DODOMine.getUserLpBalance(address,address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#403) is not in mixedCase
+Parameter DODOMine.getUserLpBalance(address,address)._user (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#403) is not in mixedCase
+Parameter DODOMine.addLpToken(address,uint256,bool)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#411) is not in mixedCase
+Parameter DODOMine.addLpToken(address,uint256,bool)._allocPoint (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#412) is not in mixedCase
+Parameter DODOMine.addLpToken(address,uint256,bool)._withUpdate (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#413) is not in mixedCase
+Parameter DODOMine.setLpToken(address,uint256,bool)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#432) is not in mixedCase
+Parameter DODOMine.setLpToken(address,uint256,bool)._allocPoint (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#433) is not in mixedCase
+Parameter DODOMine.setLpToken(address,uint256,bool)._withUpdate (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#434) is not in mixedCase
+Parameter DODOMine.setReward(uint256)._dodoPerBlock (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#444) is not in mixedCase
+Parameter DODOMine.getPendingReward(address,address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#450) is not in mixedCase
+Parameter DODOMine.getPendingReward(address,address)._user (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#450) is not in mixedCase
+Parameter DODOMine.getAllPendingReward(address)._user (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#468) is not in mixedCase
+Parameter DODOMine.getRealizedReward(address)._user (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#495) is not in mixedCase
+Parameter DODOMine.getDlpMiningSpeed(address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#499) is not in mixedCase
+Parameter DODOMine.updatePool(uint256)._pid (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#516) is not in mixedCase
+Parameter DODOMine.deposit(address,uint256)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#539) is not in mixedCase
+Parameter DODOMine.deposit(address,uint256)._amount (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#539) is not in mixedCase
+Parameter DODOMine.withdraw(address,uint256)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#556) is not in mixedCase
+Parameter DODOMine.withdraw(address,uint256)._amount (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#556) is not in mixedCase
+Parameter DODOMine.withdrawAll(address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#570) is not in mixedCase
+Parameter DODOMine.emergencyWithdraw(address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#576) is not in mixedCase
+Parameter DODOMine.claim(address)._lpToken (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#585) is not in mixedCase
+Parameter DODOMine.safeDODOTransfer(address,uint256)._to (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#617) is not in mixedCase
+Parameter DODOMine.safeDODOTransfer(address,uint256)._amount (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#617) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+addLpToken(address,uint256,bool) should be declared external:
+	- DODOMine.addLpToken(address,uint256,bool) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#410-429)
+setLpToken(address,uint256,bool) should be declared external:
+	- DODOMine.setLpToken(address,uint256,bool) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#431-442)
+deposit(address,uint256) should be declared external:
+	- DODOMine.deposit(address,uint256) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#539-554)
+withdrawAll(address) should be declared external:
+	- DODOMine.withdrawAll(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#570-573)
+emergencyWithdraw(address) should be declared external:
+	- DODOMine.emergencyWithdraw(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#576-583)
+claim(address) should be declared external:
+	- DODOMine.claim(address) (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#585-596)
+claimAll() should be declared external:
+	- DODOMine.claimAll() (loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol#598-614)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol analyzed (6 contracts with 46 detectors), 49 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x5df8603b461d536bf6095c73d9857c14d1a8945d.sol
+Tool Runtime = 1.1401957950001815 seconds
+#############################################

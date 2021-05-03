@@ -1,0 +1,113 @@
+Compilation warnings/errors on ./noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol:
+./noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol:447:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+YFURewards.notifyRewardAmount(uint256) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#711-726) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#717)
+	-leftover = remaining.mul(rewardRate) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in YFURewards.exit() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#697-700):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#698)
+		- dai.safeTransfer(msg.sender,amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#628)
+		- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+	- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+		- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+		- yfu.safeTransfer(msg.sender,reward) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#706)
+	State variables written after the call(s):
+	- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#650)
+	- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#649)
+	- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+		- rewards[msg.sender] = 0 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#705)
+		- rewards[account] = earned(account) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#652)
+	- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#653)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LPTokenWrapper.stake(uint256) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#616-623) uses tx.origin for authorization: require(bool,string)(tx.origin == sender,Andre, we just want to be your new waifu!) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#619)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-usage-of-txorigin[0m
+INFO:Detectors:[92m
+Reentrancy in YFURewards.exit() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#697-700):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#698)
+		- dai.safeTransfer(msg.sender,amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#628)
+		- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+	- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+		- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+		- yfu.safeTransfer(msg.sender,reward) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#706)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#707)
+		- getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#699)
+Reentrancy in YFURewards.getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#702-709):
+	External calls:
+	- yfu.safeTransfer(msg.sender,reward) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#706)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#707)
+Reentrancy in YFURewards.stake(uint256) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#685-689):
+	External calls:
+	- super.stake(amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#687)
+		- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+		- dai.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#622)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#688)
+Reentrancy in YFURewards.withdraw(uint256) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#691-695):
+	External calls:
+	- super.withdraw(amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#693)
+		- dai.safeTransfer(msg.sender,amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#628)
+		- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#694)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YFURewards.getReward() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#702-709) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#704)
+YFURewards.notifyRewardAmount(uint256) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#711-726) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#716)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#436-449) uses assembly
+	- INLINE ASM (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#447-448)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#41) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#73) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#232) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#262) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#340) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#419) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#490) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#567) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#591) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#479-485):
+	- (success) = recipient.call.value(amount)() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#483)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#543-562):
+	- (success,returndata) = address(token).call(data) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#555)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#581) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#289-291)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#315-318)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol#324-326)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol analyzed (10 contracts with 46 detectors), 26 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x9Ca87C82f5C5760C7C693a3cAf6801255AB8f097.sol
+Tool Runtime = 1.0029470219997165 seconds
+#############################################

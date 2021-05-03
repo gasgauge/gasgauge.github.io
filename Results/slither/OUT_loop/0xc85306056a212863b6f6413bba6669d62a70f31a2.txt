@@ -1,0 +1,110 @@
+Compilation warnings/errors on ./loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol:
+./loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol:190:13: Warning: Unused local variable.
+    (uint l,uint r) = getWinningOffsets();
+            ^----^
+./loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol:228:58: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+  function receiveApproval(address from, uint256 tokens, address tokenAddr, bytes20 data) external{
+                                                         ^---------------^
+./loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol:228:77: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+  function receiveApproval(address from, uint256 tokens, address tokenAddr, bytes20 data) external{
+                                                                            ^----------^
+
+INFO:Detectors:[93m
+Reentrancy in Lottery.withdrawFunds(uint256,uint256,address,uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#152-171):
+	External calls:
+	- liquidityToken.transfer(winner,reward) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#163)
+	State variables written after the call(s):
+	- current_round += 1 (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#165)
+	- winningIndex = 0 (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#168)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Lottery.withdrawFunds(uint256,uint256,address,uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#152-171) ignores return value by liquidityToken.transfer(winner,reward) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#163)
+Lottery.receiveApproval(address,uint256,address,bytes20) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#228-238) ignores return value by tributeToken.approve(address(contributeContract),tokens / 2) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#233)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in Lottery.receiveApproval(address,uint256,address,bytes20) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#228-238):
+	External calls:
+	- checkAndTransfer(tokens,from) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#232)
+		- require(bool,string)(tributeToken.transferFrom(_from,address(this),_amount) == true,transfer must succeed) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#218-224)
+	- tributeToken.approve(address(contributeContract),tokens / 2) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#233)
+	- contributeContract.donateTokens(tokens / 2) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#234)
+	- tributeToken.burn(tokens / 2) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#235)
+	State variables written after the call(s):
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- cursor = cursor.add(toLock) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#247)
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- entry_cursor = entry_cursor.add(1) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#243)
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- entry_map[current_round][entry_cursor] = entrant (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#248)
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- entry_position_map[current_round][entry_cursor] = cursor.add(1) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#246)
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- token_count_by_address[current_round][entrant] = token_count_by_address[current_round][entrant].add(toLock) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#249)
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- token_map[current_round][cursor.add(1)] = entry_cursor (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#244)
+		- token_map[current_round][cursor.add(toLock)] = entry_cursor (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#245)
+	- enter(from,tokens) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#236)
+		- totalRoundTokens[current_round] = totalRoundTokens[current_round].add(toLock) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#250)
+Reentrancy in Lottery.withdrawFunds(uint256,uint256,address,uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#152-171):
+	External calls:
+	- liquidityToken.transfer(winner,reward) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#163)
+	State variables written after the call(s):
+	- cursor = 0 (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#167)
+	- entry_cursor = 0 (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#166)
+	- finalizationBlock = 0 (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#170)
+	- finalizingLock = false (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#169)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Lottery.init(address) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#130-134) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(lastDrawing == 0,must be before any dispersal) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#131)
+Lottery.setWinningIndex1(bytes32) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#135-143) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= lastDrawing.add(minTimeBetweenDrawings),is not finalization time) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#137)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Lottery.checkAndTransfer(uint256,address) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#212-225) compares to a boolean constant:
+	-require(bool,string)(tributeToken.transferFrom(_from,address(this),_amount) == true,transfer must succeed) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#218-224)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Lottery.checkAndTransfer(uint256,address)._amount (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#213) is not in mixedCase
+Parameter Lottery.checkAndTransfer(uint256,address)._from (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#214) is not in mixedCase
+Variable Lottery.token_map (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#88) is not in mixedCase
+Variable Lottery.entry_map (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#89) is not in mixedCase
+Variable Lottery.entry_position_map (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#90) is not in mixedCase
+Variable Lottery.token_count_by_address (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#93) is not in mixedCase
+Variable Lottery.current_round (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#96) is not in mixedCase
+Variable Lottery.entry_cursor (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#97) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Lottery.maxRewardable (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#110) should be constant
+Lottery.minTimeBetweenDrawings (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#111) should be constant
+Lottery.tokensToSend (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#102) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+donateTokens(uint256) should be declared external:
+	- IContribute.donateTokens(uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#84)
+init(address) should be declared external:
+	- Lottery.init(address) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#130-134)
+setWinningIndex1(bytes32) should be declared external:
+	- Lottery.setWinningIndex1(bytes32) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#135-143)
+setWinningIndex2(uint256,uint256) should be declared external:
+	- Lottery.setWinningIndex2(uint256,uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#145-151)
+withdrawFunds(uint256,uint256,address,uint256) should be declared external:
+	- Lottery.withdrawFunds(uint256,uint256,address,uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#152-171)
+getWinningAddress() should be declared external:
+	- Lottery.getWinningAddress() (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#189-192)
+getHashCombo(uint256,uint256) should be declared external:
+	- Lottery.getHashCombo(uint256,uint256) (loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol#193-195)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xc85306056a212863b6f6413bba6669d62a70f31a2.sol analyzed (6 contracts with 46 detectors), 28 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xc85306056a212863b6f6413bba6669d62a70f31a2.sol
+Tool Runtime = 0.6920085679994372 seconds
+#############################################

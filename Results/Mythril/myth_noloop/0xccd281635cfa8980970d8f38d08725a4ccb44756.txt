@@ -1,0 +1,471 @@
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: OneinchHandler
+Function name: receive()
+PC address: 865
+Estimated Gas Usage: 169 - 264
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:390
+
+require(msg.sender != tx.origin, "UniswapV1Handler#receive: NO_SEND_ETH_PLEASE")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x7be, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: receive(), txdata: 0xa3e76c0f, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 1693
+Estimated Gas Usage: 11654 - 191909
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:425
+
+msg.sender.call.value(bought)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x300000040e20043a5, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1638102086a000001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000068, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 1693
+Estimated Gas Usage: 11729 - 192172
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:425
+
+msg.sender.call.value(bought)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000040, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 1947
+Estimated Gas Usage: 20385 - 342235
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:436
+
+relayer.call.value(fee)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000000093b0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000002000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000480000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 1947
+Estimated Gas Usage: 11654 - 191909
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:436
+
+relayer.call.value(fee)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000002090810, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x51190810000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000052, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 2553
+Estimated Gas Usage: 11729 - 192172
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:475
+
+oneSplitWrapper
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000040, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 2760
+Estimated Gas Usage: 20657 - 343162
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:475
+
+inputToken.allowance(address(this), address(oneSplitWrapper))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 3388
+Estimated Gas Usage: 20310 - 341972
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:484
+
+oneSplitWrapper
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c000000000000000000000000001010101010101010101010101010101010000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000061000000000000000000000000000000000000000000000000000000000000001d, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 3724
+Estimated Gas Usage: 20385 - 342235
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:484
+
+oneSplitWrapper.swap(
+            _inputToken,
+            _outputToken,
+            _inputAmount,
+            0,
+            _distributions,
+            _flag
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20804800000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 393939393939393939393939deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000039, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 3724
+Estimated Gas Usage: 20460 - 342498
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:484
+
+oneSplitWrapper.swap(
+            _inputToken,
+            _outputToken,
+            _inputAmount,
+            0,
+            _distributions,
+            _flag
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800020004000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 3724
+Estimated Gas Usage: 20235 - 341709
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:484
+
+oneSplitWrapper.swap(
+            _inputToken,
+            _outputToken,
+            _inputAmount,
+            0,
+            _distributions,
+            _flag
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200104010003bc3a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 060606060606060606060606deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 3810
+Estimated Gas Usage: 8639 - 84925
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:495
+
+if (_recipient != address(this)) {
+            PineUtils.transfer(IERC20(_outputToken), _recipient, bought);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x50000020026020008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea5000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 4151
+Estimated Gas Usage: 12222 - 194123
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:288
+
+_to.call.value(_val)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20080044102021992, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1000020b000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea5000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000, value: 0x20
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 4151
+Estimated Gas Usage: 10698 - 156203
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:288
+
+_to.call.value(_val)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea5000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000080, value: 0x0
+
+==== Unchecked return value from external call. ====
+SWC ID: 104
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 4151
+Estimated Gas Usage: 10773 - 156466
+The return value of a message call is not checked.
+External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:288
+
+_to.call.value(_val)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x18000000002121a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea5000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000005c0000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 4593
+Estimated Gas Usage: 20385 - 342235
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:249
+
+address(_token).call(abi.encodeWithSelector(_token.transfer.selector, _to, _val))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x41404410081006203, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: OneinchHandler
+Function name: handle(address,address,uint256,uint256,bytes)
+PC address: 4593
+Estimated Gas Usage: 20385 - 342235
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xccd281635cfa8980970d8f38d08725a4ccb44756.sol:249
+
+address(_token).call(abi.encodeWithSelector(_token.transfer.selector, _to, _val))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10402800001c11, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: handle(address,address,uint256,uint256,bytes), txdata: 0xe42f5ea500000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000023, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xccd281635cfa8980970d8f38d08725a4ccb44756.sol
+Tool Runtime = 10811.950405234995 seconds
+#############################################

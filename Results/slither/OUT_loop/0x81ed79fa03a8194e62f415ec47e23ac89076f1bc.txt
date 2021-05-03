@@ -1,0 +1,180 @@
+Compilation warnings/errors on ./loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol:
+./loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol:169:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+CreamUSD.f(int256,int256,int256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#290-308) performs a multiplication on the result of a division:
+	-_b = _x.mul(cst).div(1e18) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#301)
+	-D = _b.mul(_b).sub(c.mul(4)) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#303)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+CreamUSD.addLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#388-407) uses a dangerous strict equality:
+	- totalSupply() == 0 (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#392)
+CreamUSD.addLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#409-429) uses a dangerous strict equality:
+	- totalSupply() == 0 (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#413)
+CreamUSD.removeLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#431-445) uses a dangerous strict equality:
+	- balance(to) == 0 (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#441)
+CreamUSD.removeLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#447-462) uses a dangerous strict equality:
+	- balance(to) == 0 (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#458)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in CreamUSD.addLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#388-407):
+	External calls:
+	- from.safeTransferFrom(msg.sender,address(this),input) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#400)
+	State variables written after the call(s):
+	- _mint(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#401)
+		- _totalSupply = _totalSupply.add(amount) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#78)
+	- count = count.add(1) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#405)
+Reentrancy in CreamUSD.addLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#409-429):
+	External calls:
+	- from.safeTransferFrom(msg.sender,address(this),input) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#422)
+	State variables written after the call(s):
+	- _mint(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#423)
+		- _totalSupply = _totalSupply.add(amount) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#78)
+	- count = count.add(1) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#427)
+Reentrancy in CreamUSD.removeLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#431-445):
+	External calls:
+	- to.safeTransfer(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#439)
+	State variables written after the call(s):
+	- count = count.sub(1) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#443)
+Reentrancy in CreamUSD.removeLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#447-462):
+	External calls:
+	- to.safeTransfer(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#456)
+	State variables written after the call(s):
+	- count = count.sub(1) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#460)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#103) shadows:
+	- ERC20Detailed.name() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#108-110) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#103) shadows:
+	- ERC20Detailed.symbol() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#111-113) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#103) shadows:
+	- ERC20Detailed.decimals() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#114-116) (function)
+CreamUSD.normalize1e18(IERC20,uint256)._decimals (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#332) shadows:
+	- ERC20Detailed._decimals (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#101) (state variable)
+CreamUSD.normalize(IERC20,uint256)._decimals (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#342) shadows:
+	- ERC20Detailed._decimals (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#101) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in CreamUSD.addLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#388-407):
+	External calls:
+	- from.safeTransferFrom(msg.sender,address(this),input) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#400)
+	State variables written after the call(s):
+	- _mint(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#401)
+		- _balances[account] = _balances[account].add(amount) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#79)
+	- tokens[address(from)] = true (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#404)
+Reentrancy in CreamUSD.addLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#409-429):
+	External calls:
+	- from.safeTransferFrom(msg.sender,address(this),input) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#422)
+	State variables written after the call(s):
+	- _mint(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#423)
+		- _balances[account] = _balances[account].add(amount) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#79)
+	- tokens[address(from)] = true (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#426)
+Reentrancy in CreamUSD.removeLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#431-445):
+	External calls:
+	- to.safeTransfer(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#439)
+	State variables written after the call(s):
+	- tokens[address(to)] = false (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#442)
+Reentrancy in CreamUSD.removeLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#447-462):
+	External calls:
+	- to.safeTransfer(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#456)
+	State variables written after the call(s):
+	- tokens[address(to)] = false (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#459)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in CreamUSD.addLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#388-407):
+	External calls:
+	- from.safeTransferFrom(msg.sender,address(this),input) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#400)
+	Event emitted after the call(s):
+	- Transfer(address(0),account,amount) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#80)
+		- _mint(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#401)
+Reentrancy in CreamUSD.addLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#409-429):
+	External calls:
+	- from.safeTransferFrom(msg.sender,address(this),input) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#422)
+	Event emitted after the call(s):
+	- Transfer(address(0),account,amount) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#80)
+		- _mint(msg.sender,output) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#423)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+CreamUSD.swapExactAmountIn(IERC20,IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#365-374) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= deadline,expired) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#366)
+CreamUSD.swapExactAmountOut(IERC20,IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#376-386) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= deadline,expired) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#377)
+CreamUSD.addLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#388-407) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= deadline,expired) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#390)
+CreamUSD.addLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#409-429) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= deadline,expired) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#411)
+CreamUSD.removeLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#431-445) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= deadline,expired) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#432)
+CreamUSD.removeLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#447-462) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= deadline,expired) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#448)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#165-171) uses assembly
+	- INLINE ASM (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#169-170)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+CreamUSD.addLiquidityExactIn(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#388-407) compares to a boolean constant:
+	-require(bool,string)(coins[address(from)] == true,!coin) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#389)
+CreamUSD.addLiquidityExactOut(IERC20,uint256,uint256,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#409-429) compares to a boolean constant:
+	-require(bool,string)(coins[address(from)] == true,!coin) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#410)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#192-203):
+	- (success,returndata) = address(token).call(data) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#196)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter CreamUSD.setGovernance(address)._governance (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#270) is not in mixedCase
+Parameter CreamUSD.approveCoins(address,Normalizer)._coin (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#275) is not in mixedCase
+Parameter CreamUSD.approveCoins(address,Normalizer)._normalizer (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#275) is not in mixedCase
+Parameter CreamUSD.f(int256,int256,int256)._x (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#290) is not in mixedCase
+Parameter CreamUSD.normalize1e18(IERC20,uint256)._amount (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#331) is not in mixedCase
+Parameter CreamUSD.normalize(IERC20,uint256)._amount (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#341) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+CreamUSD.slitherConstructorConstantVariables() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#256-463) uses literals with too many digits:
+	- BASE = 100000 (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#284)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+CreamUSD.fee (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#283) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#40-42)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#43-46)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#47-49)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#50-53)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#54-58)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#59-62)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#63-66)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#108-110)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#111-113)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol#114-116)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol analyzed (10 contracts with 46 detectors), 50 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x81ed79fa03a8194e62f415ec47e23ac89076f1bc.sol
+Tool Runtime = 1.3949936880017049 seconds
+#############################################

@@ -1,0 +1,131 @@
+Compilation warnings/errors on ./noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol:
+./noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol:452:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in YFPool.exit() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#694-697):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#695)
+		- token.safeTransfer(msg.sender,amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#607)
+		- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+	- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+		- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+		- rewardToken.safeTransfer(msg.sender,reward) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#704)
+	State variables written after the call(s):
+	- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#633)
+	- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#632)
+	- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+		- rewards[msg.sender] = 0 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#703)
+		- rewards[account] = earned(account) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#635)
+	- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#636)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in YFPool.exit() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#694-697):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#695)
+		- token.safeTransfer(msg.sender,amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#607)
+		- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+	- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+		- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+		- rewardToken.safeTransfer(msg.sender,reward) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#704)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#705)
+		- getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#696)
+Reentrancy in YFPool.getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#699-707):
+	External calls:
+	- rewardToken.safeTransfer(msg.sender,reward) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#704)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#705)
+Reentrancy in YFPool.stake(uint256) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#679-685):
+	External calls:
+	- super.stake(amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#683)
+		- token.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#601)
+		- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#684)
+Reentrancy in YFPool.withdraw(uint256) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#687-692):
+	External calls:
+	- super.withdraw(amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#690)
+		- token.safeTransfer(msg.sender,amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#607)
+		- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#691)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YFPool.getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#699-707) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#702)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#441-454) uses assembly
+	- INLINE ASM (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#452-453)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+YFPool.stake(uint256) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#679-685) compares to a boolean constant:
+	-require(bool,string)(lockedDeposit == false,Deposits are locked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#681)
+YFPool.stake(uint256) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#679-685) compares to a boolean constant:
+	-require(bool,string)(locked == false,Pool is locked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#680)
+YFPool.withdraw(uint256) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#687-692) compares to a boolean constant:
+	-require(bool,string)(locked == false,pool is locked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#688)
+YFPool.getReward() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#699-707) compares to a boolean constant:
+	-require(bool,string)(locked == false,pool is locked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#700)
+YFPool.unlockPool() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#709-722) compares to a boolean constant:
+	-require(bool,string)(locked == true,pool already unlocked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#714)
+YFPool.lockDeposits() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#733-736) compares to a boolean constant:
+	-require(bool,string)(lockedDeposit == false,Deposits are already locked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#734)
+YFPool.unlockDeposits() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#737-740) compares to a boolean constant:
+	-require(bool,string)(lockedDeposit == true,Deposits are already unlocked) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#738)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#46) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#78) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#237) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#267) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#345) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#424) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#495) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#573) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#484-490):
+	- (success) = recipient.call.value(amount)() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#488)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#548-567):
+	- (success,returndata) = address(token).call(data) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#560)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter YFPool.withdrawTokens(address)._token (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#724) is not in mixedCase
+Parameter YFPool.setGovernance(address)._governance (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#729) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+YFPool.duration (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#617) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#294-296)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#320-323)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#329-331)
+withdrawTokens(address) should be declared external:
+	- YFPool.withdrawTokens(address) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#724-727)
+setGovernance(address) should be declared external:
+	- YFPool.setGovernance(address) (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#729-731)
+lockDeposits() should be declared external:
+	- YFPool.lockDeposits() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#733-736)
+unlockDeposits() should be declared external:
+	- YFPool.unlockDeposits() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#737-740)
+depositIsLocked() should be declared external:
+	- YFPool.depositIsLocked() (noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol#741-743)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x94d29943df4968228c8c861e1db3732722f42127.sol analyzed (9 contracts with 46 detectors), 36 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x94d29943df4968228c8c861e1db3732722f42127.sol
+Tool Runtime = 0.9853036770000472 seconds
+#############################################

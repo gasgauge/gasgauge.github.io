@@ -1,0 +1,191 @@
+INFO:Detectors:[93m
+Reentrancy in Staking.stake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#488-504):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#490)
+	- updateAccount(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#492)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#496)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].add(amountAfterFee) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#498)
+Reentrancy in Staking.stakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#506-518):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#508)
+	- updateAccountFD(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#510)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	State variables written after the call(s):
+	- depositedTokensFD[msg.sender] = depositedTokensFD[msg.sender].add(amountToStake) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#512)
+Reentrancy in Staking.unstake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#520-538):
+	External calls:
+	- updateAccount(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#525)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer withdraw fee.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#530)
+	- require(bool,string)(Token(tokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#531)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].sub(amountToWithdraw) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#533)
+Reentrancy in Staking.unstakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#540-554):
+	External calls:
+	- updateAccountFD(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#545)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	- require(bool,string)(Token(tokenAddress).transfer(msg.sender,amountToWithdraw),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#547)
+	State variables written after the call(s):
+	- depositedTokensFD[msg.sender] = depositedTokensFD[msg.sender].sub(amountToWithdraw) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#549)
+Reentrancy in Staking.updateAccount(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#403-412):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	State variables written after the call(s):
+	- lastClaimedTime[account] = now (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#411)
+Reentrancy in Staking.updateAccountFD(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#414-423):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	State variables written after the call(s):
+	- lastClaimedTimeFD[account] = now (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#422)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Staking.stake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#488-504) ignores return value by holders.add(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#501)
+Staking.stakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#506-518) ignores return value by holdersFD.add(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#515)
+Staking.unstake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#520-538) ignores return value by holders.remove(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#536)
+Staking.unstakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#540-554) ignores return value by holdersFD.remove(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#552)
+Staking.transferAnyERC20Tokens(address,address,uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#631-634) ignores return value by Token(_tokenAddr).transfer(_to,_amount) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#633)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in Staking.stake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#488-504):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#490)
+	- updateAccount(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#492)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#496)
+	State variables written after the call(s):
+	- stakingTime[msg.sender] = now (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#502)
+Reentrancy in Staking.stakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#506-518):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#508)
+	- updateAccountFD(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#510)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	State variables written after the call(s):
+	- stakingTimeFD[msg.sender] = now (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#516)
+Reentrancy in Staking.updateAccount(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#403-412):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	State variables written after the call(s):
+	- totalClaimedRewards = totalClaimedRewards.add(pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#408)
+	- totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#407)
+Reentrancy in Staking.updateAccountFD(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#414-423):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	State variables written after the call(s):
+	- totalClaimedRewards = totalClaimedRewards.add(pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#419)
+	- totalEarnedTokensFD[account] = totalEarnedTokensFD[account].add(pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#418)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Staking.stake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#488-504):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#490)
+	- updateAccount(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#492)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#409)
+		- updateAccount(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#492)
+Reentrancy in Staking.stakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#506-518):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#508)
+	- updateAccountFD(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#510)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#420)
+		- updateAccountFD(msg.sender) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#510)
+Reentrancy in Staking.updateAccount(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#403-412):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#409)
+Reentrancy in Staking.updateAccountFD(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#414-423):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#420)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Staking.updateAccount(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#403-412) uses timestamp for comparisons
+	Dangerous comparisons:
+	- pendingDivs > 0 (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#405)
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#406)
+Staking.updateAccountFD(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#414-423) uses timestamp for comparisons
+	Dangerous comparisons:
+	- pendingDivs > 0 (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#416)
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#417)
+Staking.getPendingDivs(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#425-451) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _now > stakingEndTime (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#431)
+	- lastClaimedTime[_holder] >= _now (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#435)
+Staking.getPendingDivsFD(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#453-478) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _now > stakingEndTime (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#459)
+	- lastClaimedTimeFD[_holder] >= _now (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#463)
+Staking.unstake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#520-538) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.sub(stakingTime[msg.sender]) > cliffTime,You recently staked, please wait before withdrawing.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#523)
+Staking.unstakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#540-554) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now > stakingEndTime,Cannot unstake FD before staking ends.) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#543)
+Staking.getStakingAndDaoAmount() (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#621-627) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalClaimedRewards >= stakingAndDaoTokens (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#622)
+Staking.transferAnyERC20Tokens(address,address,uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#631-634) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)((_tokenAddr != tokenAddress) || (now > adminClaimableTime),Cannot Transfer Out YFOX till 13 months of launch!) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#632)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Staking.getPendingDivs(address)._holder (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#425) is not in mixedCase
+Parameter Staking.getPendingDivsFD(address)._holder (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#453) is not in mixedCase
+Parameter Staking.transferAnyERC20Tokens(address,address,uint256)._tokenAddr (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#631) is not in mixedCase
+Parameter Staking.transferAnyERC20Tokens(address,address,uint256)._to (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#631) is not in mixedCase
+Parameter Staking.transferAnyERC20Tokens(address,address,uint256)._amount (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#631) is not in mixedCase
+Constant Staking.tokenAddress (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#354) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.rewardRate (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#357) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.rewardRateFD (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#359) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.rewardInterval (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#361) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.adminCanClaimAfter (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#362) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.stakingFeeRate (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#367) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.unstakingFeeRate (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#370) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.cliffTime (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#373) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Staking.stakingAndDaoTokens (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#619) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#334-338)
+getNumberOfHolders() should be declared external:
+	- Staking.getNumberOfHolders() (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#480-482)
+getNumberOfHoldersFD() should be declared external:
+	- Staking.getNumberOfHoldersFD() (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#483-485)
+stake(uint256) should be declared external:
+	- Staking.stake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#488-504)
+stakeFD(uint256) should be declared external:
+	- Staking.stakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#506-518)
+unstake(uint256) should be declared external:
+	- Staking.unstake(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#520-538)
+unstakeFD(uint256) should be declared external:
+	- Staking.unstakeFD(uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#540-554)
+claim() should be declared external:
+	- Staking.claim() (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#556-558)
+claimFD() should be declared external:
+	- Staking.claimFD() (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#560-562)
+getStakersList(uint256,uint256) should be declared external:
+	- Staking.getStakersList(uint256,uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#564-589)
+getStakersListFD(uint256,uint256) should be declared external:
+	- Staking.getStakersListFD(uint256,uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#591-616)
+getStakingAndDaoAmount() should be declared external:
+	- Staking.getStakingAndDaoAmount() (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#621-627)
+transferAnyERC20Tokens(address,address,uint256) should be declared external:
+	- Staking.transferAnyERC20Tokens(address,address,uint256) (loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol#631-634)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol analyzed (5 contracts with 46 detectors), 56 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x460a0f98f9a1eb9107550b1877204cc41ea6f149.sol
+Tool Runtime = 1.0052707089998876 seconds
+#############################################

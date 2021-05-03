@@ -1,0 +1,218 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: ERC1155Metadata
+Function name: uri(uint256)
+PC address: 757
+Estimated Gas Usage: 2339 - 7652
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:951
+
+k--
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: uri(uint256), txdata: 0x0e89341c0000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: MemeTokenWrapper
+Function name: withdraw(uint256)
+PC address: 790
+Estimated Gas Usage: 14790 - 90252
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:1321
+
+meme.transfer(msg.sender, amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 3a3a3a3a3a3a3a3a3a3a3a3adeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: stake(uint256), txdata: 0xa694fc3a3132020e37276a7fc18aa92409132202033100010448048008a2228848acc828, value: 0x0
+Caller: [CREATOR], function: withdraw(uint256), txdata: 0x2e1a7d4d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: MemeTokenWrapper
+Function name: stake(uint256)
+PC address: 1387
+Estimated Gas Usage: 14890 - 90447
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:1315
+
+meme.transferFrom(msg.sender, address(this), amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 3a3a3a3a3a3a3a3a3a3a3a3adeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: stake(uint256), txdata: 0xa694fc3a1035041ca08870250d50052602484a00d5365274164890225e029940a8289381, value: 0x0
+Caller: [ATTACKER], function: stake(uint256), txdata: 0xa694fc3ab00100cd25c81004165201600187014b021202246c00100010029140b8001481, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SvenEberwein
+Function name: stake(uint256)
+PC address: 2868
+Estimated Gas Usage: 14827 - 55872
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:1365
+
+require(block.timestamp >= periodStart, "Pool not open")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x14, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: stake(uint256), txdata: 0xa694fc3a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SvenEberwein
+Function name: earned(address)
+PC address: 5198
+Estimated Gas Usage: 2175 - 2650
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:389
+
+require(b <= a, "SafeMath#sub: UNDERFLOW")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: earned(address), txdata: 0x008cc2620000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SvenEberwein
+Function name: earned(address)
+PC address: 5335
+Estimated Gas Usage: 2277 - 2752
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:363
+
+if (a == 0) {
+      return 0;
+    }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: earned(address), txdata: 0x008cc2620000000000000000000000000100000201000000000000010200000000020200, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SvenEberwein
+Function name: earned(address)
+PC address: 5361
+Estimated Gas Usage: 2328 - 2803
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:368
+
+c / a
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000008001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: earned(address), txdata: 0x008cc2620000000000000000000000000102020000000002010100000100010001000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SvenEberwein
+Function name: earned(address)
+PC address: 5371
+Estimated Gas Usage: 2356 - 2831
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:368
+
+require(c / a == b, "SafeMath#mul: OVERFLOW")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: earned(address), txdata: 0x008cc2620000000000000000000000000002000100010000000000000001000102020001, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol
+Tool Runtime = 19578.208078322 seconds
+#############################################

@@ -1,0 +1,101 @@
+Compilation warnings/errors on ./noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol:
+./noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol:302:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+./noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol:483:31: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+	constructor(address _lptoken,address _rewardtoken,uint256 _initreward,uint256 _starttime,uint256 _duration) LPTokenWrapper(IERC20(_lptoken)) public{
+	                             ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in PoolReward.exit() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#545-548):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#546)
+		- y.safeTransfer(msg.sender,amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#461)
+		- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+	- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+		- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+		- rewardtoken.safeTransfer(msg.sender,reward) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#554)
+	State variables written after the call(s):
+	- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#495)
+	- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#494)
+	- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+		- rewards[msg.sender] = 0 (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#553)
+		- rewards[account] = earned(account) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#497)
+	- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#498)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in PoolReward.exit() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#545-548):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#546)
+		- y.safeTransfer(msg.sender,amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#461)
+		- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+	- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+		- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+		- rewardtoken.safeTransfer(msg.sender,reward) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#554)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#555)
+		- getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#547)
+Reentrancy in PoolReward.getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#550-557):
+	External calls:
+	- rewardtoken.safeTransfer(msg.sender,reward) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#554)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#555)
+Reentrancy in PoolReward.stake(uint256) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#533-537):
+	External calls:
+	- super.stake(amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#535)
+		- y.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#455)
+		- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#536)
+Reentrancy in PoolReward.withdraw(uint256) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#539-543):
+	External calls:
+	- super.withdraw(amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#541)
+		- y.safeTransfer(msg.sender,amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#461)
+		- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#542)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+PoolReward.rewardPerToken() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#510-522) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (block.timestamp < starttime) || (totalSupply() == 0) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#511)
+PoolReward.getReward() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#550-557) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#552)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#291-304) uses assembly
+	- INLINE ASM (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#302-303)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#7) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#334-340):
+	- (success) = recipient.call.value(amount)() (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#338)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#398-417):
+	- (success,returndata) = address(token).call(data) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#410)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Constant PoolReward.oneday (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#467) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter RewardPoolFactory.createRewardPool(address,address,uint256,uint256,uint256)._lptoken (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#562) is not in mixedCase
+Parameter RewardPoolFactory.createRewardPool(address,address,uint256,uint256,uint256)._rewardtoken (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#562) is not in mixedCase
+Parameter RewardPoolFactory.createRewardPool(address,address,uint256,uint256,uint256)._initreward (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#562) is not in mixedCase
+Parameter RewardPoolFactory.createRewardPool(address,address,uint256,uint256,uint256)._starttime (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#562) is not in mixedCase
+Parameter RewardPoolFactory.createRewardPool(address,address,uint256,uint256,uint256)._duration (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#562) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+createRewardPool(address,address,uint256,uint256,uint256) should be declared external:
+	- RewardPoolFactory.createRewardPool(address,address,uint256,uint256,uint256) (noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol#562-564)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol analyzed (8 contracts with 46 detectors), 19 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x61af5c8e6fc334df1f2b644f6aec1492ceff822d.sol
+Tool Runtime = 0.7979153920023236 seconds
+#############################################

@@ -1,0 +1,479 @@
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: AuctionProtection
+Function name: depositToken(uint256,address,uint256)
+PC address: 7927
+Estimated Gas Usage: 12545 - 70293
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:1100
+
+lockedTokens[_which] = safeAdd(lockedTokens[_which], _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000004020000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+Caller: [ATTACKER], function: depositToken(uint256,address,uint256), txdata: 0x0a9306d700000000000000000000000000000000000000000000000000000000000000006d6d6d6d6d6d6d6d6d6d6d6d02010080100880800000041001200020200102400810004008021640802040d0dc04e28004103428c00254201064408444101048, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ProtectionRegistery
+Function name: updateAddresses()
+PC address: 8492
+Estimated Gas Usage: 50659 - 382367
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:727
+
+contractsRegistry.getAddressOf(_contractName)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Utils
+Function name: updateAddresses()
+PC address: 9313
+Estimated Gas Usage: 50659 - 382367
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:727
+
+contractsRegistry.getAddressOf(_contractName)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000080000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: AuctionProtection
+Function name: stackFund(uint256)
+PC address: 14229
+Estimated Gas Usage: 11636 - 68132
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:825
+
+stackRoundId = safeAdd(stackRoundId, 1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10000002, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+Caller: [ATTACKER], function: stackFund(uint256), txdata: 0x9f2f97386d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d6d, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AuctionProtection
+Function name: cancelInvestmentBehalf(address)
+PC address: 17105
+Estimated Gas Usage: 15581 - 107511
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:777
+
+IAuction(auctionAddress).auctionDay()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000020705be, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: cancelInvestmentBehalf(address), txdata: 0x2a5651cf0000000000000000000000000000000000000100000000000100020000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: cancelInvestmentBehalf(address)
+PC address: 17170
+Estimated Gas Usage: 15581 - 107511
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:778
+
+tokenLockDuration
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x207afbe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: cancelInvestmentBehalf(address), txdata: 0x2a5651cf0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStack()
+PC address: 18781
+Estimated Gas Usage: 23447 - 120107
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:420
+
+_token.transfer(_to, _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+Caller: [CREATOR], function: unlockTokenFromStack(), txdata: 0x2c38f074, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStackBehalf(address)
+PC address: 18781
+Estimated Gas Usage: 26193 - 158123
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:420
+
+_token.transfer(_to, _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x737ba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStackBehalf(address), txdata: 0xff54be320000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: depositToken(uint256,address,uint256)
+PC address: 19176
+Estimated Gas Usage: 12545 - 70293
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:423
+
+_token.transferFrom(_from, _to, _amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1201a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+Caller: [ATTACKER], function: depositToken(uint256,address,uint256), txdata: 0x0a9306d700000000000000000000000000000000000000000000000000000000000000006d6d6d6d6d6d6d6d6d6d6d6d00000000020001000000000200000102040002028487560d6d2301292244130c0892411d02b05012504460080101266cd2ca2924, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: cancelInvestment()
+PC address: 19644
+Estimated Gas Usage: 12964 - 69624
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:977
+
+lockedFunds[_whom][address(0)]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xb, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2000401200216a5a0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStackBehalf(address), txdata: 0xff54be320000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: cancelInvestment(), txdata: 0x94f8e954, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: cancelInvestment()
+PC address: 20052
+Estimated Gas Usage: 12964 - 69624
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:984
+
+lockedTokens[_whom]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10004020ff7ba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: cancelInvestment(), txdata: 0x94f8e954, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: cancelInvestment()
+PC address: 20759
+Estimated Gas Usage: 12964 - 69624
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:998
+
+lockedOn[_whom] = 0
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10004020ff7ba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: cancelInvestment(), txdata: 0x94f8e954, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStack()
+PC address: 20991
+Estimated Gas Usage: 23447 - 120107
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:908
+
+totalTokenAmount
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbbaa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStack(), txdata: 0x2c38f074, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStack()
+PC address: 21002
+Estimated Gas Usage: 23447 - 120107
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:908
+
+totalTokenAmount = safeSub(totalTokenAmount, actulToken)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbbaa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStack(), txdata: 0x2c38f074, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStack()
+PC address: 21071
+Estimated Gas Usage: 23447 - 120107
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:909
+
+stackBalance[_whom] = 0
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbbaa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStack(), txdata: 0x2c38f074, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStack()
+PC address: 21140
+Estimated Gas Usage: 23447 - 120107
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:910
+
+lastRound[_whom] = 0
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbbaa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStack(), txdata: 0x2c38f074, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AuctionProtection
+Function name: unlockTokenFromStackBehalf(address)
+PC address: 21167
+Estimated Gas Usage: 26193 - 158123
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:911
+
+stackRoundId
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x7afba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unlockTokenFromStackBehalf(address), txdata: 0xff54be320000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AuctionProtection
+Function name: updateAddresses()
+PC address: 25854
+Estimated Gas Usage: 50615 - 382323
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol:727
+
+contractsRegistry.getAddressOf(_contractName)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000402000b00, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: updateAddresses(), txdata: 0xe26db6fc, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x05bd31d5ca9ca645fd4d0efb7a0ad383ca78566f.sol
+Tool Runtime = 3200.350576416997 seconds
+#############################################

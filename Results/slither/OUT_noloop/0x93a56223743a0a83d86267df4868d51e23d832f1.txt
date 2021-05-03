@@ -1,0 +1,190 @@
+Compilation warnings/errors on ./noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol:
+./noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol:438:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+YFFCUSDCreward.notifyRewardAmount(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#716-732) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#722)
+	-leftover = remaining.mul(rewardRate) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#725)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in YFFCUSDCreward.checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#700-710):
+	External calls:
+	- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#706)
+Reentrancy in YFFCUSDCreward.exit() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#686-689):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#687)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+		- LPtoken.safeTransfer(msg.sender,amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#615)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+		- yffc.safeTransfer(msg.sender,reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#695)
+	State variables written after the call(s):
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- initreward = initreward.mul(50).div(100) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#702)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#639)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- periodFinish = block.timestamp.add(DURATION) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#706)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#638)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- rewardRate = initreward.div(DURATION) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#705)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- rewards[msg.sender] = 0 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#694)
+		- rewards[account] = earned(account) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#641)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#642)
+Reentrancy in YFFCUSDCreward.getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#691-698):
+	External calls:
+	- checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#691)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#694)
+Reentrancy in YFFCUSDCreward.notifyRewardAmount(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#716-732):
+	External calls:
+	- yffc.mint(address(this),reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#728)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#729)
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#730)
+Reentrancy in YFFCUSDCreward.stake(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#674-678):
+	External calls:
+	- super.stake(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#676)
+		- LPtoken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#609)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+	- checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#674)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	State variables written after the call(s):
+	- super.stake(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#676)
+		- _balances[msg.sender] = _balances[msg.sender].add(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#608)
+	- super.stake(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#676)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#607)
+Reentrancy in YFFCUSDCreward.withdraw(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#680-684):
+	External calls:
+	- super.withdraw(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#682)
+		- LPtoken.safeTransfer(msg.sender,amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#615)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+	- checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#680)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	State variables written after the call(s):
+	- super.withdraw(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#682)
+		- _balances[msg.sender] = _balances[msg.sender].sub(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#614)
+	- super.withdraw(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#682)
+		- _totalSupply = _totalSupply.sub(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#613)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in YFFCUSDCreward.checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#700-710):
+	External calls:
+	- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	State variables written after the call(s):
+	- rewardRate = initreward.div(DURATION) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#705)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in YFFCUSDCreward.checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#700-710):
+	External calls:
+	- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#707)
+Reentrancy in YFFCUSDCreward.exit() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#686-689):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#687)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+		- LPtoken.safeTransfer(msg.sender,amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#615)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+	- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+		- yffc.safeTransfer(msg.sender,reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#695)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#707)
+		- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+	- RewardPaid(msg.sender,reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#696)
+		- getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#688)
+Reentrancy in YFFCUSDCreward.getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#691-698):
+	External calls:
+	- yffc.safeTransfer(msg.sender,reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#695)
+	- checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#691)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#696)
+Reentrancy in YFFCUSDCreward.notifyRewardAmount(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#716-732):
+	External calls:
+	- yffc.mint(address(this),reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#728)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#731)
+Reentrancy in YFFCUSDCreward.stake(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#674-678):
+	External calls:
+	- super.stake(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#676)
+		- LPtoken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#609)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+	- checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#674)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#677)
+Reentrancy in YFFCUSDCreward.withdraw(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#680-684):
+	External calls:
+	- super.withdraw(amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#682)
+		- LPtoken.safeTransfer(msg.sender,amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#615)
+		- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+	- checkhalve() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#680)
+		- yffc.mint(address(this),initreward) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#703)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#683)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YFFCUSDCreward.getReward() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#691-698) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#693)
+YFFCUSDCreward.notifyRewardAmount(uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#716-732) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#721)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#427-440) uses assembly
+	- INLINE ASM (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#438-439)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#31) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#63) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#222) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#252) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#330) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#410) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#481) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#558) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#582) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#470-476):
+	- (success) = recipient.call.value(amount)() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#474)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#534-553):
+	- (success,returndata) = address(token).call(data) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#546)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#572) is not in mixedCase
+Variable LPTokenWrapper.LPtoken (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#593) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+YFFCUSDCreward.starttime (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#624) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#279-281)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#305-308)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol#314-316)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x93a56223743a0a83d86267df4868d51e23d832f1.sol analyzed (10 contracts with 46 detectors), 35 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x93a56223743a0a83d86267df4868d51e23d832f1.sol
+Tool Runtime = 1.049180581998371 seconds
+#############################################

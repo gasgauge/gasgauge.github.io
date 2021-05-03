@@ -1,0 +1,271 @@
+INFO:Detectors:[91m
+LidSimplifiedPresale.releaseEthToAddress(address,uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1369-1372) sends eth to arbitrary user
+	Dangerous calls:
+	- receiver.transfer(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1371)
+LidSimplifiedPresale.claimRefund(address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1391-1397) sends eth to arbitrary user
+	Dangerous calls:
+	- account.transfer(refundAmt) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1396)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+PauserRole.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#405) shadows:
+	- Initializable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#297)
+Pausable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#480) shadows:
+	- PauserRole.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#405)
+	- Initializable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#297)
+Ownable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#557) shadows:
+	- Initializable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#297)
+ReentrancyGuard.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#597) shadows:
+	- Initializable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#297)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+LidSimplifiedPresale.deposit(address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1407-1444) uses a dangerous strict equality:
+	- excess == 0 (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1433)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1266-1304):
+	External calls:
+	- token.approve(address(uniswapRouter),token.totalSupply()) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1300)
+	State variables written after the call(s):
+	- _transferOwnership(owner) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1303)
+		- _owner = newOwner (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#554)
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1007-1025):
+	External calls:
+	- distribute(registrationFeeWithoutReferrer) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1014)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1078-1081)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1019)
+	State variables written after the call(s):
+	- stakerIsRegistered[msg.sender] = true (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1023)
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1007-1025):
+	External calls:
+	- distribute(registrationFeeWithoutReferrer) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1014)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1078-1081)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1019)
+	- stake(finalAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1024)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Stake failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1033)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1149)
+	State variables written after the call(s):
+	- stake(finalAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1024)
+		- emptyStakeTokens = 0 (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1160)
+		- emptyStakeTokens = emptyStakeTokens.add(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1164)
+	- stake(finalAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1024)
+		- profitPerShare = profitPerShare.add(amount.mul(DISTRIBUTION_MULTIPLIER).div(totalStaked)) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1162)
+	- stake(finalAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1024)
+		- totalStaked = totalStaked.add(stakeAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1146)
+Reentrancy in LidStaking.unstake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1037-1057):
+	External calls:
+	- withdraw(dividendsOf(msg.sender)) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1041)
+		- lidToken.transfer(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1062)
+	State variables written after the call(s):
+	- _increaseProfitPerShare(tax) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1048)
+		- profitPerShare = profitPerShare.add(amount.mul(DISTRIBUTION_MULTIPLIER).div(totalStaked)) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1162)
+	- stakeValue[msg.sender] = stakeValue[msg.sender].sub(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1044)
+	- stakerPayouts[msg.sender] = uintToInt(profitPerShare.mul(stakeValue[msg.sender])) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1049)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LidSimplifiedPresaleRedeemer.calculateRatePerEth(uint256,uint256,uint256).bp (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#866) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+LidStaking.withdraw(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1059-1064) ignores return value by lidToken.transfer(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1062)
+LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1266-1304) ignores return value by token.approve(address(uniswapRouter),token.totalSupply()) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1300)
+LidSimplifiedPresale.sendToUniswap() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1332-1349) ignores return value by uniswapRouter.addLiquidityETH.value(uniswapEth)(address(token),uniswapTokens,uniswapTokens,uniswapEth,address(0x000000000000000000000000000000000000dEaD),now) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1341-1348)
+LidSimplifiedPresale.issueTokens() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1351-1367) ignores return value by token.transfer(tokenPools[i],totalTokens.mulBP(tokenPoolBPs[i])) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1357-1360)
+LidSimplifiedPresale.issueTokens() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1351-1367) ignores return value by token.transfer(tokenPools[last],totalTokens.mulBP(tokenPoolBPs[last])) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1363-1366)
+LidSimplifiedPresale.redeem() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1374-1379) ignores return value by token.transfer(msg.sender,claimable) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1378)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+LidSimplifiedPresaleTimer.initialize(uint256,uint256,uint256,address,address).owner (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#741) shadows:
+	- Ownable.owner() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#509-511) (function)
+LidSimplifiedPresaleRedeemer.initialize(uint256,uint256,uint256[],uint256[],address,address).owner (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#806) shadows:
+	- Ownable.owner() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#509-511) (function)
+LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken).owner (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#990) shadows:
+	- Ownable.owner() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#509-511) (function)
+LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address).owner (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1272) shadows:
+	- Ownable.owner() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#509-511) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+LidStaking.unstake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1037-1057) has external calls inside a loop: stakeHandlers[i].handleUnstake(msg.sender,amount,stakeValue[msg.sender]) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1052)
+LidStaking._addStake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1143-1154) has external calls inside a loop: stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1149)
+LidSimplifiedPresale.issueTokens() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1351-1367) has external calls inside a loop: token.transfer(tokenPools[i],totalTokens.mulBP(tokenPoolBPs[i])) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1357-1360)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in LidSimplifiedPresale.deposit(address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1407-1444):
+	External calls:
+	- endTime = timer.updateEndTime() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1413)
+	- redeemer.setDeposit(msg.sender,depositEther.sub(fee),address(this).balance.sub(fee)) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1431)
+	State variables written after the call(s):
+	- earnedReferrals[referrer] = earnedReferrals[referrer].add(fee) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1435)
+	- referralCounts[referrer] = referralCounts[referrer].add(1) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1436)
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1007-1025):
+	External calls:
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1019)
+	State variables written after the call(s):
+	- accountReferrals[referrer] = accountReferrals[referrer].add(1) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1020)
+Reentrancy in LidStaking.unstake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1037-1057):
+	External calls:
+	- withdraw(dividendsOf(msg.sender)) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1041)
+		- lidToken.transfer(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1062)
+	State variables written after the call(s):
+	- _increaseProfitPerShare(tax) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1048)
+		- emptyStakeTokens = 0 (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1160)
+		- emptyStakeTokens = emptyStakeTokens.add(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1164)
+	- totalStaked = totalStaked.sub(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1043)
+	- totalStakers = totalStakers.sub(1) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1042)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in LidStaking.distribute(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1074-1083):
+	External calls:
+	- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1078-1081)
+	Event emitted after the call(s):
+	- OnDistribute(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1082)
+Reentrancy in LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1266-1304):
+	External calls:
+	- token.approve(address(uniswapRouter),token.totalSupply()) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1300)
+	Event emitted after the call(s):
+	- OwnershipTransferred(_owner,newOwner) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#553)
+		- _transferOwnership(owner) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1303)
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1007-1025):
+	External calls:
+	- distribute(registrationFeeWithoutReferrer) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1014)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1078-1081)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1019)
+	- stake(finalAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1024)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Stake failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1033)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1149)
+	Event emitted after the call(s):
+	- OnStake(msg.sender,amount,tax) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1034)
+		- stake(finalAmount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1024)
+Reentrancy in LidStaking.reinvest(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1066-1072):
+	External calls:
+	- tax = _addStake(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1070)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1149)
+	Event emitted after the call(s):
+	- OnReinvest(msg.sender,amount,tax) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1071)
+Reentrancy in LidStaking.stake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1027-1035):
+	External calls:
+	- tax = _addStake(amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1032)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1149)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Stake failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1033)
+	Event emitted after the call(s):
+	- OnStake(msg.sender,amount,tax) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1034)
+Reentrancy in LidStaking.unstake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1037-1057):
+	External calls:
+	- withdraw(dividendsOf(msg.sender)) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1041)
+		- lidToken.transfer(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1062)
+	- require(bool,string)(lidToken.transferFrom(address(this),msg.sender,earnings),Unstake failed due to failed transfer.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1055)
+	Event emitted after the call(s):
+	- OnUnstake(msg.sender,amount,tax) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1056)
+Reentrancy in LidStaking.withdraw(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1059-1064):
+	External calls:
+	- lidToken.transfer(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1062)
+	Event emitted after the call(s):
+	- OnWithdraw(msg.sender,amount) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1063)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+LidSimplifiedPresaleTimer.updateEndTime() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#760-767) uses timestamp for comparisons
+	Dangerous comparisons:
+	- endTime != 0 (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#761)
+LidSimplifiedPresaleTimer.isStarted() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#769-771) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (startTime != 0 && now > startTime) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#770)
+LidSimplifiedPresaleRedeemer.calculateReedemable(address,uint256,uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#881-899) uses timestamp for comparisons
+	Dangerous comparisons:
+	- finalEndTime >= now (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#887)
+	- totalRedeemable >= earnedTokens (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#893)
+LidSimplifiedPresale.deposit(address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1407-1444) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= access.getAccessTime(msg.sender,timer.startTime()),Time must be at least access time.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1409)
+	- require(bool,string)(! (now > endTime && endTime != 0),Presale Ended, time over limit.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1414)
+LidSimplifiedPresale.isPresaleEnded() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1454-1461) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ((address(this).balance >= hardcap) || (timer.isStarted() && (now > endTime && endTime != 0))) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1457-1460)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#284-294) uses assembly
+	- INLINE ASM (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#292-293)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+LidStaking.stake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1027-1035) compares to a boolean constant:
+	-require(bool,string)(stakerIsRegistered[msg.sender] == true,Must be registered to stake.) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1028)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1173) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#297) is not in mixedCase
+Variable PauserRole.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#405) is not in mixedCase
+Variable Pausable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#480) is not in mixedCase
+Variable Ownable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#557) is not in mixedCase
+Variable ReentrancyGuard.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#597) is not in mixedCase
+Function IUniswapV2Router01.WETH() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#610) is not in mixedCase
+Parameter LidSimplifiedPresaleTimer.initialize(uint256,uint256,uint256,address,address)._startTime (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#737) is not in mixedCase
+Parameter LidSimplifiedPresaleTimer.initialize(uint256,uint256,uint256,address,address)._hardCapTimer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#738) is not in mixedCase
+Parameter LidSimplifiedPresaleTimer.initialize(uint256,uint256,uint256,address,address)._softCap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#739) is not in mixedCase
+Parameter LidSimplifiedPresaleTimer.initialize(uint256,uint256,uint256,address,address)._presale (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#740) is not in mixedCase
+Parameter LidSimplifiedPresaleRedeemer.initialize(uint256,uint256,uint256[],uint256[],address,address)._redeemBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#801) is not in mixedCase
+Parameter LidSimplifiedPresaleRedeemer.initialize(uint256,uint256,uint256[],uint256[],address,address)._redeemInterval (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#802) is not in mixedCase
+Parameter LidSimplifiedPresaleRedeemer.initialize(uint256,uint256,uint256[],uint256[],address,address)._bonusRangeStart (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#803) is not in mixedCase
+Parameter LidSimplifiedPresaleRedeemer.initialize(uint256,uint256,uint256[],uint256[],address,address)._bonusRangeBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#804) is not in mixedCase
+Parameter LidSimplifiedPresaleRedeemer.initialize(uint256,uint256,uint256[],uint256[],address,address)._presale (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#805) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._stakingTaxBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#986) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._ustakingTaxBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#987) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._registrationFeeWithReferrer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#988) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._registrationFeeWithoutReferrer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#989) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._lidToken (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#991) is not in mixedCase
+Parameter LidStaking.setStartTime(uint256)._startTime (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1126) is not in mixedCase
+Parameter LidSimplifiedPresaleAccess.initialize(LidStaking)._staking (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1186) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._maxBuyPerAddress (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1267) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._uniswapEthBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1268) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._lidEthBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1269) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._referralBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1270) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._hardcap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1271) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._timer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1273) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._redeemer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1274) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._access (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1275) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._token (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1276) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._uniswapRouter (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1277) is not in mixedCase
+Parameter LidSimplifiedPresale.initialize(uint256,uint256,uint256,uint256,uint256,address,LidSimplifiedPresaleTimer,LidSimplifiedPresaleRedeemer,LidSimplifiedPresaleAccess,IERC20,IUniswapV2Router01,address)._lidFund (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1278) is not in mixedCase
+Parameter LidSimplifiedPresale.setTokenPools(uint256,uint256,address[],uint256[])._uniswapTokenBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1311) is not in mixedCase
+Parameter LidSimplifiedPresale.setTokenPools(uint256,uint256,address[],uint256[])._presaleTokenBP (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1312) is not in mixedCase
+Parameter LidSimplifiedPresale.setTokenPools(uint256,uint256,address[],uint256[])._tokenPools (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1313) is not in mixedCase
+Parameter LidSimplifiedPresale.setTokenPools(uint256,uint256,address[],uint256[])._tokenPoolBPs (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1314) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+LidSimplifiedPresaleAccess.initialize(LidStaking) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1186-1196) uses literals with too many digits:
+	- cutoffs = (500000000000000000000000,100000000000000000000000,50000000000000000000000,25000000000000000000000,1000000000000000000) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1189-1195)
+LidSimplifiedPresale.sendToUniswap() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1332-1349) uses literals with too many digits:
+	- uniswapRouter.addLiquidityETH.value(uniswapEth)(address(token),uniswapTokens,uniswapTokens,uniswapEth,address(0x000000000000000000000000000000000000dEaD),now) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1341-1348)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+Ownable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#557) is never used in LidSimplifiedPresaleTimer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#727-773)
+Ownable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#557) is never used in LidSimplifiedPresaleRedeemer (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#776-914)
+Ownable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#557) is never used in LidStaking (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#941-1168)
+Initializable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#297) is never used in LidSimplifiedPresaleAccess (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1180-1210)
+Pausable.______gap (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#480) is never used in LidSimplifiedPresale (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1213-1463)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+addPauser(address) should be declared external:
+	- PauserRole.addPauser(address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#387-389)
+renouncePauser() should be declared external:
+	- PauserRole.renouncePauser() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#391-393)
+paused() should be declared external:
+	- Pausable.paused() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#444-446)
+unpause() should be declared external:
+	- Pausable.unpause() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#475-478)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#509-511)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#535-538)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#544-546)
+registerAndStake(uint256) should be declared external:
+	- LidStaking.registerAndStake(uint256) (loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol#1003-1005)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol analyzed (18 contracts with 46 detectors), 97 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x24f15537229590f33c1bdf6f2fe3d55eed26ca6d.sol
+Tool Runtime = 3.4731771990009292 seconds
+#############################################

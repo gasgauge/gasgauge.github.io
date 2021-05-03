@@ -1,0 +1,164 @@
+Compilation warnings/errors on ./loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol:
+./loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol:214:26: Warning: The "shr" instruction is only available for Constantinople-compatible VMs. You are currently compiling for "byzantium", where it will be interpreted as an invalid instruction.
+                shl(224, shr(224, calldataload(0))), // msg.sig
+                         ^-----------------------^
+./loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol:214:17: Warning: The "shl" instruction is only available for Constantinople-compatible VMs. You are currently compiling for "byzantium", where it will be interpreted as an invalid instruction.
+                shl(224, shr(224, calldataload(0))), // msg.sig
+                ^---------------------------------^
+./loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol:437:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+StakingRewardsDecay.rewardPerToken(StakingRewardsDecay.EpochData,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1288-1304) uses a dangerous strict equality:
+	- lastTotalSupply == 0 (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1293)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+StakingRewardsDecay.initialize(address,uint256).data (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1037) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+RewardDecayAggregator.claimReward() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1455-1459) ignores return value by rewarders[i].getRewardEx(msg.sender) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1457)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+RewardDecayAggregator.claimReward() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1455-1459) has external calls inside a loop: rewarders[i].getRewardEx(msg.sender) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1457)
+RewardDecayAggregator.earned() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1461-1465) has external calls inside a loop: res = res.add(rewarders[i].earned(msg.sender)) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1463)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in StakingRewardsDecayHolder.stake(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#925-932):
+	External calls:
+	- rewarder.stake(msg.sender,amount,gem) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#928)
+	State variables written after the call(s):
+	- amounts[gem][msg.sender] = amounts[gem][msg.sender].add(amount) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#930)
+Reentrancy in StakingRewardsDecayHolder.withdraw(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#934-951):
+	External calls:
+	- (success) = address(rewarder).call(abi.encodeWithSelector(rewarder.withdraw.selector,msg.sender,amount,gem)) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#937-940)
+	State variables written after the call(s):
+	- amounts[gem][msg.sender] = amounts[gem][msg.sender].sub(amount) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#949)
+	- withdrawErrorCount ++ (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#946)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in StakingRewardsDecay.getRewardCore(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1406-1423):
+	External calls:
+	- IERC20(gov).safeTransfer(account,acc) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1420)
+	Event emitted after the call(s):
+	- RewardPaid(account,acc) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1421)
+Reentrancy in StakingRewardsDecayHolder.withdraw(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#934-951):
+	External calls:
+	- (success) = address(rewarder).call(abi.encodeWithSelector(rewarder.withdraw.selector,msg.sender,amount,gem)) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#937-940)
+	Event emitted after the call(s):
+	- withdrawError(amount,gem) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#945)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+StakingRewardsDecay.initEpoch(uint256,uint256,uint256,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1080-1103) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(starttime >= block.timestamp,starttime > block.timestamp) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1088)
+StakingRewardsDecay.calcCurrentEpoch() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1185-1194) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < EPOCHCOUNT && epochs[i].starttime <= block.timestamp (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1189)
+StakingRewardsDecay.lastTimeRewardApplicable(StakingRewardsDecay.EpochData) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1283-1286) uses timestamp for comparisons
+	Dangerous comparisons:
+	- assert(bool)(block.timestamp >= epoch.starttime) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1284)
+StakingRewardsDecay.rewardPerToken(StakingRewardsDecay.EpochData,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1288-1304) uses timestamp for comparisons
+	Dangerous comparisons:
+	- lastTotalSupply == 0 (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1293)
+StakingRewardsDecay.getRewardEpoch(address,StakingRewardsDecay.EpochData) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1337-1344) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1339)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#426-439) uses assembly
+	- INLINE ASM (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#437-438)
+Initializable.isConstructor() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#780-791) uses assembly
+	- INLINE ASM (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#787-790)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#7) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#469-475):
+	- (success) = recipient.call.value(amount)() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#473)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#529-548):
+	- (success,returndata) = address(token).call(data) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#541)
+Low level call in StakingRewardsDecayHolder.withdraw(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#934-951):
+	- (success) = address(rewarder).call(abi.encodeWithSelector(rewarder.withdraw.selector,msg.sender,amount,gem)) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#937-940)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#794) is not in mixedCase
+Event StakingRewardsDecayHolderwithdrawError(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#919) is not in CapWords
+Parameter StakingRewardsDecay.initialize(address,uint256)._gov (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1028) is not in mixedCase
+Parameter StakingRewardsDecay.setupAggregator(address)._aggregator (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1045) is not in mixedCase
+Variable StakingRewardsDecay.EPOCHCOUNT (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1005) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Initializable.______gap (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#794) is never used in StakingRewardsDecay (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#986-1443)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+LPTokenWrapper.decimals (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#813) should be constant
+LPTokenWrapper.prec (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#815) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#689-691)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#715-718)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#724-726)
+stake(uint256,address) should be declared external:
+	- StakingRewardsDecayHolder.stake(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#925-932)
+withdraw(uint256,address) should be declared external:
+	- StakingRewardsDecayHolder.withdraw(uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#934-951)
+initialize(address,uint256) should be declared external:
+	- StakingRewardsDecay.initialize(address,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1028-1043)
+setupAggregator(address) should be declared external:
+	- StakingRewardsDecay.setupAggregator(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1045-1051)
+initRewardAmount(uint256,uint256,uint256,uint256) should be declared external:
+	- StakingRewardsDecay.initRewardAmount(uint256,uint256,uint256,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1063-1073)
+setupGemForRewardChecker(address) should be declared external:
+	- StakingRewardsDecay.setupGemForRewardChecker(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1075-1078)
+initAllEpochs(uint256[],uint256,uint256) should be declared external:
+	- StakingRewardsDecay.initAllEpochs(uint256[],uint256,uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1105-1125)
+getEpochRewardRate(uint256) should be declared external:
+	- StakingRewardsDecay.getEpochRewardRate(uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1127-1129)
+getEpochStartTime(uint256) should be declared external:
+	- StakingRewardsDecay.getEpochStartTime(uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1131-1133)
+getEpochFinishTime(uint256) should be declared external:
+	- StakingRewardsDecay.getEpochFinishTime(uint256) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1135-1137)
+getTotalRewards() should be declared external:
+	- StakingRewardsDecay.getTotalRewards() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1139-1147)
+getTotalRewardTime() should be declared external:
+	- StakingRewardsDecay.getTotalRewardTime() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1149-1157)
+approveEpochsConsistency() should be declared external:
+	- StakingRewardsDecay.approveEpochsConsistency() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1159-1176)
+resetDeployer() should be declared external:
+	- StakingRewardsDecay.resetDeployer() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1178-1183)
+registerPairDesc(address,address,uint256,bytes32) should be declared external:
+	- StakingRewardsDecay.registerPairDesc(address,address,uint256,bytes32) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1215-1243)
+getPairInfo(bytes32,address) should be declared external:
+	- StakingRewardsDecay.getPairInfo(bytes32,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1245-1266)
+getPrice(bytes32) should be declared external:
+	- StakingRewardsDecay.getPrice(bytes32) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1268-1276)
+getRewardPerHour() should be declared external:
+	- StakingRewardsDecay.getRewardPerHour() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1278-1281)
+earned(address) should be declared external:
+	- StakingRewardsDecay.earned(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1320-1335)
+stake(address,uint256,address) should be declared external:
+	- StakingRewardsDecay.stake(address,uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1375-1383)
+withdraw(address,uint256,address) should be declared external:
+	- StakingRewardsDecay.withdraw(address,uint256,address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1396-1404)
+getReward() should be declared external:
+	- StakingRewardsDecay.getReward() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1425-1427)
+getRewardEx(address) should be declared external:
+	- StakingRewardsDecay.getRewardEx(address) (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1429-1432)
+claimReward() should be declared external:
+	- RewardDecayAggregator.claimReward() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1455-1459)
+earned() should be declared external:
+	- RewardDecayAggregator.earned() (loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol#1461-1465)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x51DB1Da6635578B9186B26871038F18351CDD527.sol analyzed (18 contracts with 46 detectors), 57 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x51DB1Da6635578B9186B26871038F18351CDD527.sol
+Tool Runtime = 2.436063043001923 seconds
+#############################################

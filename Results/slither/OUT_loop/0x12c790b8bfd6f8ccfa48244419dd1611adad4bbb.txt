@@ -1,0 +1,231 @@
+INFO:Detectors:[91m
+Reentrancy in WBTCexPro.invest(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168-1294):
+	External calls:
+	- investToken.safeTransferFrom(address(msg.sender),address(this),amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1192)
+	- investToken.safeTransfer(address(marketingAddress),amount.mul(MARKETING_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1194)
+	- investToken.safeTransfer(address(projectAddress),amount.mul(PROJECT_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1196)
+	- investToken.safeTransfer(address(devAddress),amount.mul(DEV_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1198)
+	- addLotteryTicket(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1278)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#311)
+		- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+		- investToken.safeTransfer(rewardPool,_amount.div(20)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1338)
+	External calls sending eth:
+	- addLotteryTicket(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1278)
+		- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+	State variables written after the call(s):
+	- daliyInvestAmount[daysInterval] = daliyInvestAmount[daysInterval].add(amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1282)
+	- totalDeposits = totalDeposits.add(1) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1288)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538) performs a multiplication on the result of a division:
+	-dividends = (user.deposits[i].amount.mul(userPercentRate).div(PERCENTS_DIVIDER)).mul(block.timestamp.sub(user.deposits[i].start)).div(TIME_STEP) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1444-1448)
+WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538) performs a multiplication on the result of a division:
+	-dividends = (user.deposits[i].amount.mul(userPercentRate).div(PERCENTS_DIVIDER)).mul(block.timestamp.sub(user.checkpoint)).div(TIME_STEP) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1456-1460)
+WBTCexPro.getUserDividends(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1610-1688) performs a multiplication on the result of a division:
+	-dividends = (user.deposits[i].amount.mul(userPercentRate).div(PERCENTS_DIVIDER)).mul(block.timestamp.sub(user.deposits[i].start)).div(TIME_STEP) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1638-1642)
+WBTCexPro.getUserDividends(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1610-1688) performs a multiplication on the result of a division:
+	-dividends = (user.deposits[i].amount.mul(userPercentRate).div(PERCENTS_DIVIDER)).mul(block.timestamp.sub(user.checkpoint)).div(TIME_STEP) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1650-1654)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538):
+	External calls:
+	- investToken.safeTransfer(msg.sender,totalAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1524)
+	State variables written after the call(s):
+	- updateRate(totalAmount,false) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1532)
+		- presentPercent = presentPercent.add(_amount.mul(PERCENT_INVEST)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1580)
+		- presentPercent = MAX_PERCENT (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1584)
+		- presentPercent = BASE_PERCENT (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1594)
+		- presentPercent = presentPercent.sub(decrease) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1598)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+WBTCexPro.withdraw().totalAmount (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1426) is a local variable never initialized
+WBTCexPro.getUserDividends(address).totalDividends (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1620) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+Reentrancy in WBTCexPro.invest(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168-1294):
+	External calls:
+	- investToken.safeTransferFrom(address(msg.sender),address(this),amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1192)
+	- investToken.safeTransfer(address(marketingAddress),amount.mul(MARKETING_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1194)
+	- investToken.safeTransfer(address(projectAddress),amount.mul(PROJECT_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1196)
+	- investToken.safeTransfer(address(devAddress),amount.mul(DEV_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1198)
+	State variables written after the call(s):
+	- updateRate(amount,true) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1276)
+		- presentPercent = presentPercent.add(_amount.mul(PERCENT_INVEST)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1580)
+		- presentPercent = MAX_PERCENT (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1584)
+		- presentPercent = BASE_PERCENT (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1594)
+		- presentPercent = presentPercent.sub(decrease) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1598)
+	- totalUsers = totalUsers.add(1) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1262)
+	- user.referrer = referrer (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1212)
+	- users[upline].bonus = users[upline].bonus.add(bonuAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1232)
+	- users[upline].totalBonus = users[upline].totalBonus.add(bonuAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1234)
+	- users[upline].missedBonus = users[upline].missedBonus.add(bonuAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1240)
+	- user.checkpoint = block.timestamp (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1260)
+	- user.deposits.push(Deposit(amount,0,block.timestamp)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1270)
+	- user.totalInvested = user.totalInvested.add(amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1272)
+Reentrancy in WBTCexPro.invest(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168-1294):
+	External calls:
+	- investToken.safeTransferFrom(address(msg.sender),address(this),amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1192)
+	- investToken.safeTransfer(address(marketingAddress),amount.mul(MARKETING_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1194)
+	- investToken.safeTransfer(address(projectAddress),amount.mul(PROJECT_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1196)
+	- investToken.safeTransfer(address(devAddress),amount.mul(DEV_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1198)
+	- addLotteryTicket(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1278)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#311)
+		- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+		- investToken.safeTransfer(rewardPool,_amount.div(20)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1338)
+	External calls sending eth:
+	- addLotteryTicket(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1278)
+		- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+	State variables written after the call(s):
+	- totalInvested = totalInvested.add(amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1286)
+Reentrancy in WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538):
+	External calls:
+	- investToken.safeTransfer(msg.sender,totalAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1524)
+	State variables written after the call(s):
+	- totalWithdrawn = totalWithdrawn.add(totalAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1528)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in WBTCexPro.invest(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168-1294):
+	External calls:
+	- investToken.safeTransferFrom(address(msg.sender),address(this),amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1192)
+	- investToken.safeTransfer(address(marketingAddress),amount.mul(MARKETING_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1194)
+	- investToken.safeTransfer(address(projectAddress),amount.mul(PROJECT_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1196)
+	- investToken.safeTransfer(address(devAddress),amount.mul(DEV_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1198)
+	Event emitted after the call(s):
+	- MissBonus(upline,msg.sender,i,bonuAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1242)
+Reentrancy in WBTCexPro.invest(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168-1294):
+	External calls:
+	- investToken.safeTransferFrom(address(msg.sender),address(this),amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1192)
+	- investToken.safeTransfer(address(marketingAddress),amount.mul(MARKETING_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1194)
+	- investToken.safeTransfer(address(projectAddress),amount.mul(PROJECT_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1196)
+	- investToken.safeTransfer(address(devAddress),amount.mul(DEV_FEE).div(PERCENTS_DIVIDER)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1198)
+	- addLotteryTicket(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1278)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#311)
+		- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+		- investToken.safeTransfer(rewardPool,_amount.div(20)) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1338)
+	External calls sending eth:
+	- addLotteryTicket(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1278)
+		- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+	Event emitted after the call(s):
+	- NewDeposit(msg.sender,amount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1292)
+Reentrancy in WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538):
+	External calls:
+	- investToken.safeTransfer(msg.sender,totalAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1524)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,totalAmount) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1534)
+Reentrancy in WBTCexPro.withdrawWinning() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1344-1370):
+	External calls:
+	- investToken.safeTransferFrom(rewardPool,msg.sender,winning) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1364)
+	Event emitted after the call(s):
+	- WithdrawWinning(msg.sender,winning) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1368)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+WBTCexPro.updateTodayAmount(uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1140-1164) uses timestamp for comparisons
+	Dangerous comparisons:
+	- daysInterval > presentDaysInterval (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1144)
+	- index < power (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1152)
+WBTCexPro.withdrawWinning() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1344-1370) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(winning > 0,No winnings) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1352)
+WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538) uses timestamp for comparisons
+	Dangerous comparisons:
+	- user.deposits[i].withdrawn.add(dividends) > user.deposits[i].amount.mul(30).div(10) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1468)
+	- referralBonus > 0 (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1490)
+	- require(bool,string)(totalAmount > 0,User has no dividends) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1500)
+	- contractBalance <= totalAmount (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1506)
+WBTCexPro.getDailyAmount() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1542-1558) uses timestamp for comparisons
+	Dangerous comparisons:
+	- index < timePower (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1550)
+WBTCexPro.getDaysInterval() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1562-1568) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= START_POINT,Not yet started) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1564)
+WBTCexPro.getUserDividends(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1610-1688) uses timestamp for comparisons
+	Dangerous comparisons:
+	- user.deposits[i].withdrawn.add(dividends) > user.deposits[i].amount.mul(30).div(10) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1662)
+WBTCexPro.obsoleteExit() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1694-1712) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now > announceAt.add(step),Not yet ripe) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1704)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#693-711) uses assembly
+	- INLINE ASM (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#707-709)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#879-921) uses assembly
+	- INLINE ASM (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#905-913)
+WBTCexPro.isContract(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1866-1874) uses assembly
+	- INLINE ASM (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1870-1872)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#30) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#185) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#330) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#647) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#940) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#747-759):
+	- (success) = recipient.call.value(amount)() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#755)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#879-921):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#887)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter WBTCexPro.setRewardPool(address)._rewardPool (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1130) is not in mixedCase
+Parameter WBTCexPro.invest(address,uint256)._amount (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168) is not in mixedCase
+Parameter WBTCexPro.addLotteryTicket(address,uint256)._user (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1298) is not in mixedCase
+Parameter WBTCexPro.addLotteryTicket(address,uint256)._amount (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1298) is not in mixedCase
+Parameter WBTCexPro.winningAmount(address)._user (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1374) is not in mixedCase
+Parameter WBTCexPro.updateRate(uint256,bool)._amount (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1576) is not in mixedCase
+Parameter WBTCexPro.updateRate(uint256,bool)._invest (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1576) is not in mixedCase
+Variable WBTCexPro.REFERRAL_PERCENTS (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#976) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+WBTCexPro.REFERRAL_PERCENTS (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#976) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setRewardPool(address) should be declared external:
+	- WBTCexPro.setRewardPool(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1130-1136)
+invest(address,uint256) should be declared external:
+	- WBTCexPro.invest(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1168-1294)
+withdrawWinning() should be declared external:
+	- WBTCexPro.withdrawWinning() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1344-1370)
+withdraw() should be declared external:
+	- WBTCexPro.withdraw() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1414-1538)
+getContractBalance() should be declared external:
+	- WBTCexPro.getContractBalance() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1570-1574)
+obsoleteExit() should be declared external:
+	- WBTCexPro.obsoleteExit() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1694-1712)
+getStartPoint() should be declared external:
+	- WBTCexPro.getStartPoint() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1716-1720)
+getUserPercent() should be declared external:
+	- WBTCexPro.getUserPercent() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1722-1726)
+getBasePercent() should be declared external:
+	- WBTCexPro.getBasePercent() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1728-1732)
+getContractPercent() should be declared external:
+	- WBTCexPro.getContractPercent() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1734-1738)
+getTodayAmount() should be declared external:
+	- WBTCexPro.getTodayAmount() (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1742-1746)
+getUserCheckpoint(address) should be declared external:
+	- WBTCexPro.getUserCheckpoint(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1750-1754)
+getUserMissedBonus(address) should be declared external:
+	- WBTCexPro.getUserMissedBonus(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1758-1762)
+getUserTotalBonus(address) should be declared external:
+	- WBTCexPro.getUserTotalBonus(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1766-1770)
+getUserReferrer(address) should be declared external:
+	- WBTCexPro.getUserReferrer(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1774-1778)
+getUserAvailable(address) should be declared external:
+	- WBTCexPro.getUserAvailable(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1790-1794)
+getUserDepositInfo(address,uint256) should be declared external:
+	- WBTCexPro.getUserDepositInfo(address,uint256) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1798-1806)
+getUserAmountOfDeposits(address) should be declared external:
+	- WBTCexPro.getUserAmountOfDeposits(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1810-1814)
+getUserTotalDeposits(address) should be declared external:
+	- WBTCexPro.getUserTotalDeposits(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1818-1838)
+getUserTotalWithdrawn(address) should be declared external:
+	- WBTCexPro.getUserTotalWithdrawn(address) (loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol#1842-1862)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol analyzed (5 contracts with 46 detectors), 62 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x12c790b8bfd6f8ccfa48244419dd1611adad4bbb.sol
+Tool Runtime = 1.817101554999681 seconds
+#############################################

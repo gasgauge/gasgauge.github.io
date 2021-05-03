@@ -1,0 +1,786 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: constructor
+PC address: 1123
+Estimated Gas Usage: 121448 - 598906
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:754
+
+DOSPaymentInterface(addressBridge.getPaymentAddress()).setPaymentMethod(proxyFundsAddr, proxyFundsTokenAddr)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: unregisterNode()
+PC address: 8839
+Estimated Gas Usage: 12390 - 153020
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:702
+
+DOSStakingInterface(addressBridge.getStakingAddress()).isValidStakingNode(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: unregisterNode(), txdata: 0x3d385cf5, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: setProxyFund(address,address)
+PC address: 10475
+Estimated Gas Usage: 23185 - 136340
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:844
+
+DOSPaymentInterface(addressBridge.getPaymentAddress()).setPaymentMethod(proxyFundsAddr, proxyFundsTokenAddr)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setProxyFund(address,address), txdata: 0x40e4a5af00000000000000000000000001010101010101010101010101010101010101010000000000000000000000000101010101010101010101010101010101010101, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: DOSProxy
+Function name: signalBootstrap(uint256)
+PC address: 11965
+Estimated Gas Usage: 1980 - 2075
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1708
+
+if (block.number <= bootstrapEndBlk) {
+
+            emit LogMessage("wait-to-collect-more-entropy");
+
+            return;
+
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: signalBootstrap(uint256), txdata: 0x5c0e159f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: signalBootstrap(uint256)
+PC address: 12517
+Estimated Gas Usage: 18647 - 128828
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1730
+
+CommitRevealInterface(addressBridge.getCommitRevealAddress()).getRandom(_cid)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setBootstrapStartThreshold(uint256), txdata: 0x100063ec0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: signalBootstrap(uint256), txdata: 0x5c0e159f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: signalBootstrap(uint256)
+PC address: 12697
+Estimated Gas Usage: 18647 - 128828
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1740
+
+lastRandomness
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setBootstrapStartThreshold(uint256), txdata: 0x100063ec0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: signalBootstrap(uint256), txdata: 0x5c0e159f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: DOSProxy
+Function name: workingGroupIds(uint256)
+PC address: 13380
+Estimated Gas Usage: 1190 - 1285
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:584
+
+uint[] public workingGroupIds
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: workingGroupIds(uint256), txdata: 0x5d3812040000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: triggerCallback(uint256,uint8,bytes,uint256[2])
+PC address: 13945
+Estimated Gas Usage: 6493 - 76909
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:702
+
+DOSStakingInterface(addressBridge.getStakingAddress()).isValidStakingNode(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: triggerCallback(uint256,uint8,bytes,uint256[2]), txdata: 0x74ad3a0600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000060000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: DOSProxy
+Function name: getGroupPubKey(uint256)
+PC address: 17393
+Estimated Gas Usage: 1274 - 3861
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1916
+
+workingGroupIds[idx]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getGroupPubKey(uint256), txdata: 0x920216530000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 18242
+Estimated Gas Usage: 48320 - 291851
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:702
+
+DOSStakingInterface(addressBridge.getStakingAddress()).isValidStakingNode(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80080000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 18994
+Estimated Gas Usage: 48320 - 291851
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1964
+
+addressBridge.getStakingAddress()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: triggerCallback(uint256,uint8,bytes,uint256[2]), txdata: 0x74ad3a0600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006800000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: DOSProxy
+Function name: expiredWorkingGroupIds(uint256)
+PC address: 19254
+Estimated Gas Usage: 1145 - 1240
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:586
+
+uint[] public expiredWorkingGroupIds
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: expiredWorkingGroupIds(uint256), txdata: 0xb45ef79d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: query(address,uint256,string,string)
+PC address: 19657
+Estimated Gas Usage: 7157 - 83165
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:716
+
+DOSPaymentInterface(addressBridge.getPaymentAddress()).hasServiceFee(from, serviceType)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: query(address,uint256,string,string), txdata: 0xb7fb8fd70000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: registerGroupPubKey(uint256,uint256[4])
+PC address: 22255
+Estimated Gas Usage: 6192 - 76373
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:702
+
+DOSStakingInterface(addressBridge.getStakingAddress()).isValidStakingNode(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: registerGroupPubKey(uint256,uint256[4]), txdata: 0xb836ccea00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: DOSProxy
+Function name: signalRandom()
+PC address: 24221
+Estimated Gas Usage: 1850 - 1945
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1638
+
+if (lastUpdatedBlock + refreshSystemRandomHardLimit > block.number) {
+
+            emit LogMessage("sys-random-not-expired");
+
+            return;
+
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: signalRandom(), txdata: 0xb9424b35, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: signalRandom()
+PC address: 24793
+Estimated Gas Usage: 8599 - 79226
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1652
+
+DOSPaymentInterface(addressBridge.getPaymentAddress()).claimGuardianReward(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: signalRandom(), txdata: 0xb9424b35, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: requestRandom(address,uint256)
+PC address: 25517
+Estimated Gas Usage: 15982 - 108020
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:716
+
+DOSPaymentInterface(addressBridge.getPaymentAddress()).hasServiceFee(from, serviceType)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: requestRandom(address,uint256), txdata: 0xc7c3f4a500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28256
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1984
+
+groupSize
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28259
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1984
+
+numPendingNodes
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: signalRandom(), txdata: 0xb9424b35, value: 0x0
+Caller: [CREATOR], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28285
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1986
+
+bootstrapStartThreshold
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setGroupSize(uint256), txdata: 0x0dfc09cb0000000000000000000000000000000000800000000000000000000000000003, value: 0x0
+Caller: [SOMEGUY], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28302
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1988
+
+expiredWorkingGroupIds.length
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28438
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:2002
+
+groupSize
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setGroupSize(uint256), txdata: 0x0dfc09cb0000000000000000000000000000000000800000000000000000000000000003, value: 0x0
+Caller: [SOMEGUY], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28441
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:2002
+
+numPendingNodes
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28483
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:2004
+
+numPendingNodes
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: signalRandom(), txdata: 0xb9424b35, value: 0x0
+Caller: [CREATOR], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: DOSProxy
+Function name: registerNewNode()
+PC address: 28862
+Estimated Gas Usage: 48320 - 291851
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:2040
+
+bootstrapStartThreshold
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setGroupSize(uint256), txdata: 0x0dfc09cb0000000000000000000000000000000000800000000000000000000000000003, value: 0x0
+Caller: [SOMEGUY], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: DOSProxy
+Function name: signalBootstrap(uint256)
+PC address: 30638
+Estimated Gas Usage: 44825 - 235737
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:2160
+
+arr[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x24000000000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setBootstrapStartThreshold(uint256), txdata: 0x100063ec0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: signalBootstrap(uint256), txdata: 0x5c0e159f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: unregisterNode()
+PC address: 33491
+Estimated Gas Usage: 12390 - 153020
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1904
+
+addressBridge.getStakingAddress()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400800000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: registerNewNode(), txdata: 0xaeb3da73, value: 0x0
+Caller: [SOMEGUY], function: unregisterNode(), txdata: 0x3d385cf5, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DOSProxy
+Function name: signalUnregister(address)
+PC address: 33704
+Estimated Gas Usage: 10152 - 82389
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:1904
+
+DOSStakingInterface(addressBridge.getStakingAddress()).nodeStop(node)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addToGuardianList(address), txdata: 0xd79351b2000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: signalUnregister(address), txdata: 0x7c1cf0830000000000000000000000000101010001010101000101010101010101010100, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: DOSProxy
+Function name: requestRandom(address,uint256)
+PC address: 34973
+Estimated Gas Usage: 12193 - 102496
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol:982
+
+if (refreshSystemRandomHardLimit + lastUpdatedBlock <= block.number) {
+
+            kickoffRandom();
+
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: requestRandom(address,uint256), txdata: 0xc7c3f4a500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol
+Tool Runtime = 10894.150074779005 seconds
+#############################################

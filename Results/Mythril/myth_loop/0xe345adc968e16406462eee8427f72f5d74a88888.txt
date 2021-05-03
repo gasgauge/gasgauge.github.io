@@ -1,0 +1,70 @@
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: BFHZELGatewayV3
+Function name: withdrawEther()
+PC address: 5626
+Estimated Gas Usage: 2784 - 37585
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./contracts/m_loop/loop6/0xe345adc968e16406462eee8427f72f5d74a88888.sol:218
+
+msg.sender.transfer(address(this).balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40802000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0xba4ae11708e373a, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x1
+Caller: [CREATOR], function: addWithdrawer(address), txdata: 0x56788a8c000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawEther(), txdata: 0x7362377b, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: BFHZELGatewayV3
+Function name: getRandom(uint16,uint256,address)
+PC address: 6668
+Estimated Gas Usage: 2399 - 3343
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop6/0xe345adc968e16406462eee8427f72f5d74a88888.sol:489
+
+uint16(
+            bytes2(
+                keccak256(
+                    abi.encodePacked(
+                        blockhash(block.number-1),
+                        _sender,
+                        _nonce,
+                        salt
+                    )
+                )
+            )
+        ) % max
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: getRandom(uint16,uint256,address), txdata: 0xa93c34e5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xe345adc968e16406462eee8427f72f5d74a88888.sol
+Tool Runtime = 2400.650424038002 seconds
+#############################################

@@ -1,0 +1,327 @@
+Compilation warnings/errors on ./loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol:
+./loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol:518:25: Warning: Failure condition of 'send' ignored. Consider using 'transfer' instead.
+                        credits[i].creditor.send(payout);
+                        ^------------------------------^
+./loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol:534:25: Warning: Failure condition of 'send' ignored. Consider using 'transfer' instead.
+                        credits[i].creditor.send(payout);
+                        ^------------------------------^
+./loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol:646:17: Warning: Failure condition of 'send' ignored. Consider using 'transfer' instead.
+                deposits[i].depositor.send(deposits[i].payout);
+                ^--------------------------------------------^
+./loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol:682:13: Warning: Failure condition of 'send' ignored. Consider using 'transfer' instead.
+            deposits[lastDepId].depositor.send(val);
+            ^-------------------------------------^
+
+INFO:Detectors:[93m
+x2jpCredit.fallback() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#420-460) performs a multiplication on the result of a division:
+	-betsCount = msg.value.div(depositAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#424)
+	-weiAmount = depositAmount.mul(betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#426)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+x2jpCredit.getUserDeposit(address,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#744-764) uses a dangerous strict equality:
+	- deposits[depositors[depositor][depositNumber]].payoutTime == 0 && depositors[depositor][depositNumber] < currentPaymentIndex (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#748-750)
+x2jpCredit.payDeposits(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#624-662) uses a dangerous strict equality:
+	- deposits[i].paymentTime <= now && deposits[i].payoutTime == 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#642)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618) ignores return value by credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#518)
+x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618) ignores return value by credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#534)
+x2jpCredit.payDeposits(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#624-662) ignores return value by deposits[i].depositor.send(deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#646)
+x2jpCredit.payoutJackpot(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#668-704) ignores return value by deposits[lastDepId].depositor.send(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#682)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unchecked-send[0m
+INFO:Detectors:[93m
+x2jpCredit.getUserDeposit(address,uint256).nulled (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#746) is a local variable never initialized
+x2jpCredit.getLastTenPayments().counter (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#830) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618) has external calls inside a loop: credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#518)
+x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618) has external calls inside a loop: credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#534)
+x2jpCredit.payDeposits(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#624-662) has external calls inside a loop: deposits[i].depositor.send(deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#646)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618) uses timestamp for comparisons
+	Dangerous comparisons:
+	- paymentTime > lastPayoutTime (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#604)
+x2jpCredit.payDeposits(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#624-662) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < _iterations && address(this).balance.sub(jackpotAmount) >= deposits[i].payout (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#636)
+	- deposits[i].paymentTime <= now && deposits[i].payoutTime == 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#642)
+	- _iterations == 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#626)
+x2jpCredit.payoutJackpot(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#668-704) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deposits.length > 0 && lastPayoutTime + lastWinnerPeriod < now && jackpotAmount > 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#670)
+x2jpCredit.getUserDeposit(address,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#744-764) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deposits[depositors[depositor][depositNumber]].payoutTime == 0 && depositors[depositor][depositNumber] < currentPaymentIndex (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#748-750)
+x2jpCredit.getLastTenPayments() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#814-854) uses timestamp for comparisons
+	Dangerous comparisons:
+	- counter < 10 && currentPaymentIndex - i > 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#832)
+	- deposits[depositIndex].payoutTime != 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#836)
+x2jpCredit.getNextTenPayouts() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#858-880) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < 300 && currentPaymentIndex + i < deposits.length (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#866)
+x2jpCredit.getLastTenCreditPayments() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#884-918) uses timestamp for comparisons
+	Dangerous comparisons:
+	- i < 10 && creditPayouts.length - i > 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#902)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+x2jpCredit.bytesToAddress(bytes) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#1010-1018) uses assembly
+	- INLINE ASM (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#1012-1018)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Contract x2jpCredit (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#256-1028) is not in CapWords
+Parameter x2jpCredit.payDeposits(uint256)._iterations (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#624) is not in mixedCase
+Parameter x2jpCredit.getDeposit(uint256)._id (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#726) is not in mixedCase
+Parameter x2jpCredit.setLastWinnerPeriod(uint256)._interval (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#964) is not in mixedCase
+Parameter x2jpCredit.addJP(address)._creditor (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#976) is not in mixedCase
+Contract addJp (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#1034-1058) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in x2jpCredit.addJP(address) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#976-1002):
+	External calls:
+	- owner.transfer(op) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#982)
+	State variables written after the call(s):
+	- creditors[_creditor].push(credits.length - 1) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#994)
+	- credits.push(newCredit) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#990)
+	- jackpotAmount = jackpotAmount.add(msg.value.sub(op)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#986)
+	Event emitted after the call(s):
+	- OnCreditReceived(_creditor,msg.value) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#996)
+Reentrancy in x2jpCredit.fallback() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#420-460):
+	External calls:
+	- msg.sender.transfer(_diff) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#434)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- deposits[lastDepId].depositor.send(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#682)
+		- owner.transfer(address(this).balance - weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#688)
+	State variables written after the call(s):
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- currentPaymentIndex = deposits.length (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#686)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- deposits[lastDepId].payoutTime = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#678)
+		- deposits[lastDepId].payout = val (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#680)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- jackpotAmount = 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#674)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- lastDepId = 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#698)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- lastJack.winner = deposits[lastDepId].depositor (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#692)
+		- lastJack.amount = val (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#694)
+		- lastJack.time = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#696)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- paused = true (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#700)
+	Event emitted after the call(s):
+	- OnPaymentSent(deposits[lastDepId].depositor,val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#684)
+		- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+Reentrancy in x2jpCredit.fallback() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#420-460):
+	External calls:
+	- msg.sender.transfer(_diff) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#434)
+	- payoutJackpot(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#440)
+		- deposits[lastDepId].depositor.send(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#682)
+		- owner.transfer(address(this).balance - weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#688)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+		- deposits[i].depositor.send(deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#646)
+		- userReferral[msg.sender].transfer(weiAmount.mul(5).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#490)
+		- credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#518)
+		- credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#534)
+	State variables written after the call(s):
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- amountRaised = amountRaised.add(weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#476)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- creditPayouts.push(newCreditPayout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#524)
+		- creditPayouts.push(newCreditPayout_scope_0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#540)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- credits[i].paid = credits[i].paid.add(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#520)
+		- credits[i].paid = credits[i].paid.add(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#536)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- currentCreditIndex += 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#548)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- currentPaymentIndex += 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#658)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- depositors[msg.sender].push(deposits.length - 1) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#598)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- deposits[i].payoutTime = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#644)
+		- deposits.push(newDeposit) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#596)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- jackpotAmount = jackpotAmount.add(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#566)
+		- jackpotAmount = jackpotAmount.add(jpVal) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#578)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- lastDepId = deposits.length - 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#608)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- lastPayoutTime = paymentTime (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#606)
+	- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+		- userReferral[msg.sender] = referrer (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#484)
+	Event emitted after the call(s):
+	- OnCreditPaid(credits[i].creditor,payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#554)
+		- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+	- OnDepositReceived(msg.sender,depositAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#600)
+		- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+	- OnJackpotAdd(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#568)
+		- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+	- OnJackpotAdd(jpVal) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#580)
+		- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+	- OnPaymentSent(deposits[i].depositor,deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#648)
+		- makeDeposit(weiAmount,betsCount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#444)
+Reentrancy in x2jpCredit.fallback() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#420-460):
+	External calls:
+	- payDeposits(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#454)
+		- deposits[i].depositor.send(deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#646)
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- deposits[lastDepId].depositor.send(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#682)
+		- owner.transfer(address(this).balance - weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#688)
+	State variables written after the call(s):
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- currentPaymentIndex = deposits.length (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#686)
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- deposits[lastDepId].payoutTime = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#678)
+		- deposits[lastDepId].payout = val (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#680)
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- jackpotAmount = 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#674)
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- lastDepId = 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#698)
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- lastJack.winner = deposits[lastDepId].depositor (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#692)
+		- lastJack.amount = val (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#694)
+		- lastJack.time = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#696)
+	- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+		- paused = true (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#700)
+	Event emitted after the call(s):
+	- OnPaymentSent(deposits[lastDepId].depositor,val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#684)
+		- payoutJackpot(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#456)
+Reentrancy in x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618):
+	External calls:
+	- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+	State variables written after the call(s):
+	- userReferral[msg.sender] = referrer (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#484)
+Reentrancy in x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618):
+	External calls:
+	- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+	- userReferral[msg.sender].transfer(weiAmount.mul(5).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#490)
+	- credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#518)
+	State variables written after the call(s):
+	- creditPayouts.push(newCreditPayout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#524)
+	- credits[i].paid = credits[i].paid.add(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#520)
+Reentrancy in x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618):
+	External calls:
+	- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+	- userReferral[msg.sender].transfer(weiAmount.mul(5).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#490)
+	- credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#534)
+	State variables written after the call(s):
+	- creditPayouts.push(newCreditPayout_scope_0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#540)
+	- credits[i].paid = credits[i].paid.add(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#536)
+Reentrancy in x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618):
+	External calls:
+	- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+	- userReferral[msg.sender].transfer(weiAmount.mul(5).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#490)
+	- credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#518)
+	- credits[i].creditor.send(payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#534)
+	State variables written after the call(s):
+	- currentCreditIndex += 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#548)
+	Event emitted after the call(s):
+	- OnCreditPaid(credits[i].creditor,payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#554)
+Reentrancy in x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618):
+	External calls:
+	- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+	- userReferral[msg.sender].transfer(weiAmount.mul(5).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#490)
+	State variables written after the call(s):
+	- depositors[msg.sender].push(deposits.length - 1) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#598)
+	- deposits.push(newDeposit) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#596)
+	- jackpotAmount = jackpotAmount.add(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#566)
+	- jackpotAmount = jackpotAmount.add(jpVal) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#578)
+	- lastDepId = deposits.length - 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#608)
+	- lastPayoutTime = paymentTime (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#606)
+	Event emitted after the call(s):
+	- OnDepositReceived(msg.sender,depositAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#600)
+	- OnJackpotAdd(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#568)
+	- OnJackpotAdd(jpVal) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#580)
+Reentrancy in x2jpCredit.makeDeposit(uint256,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#466-618):
+	External calls:
+	- owner.transfer(weiAmount.mul(ownerPercent).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#478)
+	- userReferral[msg.sender].transfer(weiAmount.mul(5).div(100)) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#490)
+	- payDeposits(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#616)
+		- deposits[i].depositor.send(deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#646)
+	State variables written after the call(s):
+	- payDeposits(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#616)
+		- currentPaymentIndex += 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#658)
+	- payDeposits(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#616)
+		- deposits[i].payoutTime = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#644)
+	Event emitted after the call(s):
+	- OnPaymentSent(deposits[i].depositor,deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#648)
+		- payDeposits(0) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#616)
+Reentrancy in x2jpCredit.payDeposits(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#624-662):
+	External calls:
+	- deposits[i].depositor.send(deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#646)
+	State variables written after the call(s):
+	- currentPaymentIndex += 1 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#658)
+	Event emitted after the call(s):
+	- OnPaymentSent(deposits[i].depositor,deposits[i].payout) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#648)
+Reentrancy in x2jpCredit.payoutJackpot(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#668-704):
+	External calls:
+	- deposits[lastDepId].depositor.send(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#682)
+	State variables written after the call(s):
+	- currentPaymentIndex = deposits.length (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#686)
+	Event emitted after the call(s):
+	- OnPaymentSent(deposits[lastDepId].depositor,val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#684)
+Reentrancy in x2jpCredit.payoutJackpot(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#668-704):
+	External calls:
+	- deposits[lastDepId].depositor.send(val) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#682)
+	- owner.transfer(address(this).balance - weiAmount) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#688)
+	State variables written after the call(s):
+	- lastDepId = 0 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#698)
+	- lastJack.winner = deposits[lastDepId].depositor (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#692)
+	- lastJack.amount = val (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#694)
+	- lastJack.time = now (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#696)
+	- paused = true (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#700)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+x2jpCredit.constructor() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#396-414) uses literals with too many digits:
+	- depositAmount = 10000000000000000 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#398)
+x2jpCredit.constructor() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#396-414) uses literals with too many digits:
+	- minCreditAmount = 10000000000000000 (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#400)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#224-228)
+getDepositsCount() should be declared external:
+	- x2jpCredit.getDepositsCount() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#710-714)
+lastDepositId() should be declared external:
+	- x2jpCredit.lastDepositId() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#718-722)
+getDeposit(uint256) should be declared external:
+	- x2jpCredit.getDeposit(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#726-732)
+getUserDepositsCount(address) should be declared external:
+	- x2jpCredit.getUserDepositsCount(address) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#736-740)
+getUserDeposit(address,uint256) should be declared external:
+	- x2jpCredit.getUserDeposit(address,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#744-764)
+getUserCreditsCount(address) should be declared external:
+	- x2jpCredit.getUserCreditsCount(address) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#770-774)
+getUserCredit(address,uint256) should be declared external:
+	- x2jpCredit.getUserCredit(address,uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#778-786)
+getPayment(uint256) should be declared external:
+	- x2jpCredit.getPayment(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#792-808)
+getLastTenPayments() should be declared external:
+	- x2jpCredit.getLastTenPayments() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#814-854)
+getNextTenPayouts() should be declared external:
+	- x2jpCredit.getNextTenPayouts() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#858-880)
+getLastTenCreditPayments() should be declared external:
+	- x2jpCredit.getLastTenCreditPayments() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#884-918)
+getNextTenCreditPayouts() should be declared external:
+	- x2jpCredit.getNextTenCreditPayouts() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#922-948)
+getLastJack() should be declared external:
+	- x2jpCredit.getLastJack() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#954-958)
+setLastWinnerPeriod(uint256) should be declared external:
+	- x2jpCredit.setLastWinnerPeriod(uint256) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#964-970)
+addJP(address) should be declared external:
+	- x2jpCredit.addJP(address) (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#976-1002)
+start() should be declared external:
+	- x2jpCredit.start() (loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol#1022-1026)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol analyzed (4 contracts with 46 detectors), 60 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xdc3feadcaf7368b42a86129ff0b2c2eda24156ff.sol
+Tool Runtime = 1.244630805002089 seconds
+#############################################

@@ -1,0 +1,173 @@
+Compilation warnings/errors on ./noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol:
+./noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol:448:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+YFUGovernance.notifyRewardAmount(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#951-966) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#957)
+	-leftover = remaining.mul(rewardRate) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#960)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+YFUGovernance.execute(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#741-749) uses a dangerous strict equality:
+	- proposals[id].open == true (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#745)
+YFUGovernance.tallyVotes(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#764-775) uses a dangerous strict equality:
+	- require(bool,string)(proposals[id].open == true,!open) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#765)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in YFUGovernance.exit() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#934-937):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#935)
+		- vote.safeTransfer(msg.sender,amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#625)
+		- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+	- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+		- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+		- token.safeTransfer(msg.sender,reward) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#946)
+	State variables written after the call(s):
+	- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#876)
+	- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#875)
+	- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+		- rewards[account] = earned(account) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#878)
+		- rewards[msg.sender] = 0 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#945)
+	- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#879)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+YFUGovernance.voteFor(uint256).vote (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#820) shadows:
+	- LPTokenWrapper.vote (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#603) (state variable)
+YFUGovernance.voteAgainst(uint256).vote (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#843) shadows:
+	- LPTokenWrapper.vote (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#603) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in YFUGovernance.exit() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#934-937):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#935)
+		- vote.safeTransfer(msg.sender,amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#625)
+		- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+	- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+		- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+		- token.safeTransfer(msg.sender,reward) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#946)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#947)
+		- getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#936)
+Reentrancy in YFUGovernance.getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#939-949):
+	External calls:
+	- token.safeTransfer(msg.sender,reward) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#946)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#947)
+Reentrancy in YFUGovernance.stake(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#911-919):
+	External calls:
+	- super.stake(amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#917)
+		- vote.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#619)
+		- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#918)
+Reentrancy in YFUGovernance.withdraw(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#921-932):
+	External calls:
+	- super.withdraw(amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#930)
+		- vote.safeTransfer(msg.sender,amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#625)
+		- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#931)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YFUGovernance.getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#939-949) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#944)
+YFUGovernance.notifyRewardAmount(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#951-966) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#956)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#437-450) uses assembly
+	- INLINE ASM (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#448-449)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+YFUGovernance.initialize(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#710-715) compares to a boolean constant:
+	-require(bool,string)(config == true,!config) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#711)
+YFUGovernance.execute(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#741-749) compares to a boolean constant:
+	-proposals[id].open == true (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#745)
+YFUGovernance.tallyVotes(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#764-775) compares to a boolean constant:
+	-require(bool,string)(proposals[id].open == true,!open) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#765)
+YFUGovernance.register() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#786-792) compares to a boolean constant:
+	-require(bool,string)(voters[msg.sender] == false,voter) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#787)
+YFUGovernance.revoke() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#795-806) compares to a boolean constant:
+	-require(bool,string)(voters[msg.sender] == true,!voter) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#796)
+YFUGovernance.stake(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#911-919) compares to a boolean constant:
+	-voters[msg.sender] == true (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#913)
+YFUGovernance.withdraw(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#921-932) compares to a boolean constant:
+	-voters[msg.sender] == true (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#923)
+YFUGovernance.withdraw(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#921-932) compares to a boolean constant:
+	-breaker == false (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#927)
+YFUGovernance.getReward() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#939-949) compares to a boolean constant:
+	-breaker == false (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#940)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#42) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#74) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#263) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#341) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#420) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#491) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#568) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#592) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#480-486):
+	- (success) = recipient.call.value(amount)() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#484)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#544-563):
+	- (success,returndata) = address(token).call(data) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#556)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#582) is not in mixedCase
+Parameter YFUGovernance.seize(IERC20,uint256)._token (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#637) is not in mixedCase
+Parameter YFUGovernance.setBreaker(bool)._breaker (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#648) is not in mixedCase
+Parameter YFUGovernance.setGovernance(address)._governance (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#685) is not in mixedCase
+Parameter YFUGovernance.setQuorum(uint256)._quorum (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#690) is not in mixedCase
+Parameter YFUGovernance.setMinimum(uint256)._minimum (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#695) is not in mixedCase
+Parameter YFUGovernance.setPeriod(uint256)._period (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#700) is not in mixedCase
+Parameter YFUGovernance.setLock(uint256)._lock (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#705) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#290-292)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#316-319)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#325-327)
+setGovernance(address) should be declared external:
+	- YFUGovernance.setGovernance(address) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#685-688)
+setQuorum(uint256) should be declared external:
+	- YFUGovernance.setQuorum(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#690-693)
+setMinimum(uint256) should be declared external:
+	- YFUGovernance.setMinimum(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#695-698)
+setPeriod(uint256) should be declared external:
+	- YFUGovernance.setPeriod(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#700-703)
+setLock(uint256) should be declared external:
+	- YFUGovernance.setLock(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#705-708)
+initialize(uint256) should be declared external:
+	- YFUGovernance.initialize(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#710-715)
+propose(address,string) should be declared external:
+	- YFUGovernance.propose(address,string) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#720-739)
+execute(uint256) should be declared external:
+	- YFUGovernance.execute(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#741-749)
+register() should be declared external:
+	- YFUGovernance.register() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#786-792)
+revoke() should be declared external:
+	- YFUGovernance.revoke() (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#795-806)
+voteFor(uint256) should be declared external:
+	- YFUGovernance.voteFor(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#810-831)
+voteAgainst(uint256) should be declared external:
+	- YFUGovernance.voteAgainst(uint256) (noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol#833-854)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol analyzed (11 contracts with 46 detectors), 57 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x44cAef2f3917F1c337Fc2f5295C71bec26e4Df30.sol
+Tool Runtime = 1.6315496339993842 seconds
+#############################################

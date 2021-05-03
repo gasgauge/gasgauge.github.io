@@ -1,0 +1,41 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: CriptoRo
+Function name: claimVestingBenefits(address)
+PC address: 8005
+Estimated Gas Usage: 5252 - 7413
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0xb3ab2b676a1efdb16a227e151dc31f5bd3856744.sol:167
+
+if(daysPassed >= fifteen_month) {
+            incentive = (bal * 25 * (4-term) / 100);
+        }else if(daysPassed >= twelve_month) {
+            incentive = (bal * 25 * (3-term) / 100);
+        }else if(daysPassed >= nine_month) {
+            incentive = (bal * 25 * (2-term) / 100);
+        }else if(daysPassed >= six_month) {
+            incentive = (bal * 25 * (1-term) / 100);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: vestCollaboratorToken(address,uint256), txdata: 0x01538f3500000000000000000000000000000000810000000000008001000100000800000000000000000000000000000000000000000000000000000000000000080000, value: 0x0
+Caller: [SOMEGUY], function: claimVestingBenefits(address), txdata: 0xa079554f0101010101010101010101010000000081000000000000800100010000080000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xb3ab2b676a1efdb16a227e151dc31f5bd3856744.sol
+Tool Runtime = 1519.331141155999 seconds
+#############################################

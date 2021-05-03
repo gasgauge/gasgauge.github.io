@@ -1,0 +1,811 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: WDXStacking
+Function name: getUSDT()
+PC address: 2652
+Estimated Gas Usage: 6857 - 77305
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:237
+
+usdtTokenContract.balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0808080808080808080808080000000000000000000000000000000000000000080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: getUSDT(), txdata: 0x581592f1, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: WDXStacking
+Function name: getUSDT()
+PC address: 2844
+Estimated Gas Usage: 6857 - 77305
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:237
+
+usdtTokenContract.transfer(owner, usdtTokenContract.balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: getUSDT(), txdata: 0x581592f1, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 3559
+Estimated Gas Usage: 13279 - 76896
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:150
+
+statuses[status].price - statuses[stakes[address(msg.sender)].status].price
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e272000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e272808080808080808080808080808080808080808080808080808080808080801000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 3721
+Estimated Gas Usage: 16688 - 115945
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:155
+
+usdtTokenContract
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080800000000000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 3990
+Estimated Gas Usage: 16688 - 115945
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:155
+
+usdtTokenContract.transferFrom(msg.sender, address(referrals[i]), amount_to_send)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfd0000000000000000000000000000000000000000fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: sendToStaking(uint256), txdata: 0xfd662e191e010201000101802000000000400001c2b32302aaaab2e304c20caab32cd04d, value: 0x0
+Caller: [CREATOR], function: buyStatus(uint8,address[]), txdata: 0xfa10e272fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd2000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 3990
+Estimated Gas Usage: 16688 - 115945
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:155
+
+usdtTokenContract.transferFrom(msg.sender, address(referrals[i]), amount_to_send)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 3990
+Estimated Gas Usage: 16688 - 115945
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:155
+
+usdtTokenContract.transferFrom(msg.sender, address(referrals[i]), amount_to_send)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080800000000000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 4292
+Estimated Gas Usage: 13279 - 76896
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:159
+
+usdtTokenContract.transferFrom(msg.sender, address(this), residue)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000200c00000028, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 1010101010101010101010100000000000000000000000000000000000000000101010101010101010101010deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: buyStatus(uint8,address[]), txdata: 0xfa10e2720000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: buyStatus(uint8,address[]), txdata: 0xfa10e272000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 4389
+Estimated Gas Usage: 16688 - 115945
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:161
+
+stakes[address(msg.sender)].status = status
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080800000000000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: buyStatus(uint8,address[])
+PC address: 4404
+Estimated Gas Usage: 13279 - 76896
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:161
+
+stakes[address(msg.sender)].status = status
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8080808080808080808080800000000000000000000000000000000000000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: buyStatus(uint8,address[]), txdata: 0xfa10e272000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5182
+Estimated Gas Usage: 53746 - 307301
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:172
+
+tokenContract.transferFrom(msg.sender, address(this), numberOfTokens)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 202020202020202020202020deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62ed3e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeff, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5182
+Estimated Gas Usage: 53746 - 307301
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:172
+
+tokenContract.transferFrom(msg.sender, address(this), numberOfTokens)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sendToStaking(uint256), txdata: 0xfd662e191d62ed3e000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5606
+Estimated Gas Usage: 53746 - 307301
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:189
+
+stakes[address(msg.sender)].status
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5695
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5705
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5715
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5725
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5735
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5745
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5755
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5765
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5783
+Estimated Gas Usage: 53746 - 307301
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 101010101010101010101010deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: buyStatus(uint8,address[]), txdata: 0xfa10e27200000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62ed3e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeff, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5798
+Estimated Gas Usage: 53746 - 307301
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:178
+
+stakes[address(msg.sender)] = Stake(
+            now, //start_time
+            numberOfTokens, //amount
+
+            now, //week_starts_at
+            0, //week_withdrawal_amount
+            now, //last_withdrawal_time
+
+            now, //last_compute_time
+            0, //last_percent
+            0, //pure_profit
+            stakes[address(msg.sender)].status //status
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x104, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e191d62f13e000000000000000000000000deadbeefdeadbeefdeadbeefdeadbefe, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 5883
+Estimated Gas Usage: 53746 - 307301
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:89
+
+stakes[address(msg.sender)].amount
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x409401201, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e198040042080808080808080808080808080808000808004808080808080808001, value: 0x0
+Caller: [CREATOR], function: sendToStaking(uint256), txdata: 0xfd662e191d62ed3e000000000000000000000000ffffbfffffffbfffffffbfffffffbfff, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: WDXStacking
+Function name: sendToStaking(uint256)
+PC address: 6025
+Estimated Gas Usage: 53746 - 307301
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:91
+
+stakes[address(msg.sender)].last_compute_time
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x409401201, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendToStaking(uint256), txdata: 0xfd662e198040042080808080808080808080808080808000808004808080808080808001, value: 0x0
+Caller: [CREATOR], function: sendToStaking(uint256), txdata: 0xfd662e191d62ed3e000000000000000000000000ffffbfffffffbfffffffbfffffffbfff, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: WDXStacking
+Function name: getFromStaking(uint256)
+PC address: 7631
+Estimated Gas Usage: 4125 - 4980
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops10/0xef47223f77d726826c866f56e3a6000914289702.sol:84
+
+assert(a == b * c + a % b)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1180000000033, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sendToStaking(uint256), txdata: 0xfd662e190101113e01010000000000000100000172afbeeffeafbeeffeafbeeffeafbefa, value: 0x0
+Caller: [SOMEGUY], function: getFromStaking(uint256), txdata: 0x439347890101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xef47223f77d726826c866f56e3a6000914289702.sol
+Tool Runtime = 4017.6178657400014 seconds
+#############################################

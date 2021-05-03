@@ -1,0 +1,448 @@
+Compilation warnings/errors on ./loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol:
+./loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol:552:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+ERC20.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1567) shadows:
+	- Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033)
+ERC20Detailed.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1686) shadows:
+	- Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033)
+MinterRole.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1868) shadows:
+	- Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033)
+ERC20Mintable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1935) shadows:
+	- MinterRole.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1868)
+	- ERC20.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1567)
+	- Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033)
+ERC20Burnable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2000) shadows:
+	- ERC20.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1567)
+	- Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033)
+Ownable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2182) shadows:
+	- Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+Reentrancy in VaultProtocol.operatorActionOneCoin(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892-3988):
+	External calls:
+	- processOnHoldDeposit(ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3910)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[coinNum],balancesOnHold[_user][coinNum])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4354)
+	- IERC20(_token).safeApprove(address(_strategy),totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3952)
+	- IDefiStrategy(_strategy).handleDeposit(_token,totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3962)
+	- IDefiStrategy(_strategy).withdraw(address(this),_token,totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3972)
+	State variables written after the call(s):
+	- claimableTokens[ind] = claimableTokens[ind].add(totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3978)
+Reentrancy in VaultProtocol.processOnHoldDeposit() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4292-4330):
+	External calls:
+	- vaultSavings = IVaultSavings(getModuleAddress(MODULE_VAULT)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4294)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+	- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[j],balancesOnHold[_user][j])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4314)
+	State variables written after the call(s):
+	- balancesOnHold[_user][j] = 0 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4316)
+Reentrancy in VaultProtocol.processOnHoldDeposit(uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4334-4366):
+	External calls:
+	- vaultSavings = IVaultSavings(getModuleAddress(MODULE_VAULT)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4338)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+	- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[coinNum],balancesOnHold[_user][coinNum])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4354)
+	State variables written after the call(s):
+	- balancesOnHold[_user][coinNum] = 0 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4356)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+VaultProtocol.requestToClaim(address,uint256).amountToWithdraw (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4420) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+ERC20Detailed.initialize(string,string,uint8).name (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1612) shadows:
+	- ERC20Detailed.name() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1630-1634) (function)
+ERC20Detailed.initialize(string,string,uint8).symbol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1612) shadows:
+	- ERC20Detailed.symbol() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1646-1650) (function)
+ERC20Detailed.initialize(string,string,uint8).decimals (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1612) shadows:
+	- ERC20Detailed.decimals() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1678-1682) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+VaultProtocol.operatorAction(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774-3888) has external calls inside a loop: depositAmounts[i_scope_0] = IERC20(registeredVaultTokens[i_scope_0]).balanceOf(address(this)).sub(claimableTokens[i_scope_0]) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3836)
+VaultProtocol.normalizedBalance() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4064-4076) has external calls inside a loop: total = total.add(IDefiStrategy(strategies[i]).normalizedBalance()) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4070)
+VaultProtocol.normalizedVaultBalance() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4080-4094) has external calls inside a loop: balance = IERC20(registeredVaultTokens[i]).balanceOf(address(this)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4086)
+VaultProtocol.processOnHoldDeposit() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4292-4330) has external calls inside a loop: vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[j],balancesOnHold[_user][j])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4314)
+VaultProtocol.processOnHoldDeposit(uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4334-4366) has external calls inside a loop: vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[coinNum],balancesOnHold[_user][coinNum])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4354)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in VaultProtocol.claimRequested(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3738-3764):
+	External calls:
+	- IERC20(token).safeTransfer(_user,amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3752)
+	State variables written after the call(s):
+	- claimableTokens[i] = claimableTokens[i].sub(amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3754)
+Reentrancy in VaultProtocol.operatorAction(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774-3888):
+	External calls:
+	- processOnHoldDeposit() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3784)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[j],balancesOnHold[_user][j])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4314)
+	State variables written after the call(s):
+	- amountToWithdraw = requestToClaim(_user,j) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3806)
+		- balancesRequested[_user][_ind] = 0 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4464)
+	- amountToWithdraw = requestToClaim(_user,j) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3806)
+		- balancesToClaim[_user] = new uint256[](supportedTokensCount()) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4404)
+		- balancesToClaim[_user][ind] = balancesToClaim[_user][ind].add(_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4408)
+	- amountToWithdraw = requestToClaim(_user,j) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3806)
+		- claimableTokens[_ind] = claimableTokens[_ind].add(amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4440)
+		- claimableTokens[_ind] = claimableTokens[_ind].add(tokenBalance) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4448)
+Reentrancy in VaultProtocol.operatorAction(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774-3888):
+	External calls:
+	- processOnHoldDeposit() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3784)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[j],balancesOnHold[_user][j])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4314)
+	- IDefiStrategy(_strategy).handleDeposit(registeredVaultTokens,depositAmounts) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3860)
+	- IDefiStrategy(_strategy).withdraw(address(this),withdrawAmounts) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3870)
+	State variables written after the call(s):
+	- claimableTokens[i_scope_1] = claimableTokens[i_scope_1].add(withdrawAmounts[i_scope_1]) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3878)
+Reentrancy in VaultProtocol.operatorActionOneCoin(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892-3988):
+	External calls:
+	- processOnHoldDeposit(ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3910)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[coinNum],balancesOnHold[_user][coinNum])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4354)
+	State variables written after the call(s):
+	- amountToWithdraw = requestToClaim(_user,ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3928)
+		- balancesRequested[_user][_ind] = 0 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4464)
+	- amountToWithdraw = requestToClaim(_user,ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3928)
+		- balancesToClaim[_user] = new uint256[](supportedTokensCount()) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4404)
+		- balancesToClaim[_user][ind] = balancesToClaim[_user][ind].add(_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4408)
+	- amountToWithdraw = requestToClaim(_user,ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3928)
+		- claimableTokens[_ind] = claimableTokens[_ind].add(amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4440)
+		- claimableTokens[_ind] = claimableTokens[_ind].add(tokenBalance) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4448)
+	- lastProcessedRequests[ind] = usersRequested.length (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3940)
+Reentrancy in VaultProtocol.processOnHoldDeposit(uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4334-4366):
+	External calls:
+	- vaultSavings = IVaultSavings(getModuleAddress(MODULE_VAULT)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4338)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+	State variables written after the call(s):
+	- lastProcessedDeposits[coinNum] = usersDeposited.length (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4364)
+Reentrancy in VaultProtocol.withdrawFromVault(address,address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3632-3690):
+	External calls:
+	- IERC20(_token).safeTransfer(_user,_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3660)
+	State variables written after the call(s):
+	- decreaseOnHoldDeposit(_user,_token,_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3668)
+		- balancesOnHold[_user][ind] = balancesOnHold[_user][ind].sub(_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4380)
+		- balancesOnHold[_user][ind] = 0 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4386)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in VaultProtocol.claimRequested(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3738-3764):
+	External calls:
+	- IERC20(token).safeTransfer(_user,amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3752)
+	Event emitted after the call(s):
+	- Claimed(address(this),_user,token,amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3756)
+Reentrancy in VaultProtocol.depositToVault(address,address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3562-3610):
+	External calls:
+	- vaultSavings = IVaultSavings(getModuleAddress(MODULE_VAULT)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3600)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+	- IOperableToken(vaultPoolToken).increaseOnHoldValue(_user,CalcUtils.normalizeAmount(_token,_amount)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3604)
+	Event emitted after the call(s):
+	- DepositToVault(_user,_token,_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3608)
+Reentrancy in VaultProtocol.operatorAction(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774-3888):
+	External calls:
+	- processOnHoldDeposit() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3784)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[j],balancesOnHold[_user][j])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4314)
+	- IDefiStrategy(_strategy).handleDeposit(registeredVaultTokens,depositAmounts) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3860)
+	Event emitted after the call(s):
+	- DepositByOperator(totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3862)
+Reentrancy in VaultProtocol.operatorAction(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774-3888):
+	External calls:
+	- processOnHoldDeposit() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3784)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[j],balancesOnHold[_user][j])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4314)
+	- IDefiStrategy(_strategy).handleDeposit(registeredVaultTokens,depositAmounts) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3860)
+	- IDefiStrategy(_strategy).withdraw(address(this),withdrawAmounts) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3870)
+	Event emitted after the call(s):
+	- WithdrawByOperator(totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3872)
+	- WithdrawRequestsResolved(totalDeposit,totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3884)
+Reentrancy in VaultProtocol.operatorActionOneCoin(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892-3988):
+	External calls:
+	- processOnHoldDeposit(ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3910)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[coinNum],balancesOnHold[_user][coinNum])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4354)
+	- IERC20(_token).safeApprove(address(_strategy),totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3952)
+	- IDefiStrategy(_strategy).handleDeposit(_token,totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3962)
+	Event emitted after the call(s):
+	- DepositByOperator(totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3964)
+Reentrancy in VaultProtocol.operatorActionOneCoin(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892-3988):
+	External calls:
+	- processOnHoldDeposit(ind) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3910)
+		- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+		- vaultPoolToken.decreaseOnHoldValue(_user,CalcUtils.normalizeAmount(registeredVaultTokens[coinNum],balancesOnHold[_user][coinNum])) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4354)
+	- IERC20(_token).safeApprove(address(_strategy),totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3952)
+	- IDefiStrategy(_strategy).handleDeposit(_token,totalDeposit) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3962)
+	- IDefiStrategy(_strategy).withdraw(address(this),_token,totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3972)
+	Event emitted after the call(s):
+	- WithdrawByOperator(totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3974)
+	- WithdrawRequestsResolved(totalDeposit,totalWithdraw) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3982)
+Reentrancy in VaultProtocol.registerStrategy(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3514-3524):
+	External calls:
+	- IDefiStrategy(_strategy).setVault(address(this)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3518)
+	Event emitted after the call(s):
+	- StrategyRegistered(address(this),_strategy,IDefiStrategy(_strategy).getStrategyId()) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3522)
+Reentrancy in VaultProtocol.withdrawFromVault(address,address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3632-3690):
+	External calls:
+	- IERC20(_token).safeTransfer(_user,_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3660)
+	Event emitted after the call(s):
+	- WithdrawFromVault(_user,_token,_amount) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3664)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+DistributionToken.isReadyForDistribution() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2814-2818) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (distributionAccumulator > 0) && (now >= nextDistributionTimestamp) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2816)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#538-556) uses assembly
+	- INLINE ASM (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#552-554)
+Initializable.isConstructor() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1007-1027) uses assembly
+	- INLINE ASM (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1023-1025)
+Module.getModuleAddress(string) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2331-2359) uses assembly
+	- INLINE ASM (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2341-2349)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#14) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#173) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#492) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#639) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#794) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#913) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1044) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1107) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1578) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1697) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1776) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1879) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1946) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2011) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2028) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2193) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2232) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2287) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2372) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2829) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2952) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2973) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3108) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3171) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3228) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3329) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3396) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#616-628):
+	- (success) = recipient.call.value(amount)() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#624)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#745-783):
+	- (success,returndata) = address(token).call(data) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#769)
+Low level call in Module.getModuleAddress(string) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2331-2359):
+	- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2335)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033) is not in mixedCase
+Variable ERC20.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1567) is not in mixedCase
+Variable ERC20Detailed.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1686) is not in mixedCase
+Variable MinterRole.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1868) is not in mixedCase
+Variable ERC20Mintable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1935) is not in mixedCase
+Variable ERC20Burnable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2000) is not in mixedCase
+Variable Ownable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2182) is not in mixedCase
+Parameter Module.initialize(address)._pool (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2309) is not in mixedCase
+Parameter Module.setPool(address)._pool (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2319) is not in mixedCase
+Parameter PoolToken.initialize(address,string,string)._pool (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2855) is not in mixedCase
+Parameter PoolToken.setAllowTransfers(bool)._allowTransfers (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2867) is not in mixedCase
+Parameter VaultPoolToken.increaseOnHoldValue(address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3013) is not in mixedCase
+Parameter VaultPoolToken.increaseOnHoldValue(address,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3013) is not in mixedCase
+Parameter VaultPoolToken.decreaseOnHoldValue(address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3023) is not in mixedCase
+Parameter VaultPoolToken.decreaseOnHoldValue(address,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3023) is not in mixedCase
+Parameter VaultPoolToken.onHoldBalanceOf(address)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3051) is not in mixedCase
+Parameter VaultProtocol.initialize(address,address[])._pool (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3478) is not in mixedCase
+Parameter VaultProtocol.registerStrategy(address)._strategy (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3514) is not in mixedCase
+Parameter VaultProtocol.setQuickWithdrawStrategy(address)._strategy (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3528) is not in mixedCase
+Parameter VaultProtocol.setRemainder(uint256,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3538) is not in mixedCase
+Parameter VaultProtocol.setRemainder(uint256,uint256)._index (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3538) is not in mixedCase
+Parameter VaultProtocol.depositToVault(address,address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3562) is not in mixedCase
+Parameter VaultProtocol.depositToVault(address,address,uint256)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3562) is not in mixedCase
+Parameter VaultProtocol.depositToVault(address,address,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3562) is not in mixedCase
+Parameter VaultProtocol.depositToVault(address,address[],uint256[])._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3614) is not in mixedCase
+Parameter VaultProtocol.depositToVault(address,address[],uint256[])._tokens (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3614) is not in mixedCase
+Parameter VaultProtocol.depositToVault(address,address[],uint256[])._amounts (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3614) is not in mixedCase
+Parameter VaultProtocol.withdrawFromVault(address,address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3632) is not in mixedCase
+Parameter VaultProtocol.withdrawFromVault(address,address,uint256)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3632) is not in mixedCase
+Parameter VaultProtocol.withdrawFromVault(address,address,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3632) is not in mixedCase
+Parameter VaultProtocol.withdrawFromVault(address,address[],uint256[])._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3694) is not in mixedCase
+Parameter VaultProtocol.withdrawFromVault(address,address[],uint256[])._tokens (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3694) is not in mixedCase
+Parameter VaultProtocol.withdrawFromVault(address,address[],uint256[])._amounts (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3694) is not in mixedCase
+Parameter VaultProtocol.quickWithdraw(address,address[],uint256[])._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3712) is not in mixedCase
+Parameter VaultProtocol.quickWithdraw(address,address[],uint256[])._tokens (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3712) is not in mixedCase
+Parameter VaultProtocol.quickWithdraw(address,address[],uint256[])._amounts (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3712) is not in mixedCase
+Parameter VaultProtocol.claimRequested(address)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3738) is not in mixedCase
+Parameter VaultProtocol.operatorAction(address)._strategy (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774) is not in mixedCase
+Parameter VaultProtocol.operatorActionOneCoin(address,address)._strategy (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892) is not in mixedCase
+Parameter VaultProtocol.operatorActionOneCoin(address,address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892) is not in mixedCase
+Parameter VaultProtocol.normalizedBalance(address)._strategy (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4054) is not in mixedCase
+Parameter VaultProtocol.totalClaimableAmount(address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4098) is not in mixedCase
+Parameter VaultProtocol.claimableAmount(address,address)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4110) is not in mixedCase
+Parameter VaultProtocol.claimableAmount(address,address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4110) is not in mixedCase
+Parameter VaultProtocol.amountOnHold(address,address)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4118) is not in mixedCase
+Parameter VaultProtocol.amountOnHold(address,address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4118) is not in mixedCase
+Parameter VaultProtocol.amountRequested(address,address)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4126) is not in mixedCase
+Parameter VaultProtocol.amountRequested(address,address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4126) is not in mixedCase
+Parameter VaultProtocol.getRemainder(uint256)._index (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4148) is not in mixedCase
+Parameter VaultProtocol.isStrategyRegistered(address)._strategy (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4174) is not in mixedCase
+Parameter VaultProtocol.isTokenRegistered(address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4200) is not in mixedCase
+Parameter VaultProtocol.tokenRegisteredInd(address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4222) is not in mixedCase
+Parameter VaultProtocol.tokenAmount(mapping(address => uint256[]),address,address)._amounts (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4250) is not in mixedCase
+Parameter VaultProtocol.tokenAmount(mapping(address => uint256[]),address,address)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4250) is not in mixedCase
+Parameter VaultProtocol.tokenAmount(mapping(address => uint256[]),address,address)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4250) is not in mixedCase
+Parameter VaultProtocol.tokenInfo(address,address[])._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4266) is not in mixedCase
+Parameter VaultProtocol.decreaseOnHoldDeposit(address,address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4370) is not in mixedCase
+Parameter VaultProtocol.decreaseOnHoldDeposit(address,address,uint256)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4370) is not in mixedCase
+Parameter VaultProtocol.decreaseOnHoldDeposit(address,address,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4370) is not in mixedCase
+Parameter VaultProtocol.addClaim(address,address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4396) is not in mixedCase
+Parameter VaultProtocol.addClaim(address,address,uint256)._token (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4396) is not in mixedCase
+Parameter VaultProtocol.addClaim(address,address,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4396) is not in mixedCase
+Parameter VaultProtocol.requestToClaim(address,uint256)._user (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4414) is not in mixedCase
+Parameter VaultProtocol.requestToClaim(address,uint256)._ind (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4414) is not in mixedCase
+Parameter VaultProtocol.handleRemainders(uint256,uint256)._amount (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4506) is not in mixedCase
+Parameter VaultProtocol.handleRemainders(uint256,uint256)._ind (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4506) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ERC20Mintable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1935) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_ACCESS (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2246) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_SAVINGS (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2248) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_INVESTING (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2250) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_STAKING_AKRO (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2252) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_STAKING_ADEL (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2254) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_DCA (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2256) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_REWARD (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2258) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_REWARD_DISTR (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2260) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.MODULE_VAULT (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2262) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.TOKEN_AKRO (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2268) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.TOKEN_ADEL (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2270) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+ModuleNames.CONTRACT_RAY (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2276) is never used in VaultPoolToken (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2981-3099)
+Initializable.______gap (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1033) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_ACCESS (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2246) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_SAVINGS (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2248) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_INVESTING (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2250) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_STAKING_AKRO (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2252) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_STAKING_ADEL (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2254) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_DCA (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2256) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_REWARD (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2258) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.MODULE_REWARD_DISTR (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2260) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.TOKEN_AKRO (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2268) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.TOKEN_ADEL (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2270) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+ModuleNames.CONTRACT_RAY (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2276) is never used in VaultProtocol (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3420-4522)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1229-1235)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1245-1249)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1267-1273)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1301-1309)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1337-1343)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1375-1381)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1630-1634)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1646-1650)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1678-1682)
+addMinter(address) should be declared external:
+	- MinterRole.addMinter(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1832-1836)
+renounceMinter() should be declared external:
+	- MinterRole.renounceMinter() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1840-1844)
+mint(address,uint256) should be declared external:
+	- ERC20Mintable.mint(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1925-1931)
+burn(uint256) should be declared external:
+	- ERC20Burnable.burn(uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#1978-1982)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2086-2090)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2138-2144)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2156-2160)
+fullBalanceOf(address) should be declared external:
+	- DistributionToken.fullBalanceOf(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2528-2538)
+	- VaultPoolToken.fullBalanceOf(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3061-3069)
+calculateUnclaimedDistributions(address) should be declared external:
+	- DistributionToken.calculateUnclaimedDistributions(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2552-2556)
+calculateDistributedAmount(uint256,uint256,uint256) should be declared external:
+	- DistributionToken.calculateDistributedAmount(uint256,uint256,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2574-2582)
+nextDistribution() should be declared external:
+	- DistributionToken.nextDistribution() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2586-2590)
+setAllowTransfers(bool) should be declared external:
+	- PoolToken.setAllowTransfers(bool) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#2867-2871)
+increaseOnHoldValue(address,uint256) should be declared external:
+	- VaultPoolToken.increaseOnHoldValue(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3013-3019)
+decreaseOnHoldValue(address,uint256) should be declared external:
+	- VaultPoolToken.decreaseOnHoldValue(address,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3023-3047)
+onHoldBalanceOf(address) should be declared external:
+	- VaultPoolToken.onHoldBalanceOf(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3051-3055)
+supportedVaults() should be declared external:
+	- IVaultSavings.supportedVaults() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3144)
+isVaultRegistered(address) should be declared external:
+	- IVaultSavings.isVaultRegistered(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3146)
+addDefiOperator(address) should be declared external:
+	- DefiOperatorRole.addDefiOperator(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3276-3280)
+renounceDefiOperator() should be declared external:
+	- DefiOperatorRole.renounceDefiOperator() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3284-3288)
+initialize(address,address[]) should be declared external:
+	- VaultProtocol.initialize(address,address[]) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3478-3510)
+registerStrategy(address) should be declared external:
+	- VaultProtocol.registerStrategy(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3514-3524)
+setQuickWithdrawStrategy(address) should be declared external:
+	- VaultProtocol.setQuickWithdrawStrategy(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3528-3534)
+setRemainder(uint256,uint256) should be declared external:
+	- VaultProtocol.setRemainder(uint256,uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3538-3544)
+setAvailableEnabled(bool) should be declared external:
+	- VaultProtocol.setAvailableEnabled(bool) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3548-3552)
+depositToVault(address,address[],uint256[]) should be declared external:
+	- VaultProtocol.depositToVault(address,address[],uint256[]) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3614-3628)
+withdrawFromVault(address,address[],uint256[]) should be declared external:
+	- VaultProtocol.withdrawFromVault(address,address[],uint256[]) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3694-3708)
+quickWithdraw(address,address[],uint256[]) should be declared external:
+	- VaultProtocol.quickWithdraw(address,address[],uint256[]) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3712-3734)
+claimRequested(address) should be declared external:
+	- VaultProtocol.claimRequested(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3738-3764)
+operatorAction(address) should be declared external:
+	- VaultProtocol.operatorAction(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3774-3888)
+operatorActionOneCoin(address,address) should be declared external:
+	- VaultProtocol.operatorActionOneCoin(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3892-3988)
+clearOnHoldDeposits() should be declared external:
+	- VaultProtocol.clearOnHoldDeposits() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#3992-4016)
+clearWithdrawRequests() should be declared external:
+	- VaultProtocol.clearWithdrawRequests() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4020-4042)
+normalizedBalance(address) should be declared external:
+	- VaultProtocol.normalizedBalance(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4054-4060)
+normalizedBalance() should be declared external:
+	- VaultProtocol.normalizedBalance() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4064-4076)
+normalizedVaultBalance() should be declared external:
+	- VaultProtocol.normalizedVaultBalance() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4080-4094)
+totalClaimableAmount(address) should be declared external:
+	- VaultProtocol.totalClaimableAmount(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4098-4106)
+claimableAmount(address,address) should be declared external:
+	- VaultProtocol.claimableAmount(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4110-4114)
+amountOnHold(address,address) should be declared external:
+	- VaultProtocol.amountOnHold(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4118-4122)
+amountRequested(address,address) should be declared external:
+	- VaultProtocol.amountRequested(address,address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4126-4130)
+quickWithdrawStrategy() should be declared external:
+	- VaultProtocol.quickWithdrawStrategy() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4140-4144)
+getRemainder(uint256) should be declared external:
+	- VaultProtocol.getRemainder(uint256) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4148-4154)
+supportedTokens() should be declared external:
+	- VaultProtocol.supportedTokens() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4158-4162)
+registeredStrategies() should be declared external:
+	- VaultProtocol.registeredStrategies() (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4192-4196)
+isTokenRegistered(address) should be declared external:
+	- VaultProtocol.isTokenRegistered(address) (loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol#4200-4218)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol analyzed (27 contracts with 46 detectors), 211 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x2039f75baf0fbf1f7710c01ab98ebc6a3af8529c.sol
+Tool Runtime = 21.486183990000427 seconds
+#############################################

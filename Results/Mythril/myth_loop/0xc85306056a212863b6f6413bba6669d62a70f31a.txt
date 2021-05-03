@@ -1,0 +1,1160 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Lottery
+Function name: init(address)
+PC address: 2975
+Estimated Gas Usage: 17038 - 127247
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:133
+
+liquidityToken.balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3512
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:233
+
+contributeContract
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3690
+Estimated Gas Usage: 72017 - 375903
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:233
+
+tributeToken.approve(address(contributeContract),tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x440001081002000a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f19191919191919191919191901014001010101010100010101010101010101800410010110041c0404101080800410088220404001014008200202804080200819191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3690
+Estimated Gas Usage: 72017 - 375903
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:233
+
+tributeToken.approve(address(contributeContract),tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f00000000000000000000000000040000200104040000040001010000000404400010000000fffff3dfffbfffff7ffffe4098602050700000401000400000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3690
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:233
+
+tributeToken.approve(address(contributeContract),tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3753
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:234
+
+contributeContract
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3907
+Estimated Gas Usage: 72017 - 375903
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:234
+
+contributeContract.donateTokens(tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40100008100400c44, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 4c4c4c4c4c4c4c4c4c4c4c4cdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f19191919191919191919191901200101200100010801400101010120040420010292c4020400200010000302519002a20104000000af10060800d0011200145019191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3907
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:234
+
+contributeContract.donateTokens(tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 3934
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:235
+
+tributeToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 4088
+Estimated Gas Usage: 72017 - 375903
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:235
+
+tributeToken.burn(tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x440001081002000a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f19191919191919191919191901014001010101010100010101010101010101800410010110041c0404101080800410088220404001014008200202804080200819191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 4088
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:235
+
+tributeToken.burn(tokens/2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: Lottery
+Function name: setWinningIndex1(bytes32)
+PC address: 5702
+Estimated Gas Usage: 5345 - 40332
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:137
+
+require(now>=lastDrawing.add(minTimeBetweenDrawings),"is not finalization time")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: setWinningIndex1(bytes32), txdata: 0x9ce256011919191919191919191919191919191919191919191919191919191919191919, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: Lottery
+Function name: setWinningIndex1(bytes32)
+PC address: 5932
+Estimated Gas Usage: 27126 - 142443
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:140
+
+block.number+1
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: setWinningIndex1(bytes32), txdata: 0x9ce256011919191919191919191919191919191919191919191919191919191919191919, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8393
+Estimated Gas Usage: 72017 - 375903
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:219
+
+tributeToken.transferFrom(
+              _from,
+              address(this),
+              _amount
+          )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x440001081002000a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: init(address), txdata: 0x19ab453c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f19191919191919191919191901014001010101010100010101010101010101800410010110041c0404101080800410088220404001014008200202804080200819191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919191919, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8578
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:118
+
+finalizingLock
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8711
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:241
+
+finalizingLock
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8908
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:243
+
+entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000000a01a0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f0000000000000000000000000101010101010101010101010101010101010100091002c80020220408008012240080010000081002002810040200000004210a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8927
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:243
+
+entry_cursor=entry_cursor.add(1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8931
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:244
+
+entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8937
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:244
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8961
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:244
+
+cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8992
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:244
+
+token_map[current_round][cursor.add(1)]=entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 8996
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:245
+
+entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9002
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:245
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9025
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:245
+
+cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9056
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:245
+
+token_map[current_round][cursor.add(toLock)]=entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9065
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:246
+
+cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9086
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:246
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9105
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:246
+
+entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9122
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:246
+
+entry_position_map[current_round][entry_cursor]=cursor.add(1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9130
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:247
+
+cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9149
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:247
+
+cursor=cursor.add(toLock)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9158
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:248
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9177
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:248
+
+entry_cursor
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9199
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:248
+
+entry_map[current_round][entry_cursor]=entrant
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9252
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:248
+
+entry_map[current_round][entry_cursor]=entrant
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9264
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:249
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9340
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:249
+
+token_count_by_address[current_round][entrant]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9361
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:249
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9439
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:249
+
+token_count_by_address[current_round][entrant]=token_count_by_address[current_round][entrant].add(toLock)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9451
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:250
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9466
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:250
+
+totalRoundTokens[current_round]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9487
+Estimated Gas Usage: 72017 - 375903
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:250
+
+current_round
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Lottery
+Function name: receiveApproval(address,uint256,address,bytes20)
+PC address: 9504
+Estimated Gas Usage: 72017 - 375903
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xc85306056a212863b6f6413bba6669d62a70f31a.sol:250
+
+totalRoundTokens[current_round]=totalRoundTokens[current_round].add(toLock)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3019a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000001004080120400801010101010101018002000180000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: receiveApproval(address,uint256,address,bytes20), txdata: 0x4c62a23f000000000000000000000000008001000000000100000000000001000000040008c53c011040028002c04020024004208010010150208002094008024040c10400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xc85306056a212863b6f6413bba6669d62a70f31a.sol
+Tool Runtime = 1219.216879575004 seconds
+#############################################

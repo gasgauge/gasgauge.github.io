@@ -1,0 +1,116 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: InDefiEcoPreMining
+Function name: deposit(address,uint256)
+PC address: 6024
+Estimated Gas Usage: 1119 - 1214
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/m_loop/loop5/0x5f0b23ba4dcb8e0bb5d81cee1db2de2b13e264a1.sol:1070
+
+require(now < maxDateDeposits)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: deposit(address,uint256), txdata: 0x47e7ef2400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: InDefiEcoPreMining
+Function name: approveTokens(address[])
+PC address: 10290
+Estimated Gas Usage: 20754 - 371919
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop5/0x5f0b23ba4dcb8e0bb5d81cee1db2de2b13e264a1.sol:1154
+
+token.allowance(address(this), address(dfDeposits))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: approveTokens(address[]), txdata: 0xac43070b00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000005000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: InDefiEcoPreMining
+Function name: releaseTokens(address,address[])
+PC address: 10763
+Estimated Gas Usage: 2709 - 6475
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/m_loop/loop5/0x5f0b23ba4dcb8e0bb5d81cee1db2de2b13e264a1.sol:1101
+
+if (now > depo.lastDeposit + _maxDelayUntilClaimTokens) {
+                uint256 _tMint = depo.tokensToMint;
+                if (_tMint > 0) {
+                    tokensToMint = add(tokensToMint, _tMint);
+                    depo.tokensToMint = 0;
+                }
+            }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: releaseTokens(address,address[]), txdata: 0xb0cf77d300000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: InDefiEcoPreMining
+Function name: getInfo(address,address)
+PC address: 11747
+Estimated Gas Usage: 8949 - 82412
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop5/0x5f0b23ba4dcb8e0bb5d81cee1db2de2b13e264a1.sol:1042
+
+compOracle.price(IToken(tokenAddress).universalSymbol())
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80a8000000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: getInfo(address,address), txdata: 0xc686554e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x5f0b23ba4dcb8e0bb5d81cee1db2de2b13e264a1.sol
+Tool Runtime = 11239.602742814 seconds
+#############################################

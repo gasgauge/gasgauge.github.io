@@ -1,0 +1,167 @@
+Compilation warnings/errors on ./noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol:
+./noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol:437:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+PulotoGovernance.notifyRewardAmount(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#966-977) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#968)
+	-leftover = remaining.mul(rewardRate) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#971)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+PulotoGovernance.execute(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#755-763) uses a dangerous strict equality:
+	- proposals[id].open == true (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#759)
+PulotoGovernance.tallyVotes(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#778-789) uses a dangerous strict equality:
+	- require(bool,string)(proposals[id].open == true,!open) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#779)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in PulotoGovernance.exit() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#948-951):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#949)
+		- lp.safeTransfer(msg.sender,amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#592)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+	- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+		- plu.safeTransfer(msg.sender,reward) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#961)
+	State variables written after the call(s):
+	- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#890)
+	- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#889)
+	- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+		- rewards[account] = earned(account) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#892)
+		- rewards[msg.sender] = 0 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#960)
+	- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#893)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in PulotoGovernance.exit() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#948-951):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#949)
+		- lp.safeTransfer(msg.sender,amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#592)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+	- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+		- plu.safeTransfer(msg.sender,reward) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#961)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#962)
+		- getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#950)
+Reentrancy in PulotoGovernance.getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#953-964):
+	External calls:
+	- plu.safeTransfer(msg.sender,reward) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#961)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#962)
+Reentrancy in PulotoGovernance.stake(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#925-933):
+	External calls:
+	- super.stake(amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#931)
+		- lp.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#586)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#932)
+Reentrancy in PulotoGovernance.withdraw(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#935-946):
+	External calls:
+	- super.withdraw(amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#944)
+		- lp.safeTransfer(msg.sender,amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#592)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#945)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+PulotoGovernance.getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#953-964) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#959)
+PulotoGovernance.notifyRewardAmount(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#966-977) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#967)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#430-439) uses assembly
+	- INLINE ASM (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#437-438)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+PulotoGovernance.execute(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#755-763) compares to a boolean constant:
+	-proposals[id].open == true (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#759)
+PulotoGovernance.tallyVotes(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#778-789) compares to a boolean constant:
+	-require(bool,string)(proposals[id].open == true,!open) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#779)
+PulotoGovernance.register() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#800-806) compares to a boolean constant:
+	-require(bool,string)(voters[msg.sender] == false,voter) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#801)
+PulotoGovernance.revoke() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#808-819) compares to a boolean constant:
+	-require(bool,string)(voters[msg.sender] == true,!voter) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#809)
+PulotoGovernance.stake(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#925-933) compares to a boolean constant:
+	-voters[msg.sender] == true (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#927)
+PulotoGovernance.withdraw(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#935-946) compares to a boolean constant:
+	-breaker == false (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#941)
+PulotoGovernance.withdraw(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#935-946) compares to a boolean constant:
+	-voters[msg.sender] == true (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#937)
+PulotoGovernance.getReward() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#953-964) compares to a boolean constant:
+	-breaker == false (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#954)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#7) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#39) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#69) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#149) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#169) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#328) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#407) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#480) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#558) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#599) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#469-475):
+	- (success) = recipient.call.value(amount)() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#473)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#533-552):
+	- (success,returndata) = address(token).call(data) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#545)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#162) is not in mixedCase
+Parameter PulotoGovernance.seize(IERC20,uint256)._token (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#646) is not in mixedCase
+Parameter PulotoGovernance.setBreaker(bool)._breaker (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#657) is not in mixedCase
+Parameter PulotoGovernance.setMinimumBPTLP(uint256)._minimum (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#664) is not in mixedCase
+Parameter PulotoGovernance.setGovernance(address)._governance (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#706) is not in mixedCase
+Parameter PulotoGovernance.setQuorum(uint256)._quorum (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#711) is not in mixedCase
+Parameter PulotoGovernance.setMinimum(uint256)._minimum (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#716) is not in mixedCase
+Parameter PulotoGovernance.setPeriod(uint256)._period (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#721) is not in mixedCase
+Parameter PulotoGovernance.setLock(uint256)._lock (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#726) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#97-99)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#123-126)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#132-134)
+setMinimumBPTLP(uint256) should be declared external:
+	- PulotoGovernance.setMinimumBPTLP(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#664-667)
+setGovernance(address) should be declared external:
+	- PulotoGovernance.setGovernance(address) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#706-709)
+setQuorum(uint256) should be declared external:
+	- PulotoGovernance.setQuorum(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#711-714)
+setMinimum(uint256) should be declared external:
+	- PulotoGovernance.setMinimum(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#716-719)
+setPeriod(uint256) should be declared external:
+	- PulotoGovernance.setPeriod(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#721-724)
+setLock(uint256) should be declared external:
+	- PulotoGovernance.setLock(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#726-729)
+propose(address,string) should be declared external:
+	- PulotoGovernance.propose(address,string) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#734-753)
+execute(uint256) should be declared external:
+	- PulotoGovernance.execute(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#755-763)
+register() should be declared external:
+	- PulotoGovernance.register() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#800-806)
+revoke() should be declared external:
+	- PulotoGovernance.revoke() (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#808-819)
+voteFor(uint256) should be declared external:
+	- PulotoGovernance.voteFor(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#823-844)
+voteAgainst(uint256) should be declared external:
+	- PulotoGovernance.voteAgainst(uint256) (noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol#846-867)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol analyzed (11 contracts with 46 detectors), 56 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x7a625b88b229b4451a6abc28a4d1c30dc708da19.sol
+Tool Runtime = 1.613033498000732 seconds
+#############################################

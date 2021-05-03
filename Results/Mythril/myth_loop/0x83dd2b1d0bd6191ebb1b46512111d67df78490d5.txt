@@ -1,0 +1,116 @@
+==== Jump to an arbitrary instruction ====
+SWC ID: 127
+Severity: High
+Contract: DeployFactory
+Function name: cashValauationCap()
+PC address: 2360
+Estimated Gas Usage: 50502 - 141931
+The caller can redirect execution to arbitrary bytecode locations.
+It is possible to redirect the control flow to arbitrary locations in the code. This may allow an attacker to bypass security controls or manipulate the business logic of the smart contract. Avoid using low-level-operations and assembly to prevent this issue.
+--------------------
+In file: ./contracts/m_loop/loop6/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol:1577
+
+function createCashBox(
+
+        address cashTokenAddress,
+
+        address assetTokenAddress,
+
+        uint256 assetToCashRate,
+
+        uint256 cashCap,
+
+        string memory name,
+
+        string memory symbol,
+
+        string memory url
+
+    ) public returns (address newCashBox) {
+
+        StockLiquiditator cashBox = new StockLiquiditator(
+
+            cashTokenAddress,
+
+            assetTokenAddress,
+
+            assetToCashRate,
+
+            cashCap,
+
+            name,
+
+            symbol,
+
+            url
+
+        );
+
+        cashBox.changeOwner(msg.sender);
+
+
+
+        cashBoxes.push(address(cashBox));
+
+        emit CashBoxAdded(
+
+            address(cashBox),
+
+            msg.sender,
+
+            assetTokenAddress,
+
+            cashTokenAddress,
+
+            url
+
+        );
+
+        return address(cashBox);
+
+    }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000010318, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: createCashBox(address,address,uint256,uint256,string,string,string), txdata: 0x7f6b05c40000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002800000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000560000000000000000000000000000000000000000000000000000000000000010, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: DeployFactory
+Function name: cashBoxes(uint256)
+PC address: 2376
+Estimated Gas Usage: 1078 - 1173
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop6/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol:1573
+
+address[] public cashBoxes
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: cashBoxes(uint256), txdata: 0xbaecb4150000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol
+Tool Runtime = 13420.846300361998 seconds
+#############################################

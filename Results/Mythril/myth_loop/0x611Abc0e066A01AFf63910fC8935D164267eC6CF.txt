@@ -1,0 +1,111 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: AddressResolver
+Function name: rebuildCaches(address[])
+PC address: 2428
+Estimated Gas Usage: 2097 - 36473
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/3/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol:246
+
+destinations[i].rebuildCache()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: importAddresses(bytes32[],address[]), txdata: 0xab0b8f7700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000001010220000010081004800201100880100000000020801004012001081000040101040808800008020804010402080110401004000002081001200101, value: 0x0
+Caller: [SOMEGUY], function: rebuildCaches(address[]), txdata: 0x766f781500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AddressResolver
+Function name: rebuildCaches(address[])
+PC address: 2428
+Estimated Gas Usage: 3756 - 72413
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/3/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol:246
+
+destinations[i].rebuildCache()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x207a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: rebuildCaches(address[]), txdata: 0x766f78150000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000280808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: AddressResolver
+Function name: areAddressesImported(bytes32[],address[])
+PC address: 3088
+Estimated Gas Usage: 698 - 793
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/3/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol:254
+
+destinations[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4858380c000061049, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [CREATOR], function: areAddressesImported(bytes32[],address[]), txdata: 0x9f42102f0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Issuer
+Function name: availableSynths(uint256)
+PC address: 8123
+Estimated Gas Usage: 1190 - 1285
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/3/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol:1641
+
+ISynth[] public availableSynths
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: availableSynths(uint256), txdata: 0x835e119c0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol
+Tool Runtime = 2538.241323160997 seconds
+#############################################

@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: BSCBridge
+Function name: transferOut(address,uint256)
+PC address: 2931
+Estimated Gas Usage: 6424 - 78701
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/8/0x6e4ae385d1f68e4d4feb455e0526c08c77464ed6.sol:468
+
+target.call.value(weiValue)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38b000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: transferOut(address,uint256), txdata: 0x76890c588b8b8b8b8b8b8b8b8b8b8b8bdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef00a082310000000000000000000000000901d12ebe1b195e5aa8748e62bd7735, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: BSCBridge
+Function name: transferOut(address,uint256)
+PC address: 2931
+Estimated Gas Usage: 6424 - 78701
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/8/0x6e4ae385d1f68e4d4feb455e0526c08c77464ed6.sol:468
+
+target.call.value(weiValue)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferOut(address,uint256), txdata: 0x76890c58000000000000000000000000000000000000000000000000000000000000000000a082310000000000000000000000000901d12ebe1b195e5aa8748e62bd7735, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x6e4ae385d1f68e4d4feb455e0526c08c77464ed6.sol
+Tool Runtime = 38.18060921295546 seconds
+#############################################

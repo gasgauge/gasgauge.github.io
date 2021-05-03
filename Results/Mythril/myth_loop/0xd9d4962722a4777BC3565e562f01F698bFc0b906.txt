@@ -1,0 +1,199 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: Ether5
+Function name: constructor
+PC address: 287
+Estimated Gas Usage: 90964 - 436988
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_loop/3/0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol:216
+
+now + poolTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: Ether5
+Function name: startNewRound()
+PC address: 9773
+Estimated Gas Usage: 4489 - 5294
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol:610
+
+now > round[_roundID].endTime && round[_roundID].ended == false
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3fffffffffffffffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8c8c8c8c8c8c8c8c8c8c8c8caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: startNewRound(), txdata: 0xbd85948c, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: Ether5
+Function name: startNewRound()
+PC address: 9823
+Estimated Gas Usage: 4506 - 5311
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol:610
+
+if (now > round[_roundID].endTime && round[_roundID].ended == false) {
+            
+            round[_roundID].ended = true;
+            round[_roundID].pool = _poolAmount;
+
+                _roundID++;
+                roundID++;
+                round[_roundID].startTime = now;
+                round[_roundID].endTime = now.add(poolTime);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3fffffffffffffffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8c8c8c8c8c8c8c8c8c8c8c8caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: startNewRound(), txdata: 0xbd85948c, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: Ether5
+Function name: startNewRound()
+PC address: 10472
+Estimated Gas Usage: 28337 - 110562
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol:49
+
+require(c >= a, "SafeMath: addition overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3fffffffffffffffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 8c8c8c8c8c8c8c8c8c8c8c8caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: startNewRound(), txdata: 0xbd85948c, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: Ether5
+Function name: withdrawIncome()
+PC address: 15352
+Estimated Gas Usage: 1980 - 2265
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol:533
+
+if(now > player[_playerAddress].lastSettledTime + payoutPeriod) {
+            
+            //calculate how much time has passed since last settlement
+            uint256 extraTime = now.sub(player[_playerAddress].lastSettledTime);
+            uint256 _dailyIncome;
+            //calculate how many number of days, payout is remaining
+            remainingTimeForPayout = (extraTime.sub((extraTime % payoutPeriod))).div(payoutPeriod);
+            
+            currInvestedAmount = player[_playerAddress].currentInvestedAmount;
+            //*YC*calculate 5%=div(20) of his invested amount, 2%=div(50), 10%=div(10)
+            _dailyIncome = currInvestedAmount.div(20);
+            //check his income limit remaining
+            if (player[_playerAddress].incomeLimitLeft >= _dailyIncome.mul(remainingTimeForPayout)) {
+                player[_playerAddress].incomeLimitLeft = player[_playerAddress].incomeLimitLeft.sub(_dailyIncome.mul(remainingTimeForPayout));
+                player[_playerAddress].dailyIncome = player[_playerAddress].dailyIncome.add(_dailyIncome.mul(remainingTimeForPayout));
+                player[_playerAddress].lastSettledTime = player[_playerAddress].lastSettledTime.add((extraTime.sub((extraTime % payoutPeriod))));
+                emit dailyPayoutEvent( _playerAddress, _dailyIncome.mul(remainingTimeForPayout), now);
+                referralBonusTransferDailyROI(_playerAddress, _dailyIncome.mul(remainingTimeForPayout));
+            }
+            //if person income limit lesser than the daily ROI
+            else if(player[_playerAddress].incomeLimitLeft !=0) {
+                uint256 temp;
+                temp = player[_playerAddress].incomeLimitLeft;                 
+                player[_playerAddress].incomeLimitLeft = 0;
+                player[_playerAddress].dailyIncome = player[_playerAddress].dailyIncome.add(temp);
+                player[_playerAddress].lastSettledTime = now;
+                emit dailyPayoutEvent( _playerAddress, temp, now);
+                referralBonusTransferDailyROI(_playerAddress, temp);
+            }         
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: withdrawIncome(), txdata: 0x1a0fa8c3, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: Ether5
+Function name: withdrawIncome()
+PC address: 20752
+Estimated Gas Usage: 3040 - 3893
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/3/0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol:80
+
+require(b <= a, errorMessage)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: withdrawIncome(), txdata: 0x1a0fa8c3, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xd9d4962722a4777BC3565e562f01F698bFc0b906.sol
+Tool Runtime = 1360.8623489039892 seconds
+#############################################

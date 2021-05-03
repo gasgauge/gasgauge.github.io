@@ -1,0 +1,1266 @@
+Compilation warnings/errors on ./loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol:
+./loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol:12:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol:588:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+./loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol:1343:5: Warning: Function state mutability can be restricted to pure
+    function _getLiquidationAmounts(
+    ^ (Relevant source part starts here and spans across multiple lines).
+./loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol:2573:5: Warning: Function state mutability can be restricted to view
+    function _getRebate(
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+INFO:Detectors:[91m
+Reentrancy in LoanClosingsBase._closeWithDeposit(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2055-2125):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2082-2087)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2090-2094)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,withdrawAmount,0,CloseTypes.Deposit) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2117-2124)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2082-2087)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2090-2094)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	State variables written after the call(s):
+	- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,withdrawAmount,0,CloseTypes.Deposit) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2117-2124)
+		- loans[loanLocal.id] = loanLocal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2499)
+Reentrancy in LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	State variables written after the call(s):
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- protocolTokenHeld = tokenBalance.sub(rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1130-1131)
+Reentrancy in LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2185-2189)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,usedCollateral,collateralToLoanSwapRate,CloseTypes.Swap) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2209-2216)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	State variables written after the call(s):
+	- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,usedCollateral,collateralToLoanSwapRate,CloseTypes.Swap) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2209-2216)
+		- loans[loanLocal.id] = loanLocal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2499)
+Reentrancy in LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909):
+	External calls:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1874-1878)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(seizedToken,receiver,seizedAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1887-1891)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(seizedToken,receiver,seizedAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1887-1891)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	State variables written after the call(s):
+	- _closeLoan(loanLocal,loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1905-1908)
+		- loans[loanLocal.id] = loanLocal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2499)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(loanParamsLocal.collateralToken,msg.sender,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2037-2041)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _withdrawAsset(loanParamsLocal.collateralToken,msg.sender,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2037-2041)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	State variables written after the call(s):
+	- loans[loanId] = loanLocal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2052)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[91m
+State.priceFeeds (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#770) is never initialized. It is used in:
+	- LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909)
+	- LoanClosingsBase._finalizeClose(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2424-2476)
+	- LoanClosingsBase._getRebate(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2573-2599)
+	- SwapsUser._loanSwap(bytes32,address,address,address,uint256,uint256,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1444-1495)
+	- SwapsUser._swapsExpectedReturn(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1612-1639)
+	- SwapsUser._checkSwapSize(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1641-1657)
+	- FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1097-1146)
+State.swapsImpl (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#771) is never initialized. It is used in:
+	- SwapsUser._swapsCall_internal(address[5],uint256[3]) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1588-1610)
+	- SwapsUser._swapsExpectedReturn(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1612-1639)
+State.loanParams (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#776) is never initialized. It is used in:
+	- LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909)
+	- LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053)
+	- LoanClosingsBase._closeWithDeposit(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2055-2125)
+	- LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217)
+State.delegatedManagers (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#781) is never initialized. It is used in:
+	- LoanClosingsBase._checkAuthorized(bytes32,bool,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2219-2232)
+State.liquidationIncentivePercent (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#814) is never initialized. It is used in:
+	- LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909)
+State.loanPoolToUnderlying (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#816) is never initialized. It is used in:
+	- LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+LiquidationHelper._getLiquidationAmounts(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1343-1398) performs a multiplication on the result of a division:
+	-maxLiquidatable = desiredMargin.add(WEI_PERCENT_PRECISION).mul(principal).div(WEI_PERCENT_PRECISION) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1364-1367)
+	-maxLiquidatable = maxLiquidatable.mul(WEI_PERCENT_PRECISION).div(desiredMargin.sub(incentivePercent)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1374-1379)
+LiquidationHelper._getLiquidationAmounts(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1343-1398) performs a multiplication on the result of a division:
+	-maxLiquidatable = maxLiquidatable.mul(WEI_PERCENT_PRECISION).div(desiredMargin.sub(incentivePercent)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1374-1379)
+	-maxSeizable = maxLiquidatable.mul(incentivePercent.add(WEI_PERCENT_PRECISION)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1385-1389)
+LoanClosingsBase._settleInterest(LoanParamsStruct.LoanParams,LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2502-2571) performs a multiplication on the result of a division:
+	-owedPerDayRefund = loanInterestLocal.owedPerDay.mul(closePrincipal).div(loanLocal.principal) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2533-2535)
+	-interestRefundToBorrower = interestRefundToBorrower.mul(owedPerDayRefund) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2549-2550)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+LoanClosingsBase._checkAuthorized(bytes32,bool,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2219-2232) uses a dangerous strict equality:
+	- require(bool,string)(msg.sender == _borrower || delegatedManagers[_id][msg.sender],unauthorized) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2227-2231)
+LoanClosingsBase._closeLoan(LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2478-2500) uses a dangerous strict equality:
+	- loanCloseAmount == loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2486)
+LoanClosingsBase._closeWithDeposit(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2055-2125) uses a dangerous strict equality:
+	- loanCloseAmount == loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2097)
+LoanClosingsBase._coverPrincipalWithSwap(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2331-2372) uses a dangerous strict equality:
+	- require(bool,string)(sourceTokenAmountUsed == swapAmount,swap error) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2365)
+LoanClosingsBase._finalizeClose(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2424-2476) uses a dangerous strict equality:
+	- require(bool,string)(closeType == CloseTypes.Deposit || loanLocal.principal == 0 || currentMargin > loanParamsLocal.maintenanceMargin,unhealthy position) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2459-2464)
+LiquidationHelper._getLiquidationAmounts(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1343-1398) uses a dangerous strict equality:
+	- currentMargin > maintenanceMargin || collateralToLoanRate == 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1354)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1497-1586) uses a dangerous strict equality:
+	- vals[2] == 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1522)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1497-1586) uses a dangerous strict equality:
+	- vals[1] == 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1549)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1497-1586) uses a dangerous strict equality:
+	- vals[2] == 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1561)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1497-1586) uses a dangerous strict equality:
+	- require(bool,string)(sourceTokenAmountUsed == vals[0],swap too large to fill) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1563)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	State variables written after the call(s):
+	- lenderInterestLocal.owedPerDay = lenderInterestLocal.owedPerDay.add(owedPerDay) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1967-1968)
+	- lenderInterestLocal.owedPerDay = lenderInterestLocal.owedPerDay.sub(loanInterestLocal.owedPerDay) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1969-1970)
+	- lenderInterestLocal.owedTotal = lenderInterestLocal.owedTotal.add(interestAmountRequired) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1997-1998)
+	- loanInterestLocal.owedPerDay = owedPerDay (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1972)
+	- loanInterestLocal.depositTotal = loanInterestLocal.depositTotal.add(interestAmountRequired) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1994-1995)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	State variables written after the call(s):
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- protocolTokenHeld = tokenBalance.sub(rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1130-1131)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	State variables written after the call(s):
+	- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+		- lendingFeeTokensHeld[feeToken] = lendingFeeTokensHeld[feeToken].add(lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1050-1051)
+Reentrancy in LoanClosingsBase._settleInterest(LoanParamsStruct.LoanParams,LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2502-2571):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2510-2513)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,interestTime) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2523-2529)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	State variables written after the call(s):
+	- lenderInterestLocal.owedPerDay = lenderInterestLocal.owedPerDay.sub(owedPerDayRefund) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2543-2544)
+	- lenderInterestLocal.principalTotal = lenderInterestLocal.principalTotal.sub(closePrincipal) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2562-2563)
+	- lenderInterestLocal.owedTotal = owedTotal - interestRefundToBorrower (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2566-2568)
+	- lenderInterestLocal.owedTotal = 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2566-2568)
+	- loanInterestLocal.owedPerDay = loanInterestLocal.owedPerDay.sub(owedPerDayRefund) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2541-2542)
+	- loanInterestLocal.depositTotal = loanInterestLocal.depositTotal.sub(interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2555-2556)
+	- loanInterestLocal.depositTotal = 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2558)
+Reentrancy in SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1497-1586):
+	External calls:
+	- _payTradingFee(addrs[4],loanId,addrs[0],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1527-1532)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall_internal(addrs,vals) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1556-1559)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1574-1579)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	State variables written after the call(s):
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1574-1579)
+		- protocolTokenHeld = tokenBalance.sub(rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1130-1131)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1574-1579)
+		- tradingFeeTokensHeld[feeToken] = tradingFeeTokensHeld[feeToken].add(tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#995-996)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+FeesHelper._settleFeeRewardForInterestExpense(LoanInterestStruct.LoanInterest,bytes32,address,address,uint256).interestExpenseFee (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1074) is a local variable never initialized
+LoanClosingsBase._rollover(bytes32,uint256,bytes).backInterestOwed (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1949) is a local variable never initialized
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes).tradingFee (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1520) is a local variable never initialized
+LoanClosingsBase._rollover(bytes32,uint256,bytes).backInterestTime (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1948) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+State._setTarget(bytes4,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#829-841) ignores return value by logicTargetsSet.addBytes32(bytes32(sig)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#837)
+State._setTarget(bytes4,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#829-841) ignores return value by logicTargetsSet.removeBytes32(bytes32(sig)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#839)
+GasTokenUser.usesGasToken(address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1688-1714) ignores return value by tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+GasTokenUser.usesGasToken(address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1688-1714) ignores return value by tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+LoanClosingsBase._closeLoan(LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2478-2500) ignores return value by activeLoansSet.removeBytes32(loanLocal.id) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2491)
+LoanClosingsBase._closeLoan(LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2478-2500) ignores return value by lenderLoanSets[loanLocal.lender].removeBytes32(loanLocal.id) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2492)
+LoanClosingsBase._closeLoan(LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2478-2500) ignores return value by borrowerLoanSets[loanLocal.borrower].removeBytes32(loanLocal.id) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2493)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1097-1146):
+	External calls:
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	State variables written after the call(s):
+	- protocolTokenHeld = tokenBalance.sub(rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1130-1131)
+Reentrancy in LoanClosingsWithGasToken.closeWithDepositWithGasToken(bytes32,address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2742-2762):
+	External calls:
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2749)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	State variables written after the call(s):
+	- nonReentrant() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2750)
+		- reentrancyLock = REENTRANCY_GUARD_LOCKED (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#284)
+		- reentrancyLock = REENTRANCY_GUARD_FREE (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#286)
+Reentrancy in LoanClosingsWithGasToken.closeWithSwapWithGasToken(bytes32,address,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2764-2787):
+	External calls:
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2772)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	State variables written after the call(s):
+	- nonReentrant() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2773)
+		- reentrancyLock = REENTRANCY_GUARD_LOCKED (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#284)
+		- reentrancyLock = REENTRANCY_GUARD_FREE (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#286)
+Reentrancy in LoanClosingsWithGasToken.liquidateWithGasToken(bytes32,address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2700-2720):
+	External calls:
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2707)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	State variables written after the call(s):
+	- nonReentrant() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2708)
+		- reentrancyLock = REENTRANCY_GUARD_LOCKED (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#284)
+		- reentrancyLock = REENTRANCY_GUARD_FREE (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#286)
+Reentrancy in LoanClosingsWithGasToken.rolloverWithGasToken(bytes32,address,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2722-2740):
+	External calls:
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2727)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	State variables written after the call(s):
+	- nonReentrant() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2728)
+		- reentrancyLock = REENTRANCY_GUARD_LOCKED (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#284)
+		- reentrancyLock = REENTRANCY_GUARD_FREE (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#286)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in LoanClosingsBase._closeWithDeposit(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2055-2125):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2082-2087)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2090-2094)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2082-2087)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2090-2094)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+Reentrancy in LoanClosingsBase._closeWithDeposit(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2055-2125):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2082-2087)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2090-2094)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,withdrawAmount,0,CloseTypes.Deposit) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2117-2124)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2082-2087)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2090-2094)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2110-2114)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,withdrawAmount,0,CloseTypes.Deposit) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2117-2124)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,withdrawAmount,0,CloseTypes.Deposit) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2117-2124)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,withdrawAmount,0,CloseTypes.Deposit) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2117-2124)
+Reentrancy in LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+	- LoanSwap(loanId,sourceToken,destToken,user,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1487-1494)
+		- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#998-1003)
+		- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+Reentrancy in LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2185-2189)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2185-2189)
+Reentrancy in LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2185-2189)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+Reentrancy in LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217):
+	External calls:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2185-2189)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,usedCollateral,collateralToLoanSwapRate,CloseTypes.Swap) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2209-2216)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+	External calls sending eth:
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,receiver) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2163-2168)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- (usedCollateral,withdrawAmount,collateralToLoanSwapRate) = _coverPrincipalWithSwap(loanLocal,loanParamsLocal,swapAmount,loanCloseAmountLessInterest,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2172-2179)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(withdrawToken,receiver,withdrawAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2202-2206)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,usedCollateral,collateralToLoanSwapRate,CloseTypes.Swap) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2209-2216)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,usedCollateral,collateralToLoanSwapRate,CloseTypes.Swap) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2209-2216)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _finalizeClose(loanLocal,loanParamsLocal,loanCloseAmount,usedCollateral,collateralToLoanSwapRate,CloseTypes.Swap) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2209-2216)
+Reentrancy in LoanClosingsBase._coverPrincipalWithSwap(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2331-2372):
+	External calls:
+	- (destTokenAmountReceived,sourceTokenAmountUsed,collateralToLoanSwapRate) = _doCollateralSwap(loanLocal,loanParamsLocal,swapAmount,principalNeeded,returnTokenIsCollateral,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2343-2350)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,destTokenAmountReceived - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2355-2359)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,destTokenAmountReceived - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2355-2359)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,destTokenAmountReceived - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2355-2359)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,destTokenAmountReceived - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2355-2359)
+Reentrancy in LoanClosingsBase._finalizeClose(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2424-2476):
+	External calls:
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _emitClosingEvents(loanParamsLocal,loanLocal,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,collateralToLoanSwapRate,currentMargin,closeType) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2466-2475)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _emitClosingEvents(loanParamsLocal,loanLocal,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,collateralToLoanSwapRate,currentMargin,closeType) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2466-2475)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _emitClosingEvents(loanParamsLocal,loanLocal,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,collateralToLoanSwapRate,currentMargin,closeType) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2466-2475)
+Reentrancy in LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909):
+	External calls:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+	- PayLendingFee(user,feeToken,lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1053-1057)
+		- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+Reentrancy in LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909):
+	External calls:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+Reentrancy in LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909):
+	External calls:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1874-1878)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	External calls sending eth:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1874-1878)
+Reentrancy in LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909):
+	External calls:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1874-1878)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(seizedToken,receiver,seizedAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1887-1891)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _returnPrincipalWithDeposit(loanParamsLocal.loanToken,address(this),loanCloseAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1848-1852)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	- loanCloseAmountLessInterest = _settleInterestToPrincipal(loanLocal,loanParamsLocal,loanCloseAmount,loanLocal.borrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1855-1860)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(loanParamsLocal.loanToken,loanLocal.borrower,loanCloseAmount - loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1864-1868)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	- _withdrawAsset(seizedToken,receiver,seizedAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1887-1891)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _emitClosingEvents(loanParamsLocal,loanLocal,loanCloseAmount,seizedAmount,collateralToLoanRate,0,currentMargin,CloseTypes.Liquidation) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1894-1903)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _emitClosingEvents(loanParamsLocal,loanLocal,loanCloseAmount,seizedAmount,collateralToLoanRate,0,currentMargin,CloseTypes.Liquidation) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1894-1903)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _emitClosingEvents(loanParamsLocal,loanLocal,loanCloseAmount,seizedAmount,collateralToLoanRate,0,currentMargin,CloseTypes.Liquidation) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1894-1903)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(seizedToken,receiver,seizedAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1887-1891)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(seizedToken,receiver,seizedAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1887-1891)
+Reentrancy in SwapsUser._loanSwap(bytes32,address,address,address,uint256,uint256,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1444-1495):
+	External calls:
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall((sourceToken,destToken,address(this),address(this),user),(minSourceTokenAmount,maxSourceTokenAmount,requiredDestTokenAmount),loanId,bypassFee,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1457-1473)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	Event emitted after the call(s):
+	- LoanSwap(loanId,sourceToken,destToken,user,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1487-1494)
+Reentrancy in FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1097-1146):
+	External calls:
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+	- LoanSwap(loanId,sourceToken,destToken,user,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1487-1494)
+		- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#998-1003)
+		- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	Event emitted after the call(s):
+	- PayLendingFee(user,feeToken,lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1053-1057)
+		- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+Reentrancy in LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1931-1934)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,block.timestamp) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1939-1945)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (sourceTokenAmountUsed) = _doCollateralSwap(loanLocal,loanParamsLocal,loanLocal.collateral,interestAmountRequired,true,loanDataBytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2005-2012)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _payInterestTransfer(loanLocal.lender,loanParamsLocal.loanToken,backInterestOwed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2019-2023)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _withdrawAsset(loanParamsLocal.collateralToken,msg.sender,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2037-2041)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _withdrawAsset(loanParamsLocal.collateralToken,msg.sender,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2037-2041)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- Rollover(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,sourceTokenAmountUsed,interestAmountRequired,loanLocal.endTimestamp,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2609-2620)
+		- _rolloverEvent(loanLocal,loanParamsLocal,sourceTokenAmountUsed,interestAmountRequired,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2044-2050)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(loanParamsLocal.collateralToken,msg.sender,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2037-2041)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(loanParamsLocal.collateralToken,msg.sender,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2037-2041)
+Reentrancy in LoanClosingsBase._settleInterest(LoanParamsStruct.LoanParams,LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2502-2571):
+	External calls:
+	- _payInterest(loanLocal.lender,loanParamsLocal.loanToken) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2510-2513)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,interestTime) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2523-2529)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _settleFeeRewardForInterestExpense(loanInterestLocal,loanLocal.id,loanParamsLocal.loanToken,loanLocal.borrower,interestTime) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2523-2529)
+Reentrancy in LoanClosingsBase._settleInterestToPrincipal(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2234-2289):
+	External calls:
+	- interestRefundToBorrower = _settleInterest(loanParamsLocal,loanLocal,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2244-2248)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _withdrawAsset(loanParamsLocal.loanToken,receiver,interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2271-2275)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	External calls sending eth:
+	- _withdrawAsset(loanParamsLocal.loanToken,receiver,interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2271-2275)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _withdrawAsset(loanParamsLocal.loanToken,receiver,interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2271-2275)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _withdrawAsset(loanParamsLocal.loanToken,receiver,interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2271-2275)
+Reentrancy in LoanClosingsBase._settleInterestToPrincipal(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2234-2289):
+	External calls:
+	- interestRefundToBorrower = _settleInterest(loanParamsLocal,loanLocal,loanCloseAmountLessInterest) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2244-2248)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- _withdrawAsset(loanParamsLocal.loanToken,receiver,interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2271-2275)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,interestAppliedToPrincipal) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2281-2285)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+	External calls sending eth:
+	- _withdrawAsset(loanParamsLocal.loanToken,receiver,interestRefundToBorrower) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2271-2275)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- vaultWithdraw(loanParamsLocal.loanToken,loanLocal.lender,interestAppliedToPrincipal) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2281-2285)
+Reentrancy in SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1497-1586):
+	External calls:
+	- _payTradingFee(addrs[4],loanId,addrs[0],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1527-1532)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall_internal(addrs,vals) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1556-1559)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1574-1579)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1574-1579)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#998-1003)
+		- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1574-1579)
+Reentrancy in LoanClosingsWithGasToken.closeWithDepositWithGasToken(bytes32,address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2742-2762):
+	External calls:
+	- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2749)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	External calls sending eth:
+	- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+	- PayLendingFee(user,feeToken,lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1053-1057)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _closeWithDeposit(loanId,receiver,depositAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2757-2761)
+Reentrancy in LoanClosingsWithGasToken.closeWithSwapWithGasToken(bytes32,address,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2764-2787):
+	External calls:
+	- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2772)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	External calls sending eth:
+	- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- LoanSwap(loanId,sourceToken,destToken,user,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1487-1494)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- PayLendingFee(user,feeToken,lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1053-1057)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#998-1003)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _closeWithSwap(loanId,receiver,swapAmount,returnTokenIsCollateral,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2780-2786)
+Reentrancy in LoanClosingsWithGasToken.liquidateWithGasToken(bytes32,address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2700-2720):
+	External calls:
+	- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1249-1252)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- IERC20(token).safeTransferFrom(from,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1254-1258)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+		- Address.sendValue(msg.sender,msg.value - principalNeeded) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2320-2323)
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2707)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	External calls sending eth:
+	- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- wethToken.deposit.value(principalNeeded)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2309)
+	Event emitted after the call(s):
+	- CloseWithDeposit(loanLocal.borrower,loanLocal.lender,loanLocal.id,msg.sender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2635-2646)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+	- CloseWithSwap(loanLocal.borrower,loanLocal.lender,loanLocal.id,loanParamsLocal.collateralToken,loanParamsLocal.loanToken,msg.sender,collateralCloseAmount,loanCloseAmount,collateralToLoanSwapRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2658-2669)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+	- Liquidate(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanCloseAmount,collateralCloseAmount,collateralToLoanRate,currentMargin) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2671-2682)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+	- PayLendingFee(user,feeToken,lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1053-1057)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _liquidate(loanId,receiver,closeAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2715-2719)
+Reentrancy in LoanClosingsWithGasToken.rolloverWithGasToken(bytes32,address,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2722-2740):
+	External calls:
+	- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+		- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+		- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+		- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+		- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	- usesGasToken(gasTokenUser) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2727)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1701-1703)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1705-1708)
+	External calls sending eth:
+	- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+		- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+	Event emitted after the call(s):
+	- EarnReward(user,vbzrxTokenAddress,loanId,rewardAmount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1138-1143)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+	- LoanSwap(loanId,sourceToken,destToken,user,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1487-1494)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+	- PayLendingFee(user,feeToken,lendingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1053-1057)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#998-1003)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+	- Rollover(loanLocal.borrower,msg.sender,loanLocal.id,loanLocal.lender,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,sourceTokenAmountUsed,interestAmountRequired,loanLocal.endTimestamp,gasRebate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2609-2620)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+		- _rollover(loanId,startingGas,) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2735-2739)
+Reentrancy in VaultController.vaultDeposit(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1199-1218):
+	External calls:
+	- IERC20(token).safeTransferFrom(from,address(this),value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1206-1210)
+	Event emitted after the call(s):
+	- VaultDeposit(token,from,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1212-1216)
+Reentrancy in VaultController.vaultEtherDeposit(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1163-1176):
+	External calls:
+	- _wethToken.deposit.value(value)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1169)
+	Event emitted after the call(s):
+	- VaultDeposit(address(_wethToken),from,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1171-1175)
+Reentrancy in VaultController.vaultEtherWithdraw(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1178-1197):
+	External calls:
+	- _wethToken.withdraw(value - balance) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1187)
+	- Address.sendValue(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1189)
+	Event emitted after the call(s):
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1191-1195)
+Reentrancy in VaultController.vaultWithdraw(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1220-1238):
+	External calls:
+	- IERC20(token).safeTransfer(to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1227-1230)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1232-1236)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+InterestUser._payInterest(address,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1279-1313) uses timestamp for comparisons
+	Dangerous comparisons:
+	- interestOwedNow > lenderInterestLocal.owedTotal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1295)
+	- interestOwedNow != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1298)
+LoanClosingsBase._liquidate(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1795-1909) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(loanLocal.active,loan is closed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1807)
+	- require(bool,string)(currentMargin <= loanParamsLocal.maintenanceMargin,healthy position) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1817-1820)
+	- loanCloseAmount < maxLiquidatable (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1833)
+	- loanCloseAmount > maxLiquidatable (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1838)
+	- require(bool,string)(loanCloseAmount != 0,nothing to liquidate) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1845)
+	- loanCloseAmount > loanCloseAmountLessInterest (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1862)
+	- loanCloseAmountLessInterest != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1871)
+	- seizedAmount != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1883)
+LoanClosingsBase._rollover(bytes32,uint256,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1911-2053) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(loanLocal.active,loan is closed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1918)
+	- require(bool,string)(block.timestamp > loanLocal.endTimestamp.sub(3600),healthy position) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1919-1922)
+	- require(bool,string)(loanPoolToUnderlying[loanLocal.lender] != address(0),invalid lender) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1923-1926)
+	- block.timestamp > loanLocal.endTimestamp (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1950)
+	- maxDuration != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1961)
+	- backInterestTime >= maxDuration (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1978)
+	- backInterestOwed != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2016)
+LoanClosingsBase._closeWithDeposit(bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2055-2125) uses timestamp for comparisons
+	Dangerous comparisons:
+	- loanCloseAmountLessInterest != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2089)
+	- loanCloseAmount == loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2097)
+	- withdrawAmount != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2107)
+	- depositAmount > loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2078-2080)
+LoanClosingsBase._closeWithSwap(bytes32,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2127-2217) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(swapAmount != 0,swapAmount == 0) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2140)
+	- swapAmount > loanLocal.collateral (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2151)
+	- swapAmount != loanLocal.collateral (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2156)
+	- require(bool,string)(loanCloseAmount != 0,loanCloseAmount == 0) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2161)
+	- loanCloseAmountLessInterest != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2181)
+LoanClosingsBase._checkAuthorized(bytes32,bool,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2219-2232) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_active,loan is closed) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2226)
+	- require(bool,string)(msg.sender == _borrower || delegatedManagers[_id][msg.sender],unauthorized) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2227-2231)
+LoanClosingsBase._settleInterestToPrincipal(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2234-2289) uses timestamp for comparisons
+	Dangerous comparisons:
+	- loanCloseAmountLessInterest >= interestRefundToBorrower (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2251)
+	- interestAppliedToPrincipal != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2278)
+LoanClosingsBase._returnPrincipalWithDeposit(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2292-2329) uses timestamp for comparisons
+	Dangerous comparisons:
+	- principalNeeded != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2298)
+	- require(bool,string)(msg.value >= principalNeeded,not enough ether) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2308)
+	- receiver != address(this) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2310)
+	- msg.value > principalNeeded (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2318)
+LoanClosingsBase._coverPrincipalWithSwap(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2331-2372) uses timestamp for comparisons
+	Dangerous comparisons:
+	- destTokenAmountReceived > principalNeeded (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2353)
+	- require(bool,string)(sourceTokenAmountUsed == swapAmount,swap error) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2365)
+	- swapAmount > sourceTokenAmountUsed (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2361-2363)
+	- sourceTokenAmountUsed > swapAmount (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2369-2371)
+LoanClosingsBase._doCollateralSwap(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2374-2399) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(destTokenAmountReceived >= principalNeeded,insufficient dest amount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2397)
+	- require(bool,string)(sourceTokenAmountUsed <= loanLocal.collateral,excessive source amount) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2398)
+LoanClosingsBase._withdrawAsset(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2402-2422) uses timestamp for comparisons
+	Dangerous comparisons:
+	- assetAmount != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2408)
+LoanClosingsBase._finalizeClose(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2424-2476) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(closeType == CloseTypes.Deposit || loanLocal.principal == 0 || currentMargin > loanParamsLocal.maintenanceMargin,unhealthy position) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2459-2464)
+LoanClosingsBase._closeLoan(LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2478-2500) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(loanCloseAmount != 0,nothing to close) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2484)
+	- loanCloseAmount == loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2486)
+LoanClosingsBase._settleInterest(LoanParamsStruct.LoanParams,LoanStruct.Loan,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2502-2571) uses timestamp for comparisons
+	Dangerous comparisons:
+	- interestTime > loanLocal.endTimestamp (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2519)
+	- closePrincipal < loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2532)
+	- closePrincipal < loanLocal.principal (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2554)
+	- owedTotal > interestRefundToBorrower (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2566-2568)
+LoanClosingsBase._getRebate(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2573-2599) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(maxDrawdown != 0,unhealthy position) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2588)
+LoanClosingsBase._emitClosingEvents(LoanParamsStruct.LoanParams,LoanStruct.Loan,uint256,uint256,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2623-2684) uses timestamp for comparisons
+	Dangerous comparisons:
+	- currentMargin != 0 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2654)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+EnumerableBytes32Set.addAddress(EnumerableBytes32Set.Bytes32Set,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#76-85) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#81-84)
+EnumerableBytes32Set.removeAddress(EnumerableBytes32Set.Bytes32Set,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#107-116) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#112-115)
+EnumerableBytes32Set.containsAddress(EnumerableBytes32Set.Bytes32Set,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#166-176) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#172-175)
+EnumerableBytes32Set.getAddress(EnumerableBytes32Set.Bytes32Set,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#240-251) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#247-250)
+Address.isContract(address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#581-590) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#588-589)
+FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1097-1146) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1118-1124)
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1134-1138)
+LoanClosingsBase._finalizeClose(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2424-2476) uses assembly
+	- INLINE ASM (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2452-2459)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#11) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#620-626):
+	- (success) = recipient.call.value(amount)() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#624)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#677-696):
+	- (success,returndata) = address(token).call(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#689)
+Low level call in FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1097-1146):
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1110-1117)
+Low level call in SwapsUser._swapsCall_internal(address[5],uint256[3]) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1588-1610):
+	- (success,data) = swapsImpl.delegatecall(data) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1606)
+Low level call in LoanClosingsBase._finalizeClose(LoanStruct.Loan,LoanParamsStruct.LoanParams,uint256,uint256,uint256,LoanClosingsBase.CloseTypes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2424-2476):
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).getCurrentMargin.selector,loanParamsLocal.loanToken,loanParamsLocal.collateralToken,loanLocal.principal,loanLocal.collateral)) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2443-2451)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Constant Constants.UserRewardsID (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#44) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Constants.wethToken (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#46) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Constants.bzrxTokenAddress (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#47) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Constants.vbzrxTokenAddress (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#48) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter SafeMath.min256(uint256,uint256)._a (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#555) is not in mixedCase
+Parameter SafeMath.min256(uint256,uint256)._b (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#555) is not in mixedCase
+Parameter IPriceFeeds.amountInEth(address,uint256).Token (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#878) is not in mixedCase
+Function SwapsUser._swapsCall_internal(address[5],uint256[3]) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1588-1610) is not in mixedCase
+Constant GasTokenUser.gasToken (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1685) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant GasTokenUser.tokenHolder (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1686) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+LoanClosingsWithGasToken.slitherConstructorConstantVariables() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2687-2788) uses literals with too many digits:
+	- gasToken = ITokenHolderLike(0x0000000000004946c0e9F43F4Dee607b0eF1fA1c) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1685)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+State.userLoanParamSets (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#793) is never used in LoanClosingsWithGasToken (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2687-2788)
+State.loanPoolsSet (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#818) is never used in LoanClosingsWithGasToken (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2687-2788)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+IERC20.decimals (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#22) should be constant
+IERC20.name (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#21) should be constant
+IERC20.symbol (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#23) should be constant
+State.affiliateFeePercent (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#812) should be constant
+State.borrowingFeePercent (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#805) should be constant
+State.feesController (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#795) should be constant
+State.lendingFeePercent (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#797) should be constant
+State.maxDisagreement (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#822) should be constant
+State.maxSwapSize (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#826) should be constant
+State.priceFeeds (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#770) should be constant
+State.protocolTokenPaid (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#810) should be constant
+State.sourceBufferPercent (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#824) should be constant
+State.swapsImpl (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#771) should be constant
+State.tradingFeePercent (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#801) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- IERC20.totalSupply() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#24)
+balanceOf(address) should be declared external:
+	- IERC20.balanceOf(address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#25)
+allowance(address,address) should be declared external:
+	- IERC20.allowance(address,address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#26)
+approve(address,uint256) should be declared external:
+	- IERC20.approve(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#27)
+transfer(address,uint256) should be declared external:
+	- IERC20.transfer(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#28)
+transferFrom(address,address,uint256) should be declared external:
+	- IERC20.transferFrom(address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#29)
+owner() should be declared external:
+	- Ownable.owner() (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#342-344)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#365-367)
+balanceOf(address) should be declared external:
+	- ITokenHolderLike.balanceOf(address) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1678)
+freeUpTo(uint256) should be declared external:
+	- ITokenHolderLike.freeUpTo(uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1679)
+freeFromUpTo(address,uint256) should be declared external:
+	- ITokenHolderLike.freeFromUpTo(address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#1680)
+closeWithDepositWithGasToken(bytes32,address,address,uint256) should be declared external:
+	- LoanClosingsWithGasToken.closeWithDepositWithGasToken(bytes32,address,address,uint256) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2742-2762)
+closeWithSwapWithGasToken(bytes32,address,address,uint256,bool,bytes) should be declared external:
+	- LoanClosingsWithGasToken.closeWithSwapWithGasToken(bytes32,address,address,uint256,bool,bytes) (loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol#2764-2787)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol analyzed (33 contracts with 46 detectors), 145 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xa12AA89BeB87332e8bfC2087956d11960E3d103e.sol
+Tool Runtime = 18.749290184998245 seconds
+#############################################

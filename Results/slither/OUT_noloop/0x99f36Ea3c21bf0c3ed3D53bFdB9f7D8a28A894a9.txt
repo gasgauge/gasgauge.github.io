@@ -1,0 +1,223 @@
+Compilation warnings/errors on ./noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol:
+./noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol:10:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[93m
+Reentrancy in EpochCoordinator._executeEpoch(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#729-762):
+	External calls:
+	- seniorTranche.epochUpdate(epochID,calcFulfillment(seniorSupply,order.seniorSupply).value,calcFulfillment(seniorRedeem,order.seniorRedeem).value,epochSeniorTokenPrice.value,order.seniorSupply,order.seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#734-736)
+	- juniorTranche.epochUpdate(epochID,calcFulfillment(juniorSupply,order.juniorSupply).value,calcFulfillment(juniorRedeem,order.juniorRedeem).value,epochJuniorTokenPrice.value,order.juniorSupply,order.juniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#738-740)
+	- assessor.changeSeniorAsset(newSeniorRatio,seniorSupply,seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#751)
+	- assessor.changeReserveAvailable(newReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#753)
+	State variables written after the call(s):
+	- lastEpochExecuted = epochID (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#755)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	- epochSeniorTokenPrice = assessor.calcSeniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#362)
+	- epochJuniorTokenPrice = assessor.calcJuniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#363)
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- seniorTranche.epochUpdate(epochID,calcFulfillment(seniorSupply,order.seniorSupply).value,calcFulfillment(seniorRedeem,order.seniorRedeem).value,epochSeniorTokenPrice.value,order.seniorSupply,order.seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#734-736)
+		- juniorTranche.epochUpdate(epochID,calcFulfillment(juniorSupply,order.juniorSupply).value,calcFulfillment(juniorRedeem,order.juniorRedeem).value,epochJuniorTokenPrice.value,order.juniorSupply,order.juniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#738-740)
+		- assessor.changeSeniorAsset(newSeniorRatio,seniorSupply,seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#751)
+		- assessor.changeReserveAvailable(newReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#753)
+	State variables written after the call(s):
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- submissionPeriod = false (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#756)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	- epochSeniorTokenPrice = assessor.calcSeniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#362)
+	- epochJuniorTokenPrice = assessor.calcJuniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#363)
+	State variables written after the call(s):
+	- submissionPeriod = true (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#386)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in EpochCoordinator._executeEpoch(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#729-762):
+	External calls:
+	- seniorTranche.epochUpdate(epochID,calcFulfillment(seniorSupply,order.seniorSupply).value,calcFulfillment(seniorRedeem,order.seniorRedeem).value,epochSeniorTokenPrice.value,order.seniorSupply,order.seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#734-736)
+	- juniorTranche.epochUpdate(epochID,calcFulfillment(juniorSupply,order.juniorSupply).value,calcFulfillment(juniorRedeem,order.juniorRedeem).value,epochJuniorTokenPrice.value,order.juniorSupply,order.juniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#738-740)
+	- assessor.changeSeniorAsset(newSeniorRatio,seniorSupply,seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#751)
+	- assessor.changeReserveAvailable(newReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#753)
+	State variables written after the call(s):
+	- bestRatioImprovement = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#760)
+	- bestReserveImprovement = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#761)
+	- bestSubScore = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#758)
+	- gotFullValidSolution = false (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#759)
+	- minChallengePeriodEnd = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#757)
+	- submissionPeriod = false (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#756)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	State variables written after the call(s):
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	State variables written after the call(s):
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	State variables written after the call(s):
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	- juniorTranche.epochUpdate(currentEpoch,0,0,0,0,0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#352)
+	- seniorTranche.epochUpdate(currentEpoch,0,0,0,0,0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#353)
+	- assessor.changeSeniorAsset(calcSeniorRatio(epochSeniorAsset,epochNAV,epochReserve),0,0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#356)
+	State variables written after the call(s):
+	- lastEpochExecuted = safeAdd(lastEpochExecuted,1) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#357)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	- epochSeniorTokenPrice = assessor.calcSeniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#362)
+	State variables written after the call(s):
+	- epochSeniorTokenPrice = assessor.calcSeniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#362)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	- epochSeniorTokenPrice = assessor.calcSeniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#362)
+	- epochJuniorTokenPrice = assessor.calcJuniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#363)
+	State variables written after the call(s):
+	- epochJuniorTokenPrice = assessor.calcJuniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#363)
+	- order.seniorRedeem = rmul(orderSeniorRedeem,epochSeniorTokenPrice.value) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#372)
+	- order.juniorRedeem = rmul(orderJuniorRedeem,epochJuniorTokenPrice.value) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#373)
+	- order.juniorSupply = orderJuniorSupply (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#374)
+	- order.seniorSupply = orderSeniorSupply (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#375)
+	- poolClosing = true (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#368)
+Reentrancy in EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387):
+	External calls:
+	- reserve.balance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#336)
+	- assessor.changeReserveAvailable(0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#337)
+	- (orderJuniorSupply,orderJuniorRedeem) = juniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#339)
+	- (orderSeniorSupply,orderSeniorRedeem) = seniorTranche.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#340)
+	- epochSeniorAsset = safeAdd(assessor.seniorDebt(),assessor.seniorBalance()) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#342)
+	- epochNAV = assessor.calcUpdateNAV() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#345)
+	- epochReserve = assessor.totalBalance() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#346)
+	- epochSeniorTokenPrice = assessor.calcSeniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#362)
+	- epochJuniorTokenPrice = assessor.calcJuniorTokenPrice(epochNAV,epochReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#363)
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- seniorTranche.epochUpdate(epochID,calcFulfillment(seniorSupply,order.seniorSupply).value,calcFulfillment(seniorRedeem,order.seniorRedeem).value,epochSeniorTokenPrice.value,order.seniorSupply,order.seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#734-736)
+		- juniorTranche.epochUpdate(epochID,calcFulfillment(juniorSupply,order.juniorSupply).value,calcFulfillment(juniorRedeem,order.juniorRedeem).value,epochJuniorTokenPrice.value,order.juniorSupply,order.juniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#738-740)
+		- assessor.changeSeniorAsset(newSeniorRatio,seniorSupply,seniorRedeem) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#751)
+		- assessor.changeReserveAvailable(newReserve) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#753)
+	State variables written after the call(s):
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- bestRatioImprovement = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#760)
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- bestReserveImprovement = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#761)
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- bestSubScore = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#758)
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- gotFullValidSolution = false (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#759)
+	- _executeEpoch(order.seniorRedeem,order.juniorRedeem,orderSeniorSupply,orderJuniorSupply) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#380-381)
+		- minChallengePeriodEnd = 0 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#757)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+EpochCoordinator.executeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#675-680) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(block.timestamp >= minChallengePeriodEnd && minChallengePeriodEnd != 0) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#676)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+EpochCoordinator.closeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#332-387) compares to a boolean constant:
+	-require(bool)(submissionPeriod == false) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#333)
+EpochCoordinator.submitSolution(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#409-420) compares to a boolean constant:
+	-require(bool,string)(submissionPeriod == true,submission-period-not-active) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#411)
+EpochCoordinator._submitSolution(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#423-466) compares to a boolean constant:
+	-gotFullValidSolution == false (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#439)
+EpochCoordinator._submitSolution(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#423-466) compares to a boolean constant:
+	-gotFullValidSolution == false (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#460)
+EpochCoordinator.scoreRatioImprovement(FixedPoint.Fixed27) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#542-552) compares to a boolean constant:
+	-checkRatioInRange(newSeniorRatio,minSeniorRatio,maxSeniorRatio) == true (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#544)
+EpochCoordinator.validate(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#649-672) compares to a boolean constant:
+	-poolClosing == true (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#663)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#9) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Contract ReserveLike_3 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#190-192) is not in CapWords
+Contract AssessorLike_3 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#194-205) is not in CapWords
+Parameter AssessorLike_3.calcSeniorTokenPrice(uint256,uint256).NAV (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#195) is not in mixedCase
+Parameter AssessorLike_3.calcJuniorTokenPrice(uint256,uint256).NAV (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#196) is not in mixedCase
+Parameter EpochCoordinator.calcAssets(uint256,uint256).NAV (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#697) is not in mixedCase
+Parameter EpochCoordinator.calcSeniorRatio(uint256,uint256,uint256).NAV (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#703) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+EpochCoordinator.slitherConstructorVariables() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#215-763) uses literals with too many digits:
+	- weightSeniorRedeem = 1000000 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#265)
+EpochCoordinator.slitherConstructorVariables() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#215-763) uses literals with too many digits:
+	- weightJuniorRedeem = 100000 (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#266)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+rely(address) should be declared external:
+	- Auth.rely(address) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#79)
+deny(address) should be declared external:
+	- Auth.deny(address) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#80)
+changeReserveAvailable(uint256) should be declared external:
+	- AssessorLike_3.changeReserveAvailable(uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#204)
+file(bytes32,uint256) should be declared external:
+	- EpochCoordinator.file(bytes32,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#307-317)
+depend(bytes32,address) should be declared external:
+	- EpochCoordinator.depend(bytes32,address) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#320-326)
+submitSolution(uint256,uint256,uint256,uint256) should be declared external:
+	- EpochCoordinator.submitSolution(uint256,uint256,uint256,uint256) (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#409-420)
+executeEpoch() should be declared external:
+	- EpochCoordinator.executeEpoch() (noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol#675-680)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol analyzed (8 contracts with 46 detectors), 35 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x99f36Ea3c21bf0c3ed3D53bFdB9f7D8a28A894a9.sol
+Tool Runtime = 1.64808764999907 seconds
+#############################################

@@ -1,0 +1,90 @@
+INFO:Detectors:[93m
+Reentrancy in ExchangeRates.deleteRate(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1332-1340):
+	External calls:
+	- require(bool,string)(_getRate(currencyKey) > 0,Rate is zero) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1333)
+		- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1818)
+	State variables written after the call(s):
+	- delete _rates[currencyKey][currentRoundForRate[currencyKey]] (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1335)
+	- currentRoundForRate[currencyKey] -- (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1337)
+Reentrancy in ExchangeRates.freezeRate(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1433-1447):
+	External calls:
+	- rate = _getRate(currencyKey) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1438)
+		- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1818)
+	State variables written after the call(s):
+	- inverse.frozenAtUpperLimit = (rate == inverse.upperLimit) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1441)
+	- inverse.frozenAtLowerLimit = (rate == inverse.lowerLimit) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1442)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+ExchangeRates.addAggregator(bytes32,address) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1403-1417) contains a tautology or contradiction:
+	- require(bool,string)(aggregator.latestRound() >= 0,Given Aggregator is invalid) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1408)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#tautology-or-contradiction[0m
+INFO:Detectors:[92m
+Reentrancy in ExchangeRates.deleteRate(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1332-1340):
+	External calls:
+	- require(bool,string)(_getRate(currencyKey) > 0,Rate is zero) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1333)
+		- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1818)
+	Event emitted after the call(s):
+	- RateDeleted(currencyKey) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1339)
+Reentrancy in ExchangeRates.freezeRate(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1433-1447):
+	External calls:
+	- rate = _getRate(currencyKey) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1438)
+		- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1818)
+	Event emitted after the call(s):
+	- InversePriceFrozen(currencyKey,rate,msg.sender) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1443)
+Reentrancy in ExchangeRates.setInversePricing(bytes32,uint256,uint256,uint256,bool,bool) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1342-1388):
+	External calls:
+	- rate = _getRate(currencyKey) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1382)
+		- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1818)
+	- exchanger().setLastExchangeRateForSynth(currencyKey,rate) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1384)
+	Event emitted after the call(s):
+	- InversePriceConfigured(currencyKey,entryPoint,upperLimit,lowerLimit) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1387)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+SelfDestructible.selfDestruct() (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#154-159) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(initiationTime + SELFDESTRUCT_DELAY < now,Self destruct delay not met) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#156)
+ExchangeRates.rateAndInvalid(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1607-1618) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (rateAndTime.rate,_rateIsStaleWithTime(getRateStalePeriod(),rateAndTime.time) || _rateIsFlagged(currencyKey,FlagsInterface(getAggregatorWarningFlags()))) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1613-1617)
+ExchangeRates.ratesAndInvalidForCurrencies(bytes32[]) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1620-1640) uses timestamp for comparisons
+	Dangerous comparisons:
+	- anyRateInvalid = flagList[i] || _rateIsStaleWithTime(_rateStalePeriod,rateEntry.time) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1637)
+ExchangeRates.rateIsInvalid(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1650-1654) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _rateIsStale(currencyKey,getRateStalePeriod()) || _rateIsFlagged(currencyKey,FlagsInterface(getAggregatorWarningFlags())) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1651-1653)
+ExchangeRates.anyRateIsInvalid(bytes32[]) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1660-1673) uses timestamp for comparisons
+	Dangerous comparisons:
+	- flagList[i] || _rateIsStale(currencyKeys[i],_rateStalePeriod) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1667)
+ExchangeRates.internalUpdateRates(bytes32[],uint256[],uint256) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1712-1742) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(timeSent < (now + ORACLE_FUTURE_LIMIT),Time is too far into the future) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1718)
+	- timeSent < _getUpdatedTime(currencyKey) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1731)
+ExchangeRates._rateIsStaleWithTime(uint256,uint256) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1914-1916) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _time.add(_rateStalePeriod) < now (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1915)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#58) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in ExchangeRates._getRateAndUpdatedTime(bytes32) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1810-1836):
+	- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1818)
+Low level call in ExchangeRates._getRateAndTimestampAtRound(bytes32,uint256) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1848-1869):
+	- (success,returnData) = address(aggregator).staticcall(payload) (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1856)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Owned.nominateNewOwner(address)._owner (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#72) is not in mixedCase
+Parameter SelfDestructible.setSelfDestructBeneficiary(address)._beneficiary (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#122) is not in mixedCase
+Parameter MixinResolver.setResolverAndSyncCache(AddressResolver)._resolver (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#385) is not in mixedCase
+Parameter MixinResolver.isResolverCached(AddressResolver)._resolver (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#405) is not in mixedCase
+Constant SafeDecimalMath.highPrecisionDecimals (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#867) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter ExchangeRates.setOracle(address)._oracle (loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol#1317) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Slither:./loops/0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol analyzed (18 contracts with 46 detectors), 23 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xda80e6024bc82c9fe9e4e6760a9769cf0d231e80.sol
+Tool Runtime = 3.8154600460002257 seconds
+#############################################

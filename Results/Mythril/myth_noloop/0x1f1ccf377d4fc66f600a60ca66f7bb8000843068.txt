@@ -1,0 +1,137 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NUXPresale
+Function name: finalize()
+PC address: 2307
+Estimated Gas Usage: 353 - 448
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/9/0x1f1ccf377d4fc66f600a60ca66f7bb8000843068.sol:602
+
+require(presaleEnded(), 'Presale not ended yet')
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21410c010208ccee, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: finalize(), txdata: 0x4bb278f3, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NUXPresale
+Function name: finalize()
+PC address: 2896
+Estimated Gas Usage: 6135 - 76253
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/9/0x1f1ccf377d4fc66f600a60ca66f7bb8000843068.sol:603
+
+INUXAsset(address(NUXToken)).transferLock(treasury, NUXToken.balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 787878787878787878787878deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: finalize(), txdata: 0x4bb278f3, value: 0x0
+Caller: [SOMEGUY], function: finalize(), txdata: 0x4bb278f3, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NUXPresale
+Function name: finalize()
+PC address: 2896
+Estimated Gas Usage: 6135 - 76253
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/9/0x1f1ccf377d4fc66f600a60ca66f7bb8000843068.sol:603
+
+INUXAsset(address(NUXToken)).transferLock(treasury, NUXToken.balanceOf(address(this)))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbfba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: finalize(), txdata: 0x4bb278f3, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NUXPresale
+Function name: USDToNUX(uint256)
+PC address: 3474
+Estimated Gas Usage: 411 - 787
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/9/0x1f1ccf377d4fc66f600a60ca66f7bb8000843068.sol:582
+
+_value * NUX
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42000000001020106, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: USDToNUX(uint256), txdata: 0x8d134bed000000010060000080faed97a9f7002686aaaab0baab9815b364c224f05b0000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NUXPresale
+Function name: setETHPrice(uint256)
+PC address: 3939
+Estimated Gas Usage: 19558 - 80520
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/9/0x1f1ccf377d4fc66f600a60ca66f7bb8000843068.sol:543
+
+100 * etherPriceUSD
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20016, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setETHPrice(uint256), txdata: 0xbc7dce066c02aaaaaaaaaaaab55655aaaaaaaaaaab55555555555555555555586aaaaaab, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x1f1ccf377d4fc66f600a60ca66f7bb8000843068.sol
+Tool Runtime = 586.065732013958 seconds
+#############################################

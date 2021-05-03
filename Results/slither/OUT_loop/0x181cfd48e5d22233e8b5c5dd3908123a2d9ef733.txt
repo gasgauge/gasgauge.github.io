@@ -1,0 +1,72 @@
+INFO:Detectors:[93m
+YFMSVault.getUnstakingFee(address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#110-113) performs a multiplication on the result of a division:
+	-_balance / 10000 * 250 (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#112)
+YFMSVault.distributeVaultRewards() (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#164-182) performs a multiplication on the result of a division:
+	-_earned = ratioMath(_userBalance,_pool).mul(_vaultReward / 100000000000000000) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#177)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+YFMSVault.cleanStakersArray(address).index (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#116) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+YFMSVault.stakeYFMS(uint256,address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#129-138) ignores return value by YFMSToken.transferFrom(_from,address(this),_amount) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#136)
+YFMSVault.unstakeYFMS(address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#140-155) ignores return value by YFMSToken.transfer(_to,_amount) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#147)
+YFMSVault.unstakeYFMS(address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#140-155) ignores return value by YFMSToken.transfer(address(0),_unstakingFee) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#148)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+YFMSVault.distributeVaultRewards() (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#164-182) has external calls inside a loop: CuraAnnonae.updateVaultData(YFMS,address(this),stakers[i],_earned) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#179)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in YFMSVault.unstakeYFMS(address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#140-155):
+	External calls:
+	- YFMSToken.transfer(_to,_amount) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#147)
+	- YFMSToken.transfer(address(0),_unstakingFee) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#148)
+	State variables written after the call(s):
+	- burnTotal = burnTotal.add(_unstakingFee) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#150)
+Reentrancy in YFMSVault.unstakeYFMS(address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#140-155):
+	External calls:
+	- YFMSToken.transfer(_to,_amount) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#147)
+	- YFMSToken.transfer(address(0),_unstakingFee) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#148)
+	- CuraAnnonae.unstake(YFMS,_to,address(this)) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#152)
+	State variables written after the call(s):
+	- cleanStakersArray(_to) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#154)
+		- stakers[index] = stakers[stakers.length - 1] (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#124)
+		- stakers.pop() (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#126)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter YFMSVault.getUserBalance(address)._from (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#101) is not in mixedCase
+Parameter YFMSVault.getUnstakingFee(address)._user (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#110) is not in mixedCase
+Parameter YFMSVault.stakeYFMS(uint256,address)._amount (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#129) is not in mixedCase
+Parameter YFMSVault.stakeYFMS(uint256,address)._from (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#129) is not in mixedCase
+Parameter YFMSVault.unstakeYFMS(address)._to (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#140) is not in mixedCase
+Parameter YFMSVault.ratioMath(uint256,uint256)._numerator (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#157) is not in mixedCase
+Parameter YFMSVault.ratioMath(uint256,uint256)._denominator (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#157) is not in mixedCase
+Variable YFMSVault.CuraAnnonae (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#91) is not in mixedCase
+Variable YFMSVault.YFMSToken (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#92) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+YFMSVault.stakeYFMS(uint256,address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#129-138) uses literals with too many digits:
+	- require(bool)(_amount >= 500000000000000000) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#132)
+YFMSVault.distributeVaultRewards() (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#164-182) uses literals with too many digits:
+	- _earned = ratioMath(_userBalance,_pool).mul(_vaultReward / 100000000000000000) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#177)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+getStakers() should be declared external:
+	- YFMSVault.getStakers() (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#106-108)
+stakeYFMS(uint256,address) should be declared external:
+	- YFMSVault.stakeYFMS(uint256,address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#129-138)
+unstakeYFMS(address) should be declared external:
+	- YFMSVault.unstakeYFMS(address) (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#140-155)
+distributeVaultRewards() should be declared external:
+	- YFMSVault.distributeVaultRewards() (loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol#164-182)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol analyzed (4 contracts with 46 detectors), 26 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x181cfd48e5d22233e8b5c5dd3908123a2d9ef733.sol
+Tool Runtime = 0.5606363269980648 seconds
+#############################################

@@ -1,0 +1,113 @@
+INFO:Detectors:[93m
+Reentrancy in YfDAIstaking.deposit(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#390-406):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#392)
+	- updateAccount(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#394)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#398)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].add(amountAfterFee) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#400)
+Reentrancy in YfDAIstaking.updateAccount(address) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#358-367):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	State variables written after the call(s):
+	- lastClaimedTime[account] = now (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#366)
+Reentrancy in YfDAIstaking.withdraw(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#408-426):
+	External calls:
+	- updateAccount(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#413)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer withdraw fee.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#418)
+	- require(bool,string)(Token(tokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#419)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].sub(amountToWithdraw) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#421)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+YfDAIstaking.deposit(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#390-406) ignores return value by holders.add(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#403)
+YfDAIstaking.withdraw(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#408-426) ignores return value by holders.remove(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#424)
+YfDAIstaking.transferAnyERC20Tokens(address,address,uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#472-475) ignores return value by Token(_tokenAddr).transfer(_to,_amount) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#474)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in YfDAIstaking.deposit(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#390-406):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#392)
+	- updateAccount(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#394)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#398)
+	State variables written after the call(s):
+	- stakingTime[msg.sender] = now (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#404)
+Reentrancy in YfDAIstaking.updateAccount(address) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#358-367):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	State variables written after the call(s):
+	- totalClaimedRewards = totalClaimedRewards.add(pendingDivs) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#363)
+	- totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#362)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in YfDAIstaking.deposit(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#390-406):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#392)
+	- updateAccount(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#394)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#364)
+		- updateAccount(msg.sender) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#394)
+Reentrancy in YfDAIstaking.updateAccount(address) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#358-367):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#364)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YfDAIstaking.updateAccount(address) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#358-367) uses timestamp for comparisons
+	Dangerous comparisons:
+	- pendingDivs > 0 (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#360)
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#361)
+YfDAIstaking.withdraw(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#408-426) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.sub(stakingTime[msg.sender]) > cliffTime,You recently staked, please wait before withdrawing.) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#411)
+YfDAIstaking.getStakingAndDaoAmount() (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#462-468) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalClaimedRewards >= stakingAndDaoTokens (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#463)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter YfDAIstaking.getPendingDivs(address)._holder (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#369) is not in mixedCase
+Parameter YfDAIstaking.transferAnyERC20Tokens(address,address,uint256)._tokenAddr (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#472) is not in mixedCase
+Parameter YfDAIstaking.transferAnyERC20Tokens(address,address,uint256)._to (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#472) is not in mixedCase
+Parameter YfDAIstaking.transferAnyERC20Tokens(address,address,uint256)._amount (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#472) is not in mixedCase
+Constant YfDAIstaking.tokenAddress (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#334) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YfDAIstaking.rewardRate (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#337) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YfDAIstaking.rewardInterval (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#338) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YfDAIstaking.stakingFeeRate (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#341) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YfDAIstaking.unstakingFeeRate (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#344) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YfDAIstaking.cliffTime (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#347) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant YfDAIstaking.stakingAndDaoTokens (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#460) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#314-318)
+getNumberOfHolders() should be declared external:
+	- YfDAIstaking.getNumberOfHolders() (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#385-387)
+deposit(uint256) should be declared external:
+	- YfDAIstaking.deposit(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#390-406)
+withdraw(uint256) should be declared external:
+	- YfDAIstaking.withdraw(uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#408-426)
+claimDivs() should be declared external:
+	- YfDAIstaking.claimDivs() (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#428-430)
+getStakersList(uint256,uint256) should be declared external:
+	- YfDAIstaking.getStakersList(uint256,uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#432-457)
+getStakingAndDaoAmount() should be declared external:
+	- YfDAIstaking.getStakingAndDaoAmount() (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#462-468)
+transferAnyERC20Tokens(address,address,uint256) should be declared external:
+	- YfDAIstaking.transferAnyERC20Tokens(address,address,uint256) (loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol#472-475)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol analyzed (5 contracts with 46 detectors), 34 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x44d771d0c998f524ff39ab6df64b72bce1d09566.sol
+Tool Runtime = 0.7592436380000436 seconds
+#############################################

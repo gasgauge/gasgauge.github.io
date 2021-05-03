@@ -1,0 +1,161 @@
+Compilation warnings/errors on ./loops/0x333efdc7465f516744186a007378fc005cb0b456.sol:
+./loops/0x333efdc7465f516744186a007378fc005cb0b456.sol:398:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+./loops/0x333efdc7465f516744186a007378fc005cb0b456.sol:819:17: Warning: Unused local variable.
+                uint256 oldTokenAmount = tokensInPipt[i];
+                ^--------------------^
+./loops/0x333efdc7465f516744186a007378fc005cb0b456.sol:860:9: Warning: Unused local variable.
+        uint256 totalEthSwap = 0;
+        ^------------------^
+
+INFO:Detectors:[91m
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) sends eth to arbitrary user
+	Dangerous calls:
+	- msg.sender.transfer(ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#833)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) performs a multiplication on the result of a division:
+	-poolRatio = poolAmountOut.mul(1000000000000000000).div(pipt.totalSupply()) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#812)
+	-tokenRequired = poolRatio.mul(pipt.getBalance(tokens[i_scope_0])).div(1000000000000000000) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#814)
+EthPiptSwap.getEthAndTokensIn(uint256,address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889-929) performs a multiplication on the result of a division:
+	-totalPoolOut = piptTotalSupply.mul(1000000000000000000).div(firstTokenBalance) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#899)
+	-poolRatio = totalPoolOut.mul(1000000000000000000).div(piptTotalSupply) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#900)
+EthPiptSwap.getEthAndTokensIn(uint256,address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889-929) performs a multiplication on the result of a division:
+	-poolRatio = totalPoolOut.mul(1000000000000000000).div(piptTotalSupply) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#900)
+	-calculations[i].tokenShare = poolRatio.mul(pipt.getBalance(tokens[i])).div(1000000000000000000) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#908)
+EthPiptSwap.getEthAndTokensIn(uint256,address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889-929) performs a multiplication on the result of a division:
+	-ethInUniswap[i] = _ethValue.mul(calculations[i].ethRequired.mul(1000000000000000000).div(totalEthRequired)).div(1000000000000000000) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#922)
+EthPiptSwap.getEthAndTokensIn(uint256,address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889-929) performs a multiplication on the result of a division:
+	-poolOut = piptTotalSupply.mul(tokensInPipt[0]).div(firstTokenBalance) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#927)
+	-poolOut = poolOut.mul(9999).div(10000) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#928)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]).ethReserve_scope_0 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#877) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) ignores return value by weth.transfer(address(tokenPair),ethInUniswap[i]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#790)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) ignores return value by TokenInterface(tokens[i]).approve(address(pipt),0) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#796)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) ignores return value by TokenInterface(tokens[i]).approve(address(pipt),tokensInPipt[i]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#799)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) ignores return value by pipt.transfer(msg.sender,poolAmountOutAfterFee) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#828)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) ignores return value by TokenInterface(oddTokens[i]).transfer(address(tokenPair),tokenBalance) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#868)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) ignores return value by weth.transfer(address(cvpPair),wethBalance) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#880)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) ignores return value by cvp.transfer(feePayout,cvpOut) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#884)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+EthPiptSwap.receive() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#739-744) (function) shadows built-in symbol"
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#builtin-symbol-shadowing[0m
+INFO:Detectors:[92m
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) has external calls inside a loop: (tokenReserve,ethReserve) = tokenPair.getReserves() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#787)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) has external calls inside a loop: weth.transfer(address(tokenPair),ethInUniswap[i]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#790)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) has external calls inside a loop: tokenPair.swap(tokensInPipt[i],uint256(0),address(this),new bytes(0)) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#792)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) has external calls inside a loop: TokenInterface(tokens[i]).approve(address(pipt),0) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#796)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) has external calls inside a loop: TokenInterface(tokens[i]).approve(address(pipt),tokensInPipt[i]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#799)
+EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836) has external calls inside a loop: tokenRequired = poolRatio.mul(pipt.getBalance(tokens[i_scope_0])).div(1000000000000000000) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#814)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) has external calls inside a loop: tokenBalance = TokenInterface(oddTokens[i]).balanceOf(address(this)) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#862)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) has external calls inside a loop: (tokenReserve,ethReserve) = tokenPair.getReserves() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#865)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) has external calls inside a loop: TokenInterface(oddTokens[i]).transfer(address(tokenPair),tokenBalance) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#868)
+EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887) has external calls inside a loop: tokenPair.swap(uint256(0),wethOut,address(this),new bytes(0)) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#870)
+EthPiptSwap.getEthAndTokensIn(uint256,address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889-929) has external calls inside a loop: calculations[i].tokenShare = poolRatio.mul(pipt.getBalance(tokens[i])).div(1000000000000000000) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#908)
+EthPiptSwap.getEthAndTokensIn(uint256,address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889-929) has external calls inside a loop: (calculations[i].tokenReserve,calculations[i].ethReserve,None) = uniswapPairFor(tokens[i]).getReserves() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#909)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887):
+	External calls:
+	- weth.transfer(address(cvpPair),wethBalance) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#880)
+	- cvpPair.swap(cvpOut,uint256(0),address(this),new bytes(0)) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#882)
+	- cvp.transfer(feePayout,cvpOut) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#884)
+	Event emitted after the call(s):
+	- PayoutCVP(feePayout,wethBalance,cvpOut) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#886)
+Reentrancy in EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836):
+	External calls:
+	- weth.deposit.value(msg.value)() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#776)
+	Event emitted after the call(s):
+	- EthToPiptSwap(msg.sender,msg.value,poolAmountOut,feeAmount,poolAmountOutFee) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#809)
+Reentrancy in EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836):
+	External calls:
+	- weth.deposit.value(msg.value)() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#776)
+	- pipt.joinPool(poolAmountOut,tokensInPipt) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#827)
+	- pipt.transfer(msg.sender,poolAmountOutAfterFee) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#828)
+	- weth.withdraw(ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#832)
+	External calls sending eth:
+	- weth.deposit.value(msg.value)() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#776)
+	- msg.sender.transfer(ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#833)
+	Event emitted after the call(s):
+	- OddEth(msg.sender,ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#834)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#391-400) uses assembly
+	- INLINE ASM (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#398-399)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#484-505) uses assembly
+	- INLINE ASM (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#497-501)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#21) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#49) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#128) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#139) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#151) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#207) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#368) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#511) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#587) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#613) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#682) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#418-424):
+	- (success) = recipient.call.value(amount)() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#422)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#484-505):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#488)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function IUniswapV2Pair.DOMAIN_SEPARATOR() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#168) is not in mixedCase
+Function IUniswapV2Pair.PERMIT_TYPEHASH() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#169) is not in mixedCase
+Function IUniswapV2Pair.MINIMUM_LIQUIDITY() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#186) is not in mixedCase
+Parameter EthPiptSwap.setFees(uint256[],uint256[],address,address)._feeLevels (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#839) is not in mixedCase
+Parameter EthPiptSwap.setFees(uint256[],uint256[],address,address)._feeAmounts (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#840) is not in mixedCase
+Parameter EthPiptSwap.setFees(uint256[],uint256[],address,address)._feePayout (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#841) is not in mixedCase
+Parameter EthPiptSwap.setFees(uint256[],uint256[],address,address)._feeManager (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#842) is not in mixedCase
+Parameter EthPiptSwap.getEthAndTokensIn(uint256,address[])._ethValue (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#889) is not in mixedCase
+Parameter EthPiptSwap.setTokensSettings(address[],address[],bool[])._tokens (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#932) is not in mixedCase
+Parameter EthPiptSwap.setTokensSettings(address[],address[],bool[])._pairs (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#933) is not in mixedCase
+Parameter EthPiptSwap.setTokensSettings(address[],address[],bool[])._reapprove (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#934) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in EthPiptSwap.swapEthToPiptByInputs(uint256[],uint256[],uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#761-836):
+	External calls:
+	- msg.sender.transfer(ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#833)
+	External calls sending eth:
+	- weth.deposit.value(msg.value)() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#776)
+	- msg.sender.transfer(ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#833)
+	Event emitted after the call(s):
+	- OddEth(msg.sender,ethDiff) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#834)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+EthPiptSwap.ETH_ADDRESS (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#696) is never used in EthPiptSwap (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#692-978)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+calcInGivenOut(uint256,uint256,uint256,uint256,uint256,uint256) should be declared external:
+	- BPoolInterface.calcInGivenOut(uint256,uint256,uint256,uint256,uint256,uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#29)
+deposit() should be declared external:
+	- TokenInterface.deposit() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#132)
+withdraw(uint256) should be declared external:
+	- TokenInterface.withdraw(uint256) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#133)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#644-646)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#663-666)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#672-676)
+convertOddToCvpAndSendToPayout(address[]) should be declared external:
+	- EthPiptSwap.convertOddToCvpAndSendToPayout(address[]) (loops/0x333efdc7465f516744186a007378fc005cb0b456.sol#855-887)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x333efdc7465f516744186a007378fc005cb0b456.sol analyzed (11 contracts with 46 detectors), 66 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x333efdc7465f516744186a007378fc005cb0b456.sol
+Tool Runtime = 1.4181603870019899 seconds
+#############################################

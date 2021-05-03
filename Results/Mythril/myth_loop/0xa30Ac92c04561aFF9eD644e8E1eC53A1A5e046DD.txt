@@ -1,0 +1,296 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: TokenPool
+Function name: transfer(address,uint256)
+PC address: 989
+Estimated Gas Usage: 4598 - 40386
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:407
+
+token.transfer(to, value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 050505050505050505050505deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: transfer(address,uint256), txdata: 0xa9059cbb05050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505050505, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TokenGeyser
+Function name: getDistributionToken()
+PC address: 1935
+Estimated Gas Usage: 8621 - 113673
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:545
+
+_unlockedPool.token()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [ATTACKER], function: getDistributionToken(), txdata: 0x22c12b84, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TokenGeyser
+Function name: getDistributionToken()
+PC address: 2154
+Estimated Gas Usage: 8621 - 113673
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:546
+
+_unlockedPool.token()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011001010101010101010000000000000000000000000001000004000000000402, value: 0x0
+Caller: [SOMEGUY], function: unlockTokens(), txdata: 0xf968f493, value: 0x0
+Caller: [ATTACKER], function: getDistributionToken(), txdata: 0x22c12b84, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: TokenGeyser
+Function name: unlockTokens()
+PC address: 2748
+Estimated Gas Usage: 11422 - 117626
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:841
+
+_lockedPool
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [SOMEGUY], function: unlockTokens(), txdata: 0xf968f493, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: TokenGeyser
+Function name: unlockSchedules(uint256)
+PC address: 2949
+Estimated Gas Usage: 1272 - 1367
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:505
+
+UnlockSchedule[] public unlockSchedules
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [ATTACKER], function: unlockSchedules(uint256), txdata: 0x5c94bcb20000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TokenGeyser
+Function name: unlockTokens()
+PC address: 5811
+Estimated Gas Usage: 11422 - 117626
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:912
+
+_lockedPool.transfer(address(_unlockedPool), unlockedTokens)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [SOMEGUY], function: unlockTokens(), txdata: 0xf968f493, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenGeyser
+Function name: updateAccounting()
+PC address: 7390
+Estimated Gas Usage: 13189 - 119490
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:84
+
+if (a == 0) {
+            return 0;
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010104010101010101010101, value: 0x0
+Caller: [ATTACKER], function: updateAccounting(), txdata: 0x494347e7, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenGeyser
+Function name: updateAccounting()
+PC address: 7416
+Estimated Gas Usage: 13240 - 119541
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:89
+
+c / a
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010202010101010101020101020101010102020102010201010101010102020101, value: 0x0
+Caller: [SOMEGUY], function: updateAccounting(), txdata: 0x494347e7, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenGeyser
+Function name: updateAccounting()
+PC address: 7426
+Estimated Gas Usage: 13268 - 119569
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:89
+
+require(c / a == b, "SafeMath: multiplication overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+Caller: [ATTACKER], function: updateAccounting(), txdata: 0x494347e7, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenGeyser
+Function name: updateAccounting()
+PC address: 7514
+Estimated Gas Usage: 14191 - 120492
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:35
+
+require(c >= a, "SafeMath: addition overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x33050400802050089, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010800840020400040440404001100180080408044001024040204001408040101008, value: 0x0
+Caller: [SOMEGUY], function: updateAccounting(), txdata: 0x494347e7, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: TokenGeyser
+Function name: updateAccounting()
+PC address: 9884
+Estimated Gas Usage: 13059 - 119360
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/5/0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol:65
+
+require(b <= a, errorMessage)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005010101010101010101010101010101010101010101010101010101010101010108, value: 0x0
+Caller: [SOMEGUY], function: updateAccounting(), txdata: 0x494347e7, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xa30Ac92c04561aFF9eD644e8E1eC53A1A5e046DD.sol
+Tool Runtime = 3575.7463221319995 seconds
+#############################################

@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CrustDist
+Function name: withDrawAll(address)
+PC address: 960
+Estimated Gas Usage: 4510 - 74154
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/1/0xD6758916BFb6c79d14709DDd1E1DC76B1AE8C0Ae.sol:393
+
+token.transfer(msg.sender, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withDrawAll(address), txdata: 0x09f21f6a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: withDrawAll(address), txdata: 0x09f21f6a000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CrustDist
+Function name: withDrawAll(address)
+PC address: 960
+Estimated Gas Usage: 4510 - 74154
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xD6758916BFb6c79d14709DDd1E1DC76B1AE8C0Ae.sol:393
+
+token.transfer(msg.sender, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withDrawAll(address), txdata: 0x09f21f6a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xD6758916BFb6c79d14709DDd1E1DC76B1AE8C0Ae.sol
+Tool Runtime = 54.19035526498919 seconds
+#############################################

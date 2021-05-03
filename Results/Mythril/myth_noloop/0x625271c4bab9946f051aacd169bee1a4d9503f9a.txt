@@ -1,0 +1,296 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ScamChecker
+Function name: withdraw(address)
+PC address: 4030
+Estimated Gas Usage: 6144 - 76118
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:164
+
+token.transfer(contractOwner, bal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xa004004000c01, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: testFeeToken(address,address,address), txdata: 0xda56ff48000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: withdraw(address), txdata: 0x51cff8d9565656565656565656565656deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ScamChecker
+Function name: withdraw(address)
+PC address: 4030
+Estimated Gas Usage: 6144 - 76118
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:164
+
+token.transfer(contractOwner, bal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdraw(address), txdata: 0x51cff8d90000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ScamChecker
+Function name: withdraw(address)
+PC address: 4128
+Estimated Gas Usage: 7761 - 112251
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:172
+
+contractOwner
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x40000000000000001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: execute(bytes), txdata: 0x09c5eabe0000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [CREATOR], function: withdraw(address), txdata: 0x51cff8d9eaeaeaeaeaeaeaeaeaeaeaeadeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ScamChecker
+Function name: withdraw(address)
+PC address: 4204
+Estimated Gas Usage: 7761 - 112251
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:172
+
+contractOwner.send(bal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: execute(bytes), txdata: 0x09c5eabe0000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [CREATOR], function: withdraw(address), txdata: 0x51cff8d9eaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaea, value: 0x0
+
+==== Unchecked return value from external call. ====
+SWC ID: 104
+Severity: Medium
+Contract: ScamChecker
+Function name: withdraw(address)
+PC address: 4204
+Estimated Gas Usage: 7761 - 112251
+The return value of a message call is not checked.
+External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:172
+
+contractOwner.send(bal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: execute(bytes), txdata: 0x09c5eabe0000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [CREATOR], function: withdraw(address), txdata: 0x51cff8d9eaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaeaea, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ScamChecker
+Function name: testFeeToken(address,address,address)
+PC address: 4577
+Estimated Gas Usage: 13255 - 260796
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:258
+
+token0.approve(router, uint(-1))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfe6f8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: testFeeToken(address,address,address), txdata: 0xda56ff480000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ScamChecker
+Function name: testFeeTokenWeth(address)
+PC address: 4832
+Estimated Gas Usage: 13243 - 260784
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:260
+
+token1.approve(router, uint(-1))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xda762, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x80000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: testFeeTokenWeth(address), txdata: 0x4f71d589000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ScamChecker
+Function name: testFeeToken(address,address,address)
+PC address: 4832
+Estimated Gas Usage: 13255 - 260796
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:260
+
+token1.approve(router, uint(-1))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: testFeeToken(address,address,address), txdata: 0xda56ff48000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ScamChecker
+Function name: testFeeToken(address,address,address)
+PC address: 5571
+Estimated Gas Usage: 13255 - 260796
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:274
+
+exchange.swapExactTokensForTokensSupportingFeeOnTransferTokens(bal, 1, path, address(this), block.timestamp)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfa7a2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: testFeeToken(address,address,address), txdata: 0xda56ff48000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ScamChecker
+Function name: testFeeTokenWeth(address,address)
+PC address: 6214
+Estimated Gas Usage: 13207 - 260748
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:284
+
+exchange.swapExactTokensForTokensSupportingFeeOnTransferTokens(bal, 1, path, address(this), block.timestamp)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000000fede2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: testFeeTokenWeth(address,address), txdata: 0x74183635000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: ScamChecker
+Function name: testFeeTokenWeth(address)
+PC address: 6452
+Estimated Gas Usage: 13243 - 260784
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/6/0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol:288
+
+token0.balanceOf(address(this)) * 1000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: testFeeTokenWeth(address), txdata: 0x4f71d5890000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x625271c4bab9946f051aacd169bee1a4d9503f9a.sol
+Tool Runtime = 494.7133679779945 seconds
+#############################################

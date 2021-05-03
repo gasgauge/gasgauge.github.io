@@ -1,0 +1,202 @@
+Compilation warnings/errors on ./loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol:
+./loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol:56:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+Reentrancy in Mystic.processActionProposal(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1122-1202):
+	External calls:
+	- (success,returnData) = proposal.applicant.call.value(proposal.tributeOffered)(action) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1182)
+	State variables written after the call(s):
+	- unsafeSubtractFromBalance(GUILD,proposal.paymentToken,proposal.paymentRequested) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1186)
+		- userTokenBalances[user][token] -= amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1822)
+		- userTokenBalances[TOTAL][token] -= amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1824)
+Reentrancy in Mystic.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#554-630):
+	External calls:
+	- IWETH(wETH).deposit() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#600)
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+	- IWETH(wETH).transfer(address(this),msg.value) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#606)
+	- IERC20(tributeToken).safeTransferFrom(msg.sender,address(this),tributeOffered) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#610)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+	State variables written after the call(s):
+	- unsafeAddToBalance(ESCROW,tributeToken,tributeOffered) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#616)
+		- userTokenBalances[user][token] += amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1802)
+		- userTokenBalances[TOTAL][token] += amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1804)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+Mystic.fairShare(uint256,uint256,uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1732-1756) performs a multiplication on the result of a division:
+	-(balance / totalSharesAndLoot) * shares (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1754)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Mystic._validateProposalForProcessing(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1370-1384) uses a dangerous strict equality:
+	- require(bool,string)(proposal.flags[1] == 0,processed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1380)
+Mystic.canRagequit(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1634-1642) uses a dangerous strict equality:
+	- proposals[proposalQueue[highestIndexYesVote]].flags[1] == 1 (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1640)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in Mystic._withdrawBalance(address,uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1526-1540):
+	External calls:
+	- IERC20(token).safeTransfer(msg.sender,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1532)
+	State variables written after the call(s):
+	- unsafeSubtractFromBalance(msg.sender,token,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1534)
+		- userTokenBalances[user][token] -= amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1822)
+		- userTokenBalances[TOTAL][token] -= amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1824)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Mystic.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32).flags (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#620) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+Mystic.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#554-630) ignores return value by IWETH(wETH).transfer(address(this),msg.value) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#606)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Mystic.withdrawBalances(address[],uint256[],bool).max (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1500) shadows:
+	- Mystic.max(uint256,uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1660-1664) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Mystic.claimShares(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1894-1928):
+	External calls:
+	- IERC20(stakeToken).safeTransferFrom(msg.sender,address(this),amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1896)
+	State variables written after the call(s):
+	- mintGuildToken(msg.sender,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1920)
+		- balances[memberAddress] = balances[memberAddress].add(amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1948)
+	- registerMember(msg.sender,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1912)
+		- memberAddressByDelegateKey[memberToOverride] = memberToOverride (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1768)
+		- memberAddressByDelegateKey[newMember] = newMember (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1794)
+	- members[msg.sender].shares = members[msg.sender].shares.add(amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1904)
+	- registerMember(msg.sender,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1912)
+		- members[memberToOverride].delegateKey = memberToOverride (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1770)
+		- members[newMember] = Member(newMember,1,shares,0,0,0) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1776-1790)
+	- totalShares = totalShares.add(amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1922)
+Reentrancy in Mystic.processActionProposal(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1122-1202):
+	External calls:
+	- (success,returnData) = proposal.applicant.call.value(proposal.tributeOffered)(action) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1182)
+	State variables written after the call(s):
+	- totalGuildBankTokens -= 1 (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1190)
+Reentrancy in Mystic.sponsorProposal(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#808-900):
+	External calls:
+	- IERC20(depositToken).safeTransferFrom(msg.sender,address(this),proposalDeposit) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#812)
+	State variables written after the call(s):
+	- proposalQueue.push(proposalId) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#894)
+	- proposal.startingPeriod = startingPeriod (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#878)
+	- proposal.sponsor = memberAddress (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#884)
+	- proposal.flags[0] = 1 (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#888)
+	- proposedToKick[proposal.applicant] = true (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#860)
+	- proposedToWhitelist[address(proposal.tributeToken)] = true (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#850)
+	- unsafeAddToBalance(ESCROW,depositToken,proposalDeposit) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#814)
+		- userTokenBalances[user][token] += amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1802)
+		- userTokenBalances[TOTAL][token] += amount (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1804)
+Reentrancy in Mystic.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#554-630):
+	External calls:
+	- IWETH(wETH).deposit() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#600)
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+	- IWETH(wETH).transfer(address(this),msg.value) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#606)
+	- IERC20(tributeToken).safeTransferFrom(msg.sender,address(this),tributeOffered) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#610)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+	State variables written after the call(s):
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#624)
+		- actions[proposalCount] = data (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#786)
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#624)
+		- proposalCount += 1 (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#802)
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#624)
+		- proposals[proposalCount] = proposal (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#792)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Mystic._withdrawBalance(address,uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1526-1540):
+	External calls:
+	- IERC20(token).safeTransfer(msg.sender,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1532)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,token,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1538)
+Reentrancy in Mystic.claimShares(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1894-1928):
+	External calls:
+	- IERC20(stakeToken).safeTransferFrom(msg.sender,address(this),amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1896)
+	Event emitted after the call(s):
+	- Transfer(address(0),memberAddress,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1952)
+		- mintGuildToken(msg.sender,amount) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1920)
+Reentrancy in Mystic.sponsorProposal(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#808-900):
+	External calls:
+	- IERC20(depositToken).safeTransferFrom(msg.sender,address(this),proposalDeposit) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#812)
+	Event emitted after the call(s):
+	- SponsorProposal(msg.sender,memberAddress,proposalId,proposalQueue.length - 1,startingPeriod) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#898)
+Reentrancy in Mystic.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#554-630):
+	External calls:
+	- IWETH(wETH).deposit() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#600)
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+	- IWETH(wETH).transfer(address(this),msg.value) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#606)
+	- IERC20(tributeToken).safeTransferFrom(msg.sender,address(this),tributeOffered) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#610)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+	Event emitted after the call(s):
+	- SubmitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,data,proposalCount,msg.sender,memberAddress) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#798)
+		- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#624)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Mystic.sponsorProposal(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#808-900) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(proposal.proposer != address(0),!proposed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#822)
+	- require(bool,string)(proposal.flags[0] == 0,sponsored) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#824)
+	- require(bool,string)(proposal.flags[3] == 0,cancelled) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#826)
+	- require(bool,string)(members[proposal.applicant].jailed == 0,applicant jailed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#828)
+	- require(bool,string)(! tokenWhitelist[address(proposal.tributeToken)],whitelisted) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#844)
+	- require(bool,string)(! proposedToWhitelist[address(proposal.tributeToken)],whitelist proposed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#846)
+	- require(bool,string)(! proposedToKick[proposal.applicant],kick proposed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#858)
+Mystic.submitVote(uint256,uint8) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#906-978) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(getCurrentPeriod() >= proposal.startingPeriod,pending) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#926)
+Mystic._didPass(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1326-1366) uses timestamp for comparisons
+	Dangerous comparisons:
+	- proposal.yesVotes > proposal.noVotes (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1332)
+	- (totalSupply().mul(dilutionBound)) < proposal.maxTotalSharesAndLootAtYesVote (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1342)
+Mystic._validateProposalForProcessing(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1370-1384) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(getCurrentPeriod() >= proposal.startingPeriod.add(votingPeriodLength).add(gracePeriodLength),!ready) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1378)
+	- require(bool,string)(proposal.flags[1] == 0,processed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1380)
+	- require(bool,string)(proposalIndex == 0 || proposals[proposalQueue[proposalIndex - 1]].flags[1] == 1,prior !processed) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1382)
+Mystic.canRagequit(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1634-1642) uses timestamp for comparisons
+	Dangerous comparisons:
+	- proposals[proposalQueue[highestIndexYesVote]].flags[1] == 1 (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1640)
+Mystic.hasVotingPeriodExpired(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1646-1650) uses timestamp for comparisons
+	Dangerous comparisons:
+	- getCurrentPeriod() >= startingPeriod.add(votingPeriodLength) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1648)
+Mystic.max(uint256,uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1660-1664) uses timestamp for comparisons
+	Dangerous comparisons:
+	- x >= y (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1662)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#44-60) uses assembly
+	- INLINE ASM (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#56-58)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20._callOptionalReturn(IERC20,bytes) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#88-106):
+	- (success,returnData) = address(token).call(data) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#94)
+Low level call in Mystic.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#554-630):
+	- (success) = wETH.call.value(msg.value)() (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#602)
+Low level call in Mystic.processActionProposal(uint256) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1122-1202):
+	- (success,returnData) = proposal.applicant.call.value(proposal.tributeOffered)(action) (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#1182)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._depositToken (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#454) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._stakeToken (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#456) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._summoner (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#458) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._summonerShares (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#460) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._summonerDeposit (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#462) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._proposalDeposit (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#464) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._processingReward (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#466) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._periodDuration (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#468) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._votingPeriodLength (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#470) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._gracePeriodLength (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#472) is not in mixedCase
+Parameter Mystic.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._dilutionBound (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#474) is not in mixedCase
+Constant Mystic.wETH (loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol#234) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Slither:./loops/0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol analyzed (7 contracts with 46 detectors), 42 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x0323fa07c085d3eb28a8c0a500112171f6dddd75.sol
+Tool Runtime = 2.7911853629993857 seconds
+#############################################

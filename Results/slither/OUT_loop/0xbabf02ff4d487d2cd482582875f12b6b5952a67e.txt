@@ -1,0 +1,148 @@
+INFO:Detectors:[91m
+FNXMinePool._redeemMineCoin(address,address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#751-765) sends eth to arbitrary user
+	Dangerous calls:
+	- recieptor.transfer(amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#756)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+FNXMinePool._mineSettlement(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#778-790) performs a multiplication on the result of a division:
+	-latestSettleTime[mineCoin] = now / _mineInterval * _mineInterval (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#786)
+FNXMinePool._getLatestMined(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#794-804) performs a multiplication on the result of a division:
+	-mintTime = (now - latestSettleTime[mineCoin]) / _mineInterval (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#799)
+	-latestMined = _mineAmount * mintTime (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#800)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+FNXMinePool._redeemMineCoin(address,address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#751-765) uses a dangerous strict equality:
+	- require(bool,string)(preBalance - afterBalance == amount,settlement token transfer error!) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#762)
+FNXMinePool.redeemOut(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#571-581) uses a dangerous strict equality:
+	- require(bool,string)(preBalance - afterBalance == amount,settlement token transfer error!) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#579)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+FNXMinePool.redeemOut(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#571-581) ignores return value by token.transfer(msg.sender,amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#577)
+FNXMinePool._redeemMineCoin(address,address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#751-765) ignores return value by minerToken.transfer(recieptor,amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#760)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in FNXMinePool._redeemMineCoin(address,address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#751-765):
+	External calls:
+	- minerToken.transfer(recieptor,amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#760)
+	External calls sending eth:
+	- recieptor.transfer(amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#756)
+	Event emitted after the call(s):
+	- RedeemMineCoin(recieptor,mineCoin,amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#764)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+FNXMinePool._mineSettlement(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#778-790) uses timestamp for comparisons
+	Dangerous comparisons:
+	- latestMined > 0 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#781)
+FNXMinePool._settlement(address,address,uint256,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#881-885) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(tokenNetWorth >= origin,error: tokenNetWorth logic error!) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#883)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#29) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#108) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#143) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#173) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#318) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#376) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#403) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#463) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#542) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable Ownable._owner (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#41) is not in mixedCase
+Contract whiteListUint32 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#177-225) is not in CapWords
+Contract whiteListUint256 (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#229-269) is not in CapWords
+Contract whiteListAddress (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#273-313) is not in CapWords
+Constant AddressWhiteList.allPermission (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#327) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowBuyOptions (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#328) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowSellOptions (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#329) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowExerciseOptions (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#330) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowAddCollateral (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#331) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowRedeemCollateral (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#332) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MinePoolData.calDecimals (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#414) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MinePoolData.opBurnCoin (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#435) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MinePoolData.opMintCoin (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#436) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MinePoolData.opTransferCoin (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#437) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter FNXMinePool.setMineCoinInfo(address,uint256,uint256)._mineAmount (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#625) is not in mixedCase
+Parameter FNXMinePool.setMineCoinInfo(address,uint256,uint256)._mineInterval (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#625) is not in mixedCase
+Parameter FNXMinePool.setBuyingMineInfo(address,uint256)._mineAmount (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#638) is not in mixedCase
+Parameter FNXMinePool.setMineAmount(address,uint256)._mineAmount (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#716) is not in mixedCase
+Parameter FNXMinePool.setMineInterval(address,uint256)._mineInterval (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#726) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in FNXMinePool._redeemMineCoin(address,address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#751-765):
+	External calls:
+	- recieptor.transfer(amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#756)
+	Event emitted after the call(s):
+	- RedeemMineCoin(recieptor,mineCoin,amount) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#764)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+AddressWhiteList.allowBuyOptions (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#328) is never used in FNXMinePool (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#551-923)
+AddressWhiteList.allowSellOptions (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#329) is never used in FNXMinePool (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#551-923)
+AddressWhiteList.allowExerciseOptions (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#330) is never used in FNXMinePool (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#551-923)
+AddressWhiteList.allowAddCollateral (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#331) is never used in FNXMinePool (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#551-923)
+AddressWhiteList.allowRedeemCollateral (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#332) is never used in FNXMinePool (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#551-923)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#56-58)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#82-85)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#91-93)
+setManager(address) should be declared external:
+	- Managerable.setManager(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#125-130)
+setHalt(bool) should be declared external:
+	- Halt.setHalt(bool) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#162-167)
+modifyPermission(address,uint256) should be declared external:
+	- AddressWhiteList.modifyPermission(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#344-346)
+removeWhiteList(address) should be declared external:
+	- AddressWhiteList.removeWhiteList(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#351-354)
+getWhiteList() should be declared external:
+	- AddressWhiteList.getWhiteList() (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#358-360)
+isEligibleAddress(address) should be declared external:
+	- AddressWhiteList.isEligibleAddress(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#365-367)
+checkAddressPermission(address,uint256) should be declared external:
+	- AddressWhiteList.checkAddressPermission(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#368-370)
+update() should be declared external:
+	- FNXMinePool.update() (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#558-559)
+redeemOut(address,uint256) should be declared external:
+	- FNXMinePool.redeemOut(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#571-581)
+getTotalMined(address) should be declared external:
+	- FNXMinePool.getTotalMined(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#586-595)
+getMineInfo(address) should be declared external:
+	- FNXMinePool.getMineInfo(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#601-603)
+getMinerBalance(address,address) should be declared external:
+	- FNXMinePool.getMinerBalance(address,address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#609-618)
+setMineCoinInfo(address,uint256,uint256) should be declared external:
+	- FNXMinePool.setMineCoinInfo(address,uint256,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#625-632)
+setBuyingMineInfo(address,uint256) should be declared external:
+	- FNXMinePool.setBuyingMineInfo(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#638-642)
+getBuyingMineInfo(address) should be declared external:
+	- FNXMinePool.getBuyingMineInfo(address) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#647-649)
+getBuyingMineInfoAll() should be declared external:
+	- FNXMinePool.getBuyingMineInfoAll() (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#653-662)
+transferMinerCoin(address,address,uint256) should be declared external:
+	- FNXMinePool.transferMinerCoin(address,address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#669-672)
+mintMinerCoin(address,uint256) should be declared external:
+	- FNXMinePool.mintMinerCoin(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#678-682)
+burnMinerCoin(address,uint256) should be declared external:
+	- FNXMinePool.burnMinerCoin(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#688-692)
+addMinerBalance(address,uint256) should be declared external:
+	- FNXMinePool.addMinerBalance(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#698-710)
+setMineAmount(address,uint256) should be declared external:
+	- FNXMinePool.setMineAmount(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#716-720)
+setMineInterval(address,uint256) should be declared external:
+	- FNXMinePool.setMineInterval(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#726-730)
+redeemMinerCoin(address,uint256) should be declared external:
+	- FNXMinePool.redeemMinerCoin(address,uint256) (loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol#736-744)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol analyzed (12 contracts with 46 detectors), 72 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xbabf02ff4d487d2cd482582875f12b6b5952a67e.sol
+Tool Runtime = 1.8563318880005681 seconds
+#############################################

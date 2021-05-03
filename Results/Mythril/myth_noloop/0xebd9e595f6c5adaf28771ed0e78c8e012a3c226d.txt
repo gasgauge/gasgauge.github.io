@@ -1,0 +1,113 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: SALESCONTRACT
+Function name: fallback
+PC address: 1259
+Estimated Gas Usage: 32951 - 198481
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0xebd9e595f6c5adaf28771ed0e78c8e012a3c226d.sol:105
+
+saleswallet.transfer(msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x6f05b5ffafa4401, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setToken(address), txdata: 0x144fa6d70000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x80000000, value: 0x6f05b59d3b20000
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SALESCONTRACT
+Function name: fallback
+PC address: 1565
+Estimated Gas Usage: 32951 - 198481
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xebd9e595f6c5adaf28771ed0e78c8e012a3c226d.sol:107
+
+ERC20Interface(token).transfer(msg.sender, _qtty*decimal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x436fdd7f68fb6fd81, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setToken(address), txdata: 0x144fa6d7000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x80000000, value: 0x6f05b59d3b20000
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SALESCONTRACT
+Function name: RetrieveToken()
+PC address: 4041
+Estimated Gas Usage: 7032 - 77947
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0xebd9e595f6c5adaf28771ed0e78c8e012a3c226d.sol:117
+
+ERC20Interface(token).transfer(saleswallet, bal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfa000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: setToken(address), txdata: 0x144fa6d7000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: RetrieveToken(), txdata: 0xca146284, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: SALESCONTRACT
+Function name: RetrieveToken()
+PC address: 4041
+Estimated Gas Usage: 7032 - 77947
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0xebd9e595f6c5adaf28771ed0e78c8e012a3c226d.sol:117
+
+ERC20Interface(token).transfer(saleswallet, bal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: RetrieveToken(), txdata: 0xca146284, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xebd9e595f6c5adaf28771ed0e78c8e012a3c226d.sol
+Tool Runtime = 324.10718192800414 seconds
+#############################################

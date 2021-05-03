@@ -1,0 +1,112 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: UniHourglass
+Function name: distribute(uint256)
+PC address: 7820
+Estimated Gas Usage: 10419 - 65596
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/9/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol:193
+
+(_amount * magnitude) / tokenSupply_
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: distribute(uint256), txdata: 0x91c05b0b0101010101010101010101010101010101010101010101010101010101010101, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: UniHourglass
+Function name: multiData()
+PC address: 10079
+Estimated Gas Usage: 15657 - 88097
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/9/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol:446
+
+erc20.balanceOf(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40100008002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: multiData(), txdata: 0xf2b79df9, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: UniHourglass
+Function name: calculateTokensReceived(uint256)
+PC address: 11236
+Estimated Gas Usage: 1269 - 1364
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/9/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol:14
+
+assert(c / a == b)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4008004010007885e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: calculateTokensReceived(uint256), txdata: 0x10d0ffdd466c20000000000000082210000000380401006a4000000537000000129c01c1, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: UniHourglass
+Function name: buy(uint256,address)
+PC address: 11743
+Estimated Gas Usage: 3818 - 38995
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/9/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol:76
+
+if (now >= ACTIVATION_TIME) {
+         onlyAmbassadors = false;
+      }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002001400, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: buy(uint256,address), txdata: 0x7deb602500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol
+Tool Runtime = 712.7192377009778 seconds
+#############################################

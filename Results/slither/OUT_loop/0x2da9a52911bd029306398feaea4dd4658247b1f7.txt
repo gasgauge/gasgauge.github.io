@@ -1,0 +1,97 @@
+Compilation warnings/errors on ./loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol:
+./loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol:310:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in pSNXVault.withdraw(uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#604-632):
+	External calls:
+	- token.safeTransfer(msg.sender,_amount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#624)
+	State variables written after the call(s):
+	- rewardBalances[msg.sender] = rewardBalances[msg.sender].sub(_amount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#628)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in pSNXVault.deposit(uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#504-560):
+	External calls:
+	- token.safeTransferFrom(msg.sender,feeAddress,feeAmount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#550)
+	- token.safeTransferFrom(msg.sender,vaultAddress,realAmount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#552)
+	State variables written after the call(s):
+	- depositBalances[msg.sender] = depositBalances[msg.sender].add(realAmount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#558)
+	- totalDeposit = totalDeposit.add(realAmount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#556)
+Reentrancy in pSNXVault.reward(uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#564-592):
+	External calls:
+	- token.safeTransferFrom(msg.sender,address(this),_amount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#572)
+	State variables written after the call(s):
+	- _rewardCount ++ (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#590)
+	- _rewards[_rewardCount].amount[addressIndices[i]] = _amount.mul(depositBalances[addressIndices[i]]).div(totalDeposit) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#582)
+	- _rewards[_rewardCount].time = block.timestamp (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#588)
+	- rewardBalances[addressIndices[i]] = rewardBalances[addressIndices[i]].add(_amount.mul(depositBalances[addressIndices[i]]).div(totalDeposit)) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#580)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in pSNXVault.withdraw(uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#604-632):
+	External calls:
+	- token.safeTransfer(msg.sender,_amount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#624)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,_amount) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#630)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+pSNXVault.withdraw(uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#604-632) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_amount > 0,can't withdraw 0) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#608)
+	- _amount > availableWithdrawAmount (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#616)
+pSNXVault.availableWithdraw(address) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#636-650) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < _rewards[i].time.add(604800) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#640)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#302-314) uses assembly
+	- INLINE ASM (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#310-312)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#322-334):
+	- (success) = recipient.call.value(amount)() (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#330)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#396-418):
+	- (success,returndata) = address(token).call(data) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#404)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Contract pSNXVault (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#424-652) is not in CapWords
+Parameter pSNXVault.setGovernance(address)._governance (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#486) is not in mixedCase
+Parameter pSNXVault.deposit(uint256)._amount (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#504) is not in mixedCase
+Parameter pSNXVault.reward(uint256)._amount (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#564) is not in mixedCase
+Parameter pSNXVault.withdraw(uint256)._amount (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#604) is not in mixedCase
+Variable pSNXVault._rewards (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#460) is not in mixedCase
+Variable pSNXVault._rewardCount (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#462) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#80-84)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#86-90)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#92-98)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#100-104)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#106-112)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#114-122)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#124-130)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#132-138)
+balance() should be declared external:
+	- pSNXVault.balance() (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#478-482)
+setGovernance(address) should be declared external:
+	- pSNXVault.setGovernance(address) (loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol#486-492)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x2da9a52911bd029306398feaea4dd4658247b1f7.sol analyzed (7 contracts with 46 detectors), 28 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x2da9a52911bd029306398feaea4dd4658247b1f7.sol
+Tool Runtime = 0.857665719002398 seconds
+#############################################

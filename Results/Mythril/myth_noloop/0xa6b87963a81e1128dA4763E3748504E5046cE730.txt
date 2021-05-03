@@ -1,0 +1,190 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: timeLockAnrx
+Function name: withdrawTokens()
+PC address: 614
+Estimated Gas Usage: 1055 - 1340
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:235
+
+require(now>lockTokens[msg.sender].unlockTime,"Function Not Yet Available. Tokens are locked until December 18th, 2021.")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbfba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: withdrawTokens(), txdata: 0x8d8f2adb, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: timeLockAnrx
+Function name: withdrawTokens()
+PC address: 965
+Estimated Gas Usage: 4578 - 40321
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:239
+
+anrToken.transfer(msg.sender, amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c00000020e0798, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 5f5f5f5f5f5f5f5f5f5f5f5fdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: deposit(uint256), txdata: 0xb6b55f250000000000008000000000000001800000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: withdrawTokens(), txdata: 0x8d8f2adb, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: timeLockAnrx
+Function name: deposit(uint256)
+PC address: 1284
+Estimated Gas Usage: 18238 - 115111
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:207
+
+anrToken.transferFrom(msg.sender,address(this),amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x810c4500080fee, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 252525252525252525252525deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: deposit(uint256), txdata: 0xb6b55f250000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: deposit(uint256), txdata: 0xb6b55f252525252525252525252525252525252525252525252525252525252525252525, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: timeLockAnrx
+Function name: deposit(uint256)
+PC address: 1374
+Estimated Gas Usage: 18238 - 115111
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:215
+
+now + 31363200
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400400000000eafb6, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: deposit(uint256), txdata: 0xb6b55f250000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: timeLockAnrx
+Function name: deposit(uint256)
+PC address: 1458
+Estimated Gas Usage: 18238 - 115111
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:223
+
+lockTokens[msg.sender] = newStake
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000072b72, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4000000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 252525252525252525252525deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: deposit(uint256), txdata: 0xb6b55f250000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: timeLockAnrx
+Function name: deposit(uint256)
+PC address: 1468
+Estimated Gas Usage: 18238 - 115111
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:223
+
+lockTokens[msg.sender] = newStake
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000072b72, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4000000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 252525252525252525252525deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: deposit(uint256), txdata: 0xb6b55f250000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: timeLockAnrx
+Function name: deposit(uint256)
+PC address: 1478
+Estimated Gas Usage: 18238 - 115111
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xa6b87963a81e1128dA4763E3748504E5046cE730.sol:223
+
+lockTokens[msg.sender] = newStake
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000072b72, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4000000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 252525252525252525252525deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: deposit(uint256), txdata: 0xb6b55f250000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xa6b87963a81e1128dA4763E3748504E5046cE730.sol
+Tool Runtime = 29.866703253996093 seconds
+#############################################

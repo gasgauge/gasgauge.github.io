@@ -1,0 +1,182 @@
+Compilation warnings/errors on ./loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol:
+./loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol:7:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol:1194:9: Warning: Unused local variable.
+        uint256 supplyAfterRebase = kassiakommercial.rebase(epoch, indexDelta, positive);
+        ^-----------------------^
+
+INFO:Detectors:[93m
+KASSIAKOMMERCIALRebaser.rebase() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1148-1199) performs a multiplication on the result of a division:
+	-indexDelta = indexDelta.div(rebaseLag) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1174)
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1188)
+KASSIAKOMMERCIALRebaser.rebase() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1148-1199) performs a multiplication on the result of a division:
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1188)
+	-mintAmount = currSupply.mul(mintPerc).div(10 ** 18) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1190)
+KASSIAKOMMERCIALRebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1334-1363) performs a multiplication on the result of a division:
+	-token0.mul(offPegPerc / 3).div(10 ** 18) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1354)
+KASSIAKOMMERCIALRebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1334-1363) performs a multiplication on the result of a division:
+	-token1.mul(offPegPerc / 3).div(10 ** 18) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1360)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+FixedPoint.mul(FixedPoint.uq112x112,uint256).z (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#589) is a local variable never initialized
+KASSIAKOMMERCIALRebaser.rebase().mintAmount (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1185) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244) ignores return value by kassiakommercial.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1220)
+KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244) ignores return value by kassiakommercial.mint(uniswap_pair,uniVars.kassiakommercialsToUni.sub(uniVars.amountFromReserves)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1224)
+KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244) ignores return value by kassiakommercial.mint(uniswap_pair,uniVars.kassiakommercialsToUni) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1228)
+KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244) ignores return value by kassiakommercial.mint(reservesContract,uniVars.mintToReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1233)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in KASSIAKOMMERCIALRebaser.afterRebase(uint256,uint256) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1391-1419):
+	External calls:
+	- UniswapPair(uniswap_pair).sync() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1398)
+	- buyReserveAndTransfer(mintAmount,offPegPerc) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1401-1404)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1285)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1293)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1301)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1311)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1320)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1328)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1414)
+Reentrancy in KASSIAKOMMERCIALRebaser.rebase() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1148-1199):
+	External calls:
+	- supplyAfterRebase = kassiakommercial.rebase(epoch,indexDelta,positive) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1194)
+	- afterRebase(mintAmount,offPegPerc) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1198)
+		- UniswapPair(uniswap_pair).sync() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1398)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1285)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1293)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1301)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1311)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1320)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1328)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1414)
+		- afterRebase(mintAmount,offPegPerc) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1198)
+Reentrancy in KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244):
+	External calls:
+	- kassiakommercial.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1220)
+	- kassiakommercial.mint(uniswap_pair,uniVars.kassiakommercialsToUni.sub(uniVars.amountFromReserves)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1224)
+	- kassiakommercial.mint(uniswap_pair,uniVars.kassiakommercialsToUni) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1228)
+	- kassiakommercial.mint(reservesContract,uniVars.mintToReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1233)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount1) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1238)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount1,uniVars.kassiakommercialsToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1239)
+Reentrancy in KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244):
+	External calls:
+	- kassiakommercial.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1220)
+	- kassiakommercial.mint(uniswap_pair,uniVars.kassiakommercialsToUni.sub(uniVars.amountFromReserves)) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1224)
+	- kassiakommercial.mint(uniswap_pair,uniVars.kassiakommercialsToUni) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1228)
+	- kassiakommercial.mint(reservesContract,uniVars.mintToReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1233)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount0) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1241)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount0,uniVars.kassiakommercialsToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1242)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniswapV2OracleLibrary.currentCumulativePrices(address,bool) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#634-663) uses timestamp for comparisons
+	Dangerous comparisons:
+	- blockTimestampLast != blockTimestamp (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#644)
+	- blockTimestampLast != blockTimestamp (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#654)
+KASSIAKOMMERCIALRebaser.activate_rebasing() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1131-1139) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= timeOfTWAPInit + rebaseDelay,!end_delay) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1136)
+KASSIAKOMMERCIALRebaser.rebase() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1148-1199) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(lastRebaseTimestampSec.add(minRebaseTimeIntervalSec) < now) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1157)
+KASSIAKOMMERCIALRebaser._inRebaseWindow() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1554-1561) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) >= rebaseWindowOffsetSec,too early) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1559)
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) < (rebaseWindowOffsetSec.add(rebaseWindowLengthSec)),too late) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1560)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#280-289) uses assembly
+	- INLINE ASM (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#287-288)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#373-394) uses assembly
+	- INLINE ASM (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#386-390)
+KASSIAKOMMERCIALRebaser.externalCall(address,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1688-1718) uses assembly
+	- INLINE ASM (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1693-1717)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#12) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#17) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#96) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#257) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#467) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#521) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#526) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#531) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#667) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#743) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#307-313):
+	- (success) = recipient.call.value(amount)() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#311)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#373-394):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#377)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function UniswapPair.DOMAIN_SEPARATOR() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#484) is not in mixedCase
+Function UniswapPair.PERMIT_TYPEHASH() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#485) is not in mixedCase
+Function UniswapPair.MINIMUM_LIQUIDITY() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#502) is not in mixedCase
+Struct FixedPoint.uq112x112 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#556-558) is not in CapWords
+Struct FixedPoint.uq144x112 (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#562-564) is not in CapWords
+Variable KASSIAKOMMERCIALTokenStorage._notEntered (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#677) is not in mixedCase
+Constant KASSIAKOMMERCIALTokenStorage.internalDecimals (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#722) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable KASSIAKOMMERCIALTokenStorage._kassiakommercialBalances (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#734) is not in mixedCase
+Variable KASSIAKOMMERCIALTokenStorage._allowedFragments (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#736) is not in mixedCase
+Variable KASSIAKOMMERCIALGovernanceStorage._delegates (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#747) is not in mixedCase
+Function KASSIAKOMMERCIALTokenInterface._setRebaser(address) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#846) is not in mixedCase
+Function KASSIAKOMMERCIALTokenInterface._setIncentivizer(address) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#847) is not in mixedCase
+Function KASSIAKOMMERCIALTokenInterface._setPendingGov(address) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#848) is not in mixedCase
+Function KASSIAKOMMERCIALTokenInterface._acceptGov() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#849) is not in mixedCase
+Function KASSIAKOMMERCIALRebaser._setPendingGov(address) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1091-1098) is not in mixedCase
+Function KASSIAKOMMERCIALRebaser._acceptGov() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1103-1111) is not in mixedCase
+Function KASSIAKOMMERCIALRebaser.init_twap() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1116-1126) is not in mixedCase
+Function KASSIAKOMMERCIALRebaser.activate_rebasing() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1131-1139) is not in mixedCase
+Constant KASSIAKOMMERCIALRebaser.rebaseDelay (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#957) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable KASSIAKOMMERCIALRebaser.uniswap_pair (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#972) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+KASSIAKOMMERCIALTokenStorage._notEntered (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#677) should be constant
+KASSIAKOMMERCIALTokenStorage.decimals (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#692) should be constant
+KASSIAKOMMERCIALTokenStorage.gov (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#697) should be constant
+KASSIAKOMMERCIALTokenStorage.incentivizer (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#712) should be constant
+KASSIAKOMMERCIALTokenStorage.initSupply (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#738) should be constant
+KASSIAKOMMERCIALTokenStorage.kassiakommercialsScalingFactor (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#732) should be constant
+KASSIAKOMMERCIALTokenStorage.name (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#682) should be constant
+KASSIAKOMMERCIALTokenStorage.pendingGov (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#702) should be constant
+KASSIAKOMMERCIALTokenStorage.rebaser (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#707) should be constant
+KASSIAKOMMERCIALTokenStorage.symbol (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#687) should be constant
+KASSIAKOMMERCIALTokenStorage.totalSupply (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#717) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setMaxSlippageFactor(uint256) should be declared external:
+	- KASSIAKOMMERCIALRebaser.setMaxSlippageFactor(uint256) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1049-1056)
+setRebaseMintPerc(uint256) should be declared external:
+	- KASSIAKOMMERCIALRebaser.setRebaseMintPerc(uint256) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1063-1070)
+setReserveContract(address) should be declared external:
+	- KASSIAKOMMERCIALRebaser.setReserveContract(address) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1078-1085)
+init_twap() should be declared external:
+	- KASSIAKOMMERCIALRebaser.init_twap() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1116-1126)
+activate_rebasing() should be declared external:
+	- KASSIAKOMMERCIALRebaser.activate_rebasing() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1131-1139)
+rebase() should be declared external:
+	- KASSIAKOMMERCIALRebaser.rebase() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1148-1199)
+uniswapV2Call(address,uint256,uint256,bytes) should be declared external:
+	- KASSIAKOMMERCIALRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1202-1244)
+getCurrentTWAP() should be declared external:
+	- KASSIAKOMMERCIALRebaser.getCurrentTWAP() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1454-1470)
+inRebaseWindow() should be declared external:
+	- KASSIAKOMMERCIALRebaser.inRebaseWindow() (loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol#1547-1552)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol analyzed (12 contracts with 46 detectors), 75 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8204A7Ed1335c103D82f1fA637e79f8Ae5BBE87A.sol
+Tool Runtime = 2.4373164309981803 seconds
+#############################################

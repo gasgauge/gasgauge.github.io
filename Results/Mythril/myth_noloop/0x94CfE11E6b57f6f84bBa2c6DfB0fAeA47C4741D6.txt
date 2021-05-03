@@ -1,0 +1,169 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SushiRoll
+Function name: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 615
+Estimated Gas Usage: 10837 - 224428
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol:50
+
+IUniswapV2Router2(fromRouter).removeLiquidityWithPermit(
+            tokenA, tokenB,
+            liquidity,
+            amountAMin, amountBMin,
+            address(this),
+            now + 1,
+            true,
+            v, r, s)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x180000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32), txdata: 0x33d93293000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000002b0600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: SushiRoll
+Function name: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 903
+Estimated Gas Usage: 10837 - 224428
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol:61
+
+IERC20(tokenA).approve(0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F, uint256(-1))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32), txdata: 0x33d93293000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SushiRoll
+Function name: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 1178
+Estimated Gas Usage: 10837 - 224428
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol:62
+
+IERC20(tokenB).approve(0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F, uint256(-1))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32), txdata: 0x33d9329300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: SushiRoll
+Function name: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 1680
+Estimated Gas Usage: 10837 - 224428
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/3/0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol:75
+
+amountA - pooledAmountA
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x840000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32), txdata: 0x33d93293000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: SushiRoll
+Function name: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2179
+Estimated Gas Usage: 10837 - 224428
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/3/0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol:79
+
+amountB - pooledAmountB
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x414c0c00000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32), txdata: 0x33d93293000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SushiRoll
+Function name: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32)
+PC address: 2443
+Estimated Gas Usage: 10837 - 224428
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol:79
+
+tokenB.call(abi.encodeWithSelector(0xa9059cbb, msg.sender, amountB - pooledAmountB))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: roll(address,address,address,uint256,uint256,uint256,uint8,bytes32,bytes32), txdata: 0x33d9329300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x94CfE11E6b57f6f84bBa2c6DfB0fAeA47C4741D6.sol
+Tool Runtime = 39.9877615209989 seconds
+#############################################

@@ -1,0 +1,181 @@
+INFO:Detectors:[93m
+SafeMath.ceil(uint256,uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#356-360) performs a multiplication on the result of a division:
+	-(a + m - 1) / m * m (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#358)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in HypeStake.CLAIMREWARD() (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#790-822):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transfer(msg.sender,owing),ERROR: error in sending reward from contract) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#806)
+	State variables written after the call(s):
+	- stakers[msg.sender].lastDividends = owing (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#814)
+	- stakers[msg.sender].round = round (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#816)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#818)
+Reentrancy in HypeStake.STAKE(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#642-706):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#646)
+	State variables written after the call(s):
+	- totalStakes = totalStakes.add(tokens.sub(_stakingFee)) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#694)
+Reentrancy in HypeStake.WITHDRAW(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#878-934):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#906)
+	State variables written after the call(s):
+	- _addPayout(_unstakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#928)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#772)
+	- stakers[msg.sender].stakedTokens = stakers[msg.sender].stakedTokens.sub(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#910)
+	- stakers[msg.sender].lastDividends = owing (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#912)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#914)
+	- stakers[msg.sender].round = round (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#916)
+	- _addPayout(_unstakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#928)
+		- totalDividends = totalDividends.add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#770)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in HypeStake.ADDFUNDS(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#738-746):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#742)
+	State variables written after the call(s):
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#744)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#772)
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#744)
+		- round ++ (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#778)
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#744)
+		- scaledRemainder = available.mod(totalStakes) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#766)
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#744)
+		- totalDividends = totalDividends.add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#770)
+Reentrancy in HypeStake.STAKE(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#642-706):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#646)
+	State variables written after the call(s):
+	- farmLock[msg.sender] = block.timestamp (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#688)
+	- _addPayout(_stakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#664)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#772)
+	- _addPayout(_stakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#664)
+		- round ++ (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#778)
+	- _addPayout(_stakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#664)
+		- scaledRemainder = available.mod(totalStakes) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#766)
+	- addStakeholder(msg.sender) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#698)
+		- stakeholders.push(_stakeholder) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#624)
+	- owing = pendingReward(msg.sender) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#670)
+		- stakers[staker].remainder += ((totalDividends.sub(payouts[stakersRound - 1])).mul(stakers[staker].stakedTokens)) % scaling (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#844)
+	- stakers[msg.sender].remainder += owing (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#672)
+	- stakers[msg.sender].stakedTokens = (tokens.sub(_stakingFee)).add(stakers[msg.sender].stakedTokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#676)
+	- stakers[msg.sender].lastDividends = owing (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#678)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#680)
+	- stakers[msg.sender].round = round (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#682)
+	- _addPayout(_stakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#664)
+		- totalDividends = totalDividends.add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#770)
+Reentrancy in HypeStake.WITHDRAW(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#878-934):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#906)
+	State variables written after the call(s):
+	- _addPayout(_unstakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#928)
+		- round ++ (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#778)
+	- _addPayout(_unstakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#928)
+		- scaledRemainder = available.mod(totalStakes) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#766)
+	- totalStakes = totalStakes.sub(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#920)
+Reentrancy in HypeStake.distributeRewards(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#572-590):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#580)
+	State variables written after the call(s):
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#584)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#772)
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#584)
+		- round ++ (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#778)
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#584)
+		- scaledRemainder = available.mod(totalStakes) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#766)
+	- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#584)
+		- totalDividends = totalDividends.add(dividendPerToken) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#770)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in HypeStake.ADDFUNDS(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#738-746):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#742)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#776)
+		- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#744)
+Reentrancy in HypeStake.CLAIMREWARD() (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#790-822):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transfer(msg.sender,owing),ERROR: error in sending reward from contract) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#806)
+	Event emitted after the call(s):
+	- CLAIMEDREWARD(msg.sender,owing) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#810)
+Reentrancy in HypeStake.STAKE(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#642-706):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#646)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#776)
+		- _addPayout(_stakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#664)
+	- STAKED(msg.sender,tokens.sub(_stakingFee),_stakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#702)
+Reentrancy in HypeStake.WITHDRAW(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#878-934):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#906)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#776)
+		- _addPayout(_unstakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#928)
+	- UNSTAKED(msg.sender,tokens.sub(_unstakingFee),_unstakingFee) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#932)
+Reentrancy in HypeStake.distributeRewards(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#572-590):
+	External calls:
+	- require(bool,string)(IERC20(Hype).transferFromStake(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#580)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#776)
+		- _addPayout(tokens) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#584)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+HypeStake.WITHDRAW(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#878-934) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(farmLock[msg.sender] + 2592000 <= block.timestamp,Withdraw can only be done after 30 days) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#888)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+HypeStake.WITHDRAW(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#878-934) compares to a boolean constant:
+	-require(bool,string)(breaker == false,Admin Restricted WITHDRAW) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#880)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#26) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.transferOwnership(address)._newOwner (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#400) is not in mixedCase
+Parameter HypeStake.setBreaker(bool)._breaker (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#538) is not in mixedCase
+Parameter HypeStake.calculateReward(address)._stakeholder (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#552) is not in mixedCase
+Parameter HypeStake.isStakeholder(address)._address (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#594) is not in mixedCase
+Parameter HypeStake.addStakeholder(address)._stakeholder (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#616) is not in mixedCase
+Function HypeStake.STAKE(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#642-706) is not in mixedCase
+Parameter HypeStake.calculateExitBlock(address)._staker (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#712) is not in mixedCase
+Function HypeStake.ADDFUNDS(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#738-746) is not in mixedCase
+Function HypeStake.CLAIMREWARD() (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#790-822) is not in mixedCase
+Function HypeStake.WITHDRAW(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#878-934) is not in mixedCase
+Parameter HypeStake.onePercent(uint256)._tokens (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#944) is not in mixedCase
+Variable HypeStake.Hype (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#460) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+HypeStake.slitherConstructorVariables() (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#454-996) uses literals with too many digits:
+	- maxAllowed = 2000000000000000000000 (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#480)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+HypeStake.Hype (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#460) should be constant
+HypeStake.blockPerDay (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#482) should be constant
+HypeStake.maxAllowed (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#480) should be constant
+HypeStake.rewardMaker (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#462) should be constant
+HypeStake.scaling (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#476) should be constant
+HypeStake.stakingFee (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#468) should be constant
+HypeStake.unstakingFee (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#470) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Owned.transferOwnership(address) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#400-408)
+calculateReward(address) should be declared external:
+	- HypeStake.calculateReward(address) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#552-566)
+distributeRewards(uint256) should be declared external:
+	- HypeStake.distributeRewards(uint256) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#572-590)
+calculateExitBlock(address) should be declared external:
+	- HypeStake.calculateExitBlock(address) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#712-726)
+CLAIMREWARD() should be declared external:
+	- HypeStake.CLAIMREWARD() (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#790-822)
+getPendingReward(address) should be declared external:
+	- HypeStake.getPendingReward(address) (loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol#852-866)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol analyzed (4 contracts with 46 detectors), 43 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x7ddc0ff83f5e350f233bdbb207af04e15a19dbde.sol
+Tool Runtime = 0.9639915400002792 seconds
+#############################################

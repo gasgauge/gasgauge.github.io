@@ -1,0 +1,60 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: BlockSwapAssetV2
+Function name: owner()
+PC address: 2563
+Estimated Gas Usage: 983 - 1078
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/12/0xe692c8d72bd4ac7764090d54842a305546dd1de5.sol:595
+
+if (block.number >= _newOwnerEffectiveHeight) {
+            return _newOwner;
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: owner(), txdata: 0x8da5cb5b, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: BlockSwapAssetV2
+Function name: changeDCRMOwner(address)
+PC address: 3755
+Estimated Gas Usage: 25019 - 87817
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/12/0xe692c8d72bd4ac7764090d54842a305546dd1de5.sol:605
+
+block.number + 13300
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: changeDCRMOwner(address), txdata: 0xb524f3a50000000000000000000000000101010101010101010101010101010101010101, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xe692c8d72bd4ac7764090d54842a305546dd1de5.sol
+Tool Runtime = 5455.019081172999 seconds
+#############################################

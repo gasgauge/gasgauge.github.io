@@ -1,0 +1,179 @@
+Compilation warnings/errors on ./loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:
+./loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol:599:28: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+    assembly { codehash := extcodehash(account) }
+                           ^------------------^
+
+INFO:Detectors:[93m
+SvenEberwein.earned(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1355-1361) performs a multiplication on the result of a division:
+	-points[account].add(blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(balanceOf(account))).div(1e8) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1357-1360)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in ERC1155Tradable.mint(address,uint256,uint256,bytes) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1243-1253):
+	External calls:
+	- _mint(_to,_id,_quantity,_data) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1251)
+		- retval = IERC1155TokenReceiver(_to).onERC1155Received(msg.sender,_from,_id,_amount,_data) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#707)
+	State variables written after the call(s):
+	- tokenSupply[_id] = tokenSupply[_id].add(_quantity) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1252)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+MemeTokenWrapper.stake(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1312-1316) ignores return value by meme.transferFrom(msg.sender,address(this),amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1315)
+MemeTokenWrapper.withdraw(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1318-1322) ignores return value by meme.transfer(msg.sender,amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1321)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC1155Tradable.isApprovedForAll(address,address)._owner (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1258) shadows:
+	- Ownable._owner (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#73) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in ERC1155Tradable.create(uint256,uint256,string,bytes) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1215-1234):
+	External calls:
+	- _mint(msg.sender,_id,_initialSupply,_data) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1230)
+		- retval = IERC1155TokenReceiver(_to).onERC1155Received(msg.sender,_from,_id,_amount,_data) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#707)
+	State variables written after the call(s):
+	- tokenMaxSupply[_id] = _maxSupply (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1232)
+	- tokenSupply[_id] = _initialSupply (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1231)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in SvenEberwein.redeem(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1383-1391):
+	External calls:
+	- memes.mint(msg.sender,card,1,) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1389)
+	Event emitted after the call(s):
+	- Redeemed(msg.sender,cards[card]) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1390)
+Reentrancy in SvenEberwein.stake(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1364-1370):
+	External calls:
+	- super.stake(amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1368)
+		- meme.transferFrom(msg.sender,address(this),amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1315)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1369)
+Reentrancy in SvenEberwein.withdraw(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1372-1377):
+	External calls:
+	- super.withdraw(amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1375)
+		- meme.transfer(msg.sender,amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1321)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1376)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+SvenEberwein.stake(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1364-1370) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= periodStart,Pool not open) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1365)
+SvenEberwein.redeem(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1383-1391) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(points[msg.sender] >= cards[card],Not enough points to redeem for card) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1385)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#589-601) uses assembly
+	- INLINE ASM (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#599-600)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes)._from (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#646) is not in mixedCase
+Parameter ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes)._to (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#646) is not in mixedCase
+Parameter ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#646) is not in mixedCase
+Parameter ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes)._amount (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#646) is not in mixedCase
+Parameter ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes)._data (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#646) is not in mixedCase
+Parameter ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)._from (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#665) is not in mixedCase
+Parameter ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)._to (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#665) is not in mixedCase
+Parameter ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)._ids (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#665) is not in mixedCase
+Parameter ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)._amounts (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#665) is not in mixedCase
+Parameter ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)._data (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#665) is not in mixedCase
+Parameter ERC1155.setApprovalForAll(address,bool)._operator (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#761) is not in mixedCase
+Parameter ERC1155.setApprovalForAll(address,bool)._approved (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#761) is not in mixedCase
+Parameter ERC1155.isApprovedForAll(address,address)._owner (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#775) is not in mixedCase
+Parameter ERC1155.isApprovedForAll(address,address)._operator (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#775) is not in mixedCase
+Parameter ERC1155.balanceOf(address,uint256)._owner (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#792) is not in mixedCase
+Parameter ERC1155.balanceOf(address,uint256)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#792) is not in mixedCase
+Parameter ERC1155.balanceOfBatch(address[],uint256[])._owners (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#804) is not in mixedCase
+Parameter ERC1155.balanceOfBatch(address[],uint256[])._ids (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#804) is not in mixedCase
+Parameter ERC1155.supportsInterface(bytes4)._interfaceID (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#846) is not in mixedCase
+Parameter ERC1155Metadata.uri(uint256)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#879) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string,string)._a (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1070) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string,string)._b (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1071) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string,string)._c (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1072) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string,string)._d (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1073) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string,string)._e (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1074) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string)._a (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1093) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string)._b (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1094) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string)._c (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1095) is not in mixedCase
+Parameter Strings.strConcat(string,string,string,string)._d (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1096) is not in mixedCase
+Parameter Strings.strConcat(string,string,string)._a (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1102) is not in mixedCase
+Parameter Strings.strConcat(string,string,string)._b (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1103) is not in mixedCase
+Parameter Strings.strConcat(string,string,string)._c (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1104) is not in mixedCase
+Parameter Strings.strConcat(string,string)._a (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1109) is not in mixedCase
+Parameter Strings.strConcat(string,string)._b (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1109) is not in mixedCase
+Parameter Strings.uint2str(uint256)._i (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1113) is not in mixedCase
+Parameter ERC1155Tradable.uri(uint256)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1176) is not in mixedCase
+Parameter ERC1155Tradable.totalSupply(uint256)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1186) is not in mixedCase
+Parameter ERC1155Tradable.maxSupply(uint256)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1195) is not in mixedCase
+Parameter ERC1155Tradable.setBaseMetadataURI(string)._newBaseMetadataURI (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1203) is not in mixedCase
+Parameter ERC1155Tradable.create(uint256,uint256,string,bytes)._maxSupply (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1216) is not in mixedCase
+Parameter ERC1155Tradable.create(uint256,uint256,string,bytes)._initialSupply (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1217) is not in mixedCase
+Parameter ERC1155Tradable.create(uint256,uint256,string,bytes)._uri (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1218) is not in mixedCase
+Parameter ERC1155Tradable.create(uint256,uint256,string,bytes)._data (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1219) is not in mixedCase
+Parameter ERC1155Tradable.mint(address,uint256,uint256,bytes)._to (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1244) is not in mixedCase
+Parameter ERC1155Tradable.mint(address,uint256,uint256,bytes)._id (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1245) is not in mixedCase
+Parameter ERC1155Tradable.mint(address,uint256,uint256,bytes)._quantity (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1246) is not in mixedCase
+Parameter ERC1155Tradable.mint(address,uint256,uint256,bytes)._data (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1247) is not in mixedCase
+Parameter ERC1155Tradable.isApprovedForAll(address,address)._owner (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1258) is not in mixedCase
+Parameter ERC1155Tradable.isApprovedForAll(address,address)._operator (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1258) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SvenEberwein.stake(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1364-1370) uses literals with too many digits:
+	- require(bool,string)(amount.add(balanceOf(msg.sender)) <= 500000000,Cannot stake more than 5 meme) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1366)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+SvenEberwein.periodStart (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1328) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#89-91)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#115-118)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#124-126)
+addMinter(address) should be declared external:
+	- MinterRole.addMinter(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#269-271)
+renounceMinter() should be declared external:
+	- MinterRole.renounceMinter() (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#273-275)
+addWhitelistAdmin(address) should be declared external:
+	- WhitelistAdminRole.addWhitelistAdmin(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#313-315)
+renounceWhitelistAdmin() should be declared external:
+	- WhitelistAdminRole.renounceWhitelistAdmin() (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#317-319)
+safeTransferFrom(address,address,uint256,uint256,bytes) should be declared external:
+	- ERC1155.safeTransferFrom(address,address,uint256,uint256,bytes) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#646-655)
+safeBatchTransferFrom(address,address,uint256[],uint256[],bytes) should be declared external:
+	- ERC1155.safeBatchTransferFrom(address,address,uint256[],uint256[],bytes) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#665-674)
+balanceOf(address,uint256) should be declared external:
+	- ERC1155.balanceOf(address,uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#792-796)
+balanceOfBatch(address[],uint256[]) should be declared external:
+	- ERC1155.balanceOfBatch(address[],uint256[]) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#804-818)
+uri(uint256) should be declared external:
+	- ERC1155Metadata.uri(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#879-881)
+	- ERC1155Tradable.uri(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1176-1179)
+removeWhitelistAdmin(address) should be declared external:
+	- ERC1155Tradable.removeWhitelistAdmin(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1168-1170)
+removeMinter(address) should be declared external:
+	- ERC1155Tradable.removeMinter(address) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1172-1174)
+totalSupply(uint256) should be declared external:
+	- ERC1155Tradable.totalSupply(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1186-1188)
+maxSupply(uint256) should be declared external:
+	- ERC1155Tradable.maxSupply(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1195-1197)
+setBaseMetadataURI(string) should be declared external:
+	- ERC1155Tradable.setBaseMetadataURI(string) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1203-1205)
+mint(address,uint256,uint256,bytes) should be declared external:
+	- ERC1155Tradable.mint(address,uint256,uint256,bytes) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1243-1253)
+totalSupply() should be declared external:
+	- MemeTokenWrapper.totalSupply() (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1304-1306)
+addCard(uint256,uint256) should be declared external:
+	- SvenEberwein.addCard(uint256,uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1350-1353)
+redeem(uint256) should be declared external:
+	- SvenEberwein.redeem(uint256) (loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol#1383-1391)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol analyzed (21 contracts with 46 detectors), 86 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xA927BdE3b89bd6AEb7B4d0e4d5E9F9039dbB3B9f.sol
+Tool Runtime = 2.615980466998735 seconds
+#############################################

@@ -1,0 +1,148 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NHCCoin
+Function name: afterTime(uint256)
+PC address: 3003
+Estimated Gas Usage: 357 - 733
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops2/0x6ef2e0eb03ee48d2d93751ebb904770c19a74501.sol:401
+
+now + _value
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: afterTime(uint256), txdata: 0x04859ceb8084000010800901000082000091041000000002200020880200101012000002, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: NHCCoin
+Function name: lockState(address,uint256)
+PC address: 4809
+Estimated Gas Usage: 1230 - 1515
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops2/0x6ef2e0eb03ee48d2d93751ebb904770c19a74501.sol:334
+
+lockInfo[_holder][_idx]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: lockState(address,uint256), txdata: 0x46cf1bb500000000000000000000000002020202010000000000000100000100000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NHCCoin
+Function name: lockAfter(address,uint256,uint256)
+PC address: 7484
+Estimated Gas Usage: 25676 - 108152
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops2/0x6ef2e0eb03ee48d2d93751ebb904770c19a74501.sol:350
+
+now + _afterTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: lockAfter(address,uint256,uint256), txdata: 0x8a57af6b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NHCCoin
+Function name: transferWithLockAfter(address,uint256,uint256)
+PC address: 8895
+Estimated Gas Usage: 30692 - 115306
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops2/0x6ef2e0eb03ee48d2d93751ebb904770c19a74501.sol:388
+
+now + _afterTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc0000000000080, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferWithLockAfter(address,uint256,uint256), txdata: 0x927a4a7b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000001184e72a1008000000000000000000000000000000000004000000000000000000000112240, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NHCCoin
+Function name: transfer(address,uint256)
+PC address: 13238
+Estimated Gas Usage: 4878 - 6298
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops2/0x6ef2e0eb03ee48d2d93751ebb904770c19a74501.sol:316
+
+if (lockInfo[_holder][i].releaseTime <= now) {
+                _balances[_holder] = _balances[_holder].add(lockInfo[_holder][i].balance);
+                emit Unlock(_holder, lockInfo[_holder][i].balance);
+                lockInfo[_holder][i].balance = 0;
+
+                if (i != lockInfo[_holder].length - 1) {
+                    lockInfo[_holder][i] = lockInfo[_holder][lockInfo[_holder].length - 1];
+                    i--;
+                }
+                lockInfo[_holder].length--;
+
+            }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: lock(address,uint256,uint256), txdata: 0xe2ab691d000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: transfer(address,uint256), txdata: 0xa9059cbb69696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969696969, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x6ef2e0eb03ee48d2d93751ebb904770c19a74501.sol
+Tool Runtime = 5986.0637961309985 seconds
+#############################################

@@ -1,0 +1,118 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: ERC20CampGlobal
+Function name: unlockByQuantity(address,uint256,uint256)
+PC address: 4422
+Estimated Gas Usage: 85082 - 333260
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/m_loop/loop5/0xB95EC860C1999bcd5111Ff3Ff086D0CeECadB7F9.sol:703
+
+idx -=1
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x3800080000000001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: lockByQuantity(address,uint256,uint256), txdata: 0x78b76528000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000000000000000000000000000000000000000000000000000000000018080010100010001000400010102800020200000000401002010044010000810, value: 0x0
+Caller: [CREATOR], function: unlockByQuantity(address,uint256,uint256), txdata: 0x0996eebe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: ERC20CampGlobal
+Function name: unlockByQuantity(address,uint256,uint256)
+PC address: 4430
+Estimated Gas Usage: 85082 - 333260
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/m_loop/loop5/0xB95EC860C1999bcd5111Ff3Ff086D0CeECadB7F9.sol:701
+
+idx++
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800002, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: lockByQuantity(address,uint256,uint256), txdata: 0x78b76528000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000000000000000000000000000000000000000000000000000000000010102801040000109002001010142020108100808021020100202080240002080, value: 0x0
+Caller: [CREATOR], function: unlockByQuantity(address,uint256,uint256), txdata: 0x0996eebe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: ERC20CampGlobal
+Function name: timelockList(address,uint256)
+PC address: 8897
+Estimated Gas Usage: 1263 - 1548
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop5/0xB95EC860C1999bcd5111Ff3Ff086D0CeECadB7F9.sol:600
+
+mapping (address => LockInfo[]) public timelockList
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: timelockList(address,uint256), txdata: 0xd26c4a7600000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: ERC20CampGlobal
+Function name: transfer(address,uint256)
+PC address: 11392
+Estimated Gas Usage: 4944 - 6224
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/m_loop/loop5/0xB95EC860C1999bcd5111Ff3Ff086D0CeECadB7F9.sol:750
+
+if (timelockList[holder][idx]._releaseTime <= now) {
+                // If lockupinfo was deleted, loop restart at same position.
+                if( _unlock(holder, idx) ) {
+                    idx -=1;
+                }
+            }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000000402, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: lockByQuantity(address,uint256,uint256), txdata: 0x78b76528000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xB95EC860C1999bcd5111Ff3Ff086D0CeECadB7F9.sol
+Tool Runtime = 8150.966047591999 seconds
+#############################################

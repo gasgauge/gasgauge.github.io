@@ -1,0 +1,989 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: constructor
+PC address: 459
+Estimated Gas Usage: 123411 - 572634
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1493
+
+now + 365 days
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NFTReward
+Function name: seizeErc721(address,uint256)
+PC address: 6092
+Estimated Gas Usage: 3715 - 39036
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1563
+
+token.safeTransferFrom(address(this), _governance, tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117dee342dffffffffffffffffff02ffeaffff80000109af1c0000008085f70240, value: 0x0
+Caller: [SOMEGUY], function: seizeErc721(address,uint256), txdata: 0x24c5f05efdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeeffdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: withdraw()
+PC address: 6184
+Estimated Gas Usage: 1070 - 1165
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1815
+
+require(block.timestamp > _startTime, "not start")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc0000002000080, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: withdraw(), txdata: 0x3ccfd60b, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: getReward()
+PC address: 6788
+Estimated Gas Usage: 29891 - 111692
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1802
+
+if (block.timestamp >= _periodFinish) {
+            _initReward = _initReward.mul(50).div(100);
+
+            _dego.mint(address(this), _initReward);
+
+            _rewardRate = _initReward.div(DURATION);
+            _periodFinish = block.timestamp.add(DURATION);
+            emit RewardAdded(_initReward);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc23aa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getReward(), txdata: 0x3d18b912, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: getReward()
+PC address: 7185
+Estimated Gas Usage: 30709 - 112510
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1815
+
+require(block.timestamp > _startTime, "not start")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6c581, value: 0x0
+Caller: [CREATOR], function: getReward(), txdata: 0x3d18b912, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: NFTReward
+Function name: _playerGego(address,uint256)
+PC address: 8494
+Estimated Gas Usage: 1220 - 1505
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1520
+
+mapping(address => uint256[]) public _playerGego
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: _playerGego(address,uint256), txdata: 0x5efee79700000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: withdrawGego(uint256)
+PC address: 8904
+Estimated Gas Usage: 30038 - 111839
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1802
+
+if (block.timestamp >= _periodFinish) {
+            _initReward = _initReward.mul(50).div(100);
+
+            _dego.mint(address(this), _initReward);
+
+            _rewardRate = _initReward.div(DURATION);
+            _periodFinish = block.timestamp.add(DURATION);
+            emit RewardAdded(_initReward);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdrawGego(uint256), txdata: 0x73b2d3220000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: withdrawGego(uint256)
+PC address: 9301
+Estimated Gas Usage: 30856 - 112657
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1815
+
+require(block.timestamp > _startTime, "not start")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd11000000000000000000000001fffffffffffffffffffffffffffffffffff6c581, value: 0x0
+Caller: [CREATOR], function: withdrawGego(uint256), txdata: 0x73b2d322fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: NFTReward
+Function name: withdrawGego(uint256)
+PC address: 9715
+Estimated Gas Usage: 33632 - 116189
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1714
+
+gegoIds[gegoIndex]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd110000003ffffffffffffffffffffffffffffffffffffffffffffffffffff75001, value: 0x0
+Caller: [SOMEGUY], function: withdrawGego(uint256), txdata: 0x73b2d3220000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12170
+Estimated Gas Usage: 33361 - 169502
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1848
+
+_dego.mint(address(this), reward)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x66, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffff3fffffffffffffffffffffffffffffffffffffffffffff69d81, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d890fdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfd, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12194
+Estimated Gas Usage: 33361 - 169502
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1849
+
+_periodFinish
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1081, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 3d3d3d3d3d3d3d3d3d3d3d3ddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117fffffffffff3de0000000001000000000000000000000000000000000066701, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900606060606060606060606060606060606060606060606060606060606060606, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12202
+Estimated Gas Usage: 17120 - 92346
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1849
+
+if (block.timestamp >= _periodFinish) {
+            _rewardRate = reward.div(DURATION);
+        } else {
+            uint256 remaining = _periodFinish.sub(block.timestamp);
+            uint256 leftover = remaining.mul(_rewardRate);
+            _rewardRate = reward.add(leftover).div(DURATION);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12229
+Estimated Gas Usage: 33361 - 169502
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1850
+
+_rewardRate = reward.div(DURATION)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 909090909090909090909090deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12244
+Estimated Gas Usage: 33361 - 169502
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1852
+
+_periodFinish
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1081, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 3d3d3d3d3d3d3d3d3d3d3d3ddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117fffffffffff3de0000000001000000000000000000000000000000000066701, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900606060606060606060606060606060606060606060606060606060606060606, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12340
+Estimated Gas Usage: 33361 - 169502
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1856
+
+_lastUpdateTime = block.timestamp
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 909090909090909090909090deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 12368
+Estimated Gas Usage: 33361 - 169502
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1857
+
+_periodFinish = block.timestamp.add(DURATION)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 909090909090909090909090deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: getFixRate(uint256,uint256)
+PC address: 13346
+Estimated Gas Usage: 1029 - 1783
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1611
+
+quality*10000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80040100080001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getFixRate(uint256,uint256), txdata: 0xb0718b170000000000000000000000000000000000000000000000000000000000000005024919ed532617c1bda5119ce075f6fd22000000081f4880083c80014200001d, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: getFixRate(uint256,uint256)
+PC address: 13425
+Estimated Gas Usage: 951 - 1705
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1614
+
+quality.sub(5000)*10000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400410290000414a1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: getFixRate(uint256,uint256), txdata: 0xb0718b17000000000000000000000000000000000000000000000000000000000000000209582d6c257de60aa64c2f837b4a2339c0ebedfa44001483923cbcb8baf98010, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: getFixRate(uint256,uint256)
+PC address: 13504
+Estimated Gas Usage: 977 - 1731
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1617
+
+quality.sub(8000)*10000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000100090001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getFixRate(uint256,uint256), txdata: 0xb0718b1700000000000000000000000000000000000000000000000000000000000000030b80806b000000000000000000000000000000000000000000001000000001b9, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: getFixRate(uint256,uint256)
+PC address: 13583
+Estimated Gas Usage: 1003 - 1757
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1620
+
+quality.sub(9000)*20000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: getFixRate(uint256,uint256), txdata: 0xb0718b17000000000000000000000000000000000000000000000000000000000000000405e3540000000000000000000000000000000000000000000000000000002338, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: getFixRate(uint256,uint256)
+PC address: 13661
+Estimated Gas Usage: 1029 - 1783
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1623
+
+quality.sub(9800)*20000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getFixRate(uint256,uint256), txdata: 0xb0718b1700000000000000000000000000000000000000000000000000000000000000050108820b0040000000000000000145200e56041a0000040008a0dca51206ce39, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: NFTReward
+Function name: getFixRate(uint256,uint256)
+PC address: 13730
+Estimated Gas Usage: 1019 - 1773
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1626
+
+quality.sub(9980)*20000
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8410, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getFixRate(uint256,uint256), txdata: 0xb0718b1700000000000000000000000000000000000000000000000000000000000000060560ae45a00000000002c083381d7dbf487fcb923a29c84b81d8000000004202, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NFTReward
+Function name: startNFTReward(uint256)
+PC address: 14606
+Estimated Gas Usage: 48331 - 225132
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1831
+
+_dego.mint(address(this), _initReward)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6c580, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: startNFTReward(uint256)
+PC address: 14630
+Estimated Gas Usage: 48321 - 225122
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1833
+
+_startTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 909090909090909090909090deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff74b00, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: startNFTReward(uint256)
+PC address: 14635
+Estimated Gas Usage: 48331 - 225132
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1833
+
+_lastUpdateTime = _startTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6c580, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: startNFTReward(uint256)
+PC address: 14646
+Estimated Gas Usage: 48331 - 225132
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1834
+
+_startTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6c580, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: startNFTReward(uint256)
+PC address: 14665
+Estimated Gas Usage: 48331 - 225132
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1834
+
+_periodFinish = _startTime.add(DURATION)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6c580, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFTReward
+Function name: startNFTReward(uint256)
+PC address: 14702
+Estimated Gas Usage: 48331 - 225132
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1836
+
+_initReward
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd117ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6c580, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: stakeGego(uint256,string)
+PC address: 15966
+Estimated Gas Usage: 30378 - 114861
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1802
+
+if (block.timestamp >= _periodFinish) {
+            _initReward = _initReward.mul(50).div(100);
+
+            _dego.mint(address(this), _initReward);
+
+            _rewardRate = _initReward.div(DURATION);
+            _periodFinish = block.timestamp.add(DURATION);
+            emit RewardAdded(_initReward);
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80002000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: stakeGego(uint256,string), txdata: 0xfc1d230e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: stakeGego(uint256,string)
+PC address: 16363
+Estimated Gas Usage: 31196 - 115679
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:1815
+
+require(block.timestamp > _startTime, "not start")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x9920220008800001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: startNFTReward(uint256), txdata: 0xc230fd110000000000000000000000000000005300000000000000200000000000000080, value: 0x0
+Caller: [SOMEGUY], function: stakeGego(uint256,string), txdata: 0xfc1d230e00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 18431
+Estimated Gas Usage: 19013 - 94617
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:149
+
+if (a == 0) {
+            return 0;
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8909090909090909090909090909090909090909090909090909090909090909090, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 18457
+Estimated Gas Usage: 19064 - 94668
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:154
+
+c / a
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8909090909090909090909090909090909090909090909090909090909090909090, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 18467
+Estimated Gas Usage: 19092 - 94696
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:154
+
+require(c / a == b, "SafeMath: multiplication overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8909090909090909090909090909090909090909090909090909090909090909090, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 18651
+Estimated Gas Usage: 27492 - 143096
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:100
+
+require(c >= a, "SafeMath: addition overflow")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: lastTimeRewardApplicable()
+PC address: 19017
+Estimated Gas Usage: 1068 - 1163
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:57
+
+a < b ? a : b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: lastTimeRewardApplicable(), txdata: 0x80faa57d, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: NFTReward
+Function name: notifyMintAmount(uint256)
+PC address: 19047
+Estimated Gas Usage: 18066 - 93670
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/loops8/0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol:130
+
+require(b <= a, errorMessage)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8900000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: notifyMintAmount(uint256), txdata: 0x9964d8909090909090909090909090909090909090909090909090909090909090909090, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xbd277e47d0ecdd5db6c57eda717dd8f5a329edec.sol
+Tool Runtime = 4354.254623047003 seconds
+#############################################

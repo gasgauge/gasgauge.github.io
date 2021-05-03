@@ -1,0 +1,209 @@
+Compilation warnings/errors on ./noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol:
+./noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol:223:60: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+    function receiveApproval(address from, uint256 tokens, address token, bytes20 data) public{
+                                                           ^-----------^
+
+INFO:Detectors:[93m
+ConTribute.sell(uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#358-388) performs a multiplication on the result of a division:
+	-_dividends = SafeMath.div(SafeMath.mul(_amountOfERC20s,exitFee_),100) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#367)
+	-profitPerShare_ = SafeMath.add(profitPerShare_,(_dividends * magnitude) / tokenSupply_) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#381-383)
+ConTribute.purchaseTokens(address,address,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#498-597) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_incomingERC20,entryFee_),100) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#509-514)
+	-_maintenance = SafeMath.div(SafeMath.mul(_undividedDividends,maintenanceFee_),100) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#516-521)
+ConTribute.purchaseTokens(address,address,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#498-597) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_incomingERC20,entryFee_),100) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#509-514)
+	-_referralBonus = SafeMath.div(SafeMath.mul(_undividedDividends,referralFee_),100) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#524-529)
+ConTribute.purchaseTokens(address,address,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#498-597) performs a multiplication on the result of a division:
+	-_fee = _fee - (_fee - (_amountOfERC20s * ((_dividends * magnitude) / (tokenSupply_)))) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#569)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+ConTribute.withdraw() (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#339-356) ignores return value by erc20.transfer(_customerAddress,_dividends) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#353)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in ConTribute._buy(uint256,address,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#260-275):
+	External calls:
+	- checkAndTransfer2(_amount,_sender) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#268)
+		- require(bool,string)(erc20.transferFrom(_from,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#249-255)
+	State variables written after the call(s):
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- ambassadorAccumulatedQuota_[_customerAddress] = SafeMath.add(ambassadorAccumulatedQuota_[_customerAddress],_amountOfERC20) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#107-108)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- invested_[_customerAddress] += _incomingERC20 (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#507)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- onlyAmbassadors = false (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#97)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- payoutsTo_[_customerAddress] += _updatedPayouts (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#580)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- profitPerShare_ += ((_dividends * magnitude) / (tokenSupply_)) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#568)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- referralBalance_[maintenanceAddress] = SafeMath.add(referralBalance_[maintenanceAddress],_maintenance) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#548-549)
+		- referralBalance_[_referredBy] = SafeMath.add(referralBalance_[_referredBy],_referralBonus) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#554-555)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- tokenBalanceLedger_[_customerAddress] = SafeMath.add(tokenBalanceLedger_[_customerAddress],_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#575-576)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- tokenSupply_ = SafeMath.add(tokenSupply_,_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#566)
+		- tokenSupply_ = _amountOfERC20s (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#572)
+	- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+		- totalReferralEarnings_[_referredBy] = SafeMath.add(totalReferralEarnings_[_referredBy],_referralBonus) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#557-558)
+Reentrancy in ConTribute.buy(uint256,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#276-290):
+	External calls:
+	- checkAndTransfer(_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#283)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#232-238)
+	State variables written after the call(s):
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- ambassadorAccumulatedQuota_[_customerAddress] = SafeMath.add(ambassadorAccumulatedQuota_[_customerAddress],_amountOfERC20) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#107-108)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- invested_[_customerAddress] += _incomingERC20 (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#507)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- onlyAmbassadors = false (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#97)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- payoutsTo_[_customerAddress] += _updatedPayouts (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#580)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- profitPerShare_ += ((_dividends * magnitude) / (tokenSupply_)) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#568)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- referralBalance_[maintenanceAddress] = SafeMath.add(referralBalance_[maintenanceAddress],_maintenance) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#548-549)
+		- referralBalance_[_referredBy] = SafeMath.add(referralBalance_[_referredBy],_referralBonus) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#554-555)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- tokenBalanceLedger_[_customerAddress] = SafeMath.add(tokenBalanceLedger_[_customerAddress],_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#575-576)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- tokenSupply_ = SafeMath.add(tokenSupply_,_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#566)
+		- tokenSupply_ = _amountOfERC20s (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#572)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+		- totalReferralEarnings_[_referredBy] = SafeMath.add(totalReferralEarnings_[_referredBy],_referralBonus) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#557-558)
+Reentrancy in ConTribute.buyFor(uint256,address,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#292-306):
+	External calls:
+	- checkAndTransfer(_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#300)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#232-238)
+	State variables written after the call(s):
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- ambassadorAccumulatedQuota_[_customerAddress] = SafeMath.add(ambassadorAccumulatedQuota_[_customerAddress],_amountOfERC20) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#107-108)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- invested_[_customerAddress] += _incomingERC20 (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#507)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- onlyAmbassadors = false (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#97)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- payoutsTo_[_customerAddress] += _updatedPayouts (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#580)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- profitPerShare_ += ((_dividends * magnitude) / (tokenSupply_)) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#568)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- referralBalance_[maintenanceAddress] = SafeMath.add(referralBalance_[maintenanceAddress],_maintenance) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#548-549)
+		- referralBalance_[_referredBy] = SafeMath.add(referralBalance_[_referredBy],_referralBonus) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#554-555)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- tokenBalanceLedger_[_customerAddress] = SafeMath.add(tokenBalanceLedger_[_customerAddress],_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#575-576)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- tokenSupply_ = SafeMath.add(tokenSupply_,_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#566)
+		- tokenSupply_ = _amountOfERC20s (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#572)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+		- totalReferralEarnings_[_referredBy] = SafeMath.add(totalReferralEarnings_[_referredBy],_referralBonus) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#557-558)
+Reentrancy in ConTribute.donateTokens(uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#491-497):
+	External calls:
+	- checkAndTransfer(todonate) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#495)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#232-238)
+	State variables written after the call(s):
+	- profitPerShare_ = SafeMath.add(profitPerShare_,(todonate * magnitude) / tokenSupply_) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#496)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in ConTribute._buy(uint256,address,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#260-275):
+	External calls:
+	- checkAndTransfer2(_amount,_sender) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#268)
+		- require(bool,string)(erc20.transferFrom(_from,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#249-255)
+	Event emitted after the call(s):
+	- Transfer(address(0),_customerAddress,_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#582-586)
+		- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+	- onTokenPurchase(_customerAddress,_incomingERC20,_amountOfERC20s,_referredBy,now) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#588-594)
+		- purchaseTokens(_referredBy,_sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#270-274)
+Reentrancy in ConTribute.buy(uint256,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#276-290):
+	External calls:
+	- checkAndTransfer(_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#283)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#232-238)
+	Event emitted after the call(s):
+	- Transfer(address(0),_customerAddress,_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#582-586)
+		- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+	- onTokenPurchase(_customerAddress,_incomingERC20,_amountOfERC20s,_referredBy,now) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#588-594)
+		- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#285-289)
+Reentrancy in ConTribute.buyFor(uint256,address,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#292-306):
+	External calls:
+	- checkAndTransfer(_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#300)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#232-238)
+	Event emitted after the call(s):
+	- Transfer(address(0),_customerAddress,_amountOfERC20s) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#582-586)
+		- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+	- onTokenPurchase(_customerAddress,_incomingERC20,_amountOfERC20s,_referredBy,now) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#588-594)
+		- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#301-305)
+Reentrancy in ConTribute.withdraw() (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#339-356):
+	External calls:
+	- erc20.transfer(_customerAddress,_dividends) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#353)
+	Event emitted after the call(s):
+	- onWithdraw(_customerAddress,_dividends) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#355)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+ConTribute.checkAndTransfer(uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#227-239) compares to a boolean constant:
+	-require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#232-238)
+ConTribute.checkAndTransfer2(uint256,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#243-256) compares to a boolean constant:
+	-require(bool,string)(erc20.transferFrom(_from,address(this),_amount) == true,transfer must succeed) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#249-255)
+ConTribute.antiEarlyWhale(uint256,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#91-121) compares to a boolean constant:
+	-require(bool)((ambassadors_[_customerAddress] == true && (ambassadorAccumulatedQuota_[_customerAddress] + _amountOfERC20) <= ambassadorMaxPurchase_)) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#102-105)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#5) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Event ConTributeonDistribute(address,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#133-136) is not in CapWords
+Event ConTributeonTokenPurchase(address,uint256,uint256,address,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#138-144) is not in CapWords
+Event ConTributeonTokenSell(address,uint256,uint256,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#146-151) is not in CapWords
+Event ConTributeonReinvestment(address,uint256,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#153-157) is not in CapWords
+Event ConTributeonWithdraw(address,uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#159-162) is not in CapWords
+Parameter ConTribute.checkAndTransfer(uint256)._amount (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#228) is not in mixedCase
+Parameter ConTribute.checkAndTransfer2(uint256,address)._amount (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#244) is not in mixedCase
+Parameter ConTribute.checkAndTransfer2(uint256,address)._from (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#245) is not in mixedCase
+Parameter ConTribute.buy(uint256,address)._amount (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#277) is not in mixedCase
+Parameter ConTribute.buy(uint256,address)._referredBy (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#278) is not in mixedCase
+Parameter ConTribute.buyFor(uint256,address,address)._amount (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#293) is not in mixedCase
+Parameter ConTribute.buyFor(uint256,address,address)._customerAddress (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#294) is not in mixedCase
+Parameter ConTribute.buyFor(uint256,address,address)._referredBy (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#295) is not in mixedCase
+Parameter ConTribute.sell(uint256)._amountOfERC20s (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#359) is not in mixedCase
+Parameter ConTribute.myDividends(bool)._includeReferralBonus (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#416) is not in mixedCase
+Parameter ConTribute.balanceOf(address)._customerAddress (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#428) is not in mixedCase
+Parameter ConTribute.dividendsOf(address)._customerAddress (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#438) is not in mixedCase
+Parameter ConTribute.totalReferralEarnings(address)._client (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#482) is not in mixedCase
+Parameter ConTribute.purchaseTokens(address,address,uint256)._referredBy (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#499) is not in mixedCase
+Parameter ConTribute.purchaseTokens(address,address,uint256)._customerAddress (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#500) is not in mixedCase
+Parameter ConTribute.purchaseTokens(address,address,uint256)._incomingERC20 (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#501) is not in mixedCase
+Constant ConTribute.ambassadorMaxPurchase_ (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#83) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable ConTribute.ACTIVATION_TIME (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#89) is not in mixedCase
+Constant ConTribute.magnitude (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#186) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ConTribute.entryFee_ (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#176) should be constant
+ConTribute.exitFee_ (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#178) should be constant
+ConTribute.maintenanceFee_ (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#182) should be constant
+ConTribute.name (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#170) should be constant
+ConTribute.referralFee_ (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#180) should be constant
+ConTribute.symbol (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#172) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+activate() should be declared external:
+	- ConTribute.activate() (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#216-219)
+receiveApproval(address,uint256,address,bytes20) should be declared external:
+	- ConTribute.receiveApproval(address,uint256,address,bytes20) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#223-226)
+buy(uint256,address) should be declared external:
+	- ConTribute.buy(uint256,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#276-290)
+buyFor(uint256,address,address) should be declared external:
+	- ConTribute.buyFor(uint256,address,address) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#292-306)
+reinvest() should be declared external:
+	- ConTribute.reinvest() (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#309-326)
+getInvested() should be declared external:
+	- ConTribute.getInvested() (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#473-479)
+donateTokens(uint256) should be declared external:
+	- ConTribute.donateTokens(uint256) (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#491-497)
+multiData() should be declared external:
+	- ConTribute.multiData() (noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol#599-639)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol analyzed (4 contracts with 46 detectors), 56 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8ee57d45794b80588e9e5102ce0bdcc4f612bbd3.sol
+Tool Runtime = 1.3618687550006143 seconds
+#############################################

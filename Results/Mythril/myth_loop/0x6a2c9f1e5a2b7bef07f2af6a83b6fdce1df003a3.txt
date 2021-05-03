@@ -1,0 +1,86 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: etherATM
+Function name: enter()
+PC address: 886
+Estimated Gas Usage: 64757 - 328970
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0x6a2c9f1e5a2b7bef07f2af6a83b6fdce1df003a3.sol:98
+
+owner.transfer(collectedFees)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: enter(), txdata: 0xe97dcb62, value: 0x22b1c8c1227a00001
+Caller: [CREATOR], function: enter(), txdata: 0xe97dcb62, value: 0x22b1c8c1227a00001
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: etherATM
+Function name: enter()
+PC address: 1183
+Estimated Gas Usage: 63938 - 293965
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0x6a2c9f1e5a2b7bef07f2af6a83b6fdce1df003a3.sol:116
+
+persons[payoutIdx].etherAddress.transfer(transactionAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x23000c00027c00020, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: enter(), txdata: 0xe97dcb62, value: 0x22b1c8c1227a00001
+Caller: [SOMEGUY], function: enter(), txdata: 0xe97dcb62, value: 0x1bc16d674ec800001
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: etherATM
+Function name: persons(uint256)
+PC address: 1269
+Estimated Gas Usage: 1056 - 1151
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0x6a2c9f1e5a2b7bef07f2af6a83b6fdce1df003a3.sol:26
+
+Person[] public persons
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: persons(uint256), txdata: 0xa2f9eac60000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x6a2c9f1e5a2b7bef07f2af6a83b6fdce1df003a3.sol
+Tool Runtime = 271.4732032840002 seconds
+#############################################

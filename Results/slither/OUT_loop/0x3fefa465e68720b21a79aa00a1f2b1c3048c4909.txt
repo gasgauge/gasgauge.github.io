@@ -1,0 +1,60 @@
+Compilation warnings/errors on ./loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol:
+./loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol:16:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[91m
+LockedTokenVault.holderTransferRequest (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#343) is never initialized. It is used in:
+	- LockedTokenVault.getHolderTransferRequest(address) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#444-446)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+Reentrancy in LockedTokenVault.claim() (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#428-432):
+	External calls:
+	- _tokenTransferOut(msg.sender,claimableToken) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#430)
+		- IERC20(_TOKEN_).safeTransfer(to,amount) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#476)
+		- (success,returndata) = address(token).call(data) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#307)
+	State variables written after the call(s):
+	- claimedBalances[msg.sender] = claimedBalances[msg.sender].add(claimableToken) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#431)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in LockedTokenVault.deposit(uint256) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#383-386):
+	External calls:
+	- _tokenTransferIn(_OWNER_,amount) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#384)
+		- IERC20(_TOKEN_).safeTransferFrom(from,address(this),amount) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#472)
+		- (success,returndata) = address(token).call(data) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#307)
+	State variables written after the call(s):
+	- _UNDISTRIBUTED_AMOUNT_ = _UNDISTRIBUTED_AMOUNT_.add(amount) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#385)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+LockedTokenVault.getClaimableBalance(address) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#448-454) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < _START_RELEASE_TIME_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#449)
+LockedTokenVault.getRemainingBalance(address) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#456-467) uses timestamp for comparisons
+	Dangerous comparisons:
+	- timePast < _RELEASE_DURATION_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#459)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#15) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20._callOptionalReturn(IERC20,bytes) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#296-315):
+	- (success,returndata) = address(token).call(data) (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#307)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Ownable._OWNER_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#122) is not in mixedCase
+Variable Ownable._NEW_OWNER_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#123) is not in mixedCase
+Variable LockedTokenVault._TOKEN_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#338) is not in mixedCase
+Variable LockedTokenVault._UNDISTRIBUTED_AMOUNT_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#345) is not in mixedCase
+Variable LockedTokenVault._START_RELEASE_TIME_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#346) is not in mixedCase
+Variable LockedTokenVault._RELEASE_DURATION_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#347) is not in mixedCase
+Variable LockedTokenVault._CLIFF_RATE_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#348) is not in mixedCase
+Variable LockedTokenVault._DISTRIBUTE_FINISHED_ (loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol#350) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Slither:./loops/0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol analyzed (6 contracts with 46 detectors), 16 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x3fefa465e68720b21a79aa00a1f2b1c3048c4909.sol
+Tool Runtime = 0.7656815480004298 seconds
+#############################################

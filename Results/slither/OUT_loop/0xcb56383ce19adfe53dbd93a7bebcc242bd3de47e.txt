@@ -1,0 +1,307 @@
+INFO:Detectors:[93m
+DOSProxy.signalBootstrap(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702-1762) performs a multiplication on the result of a division:
+	-arrSize = bootstrapStartThreshold / groupSize * groupSize (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1746)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+DOSProxy.formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1976-2070) uses a dangerous strict equality:
+	- lastFormGrpReqId == 0 (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2020)
+DOSProxy.kickoffRandom() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#994-1020) uses a dangerous strict equality:
+	- idx == UINTMAX (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1000)
+DOSProxy.query(address,uint256,string,string) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1232-1320) uses a dangerous strict equality:
+	- idx == UINTMAX (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1270)
+DOSProxy.requestRandom(address,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1326-1382) uses a dangerous strict equality:
+	- idx == UINTMAX (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1342)
+DOSProxy.signalBootstrap(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702-1762) uses a dangerous strict equality:
+	- require(bool,string)(bootstrapRound == _cid,not-in-bootstrap) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1704)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in DOSProxy.dispatchJob(DOSProxy.TrafficType,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#980-990):
+	External calls:
+	- kickoffRandom() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#984)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+	State variables written after the call(s):
+	- dispatchJobCore(trafficType,pseudoSeed) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#988)
+		- expiredWorkingGroupIds.push(workingGroupIds[dissolveIdx]) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#964)
+	- dispatchJobCore(trafficType,pseudoSeed) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#988)
+		- workingGroupIds[dissolveIdx] = workingGroupIds[workingGroupIds.length - 1] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#966)
+		- workingGroupIds.length -- (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#968)
+Reentrancy in DOSProxy.registerNewNode() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1940-1968):
+	External calls:
+	- DOSStakingInterface(addressBridge.getStakingAddress()).nodeStart(msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1964)
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(from,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- bootstrapRound = CommitRevealInterface(addressBridge.getCommitRevealAddress()).startCommitReveal(block.number,bootstrapCommitDuration,bootstrapRevealDuration,bootstrapStartThreshold) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2044-2054)
+	State variables written after the call(s):
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- numPendingNodes ++ (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1046)
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- pendingNodeList[node] = pendingNodeList[pendingNodeTail] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1040)
+		- pendingNodeList[pendingNodeTail] = node (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1042)
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- pendingNodeTail = node (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1044)
+Reentrancy in DOSProxy.signalBootstrap(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702-1762):
+	External calls:
+	- rndSeed = CommitRevealInterface(addressBridge.getCommitRevealAddress()).getRandom(_cid) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1730)
+	State variables written after the call(s):
+	- pick(arrSize,0,candidates) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1752)
+		- numPendingNodes -= num (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2140)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in DOSProxy.formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1976-2070):
+	External calls:
+	- bootstrapRound = CommitRevealInterface(addressBridge.getCommitRevealAddress()).startCommitReveal(block.number,bootstrapCommitDuration,bootstrapRevealDuration,bootstrapStartThreshold) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2044-2054)
+	State variables written after the call(s):
+	- bootstrapEndBlk = block.number + bootstrapCommitDuration + bootstrapRevealDuration (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2056)
+Reentrancy in DOSProxy.query(address,uint256,string,string) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1232-1320):
+	External calls:
+	- idx = dispatchJob(TrafficType.UserQuery,queryId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1266)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+	State variables written after the call(s):
+	- PendingRequests[queryId] = PendingRequest(queryId,grp.groupId,grp.groupPubKey,from) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1280)
+Reentrancy in DOSProxy.registerNewNode() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1940-1968):
+	External calls:
+	- DOSStakingInterface(addressBridge.getStakingAddress()).nodeStart(msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1964)
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(from,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- bootstrapRound = CommitRevealInterface(addressBridge.getCommitRevealAddress()).startCommitReveal(block.number,bootstrapCommitDuration,bootstrapRevealDuration,bootstrapStartThreshold) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2044-2054)
+	State variables written after the call(s):
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- PendingRequests[requestId] = PendingRequest(requestId,grp.groupId,grp.groupPubKey,from) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1352)
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- bootstrapEndBlk = block.number + bootstrapCommitDuration + bootstrapRevealDuration (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2056)
+Reentrancy in DOSProxy.requestRandom(address,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1326-1382):
+	External calls:
+	- idx = dispatchJob(TrafficType.UserRandom,requestId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1338)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+	State variables written after the call(s):
+	- PendingRequests[requestId] = PendingRequest(requestId,grp.groupId,grp.groupPubKey,from) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1352)
+Reentrancy in DOSProxy.signalBootstrap(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702-1762):
+	External calls:
+	- rndSeed = CommitRevealInterface(addressBridge.getCommitRevealAddress()).getRandom(_cid) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1730)
+	State variables written after the call(s):
+	- lastRandomness = uint256(keccak256(bytes)(abi.encodePacked(lastRandomness,rndSeed))) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1740)
+	- lastUpdatedBlock = block.number (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1742)
+	- regroup(candidates,arrSize / groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1756)
+		- numPendingGroups ++ (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1032)
+	- regroup(candidates,arrSize / groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1756)
+		- pendingGroupList[groupId] = pendingGroupList[pendingGroupTail] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1026)
+		- pendingGroupList[pendingGroupTail] = groupId (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1028)
+	- regroup(candidates,arrSize / groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1756)
+		- pendingGroupTail = groupId (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1030)
+	- regroup(candidates,arrSize / groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1756)
+		- pendingGroups[groupId] = PendingGroup(groupId,block.number) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2200)
+		- memberList[HEAD_A] = HEAD_A (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2204)
+		- memberList[members[j_scope_0]] = memberList[HEAD_A] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2208)
+		- memberList[HEAD_A] = members[j_scope_0] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2210)
+	- pick(arrSize,0,candidates) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1752)
+		- pendingNodeList[HEAD_A] = pendingNodeList[curr] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2132)
+		- delete pendingNodeList[curr] (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2134)
+	- pick(arrSize,0,candidates) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1752)
+		- pendingNodeTail = HEAD_A (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2146)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in DOSProxy.formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1976-2070):
+	External calls:
+	- lastFormGrpReqId = requestRandom(address(this),block.number) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2018)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(from,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+	Event emitted after the call(s):
+	- LogGroupingInitiated(numPendingNodes,groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2022)
+Reentrancy in DOSProxy.query(address,uint256,string,string) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1232-1320):
+	External calls:
+	- idx = dispatchJob(TrafficType.UserQuery,queryId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1266)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+	Event emitted after the call(s):
+	- LogMessage(skipped-user-query-no-live-wgrp) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1272)
+	- LogUrl(queryId,timeout,dataSource,selector,lastRandomness,grp.groupId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1282-1296)
+Reentrancy in DOSProxy.registerNewNode() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1940-1968):
+	External calls:
+	- DOSStakingInterface(addressBridge.getStakingAddress()).nodeStart(msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1964)
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(from,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- bootstrapRound = CommitRevealInterface(addressBridge.getCommitRevealAddress()).startCommitReveal(block.number,bootstrapCommitDuration,bootstrapRevealDuration,bootstrapStartThreshold) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2044-2054)
+	Event emitted after the call(s):
+	- LogGroupDissolve(groupId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1224)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogGroupingInitiated(numPendingNodes,groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2022)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogInsufficientPendingNode(numPendingNodes) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2004)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogMessage(no-live-wgrp,try-bootstrap) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1002)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogMessage(skipped-user-rnd-no-live-wgrp) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1344)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogMessage(already-in-formation) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2028)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogMessage(skipped-formation-not-enough-expired-wgrp) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2036)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogMessage(already-in-bootstrap) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2062)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogRequestUserRandom(requestId,lastRandomness,userSeed,grp.groupId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1358-1368)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+	- LogUpdateRandom(lastRandomness,lastHandledGroup.groupId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1016)
+		- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1966)
+Reentrancy in DOSProxy.requestRandom(address,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1326-1382):
+	External calls:
+	- idx = dispatchJob(TrafficType.UserRandom,requestId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1338)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+	Event emitted after the call(s):
+	- LogMessage(skipped-user-rnd-no-live-wgrp) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1344)
+	- LogRequestUserRandom(requestId,lastRandomness,userSeed,grp.groupId) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1358-1368)
+Reentrancy in DOSProxy.signalBootstrap(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702-1762):
+	External calls:
+	- rndSeed = CommitRevealInterface(addressBridge.getCommitRevealAddress()).getRandom(_cid) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1730)
+	Event emitted after the call(s):
+	- GuardianReward(block.number,msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1758)
+	- LogGrouping(groupId,members) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2216)
+		- regroup(candidates,arrSize / groupSize) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1756)
+	- LogMessage(bootstrap-commit-reveal-failure) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1734)
+Reentrancy in DOSProxy.signalGroupFormation() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1686-1700):
+	External calls:
+	- formGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1688)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(from,requestId,uint256(TrafficType.UserRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1370-1378)
+		- bootstrapRound = CommitRevealInterface(addressBridge.getCommitRevealAddress()).startCommitReveal(block.number,bootstrapCommitDuration,bootstrapRevealDuration,bootstrapStartThreshold) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2044-2054)
+	Event emitted after the call(s):
+	- GuardianReward(block.number,msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1690)
+Reentrancy in DOSProxy.signalRandom() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1636-1654):
+	External calls:
+	- kickoffRandom() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1648)
+		- DOSPaymentInterface(addressBridge.getPaymentAddress()).chargeServiceFee(proxyFundsAddr,lastRandomness,uint256(TrafficType.SystemRandom)) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1018)
+	Event emitted after the call(s):
+	- GuardianReward(block.number,msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1650)
+Reentrancy in DOSProxy.signalUnregister(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1766-1780):
+	External calls:
+	- unregister(member) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1768)
+		- DOSStakingInterface(addressBridge.getStakingAddress()).nodeStop(node) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1904)
+	Event emitted after the call(s):
+	- GuardianReward(block.number,msg.sender) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1770)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+BN256.pointAdd(BN256.G1Point,BN256.G1Point) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#64-86) uses assembly
+	- INLINE ASM (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#76-86)
+BN256.scalarMul(BN256.G1Point,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#90-110) uses assembly
+	- INLINE ASM (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#100-110)
+BN256.pairingCheck(BN256.G1Point[],BN256.G2Point[]) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#154-212) uses assembly
+	- INLINE ASM (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#190-210)
+DOSProxy.getCodeSize(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#924-932) uses assembly
+	- INLINE ASM (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#926-932)
+DOSProxy.toBytes(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1538-1544) uses assembly
+	- INLINE ASM (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1542-1544)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Function BN256.P1() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#36-40) is not in mixedCase
+Function BN256.P2() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#44-60) is not in mixedCase
+Function BN256.G2Equal(BN256.G2Point,BN256.G2Point) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#140-144) is not in mixedCase
+Function UserContractInterface.__callback__(uint256,bytes) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#370) is not in mixedCase
+Function UserContractInterface.__callback__(uint256,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#374) is not in mixedCase
+Parameter DOSProxy.addToGuardianList(address)._addr (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#760) is not in mixedCase
+Parameter DOSProxy.removeFromGuardianList(address)._addr (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#768) is not in mixedCase
+Parameter DOSProxy.signalBootstrap(uint256)._cid (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702) is not in mixedCase
+Function DOSProxy.__callback__(uint256,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#2076-2120) is not in mixedCase
+Variable DOSProxy.PendingRequests (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#496) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+DOSProxy.bootstrapCommitDuration (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#526) should be constant
+DOSProxy.bootstrapGroups (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#514) should be constant
+DOSProxy.bootstrapRevealDuration (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#528) should be constant
+DOSProxy.checkExpireLimit (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#508) should be constant
+DOSProxy.groupToPick (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#518) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#268-272)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#318-324)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#336-340)
+startCommitReveal(uint256,uint256,uint256,uint256) should be declared external:
+	- CommitRevealInterface.startCommitReveal(uint256,uint256,uint256,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#382)
+getRandom(uint256) should be declared external:
+	- CommitRevealInterface.getRandom(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#384)
+getCommitRevealAddress() should be declared external:
+	- DOSAddressBridgeInterface.getCommitRevealAddress() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#392)
+getPaymentAddress() should be declared external:
+	- DOSAddressBridgeInterface.getPaymentAddress() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#394)
+getStakingAddress() should be declared external:
+	- DOSAddressBridgeInterface.getStakingAddress() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#396)
+hasServiceFee(address,uint256) should be declared external:
+	- DOSPaymentInterface.hasServiceFee(address,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#404)
+chargeServiceFee(address,uint256,uint256) should be declared external:
+	- DOSPaymentInterface.chargeServiceFee(address,uint256,uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#406)
+recordServiceFee(uint256,address,address[]) should be declared external:
+	- DOSPaymentInterface.recordServiceFee(uint256,address,address[]) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#408)
+claimGuardianReward(address) should be declared external:
+	- DOSPaymentInterface.claimGuardianReward(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#410)
+setPaymentMethod(address,address) should be declared external:
+	- DOSPaymentInterface.setPaymentMethod(address,address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#412)
+nodeStart(address) should be declared external:
+	- DOSStakingInterface.nodeStart(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#420)
+nodeStop(address) should be declared external:
+	- DOSStakingInterface.nodeStop(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#422)
+isValidStakingNode(address) should be declared external:
+	- DOSStakingInterface.isValidStakingNode(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#424)
+addToGuardianList(address) should be declared external:
+	- DOSProxy.addToGuardianList(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#760-764)
+removeFromGuardianList(address) should be declared external:
+	- DOSProxy.removeFromGuardianList(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#768-772)
+getLastHandledGroup() should be declared external:
+	- DOSProxy.getLastHandledGroup() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#776-792)
+getWorkingGroupById(uint256) should be declared external:
+	- DOSProxy.getWorkingGroupById(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#796-812)
+workingGroupIdsLength() should be declared external:
+	- DOSProxy.workingGroupIdsLength() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#816-820)
+expiredWorkingGroupIdsLength() should be declared external:
+	- DOSProxy.expiredWorkingGroupIdsLength() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#824-828)
+setProxyFund(address,address) should be declared external:
+	- DOSProxy.setProxyFund(address,address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#832-846)
+setGroupSize(uint256) should be declared external:
+	- DOSProxy.setGroupSize(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#852-860)
+setBootstrapStartThreshold(uint256) should be declared external:
+	- DOSProxy.setBootstrapStartThreshold(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#864-872)
+setGroupMaturityPeriod(uint256) should be declared external:
+	- DOSProxy.setGroupMaturityPeriod(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#876-884)
+setLifeDiversity(uint256) should be declared external:
+	- DOSProxy.setLifeDiversity(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#888-896)
+setPendingGroupMaxLife(uint256) should be declared external:
+	- DOSProxy.setPendingGroupMaxLife(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#900-908)
+setSystemRandomHardLimit(uint256) should be declared external:
+	- DOSProxy.setSystemRandomHardLimit(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#912-920)
+signalRandom() should be declared external:
+	- DOSProxy.signalRandom() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1636-1654)
+signalGroupDissolve() should be declared external:
+	- DOSProxy.signalGroupDissolve() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1660-1680)
+signalGroupFormation() should be declared external:
+	- DOSProxy.signalGroupFormation() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1686-1700)
+signalBootstrap(uint256) should be declared external:
+	- DOSProxy.signalBootstrap(uint256) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1702-1762)
+signalUnregister(address) should be declared external:
+	- DOSProxy.signalUnregister(address) (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1766-1780)
+unregisterNode() should be declared external:
+	- DOSProxy.unregisterNode() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1786-1790)
+getWorkingGroupSize() should be declared external:
+	- DOSProxy.getWorkingGroupSize() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1924-1928)
+getExpiredWorkingGroupSize() should be declared external:
+	- DOSProxy.getExpiredWorkingGroupSize() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1932-1936)
+registerNewNode() should be declared external:
+	- DOSProxy.registerNewNode() (loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol#1940-1968)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol analyzed (8 contracts with 46 detectors), 82 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xcb56383ce19adfe53dbd93a7bebcc242bd3de47e.sol
+Tool Runtime = 3.272650358998362 seconds
+#############################################

@@ -1,0 +1,239 @@
+INFO:Detectors:[93m
+CollateralCal._redeemCollateral(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#915-926) performs a multiplication on the result of a division:
+	-newRedeem = leftCollateral / tokenNetWorth (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#919)
+	-newWorth = newRedeem * tokenNetWorth (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#920)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+OptionsManagerV2 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1187-1323) has incorrect ERC20 function interface:Allowances.approve(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#629-631)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-erc20-interface[0m
+INFO:Detectors:[93m
+CollateralCal.getPayableAmount(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1095-1113) uses a dangerous strict equality:
+	- require(bool,string)(afterBalance - preBalance == settlementAmount,settlement token transfer error!) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1107)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+CollateralCal.getPayableAmount(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1095-1113) ignores return value by oToken.transferFrom(msg.sender,address(this),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1105)
+CollateralCal.getPayableAmount(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1095-1113) ignores return value by oToken.transfer(address(_collateralPool),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1109)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in CollateralCal.addCollateral(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#862-877):
+	External calls:
+	- amount = getPayableAmount(collateral,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#863)
+		- oToken.transferFrom(msg.sender,address(this),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1105)
+		- oToken.transfer(address(_collateralPool),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1109)
+	- fee = _collateralPool.addTransactionFee(collateral,amount,3) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#864)
+	- _collateralPool.addUserPayingUsd(msg.sender,userPaying) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#871)
+	- _collateralPool.addCollateralBalance(collateral,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#872)
+	- _collateralPool.addUserInputCollateral(msg.sender,collateral,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#873)
+	- _collateralPool.addNetWorthBalance(collateral,int256(amount)) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#874)
+	External calls sending eth:
+	- amount = getPayableAmount(collateral,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#863)
+		- poolAddr.transfer(msg.value) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1101)
+	Event emitted after the call(s):
+	- AddCollateral(msg.sender,collateral,amount,mintAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#875)
+Reentrancy in OptionsManagerV2.buyOption(address,uint256,uint256,uint32,uint256,uint256,uint8) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1242-1251):
+	External calls:
+	- _optionsPool.createOptions(msg.sender,settlement,ty_ly_exp,strikePrice,optionPrice,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1249)
+	- buyOption_sub(settlement,settlementAmount,optionPrice,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1250)
+		- fee = _collateralPool.addTransactionFee(settlement,allPay,0) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1266)
+		- _collateralPool.transferPayback(msg.sender,settlement,settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1270)
+		- oToken.transferFrom(msg.sender,address(this),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1105)
+		- _FPTCoin.addMinerBalance(msg.sender,allPayUSd) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1273)
+		- oToken.transfer(address(_collateralPool),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1109)
+	External calls sending eth:
+	- buyOption_sub(settlement,settlementAmount,optionPrice,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1250)
+		- poolAddr.transfer(msg.value) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1101)
+	Event emitted after the call(s):
+	- BuyOption(msg.sender,settlement,id,optionPrice,allPay,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1274)
+		- buyOption_sub(settlement,settlementAmount,optionPrice,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1250)
+Reentrancy in OptionsManagerV2.buyOption_sub(address,uint256,uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1259-1275):
+	External calls:
+	- settlementAmount = getPayableAmount(settlement,settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1261)
+		- oToken.transferFrom(msg.sender,address(this),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1105)
+		- oToken.transfer(address(_collateralPool),settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1109)
+	- fee = _collateralPool.addTransactionFee(settlement,allPay,0) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1266)
+	- _collateralPool.transferPayback(msg.sender,settlement,settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1270)
+	- _FPTCoin.addMinerBalance(msg.sender,allPayUSd) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1273)
+	External calls sending eth:
+	- settlementAmount = getPayableAmount(settlement,settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1261)
+		- poolAddr.transfer(msg.value) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1101)
+	Event emitted after the call(s):
+	- BuyOption(msg.sender,settlement,id,optionPrice,allPay,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1274)
+Reentrancy in OptionsManagerV2.exerciseOption(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1298-1310):
+	External calls:
+	- _optionsPool.burnOptions(msg.sender,optionsId,amount,optPrice) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1305)
+	- _collateralPool.addNetWorthBalance(settlement,int256(fullPay)) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1307)
+	- _paybackWorth(allPay,2) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1308)
+		- _collateralPool.transferPaybackAndFee(msg.sender,whiteList[i],_payBack,feeType) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1086)
+	Event emitted after the call(s):
+	- ExerciseOption(msg.sender,optionsId,amount,allPay) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1309)
+Reentrancy in CollateralCal.redeemCollateral(uint256,address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#884-909):
+	External calls:
+	- (burnAmount,redeemWorth) = _FPTCoin.redeemLockedCollateral(msg.sender,tokenAmount,leftCollateral) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#890)
+	- (newRedeem,newWorth) = _redeemCollateral(tokenAmount,leftCollateral) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#899)
+		- _FPTCoin.addlockBalance(msg.sender,locked,locked * tokenNetWorth) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#922)
+	- _redeemCollateralWorth(collateral,redeemWorth,userTotalWorth) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#905)
+		- _collateralPool.transferPaybackBalances(msg.sender,redeemWorth,tmpWhiteList,colBalances,PremiumBalances,prices) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#955-956)
+	Event emitted after the call(s):
+	- RedeemCollateral(msg.sender,collateral,redeemWorth) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#951)
+		- _redeemCollateralWorth(collateral,redeemWorth,userTotalWorth) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#905)
+Reentrancy in OptionsManagerV2.sellOption(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1281-1292):
+	External calls:
+	- _optionsPool.burnOptions(msg.sender,optionsId,amount,optPrice) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1286)
+	- _collateralPool.addNetWorthBalance(settlement,int256(fullPay)) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1289)
+	- _paybackWorth(allPay,1) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1290)
+		- _collateralPool.transferPaybackAndFee(msg.sender,whiteList[i],_payBack,feeType) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1086)
+	Event emitted after the call(s):
+	- SellOption(msg.sender,optionsId,amount,allPay) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1291)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#29) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#47) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#126) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#156) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#301) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#359) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#386) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#422) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#459) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#480) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#528) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#556) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#613) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#650) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#729) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#791) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1149) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1178) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable Ownable._owner (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#59) is not in mixedCase
+Contract whiteListUint32 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#160-208) is not in CapWords
+Contract whiteListUint256 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#212-252) is not in CapWords
+Contract whiteListAddress (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#256-296) is not in CapWords
+Constant AddressWhiteList.allPermission (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#310) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowBuyOptions (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#311) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowSellOptions (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#312) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowExerciseOptions (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#313) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowAddCollateral (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#314) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowRedeemCollateral (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#315) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter IOptionsPool.createOptions(address,address,uint256,uint256,uint256,uint256).type_ly_exp (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#391) is not in mixedCase
+Variable ImportOptionsPool._optionsPool (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#410) is not in mixedCase
+Variable ImportOracle._oracle (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#437) is not in mixedCase
+Function IOptionsPrice.getOptionsPrice_iv(uint256,uint256,uint256,uint256,uint256,uint8) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#463-464) is not in mixedCase
+Variable ImportOptionsPrice._optionsPrice (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#468) is not in mixedCase
+Parameter ICollateralPool.transferPaybackBalances(address,uint256,address[],uint256[],uint256[],uint256[]).PremiumBalances (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#507) is not in mixedCase
+Parameter ICollateralPool.getCollateralAndPremiumBalances(address,uint256,address[],uint256[],uint256[])._RealBalances (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#509) is not in mixedCase
+Variable ImportCollateralPool._collateralPool (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#516) is not in mixedCase
+Parameter ImportIFPTCoin.setFPTCoinAddress(address).FPTCoinAddr (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#548) is not in mixedCase
+Variable ImportIFPTCoin._FPTCoin (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#544) is not in mixedCase
+Parameter ImputRange.isInputAmountInRange(uint256).Amount (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#574) is not in mixedCase
+Parameter ImputRange.setInputAmountRange(uint256,uint256)._minAmount (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#604) is not in mixedCase
+Parameter ImputRange.setInputAmountRange(uint256,uint256)._maxAmount (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#604) is not in mixedCase
+Modifier ImputRange.InRange(uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#566-569) is not in mixedCase
+Modifier ImputRange.Smaller(uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#585-588) is not in mixedCase
+Modifier ImputRange.Larger(uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#589-592) is not in mixedCase
+Parameter Allowances.setValid(bool)._bValid (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#635) is not in mixedCase
+Contract tuple64 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1150-1173) is not in CapWords
+Parameter OptionsManagerV2.setPriceRateRange(uint256,uint256)._minPriceRate (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1219) is not in mixedCase
+Parameter OptionsManagerV2.setPriceRateRange(uint256,uint256)._maxPriceRate (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1219) is not in mixedCase
+Function OptionsManagerV2.buyOption_sub(address,uint256,uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1259-1275) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in CollateralCal.addCollateral(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#862-877):
+	External calls:
+	- amount = getPayableAmount(collateral,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#863)
+		- poolAddr.transfer(msg.value) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1101)
+	Event emitted after the call(s):
+	- AddCollateral(msg.sender,collateral,amount,mintAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#875)
+Reentrancy in OptionsManagerV2.buyOption_sub(address,uint256,uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1259-1275):
+	External calls:
+	- settlementAmount = getPayableAmount(settlement,settlementAmount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1261)
+		- poolAddr.transfer(msg.value) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1101)
+	Event emitted after the call(s):
+	- BuyOption(msg.sender,settlement,id,optionPrice,allPay,amount) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1274)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+AddressWhiteList.allowExerciseOptions (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#313) is never used in OptionsManagerV2 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1187-1323)
+AddressWhiteList.allowAddCollateral (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#314) is never used in OptionsManagerV2 (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1187-1323)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#74-76)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#100-103)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#109-111)
+setHalt(bool) should be declared external:
+	- Halt.setHalt(bool) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#145-150)
+modifyPermission(address,uint256) should be declared external:
+	- AddressWhiteList.modifyPermission(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#327-329)
+removeWhiteList(address) should be declared external:
+	- AddressWhiteList.removeWhiteList(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#334-337)
+getWhiteList() should be declared external:
+	- AddressWhiteList.getWhiteList() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#341-343)
+isEligibleAddress(address) should be declared external:
+	- AddressWhiteList.isEligibleAddress(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#348-350)
+getOptionsPoolAddress() should be declared external:
+	- ImportOptionsPool.getOptionsPoolAddress() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#411-413)
+setOptionsPoolAddress(address) should be declared external:
+	- ImportOptionsPool.setOptionsPoolAddress(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#414-416)
+getOracleAddress() should be declared external:
+	- ImportOracle.getOracleAddress() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#448-450)
+setOracleAddress(address) should be declared external:
+	- ImportOracle.setOracleAddress(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#451-453)
+getOptionsPriceAddress() should be declared external:
+	- ImportOptionsPrice.getOptionsPriceAddress() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#469-471)
+setOptionsPriceAddress(address) should be declared external:
+	- ImportOptionsPrice.setOptionsPriceAddress(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#472-474)
+getCollateralPoolAddress() should be declared external:
+	- ImportCollateralPool.getCollateralPoolAddress() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#517-519)
+setCollateralPoolAddress(address) should be declared external:
+	- ImportCollateralPool.setCollateralPoolAddress(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#520-522)
+getFPTCoinAddress() should be declared external:
+	- ImportIFPTCoin.getFPTCoinAddress() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#545-547)
+setFPTCoinAddress(address) should be declared external:
+	- ImportIFPTCoin.setFPTCoinAddress(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#548-550)
+getInputAmountRange() should be declared external:
+	- ImputRange.getInputAmountRange() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#596-598)
+setInputAmountRange(uint256,uint256) should be declared external:
+	- ImputRange.setInputAmountRange(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#604-607)
+approve(address,uint256) should be declared external:
+	- Allowances.approve(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#629-631)
+allowance(address) should be declared external:
+	- Allowances.allowance(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#632-634)
+setValid(bool) should be declared external:
+	- Allowances.setValid(bool) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#635-637)
+setCollateralRate(address,uint256) should be declared external:
+	- CollateralCal.setCollateralRate(address,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#809-814)
+getCollateralRate(address) should be declared external:
+	- CollateralCal.getCollateralRate(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#818-820)
+getUserPayingUsd(address) should be declared external:
+	- CollateralCal.getUserPayingUsd(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#825-828)
+userInputCollateral(address,address) should be declared external:
+	- CollateralCal.userInputCollateral(address,address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#834-837)
+calCollateralWorth(address) should be declared external:
+	- CollateralCal.calCollateralWorth(address) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#964-973)
+initialize() should be declared external:
+	- OptionsManagerV2.initialize() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1204-1206)
+update() should be declared external:
+	- OptionsManagerV2.update() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1207-1209)
+getPriceRateRange() should be declared external:
+	- OptionsManagerV2.getPriceRateRange() (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1213-1215)
+setPriceRateRange(uint256,uint256) should be declared external:
+	- OptionsManagerV2.setPriceRateRange(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1219-1222)
+buyOption(address,uint256,uint256,uint32,uint256,uint256,uint8) should be declared external:
+	- OptionsManagerV2.buyOption(address,uint256,uint256,uint32,uint256,uint256,uint8) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1242-1251)
+sellOption(uint256,uint256) should be declared external:
+	- OptionsManagerV2.sellOption(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1281-1292)
+exerciseOption(uint256,uint256) should be declared external:
+	- OptionsManagerV2.exerciseOption(uint256,uint256) (loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol#1298-1310)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol analyzed (26 contracts with 46 detectors), 101 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x3615687ac4e687cffcd01e69db5b48d83c4c1b87.sol
+Tool Runtime = 6.159328408000874 seconds
+#############################################

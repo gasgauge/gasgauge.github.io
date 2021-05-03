@@ -1,0 +1,106 @@
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#528) shadows:
+	- ERC20Detailed.name() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#537-539) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#528) shadows:
+	- ERC20Detailed.symbol() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#545-547) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#528) shadows:
+	- ERC20Detailed.decimals() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#561-563) (function)
+Property.constructor(address,address,string,string)._config (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#789) shadows:
+	- UsingConfig._config (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#668) (state variable)
+Property.constructor(address,address,string,string)._name (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#791) shadows:
+	- ERC20Detailed._name (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#519) (state variable)
+Property.constructor(address,address,string,string)._symbol (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#792) shadows:
+	- ERC20Detailed._symbol (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#520) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Property.transfer(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#824-846):
+	External calls:
+	- IAllocator(config().allocator()).beforeBalanceChange(address(this),msg.sender,_to) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#835-839)
+	State variables written after the call(s):
+	- _transfer(msg.sender,_to,_value) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#844)
+		- _balances[sender] = _balances[sender].sub(amount,ERC20: transfer amount exceeds balance) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#435)
+		- _balances[recipient] = _balances[recipient].add(amount) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#436)
+Reentrancy in Property.transferFrom(address,address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#851-891):
+	External calls:
+	- IAllocator(config().allocator()).beforeBalanceChange(address(this),_from,_to) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#867-871)
+	State variables written after the call(s):
+	- _approve(_from,msg.sender,allowanceAmount.sub(_value,ERC20: transfer amount exceeds allowance)) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#882-889)
+		- _allowances[owner][spender] = amount (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#493)
+	- _transfer(_from,_to,_value) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#876)
+		- _balances[sender] = _balances[sender].sub(amount,ERC20: transfer amount exceeds balance) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#435)
+		- _balances[recipient] = _balances[recipient].add(amount) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#436)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Property.transfer(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#824-846):
+	External calls:
+	- IAllocator(config().allocator()).beforeBalanceChange(address(this),msg.sender,_to) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#835-839)
+	Event emitted after the call(s):
+	- Transfer(sender,recipient,amount) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#437)
+		- _transfer(msg.sender,_to,_value) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#844)
+Reentrancy in Property.transferFrom(address,address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#851-891):
+	External calls:
+	- IAllocator(config().allocator()).beforeBalanceChange(address(this),_from,_to) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#867-871)
+	Event emitted after the call(s):
+	- Approval(owner,spender,amount) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#494)
+		- _approve(_from,msg.sender,allowanceAmount.sub(_value,ERC20: transfer amount exceeds allowance)) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#882-889)
+	- Transfer(sender,recipient,amount) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#437)
+		- _transfer(_from,_to,_value) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#876)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#168) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#199) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#279) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#512) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#570) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#661) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#696) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#712) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#724) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#764) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Property.transfer(address,uint256)._to (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#824) is not in mixedCase
+Parameter Property.transfer(address,uint256)._value (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#824) is not in mixedCase
+Parameter Property.transferFrom(address,address,uint256)._from (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#852) is not in mixedCase
+Parameter Property.transferFrom(address,address,uint256)._to (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#853) is not in mixedCase
+Parameter Property.transferFrom(address,address,uint256)._value (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#854) is not in mixedCase
+Parameter Property.withdraw(address,uint256)._sender (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#896) is not in mixedCase
+Parameter Property.withdraw(address,uint256)._value (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#896) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Property.slitherConstructorConstantVariables() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#779-909) uses literals with too many digits:
+	- SUPPLY = 10000000000000000000000000 (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#782)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#320-322)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#327-329)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#339-342)
+	- Property.transfer(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#824-846)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#358-361)
+transferFrom(address,address,uint256) should be declared external:
+	- Property.transferFrom(address,address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#851-891)
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#375-379)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#393-396)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#412-415)
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#537-539)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#545-547)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol#561-563)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x4792e204cefc32c25fcd34388473b255d8c9c506.sol analyzed (11 contracts with 46 detectors), 40 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x4792e204cefc32c25fcd34388473b255d8c9c506.sol
+Tool Runtime = 1.021422278998216 seconds
+#############################################

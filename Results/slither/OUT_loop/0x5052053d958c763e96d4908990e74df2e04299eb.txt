@@ -1,0 +1,326 @@
+Compilation warnings/errors on ./loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol:
+./loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol:302:9: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+        address from,
+        ^----------^
+./loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol:303:9: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+        address to,
+        ^--------^
+./loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol:304:9: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+        uint256 value
+        ^-----------^
+
+INFO:Detectors:[93m
+ValidatorShare._buyShares(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1768-1790) performs a multiplication on the result of a division:
+	-shares = _amount.mul(precision).div(rate) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1773)
+	-_amount = _amount.sub(_amount % rate.mul(shares).div(precision)) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1780)
+ValidatorShare.slash(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1886-1900) performs a multiplication on the result of a division:
+	-_amountToSlash = delegationAmount.mul(totalAmountToSlash).div(valPow.add(delegationAmount)) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1893)
+	-_amountToSlashWithdrawalPool = _withdrawPool.mul(_amountToSlash).div(delegationAmount) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1894)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in ValidatorShare._buyVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1730-1735):
+	External calls:
+	- _withdrawAndTransferReward() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1731)
+		- require(bool,string)(stakeManager.transferFunds(validatorId,liquidRewards,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1841)
+		- stakingLogger.logDelegatorClaimRewards(validatorId,msg.sender,liquidRewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1842)
+	- amountToDeposit = _buyShares(_amount,_minSharesToMint) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1732)
+		- stakeManager.updateValidatorState(validatorId,int256(_amount)) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1783)
+		- logger.logShareMinted(validatorId,msg.sender,_amount,shares) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1786)
+		- logger.logStakeUpdate(validatorId) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1787)
+	State variables written after the call(s):
+	- amountToDeposit = _buyShares(_amount,_minSharesToMint) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1732)
+		- _balances[account] = _balances[account].add(value) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#248)
+Reentrancy in ValidatorShare._claimUnstakedTokens() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1866-1884):
+	External calls:
+	- require(bool,string)(stakeManager.transferFunds(validatorId,_amount,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1879)
+	- stakingLogger.logDelegatorUnstaked(validatorId,msg.sender,_amount) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1880)
+	State variables written after the call(s):
+	- delete unbonds[msg.sender] (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1881)
+Reentrancy in ValidatorShare.sellVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1800-1830):
+	External calls:
+	- _withdrawAndTransferReward() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1810)
+		- require(bool,string)(stakeManager.transferFunds(validatorId,liquidRewards,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1841)
+		- stakingLogger.logDelegatorClaimRewards(validatorId,msg.sender,liquidRewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1842)
+	State variables written after the call(s):
+	- _burn(msg.sender,shares) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1812)
+		- _balances[account] = _balances[account].sub(value) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#262)
+	- _burn(msg.sender,shares) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1812)
+		- _totalSupply = _totalSupply.sub(value) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#261)
+Reentrancy in ValidatorShare.sellVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1800-1830):
+	External calls:
+	- _withdrawAndTransferReward() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1810)
+		- require(bool,string)(stakeManager.transferFunds(validatorId,liquidRewards,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1841)
+		- stakingLogger.logDelegatorClaimRewards(validatorId,msg.sender,liquidRewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1842)
+	- stakeManager.updateValidatorState(validatorId,- int256(claimAmount)) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1813)
+	State variables written after the call(s):
+	- _reduceActiveStake(claimAmount) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1815)
+		- activeAmount = activeAmount.sub(activeStakeReduce) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1793)
+Reentrancy in ValidatorShare.updateCommissionRate(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1633-1646):
+	External calls:
+	- stakingLogger.logUpdateCommissionRate(validatorId,newCommissionRate,commissionRate) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1643)
+	State variables written after the call(s):
+	- commissionRate = newCommissionRate (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1644)
+	- lastCommissionUpdate = epoch (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1645)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in ValidatorShare.sellVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1800-1830):
+	External calls:
+	- _withdrawAndTransferReward() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1810)
+		- require(bool,string)(stakeManager.transferFunds(validatorId,liquidRewards,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1841)
+		- stakingLogger.logDelegatorClaimRewards(validatorId,msg.sender,liquidRewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1842)
+	- stakeManager.updateValidatorState(validatorId,- int256(claimAmount)) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1813)
+	State variables written after the call(s):
+	- unbonds[msg.sender] = unbond (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1825)
+	- withdrawPool = withdrawPool.add(claimAmount) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1818)
+	- withdrawShares = withdrawShares.add(_withdrawPoolShare) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1819)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in ValidatorShare._buyVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1730-1735):
+	External calls:
+	- _withdrawAndTransferReward() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1731)
+		- require(bool,string)(stakeManager.transferFunds(validatorId,liquidRewards,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1841)
+		- stakingLogger.logDelegatorClaimRewards(validatorId,msg.sender,liquidRewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1842)
+	- amountToDeposit = _buyShares(_amount,_minSharesToMint) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1732)
+		- stakeManager.updateValidatorState(validatorId,int256(_amount)) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1783)
+		- logger.logShareMinted(validatorId,msg.sender,_amount,shares) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1786)
+		- logger.logStakeUpdate(validatorId) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1787)
+	Event emitted after the call(s):
+	- Transfer(address(0),account,value) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#249)
+		- amountToDeposit = _buyShares(_amount,_minSharesToMint) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1732)
+Reentrancy in Registry.mapToken(address,address,bool) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#434-445):
+	External calls:
+	- IWithdrawManager(contractMap[WITHDRAW_MANAGER]).createExitQueue(_rootToken) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#443)
+	Event emitted after the call(s):
+	- TokenMapped(_rootToken,_childToken) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#444)
+Reentrancy in ValidatorShare.sellVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1800-1830):
+	External calls:
+	- _withdrawAndTransferReward() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1810)
+		- require(bool,string)(stakeManager.transferFunds(validatorId,liquidRewards,msg.sender),Insufficent rewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1841)
+		- stakingLogger.logDelegatorClaimRewards(validatorId,msg.sender,liquidRewards) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1842)
+	Event emitted after the call(s):
+	- Transfer(account,address(0),value) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#263)
+		- _burn(msg.sender,shares) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1812)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+BytesLib.concat(bytes,bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#605-679) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#611-678)
+BytesLib.slice(bytes,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#681-746) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#688-745)
+BytesLib.toBytes4(bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#764-768) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#765-768)
+BytesLib.fromUint(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#778-783) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#780-783)
+BytesLib.toUint(bytes,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#785-796) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#792-795)
+BytesLib.toAddress(bytes,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#798-813) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#805-812)
+ECVerify.ecrecovery(bytes32,bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#823-858) uses assembly
+	- INLINE ASM (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#836-843)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#35) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#104) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#297) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#313) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#322) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#344) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#383) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#524) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#601) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#819) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#886) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1401) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1427) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1444) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1513) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1557) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1573) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Registry.updateContractMap(bytes32,address)._key (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#423) is not in mixedCase
+Parameter Registry.updateContractMap(bytes32,address)._address (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#423) is not in mixedCase
+Parameter Registry.mapToken(address,address,bool)._rootToken (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#435) is not in mixedCase
+Parameter Registry.mapToken(address,address,bool)._childToken (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#436) is not in mixedCase
+Parameter Registry.mapToken(address,address,bool)._isERC721 (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#437) is not in mixedCase
+Parameter Registry.addPredicate(address,Registry.Type)._type (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#458) is not in mixedCase
+Parameter Registry.isTokenMapped(address)._token (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#498) is not in mixedCase
+Parameter Registry.isTokenMappedAndIsErc721(address)._token (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#502) is not in mixedCase
+Parameter Registry.isTokenMappedAndGetPredicate(address)._token (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#507) is not in mixedCase
+Parameter BytesLib.slice(bytes,uint256,uint256)._bytes (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#681) is not in mixedCase
+Parameter BytesLib.slice(bytes,uint256,uint256)._start (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#681) is not in mixedCase
+Parameter BytesLib.slice(bytes,uint256,uint256)._length (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#681) is not in mixedCase
+Parameter BytesLib.leftPad(bytes)._bytes (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#749) is not in mixedCase
+Parameter BytesLib.toUint(bytes,uint256)._bytes (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#785) is not in mixedCase
+Parameter BytesLib.toUint(bytes,uint256)._start (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#785) is not in mixedCase
+Parameter BytesLib.toAddress(bytes,uint256)._bytes (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#798) is not in mixedCase
+Parameter BytesLib.toAddress(bytes,uint256)._start (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#798) is not in mixedCase
+Modifier StakingInfo.StakeManagerOrValidatorContract(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1077-1086) is not in mixedCase
+Parameter ValidatorShare.initialize(uint256,address,address)._validatorId (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1623) is not in mixedCase
+Parameter ValidatorShare.initialize(uint256,address,address)._stakingLogger (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1623) is not in mixedCase
+Parameter ValidatorShare.initialize(uint256,address,address)._stakeManager (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1623) is not in mixedCase
+Parameter ValidatorShare.buyVoucher(uint256,uint256)._amount (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1726) is not in mixedCase
+Parameter ValidatorShare.buyVoucher(uint256,uint256)._minSharesToMint (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1726) is not in mixedCase
+Parameter ValidatorShare.updateDelegation(bool)._delegation (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1902) is not in mixedCase
+Variable ValidatorShare.__totalStake (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1604) is not in mixedCase
+Variable ValidatorShare.__amountStaked (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1613) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ValidatorShare.__amountStaked (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1613) is never used in ValidatorShare (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1582-1931)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+IStakeManagerLocal.accountStateRoot (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#910) should be constant
+IStakeManagerLocal.activeAmount (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#911) should be constant
+IStakeManagerLocal.validatorRewards (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#912) should be constant
+ValidatorShare.__totalStake (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1604) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#151-153)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#160-163)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#174-177)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#187-191)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#203-206)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#218-221)
+addErc20Predicate(address) should be declared external:
+	- Registry.addErc20Predicate(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#447-451)
+addErc721Predicate(address) should be declared external:
+	- Registry.addErc721Predicate(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#453-456)
+removePredicate(address) should be declared external:
+	- Registry.removePredicate(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#464-468)
+getValidatorShareAddress() should be declared external:
+	- Registry.getValidatorShareAddress() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#470-472)
+getWethTokenAddress() should be declared external:
+	- Registry.getWethTokenAddress() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#474-476)
+getDepositManagerAddress() should be declared external:
+	- Registry.getDepositManagerAddress() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#478-480)
+getStakeManagerAddress() should be declared external:
+	- Registry.getStakeManagerAddress() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#482-484)
+getSlashingManagerAddress() should be declared external:
+	- Registry.getSlashingManagerAddress() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#486-488)
+getWithdrawManagerAddress() should be declared external:
+	- Registry.getWithdrawManagerAddress() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#490-492)
+getChildChainAndStateSender() should be declared external:
+	- Registry.getChildChainAndStateSender() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#494-496)
+isTokenMappedAndGetPredicate(address) should be declared external:
+	- Registry.isTokenMappedAndGetPredicate(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#507-512)
+isChildTokenErc721(address) should be declared external:
+	- Registry.isChildTokenErc721(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#514-518)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#548-550)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#574-577)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#583-585)
+ecrecovery(bytes32,uint8,bytes32,bytes32) should be declared external:
+	- ECVerify.ecrecovery(bytes32,uint8,bytes32,bytes32) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#860-872)
+ecverify(bytes32,bytes,address) should be declared external:
+	- ECVerify.ecverify(bytes32,bytes,address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#874-880)
+currentValidatorSetTotalStake() should be declared external:
+	- IStakeManagerLocal.currentValidatorSetTotalStake() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#914)
+signerToValidator(address) should be declared external:
+	- IStakeManagerLocal.signerToValidator(address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#917-920)
+isValidator(uint256) should be declared external:
+	- IStakeManagerLocal.isValidator(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#922)
+logStaked(address,bytes,uint256,uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logStaked(address,bytes,uint256,uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1114-1132)
+logUnstaked(address,uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logUnstaked(address,uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1134-1141)
+logUnstakeInit(address,uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logUnstakeInit(address,uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1143-1157)
+logSignerChange(uint256,address,address,bytes) should be declared external:
+	- StakingInfo.logSignerChange(uint256,address,address,bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1159-1173)
+logRestaked(uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logRestaked(uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1175-1180)
+logJailed(uint256,uint256,address) should be declared external:
+	- StakingInfo.logJailed(uint256,uint256,address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1182-1187)
+logUnjailed(uint256,address) should be declared external:
+	- StakingInfo.logUnjailed(uint256,address) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1189-1194)
+logSlashed(uint256,uint256) should be declared external:
+	- StakingInfo.logSlashed(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1196-1201)
+logThresholdChange(uint256,uint256) should be declared external:
+	- StakingInfo.logThresholdChange(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1203-1208)
+logDynastyValueChange(uint256,uint256) should be declared external:
+	- StakingInfo.logDynastyValueChange(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1210-1215)
+logProposerBonusChange(uint256,uint256) should be declared external:
+	- StakingInfo.logProposerBonusChange(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1217-1222)
+logRewardUpdate(uint256,uint256) should be declared external:
+	- StakingInfo.logRewardUpdate(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1224-1229)
+logStakeUpdate(uint256) should be declared external:
+	- StakingInfo.logStakeUpdate(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1231-1241)
+logClaimRewards(uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logClaimRewards(uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1243-1249)
+logStartAuction(uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logStartAuction(uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1251-1257)
+logConfirmAuction(uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logConfirmAuction(uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1259-1265)
+logTopUpFee(address,uint256) should be declared external:
+	- StakingInfo.logTopUpFee(address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1267-1269)
+logClaimFee(address,uint256) should be declared external:
+	- StakingInfo.logClaimFee(address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1271-1273)
+getStakerDetails(uint256) should be declared external:
+	- StakingInfo.getStakerDetails(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1275-1306)
+getAccountStateRoot() should be declared external:
+	- StakingInfo.getAccountStateRoot() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1323-1330)
+getValidatorContractAddress(uint256) should be declared external:
+	- StakingInfo.getValidatorContractAddress(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1332-1341)
+logShareMinted(uint256,address,uint256,uint256) should be declared external:
+	- StakingInfo.logShareMinted(uint256,address,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1344-1351)
+logShareBurned(uint256,address,uint256,uint256) should be declared external:
+	- StakingInfo.logShareBurned(uint256,address,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1353-1360)
+logDelegatorClaimRewards(uint256,address,uint256) should be declared external:
+	- StakingInfo.logDelegatorClaimRewards(uint256,address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1362-1368)
+logDelegatorRestaked(uint256,address,uint256) should be declared external:
+	- StakingInfo.logDelegatorRestaked(uint256,address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1370-1376)
+logDelegatorUnstaked(uint256,address,uint256) should be declared external:
+	- StakingInfo.logDelegatorUnstaked(uint256,address,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1378-1383)
+logUpdateCommissionRate(uint256,uint256,uint256) should be declared external:
+	- StakingInfo.logUpdateCommissionRate(uint256,uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1385-1395)
+stakeFor(address,uint256,uint256,bool,bytes) should be declared external:
+	- IStakeManager.stakeFor(address,uint256,uint256,bool,bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1481-1487)
+checkSignatures(uint256,bytes32,bytes32,address,bytes) should be declared external:
+	- IStakeManager.checkSignatures(uint256,bytes32,bytes32,address,bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1489-1495)
+updateValidatorState(uint256,int256) should be declared external:
+	- IStakeManager.updateValidatorState(uint256,int256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1497)
+ownerOf(uint256) should be declared external:
+	- IStakeManager.ownerOf(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1499)
+slash(bytes) should be declared external:
+	- IStakeManager.slash(bytes) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1501)
+validatorStake(uint256) should be declared external:
+	- IStakeManager.validatorStake(uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1503)
+epoch() should be declared external:
+	- IStakeManager.epoch() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1505)
+withdrawalDelay() should be declared external:
+	- IStakeManager.withdrawalDelay() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1507)
+addProposerBonus(uint256,uint256) should be declared external:
+	- ValidatorShare.addProposerBonus(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1660-1663)
+	- IValidatorShare.addProposerBonus(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1519)
+withdrawRewards() should be declared external:
+	- ValidatorShare.withdrawRewards() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1848-1851)
+	- IValidatorShare.withdrawRewards() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1521)
+unstakeClaimTokens() should be declared external:
+	- IValidatorShare.unstakeClaimTokens() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1523)
+	- ValidatorShare.unstakeClaimTokens() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1862-1864)
+owner() should be declared external:
+	- IValidatorShare.owner() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1529)
+restake() should be declared external:
+	- IValidatorShare.restake() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1531)
+	- ValidatorShare.restake() (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1747-1749)
+buyVoucher(uint256,uint256) should be declared external:
+	- ValidatorShare.buyVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1726-1728)
+sellVoucher(uint256,uint256) should be declared external:
+	- ValidatorShare.sellVoucher(uint256,uint256) (loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol#1800-1830)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x5052053d958c763e96d4908990e74df2e04299eb.sol analyzed (19 contracts with 46 detectors), 136 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x5052053d958c763e96d4908990e74df2e04299eb.sol
+Tool Runtime = 3.375319557999319 seconds
+#############################################

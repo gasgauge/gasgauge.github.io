@@ -1,0 +1,189 @@
+Compilation warnings/errors on ./loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol:
+./loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol:1091:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+DmmController.getDmmSupplyValue(IDmmToken,uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3976-4002) performs a multiplication on the result of a division:
+	-underlyingTokenAmount = dmmSupply.mul(currentExchangeRate).div(EXCHANGE_RATE_BASE_RATE) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3978)
+	-standardizedUnderlyingTokenAmount = underlyingTokenAmount.mul((10 ** (18 - uint256(dmmToken.decimals())))) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3990)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in DmmController.addMarket(address,string,string,uint8,uint256,uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3264-3342):
+	External calls:
+	- dmmToken = dmmEtherFactory.deployToken(symbol,name,decimals,minMintAmount,minRedeemAmount,totalSupply,controller) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3298-3314)
+	- dmmToken = dmmTokenFactory.deployToken(symbol,name,decimals,minMintAmount,minRedeemAmount,totalSupply,controller) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3318-3334)
+	State variables written after the call(s):
+	- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+		- underlyingTokenAddressToDmmTokenIdMap[underlyingToken] = dmmTokenId (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3940)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+DmmController.adminWithdrawFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3608-3650) ignores return value by token.withdrawUnderlying(underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3620)
+DmmController.adminDepositFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3654-3678) ignores return value by underlyingToken.approve(dmmTokenAddress,underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3672)
+DmmController.adminDepositFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3654-3678) ignores return value by IDmmToken(dmmTokenAddress).depositUnderlying(underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3674)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+DmmController.transferOwnershipToNewController(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3398-3432) has external calls inside a loop: Ownable(dmmToken).transferOwnership(newController) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3424)
+DmmController.getTotalCollateralization() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3682-3724) has external calls inside a loop: currentExchangeRate = token.getCurrentExchangeRate() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3694)
+DmmController.getTotalCollateralization() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3682-3724) has external calls inside a loop: totalSupply = IERC20(address(token)).totalSupply() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3706)
+DmmController.getActiveCollateralization() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3728-3754) has external calls inside a loop: underlyingLiabilitiesValue = getDmmSupplyValue(token,token.activeSupply(),token.getCurrentExchangeRate()) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3738)
+DmmController.getActiveCollateralization() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3728-3754) has external calls inside a loop: underlyingAssetsValue = getUnderlyingSupplyValue(underlyingToken,underlyingToken.balanceOf(address(token)),token.decimals()) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3746)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in DmmController.addMarket(address,string,string,uint8,uint256,uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3264-3342):
+	External calls:
+	- dmmToken = dmmEtherFactory.deployToken(symbol,name,decimals,minMintAmount,minRedeemAmount,totalSupply,controller) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3298-3314)
+	- dmmToken = dmmTokenFactory.deployToken(symbol,name,decimals,minMintAmount,minRedeemAmount,totalSupply,controller) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3318-3334)
+	State variables written after the call(s):
+	- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+		- dmmTokenAddressToDmmTokenIdMap[dmmToken] = dmmTokenId (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3938)
+	- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+		- dmmTokenIdToDmmTokenAddressMap[dmmTokenId] = dmmToken (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3936)
+	- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+		- dmmTokenIdToIsDisabledMap[dmmTokenId] = false (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3948)
+	- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+		- dmmTokenIdToUnderlyingTokenAddressMap[dmmTokenId] = underlyingToken (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3942)
+	- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+		- dmmTokenIds.push(dmmTokenId) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3950)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in DmmController.addMarket(address,string,string,uint8,uint256,uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3264-3342):
+	External calls:
+	- dmmToken = dmmEtherFactory.deployToken(symbol,name,decimals,minMintAmount,minRedeemAmount,totalSupply,controller) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3298-3314)
+	- dmmToken = dmmTokenFactory.deployToken(symbol,name,decimals,minMintAmount,minRedeemAmount,totalSupply,controller) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3318-3334)
+	Event emitted after the call(s):
+	- MarketAdded(dmmTokenId,dmmToken,underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3954)
+		- _addMarket(address(dmmToken),underlyingToken) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3340)
+Reentrancy in DmmController.adminDepositFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3654-3678):
+	External calls:
+	- underlyingToken.safeTransferFrom(_msgSender(),address(this),underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3666)
+	- underlyingToken.approve(dmmTokenAddress,underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3672)
+	- IDmmToken(dmmTokenAddress).depositUnderlying(underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3674)
+	Event emitted after the call(s):
+	- AdminDeposit(_msgSender(),underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3676)
+Reentrancy in DmmController.adminWithdrawFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3608-3650):
+	External calls:
+	- token.withdrawUnderlying(underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3620)
+	- underlyingToken.safeTransfer(_msgSender(),underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3624)
+	Event emitted after the call(s):
+	- AdminWithdraw(_msgSender(),underlyingAmount) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3648)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1069-1095) uses assembly
+	- INLINE ASM (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1091-1093)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Blacklistable.notBlacklisted(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1484-1490) compares to a boolean constant:
+	-require(bool,string)(blacklisted[account] == false,BLACKLISTED) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1486)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#14) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#75) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#154) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#247) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#400) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#719) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#876) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1035) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1178) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1365) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1422) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1609) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1634) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1669) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1706) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#2237) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#2814) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#2845) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#2884) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#2905) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#2972) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1155-1167):
+	- (success) = recipient.call.value(amount)() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1163)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1284-1322):
+	- (success,returndata) = address(token).call(data) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1308)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+addPauser(address) should be declared external:
+	- PauserRole.addPauser(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#204-208)
+renouncePauser() should be declared external:
+	- PauserRole.renouncePauser() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#212-216)
+pause() should be declared external:
+	- Pausable.pause() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#367-373)
+unpause() should be declared external:
+	- Pausable.unpause() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#383-389)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#825-831)
+checkNotBlacklisted(address) should be declared external:
+	- Blacklistable.checkNotBlacklisted(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1500-1504)
+isBlacklisted(address) should be declared external:
+	- Blacklistable.isBlacklisted(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1518-1522)
+blacklist(address) should be declared external:
+	- Blacklistable.blacklist(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1536-1542)
+unBlacklist(address) should be declared external:
+	- Blacklistable.unBlacklist(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#1556-1562)
+blacklistable() should be declared external:
+	- DmmController.blacklistable() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3256-3260)
+addMarket(address,string,string,uint8,uint256,uint256,uint256) should be declared external:
+	- DmmController.addMarket(address,string,string,uint8,uint256,uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3264-3342)
+addMarketFromExistingDmmToken(address,address) should be declared external:
+	- DmmController.addMarketFromExistingDmmToken(address,address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3346-3394)
+transferOwnershipToNewController(address) should be declared external:
+	- DmmController.transferOwnershipToNewController(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3398-3432)
+enableMarket(uint256) should be declared external:
+	- DmmController.enableMarket(uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3436-3444)
+disableMarket(uint256) should be declared external:
+	- DmmController.disableMarket(uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3448-3456)
+setGuardian(address) should be declared external:
+	- DmmController.setGuardian(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3460-3478)
+setDmmTokenFactory(address) should be declared external:
+	- DmmController.setDmmTokenFactory(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3482-3490)
+setDmmEtherFactory(address) should be declared external:
+	- DmmController.setDmmEtherFactory(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3494-3502)
+setInterestRateInterface(address) should be declared external:
+	- DmmController.setInterestRateInterface(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3506-3514)
+setOffChainAssetValuator(address) should be declared external:
+	- DmmController.setOffChainAssetValuator(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3518-3526)
+setOffChainCurrencyValuator(address) should be declared external:
+	- DmmController.setOffChainCurrencyValuator(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3530-3538)
+setUnderlyingTokenValuator(address) should be declared external:
+	- DmmController.setUnderlyingTokenValuator(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3542-3550)
+setMinCollateralization(uint256) should be declared external:
+	- DmmController.setMinCollateralization(uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3554-3562)
+setMinReserveRatio(uint256) should be declared external:
+	- DmmController.setMinReserveRatio(uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3566-3574)
+increaseTotalSupply(uint256,uint256) should be declared external:
+	- DmmController.increaseTotalSupply(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3578-3590)
+decreaseTotalSupply(uint256,uint256) should be declared external:
+	- DmmController.decreaseTotalSupply(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3594-3604)
+adminWithdrawFunds(uint256,uint256) should be declared external:
+	- DmmController.adminWithdrawFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3608-3650)
+adminDepositFunds(uint256,uint256) should be declared external:
+	- DmmController.adminDepositFunds(uint256,uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3654-3678)
+getActiveCollateralization() should be declared external:
+	- DmmController.getActiveCollateralization() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3728-3754)
+getInterestRateByUnderlyingTokenAddress(address) should be declared external:
+	- DmmController.getInterestRateByUnderlyingTokenAddress(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3758-3764)
+getExchangeRateByUnderlying(address) should be declared external:
+	- DmmController.getExchangeRateByUnderlying(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3800-3806)
+getExchangeRate(address) should be declared external:
+	- DmmController.getExchangeRate(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3810-3820)
+isMarketEnabledByDmmTokenId(uint256) should be declared external:
+	- DmmController.isMarketEnabledByDmmTokenId(uint256) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3852-3856)
+isMarketEnabledByDmmTokenAddress(address) should be declared external:
+	- DmmController.isMarketEnabledByDmmTokenAddress(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3860-3870)
+getTokenIdFromDmmTokenAddress(address) should be declared external:
+	- DmmController.getTokenIdFromDmmTokenAddress(address) (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3874-3884)
+getDmmTokenIds() should be declared external:
+	- DmmController.getDmmTokenIds() (loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol#3900-3904)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol analyzed (21 contracts with 46 detectors), 76 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xb07eb3426d742cda9120931e7028d54f9df34a3e.sol
+Tool Runtime = 4.002652155999385 seconds
+#############################################

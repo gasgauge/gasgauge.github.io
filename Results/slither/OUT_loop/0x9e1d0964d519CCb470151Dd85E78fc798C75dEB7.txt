@@ -1,0 +1,112 @@
+Compilation warnings/errors on ./loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol:
+./loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol:177:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+USDCPool.rewardRate(uint256) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#364-378) performs a multiplication on the result of a division:
+	-steps = (timestamp - starttime) / 3600 (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#365)
+	-duration_mod = timestamp - starttime - 3600 * steps (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#366)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in USDCPool.exit() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#425-428):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#426)
+		- _token.safeTransfer(msg.sender,amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#298)
+		- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+	- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+		- lv.safeTransfer(msg.sender,reward) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#395)
+		- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+	State variables written after the call(s):
+	- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+		- lastUpdateTime = lastTimeRewardApplicable() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#340)
+	- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+		- rewardPerTokenStored = rewardPerToken() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#339)
+	- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+		- rewards[msg.sender] = 0 (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#394)
+		- rewards[account] = earned(account) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#342)
+	- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#343)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in USDCPool.exit() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#425-428):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#426)
+		- _token.safeTransfer(msg.sender,amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#298)
+		- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+	- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+		- lv.safeTransfer(msg.sender,reward) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#395)
+		- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#396)
+		- getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#427)
+Reentrancy in USDCPool.getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#391-398):
+	External calls:
+	- lv.safeTransfer(msg.sender,reward) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#395)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#396)
+Reentrancy in USDCPool.stake(uint256) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#413-417):
+	External calls:
+	- super.stake(amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#415)
+		- _token.safeTransferFrom(msg.sender,address(this),amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#292)
+		- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#416)
+Reentrancy in USDCPool.withdraw(uint256) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#419-423):
+	External calls:
+	- super.withdraw(amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#421)
+		- _token.safeTransfer(msg.sender,amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#298)
+		- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#422)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+USDCPool.rewardRate(uint256) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#364-378) uses timestamp for comparisons
+	Dangerous comparisons:
+	- step < steps (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#370)
+	- duration_mod > 0 (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#373)
+USDCPool.getReward() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#391-398) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#393)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#174-179) uses assembly
+	- INLINE ASM (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#177-178)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#40) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#185-189):
+	- (success) = recipient.call.value(amount)() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#187)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#213-221):
+	- (success,returndata) = address(token).call(data) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#215)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#246) is not in mixedCase
+Variable LPTokenWrapper._token (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#261) is not in mixedCase
+Variable LPTokenWrapper._last_updated (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#265) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+USDCPool.slitherConstructorConstantVariables() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#303-430) uses literals with too many digits:
+	- HARD_CAP = 2000000 * 10 ** 6 (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#310)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+USDCPool.starttime (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#313) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#125-127)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#138-141)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol#143-145)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol analyzed (10 contracts with 46 detectors), 21 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x9e1d0964d519CCb470151Dd85E78fc798C75dEB7.sol
+Tool Runtime = 0.9705544479984383 seconds
+#############################################

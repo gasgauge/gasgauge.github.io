@@ -1,0 +1,214 @@
+Compilation warnings/errors on ./noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol:
+./noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol:452:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+OVENPool.notifyRewardAmount(uint256) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#720-742) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#727)
+	-leftover = remaining.mul(rewardRate) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#730)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+DegenPizzaFactory.initMBN() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#900-908) uses a dangerous strict equality:
+	- require(bool,string)(address(mbnPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#901)
+DegenPizzaFactory.initSEED() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#860-868) uses a dangerous strict equality:
+	- require(bool,string)(address(usdcSeedPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#861)
+DegenPizzaFactory.initUNI() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#921-930) uses a dangerous strict equality:
+	- require(bool,string)(address(uniswapPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#922)
+DegenPizzaFactory.initUSDC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#910-918) uses a dangerous strict equality:
+	- require(bool,string)(address(usdcPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#911)
+DegenPizzaFactory.initWBTC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#870-878) uses a dangerous strict equality:
+	- require(bool,string)(address(wbtcPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#871)
+DegenPizzaFactory.initWETH() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#880-888) uses a dangerous strict equality:
+	- require(bool,string)(address(wethPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#881)
+DegenPizzaFactory.initYFV() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#890-898) uses a dangerous strict equality:
+	- require(bool,string)(address(yfvPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#891)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in OVENPool.exit() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#706-709):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#707)
+		- lpt.safeTransfer(msg.sender,amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#624)
+		- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+	- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+		- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+		- degenPizza.safeTransfer(msg.sender,reward) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#715)
+	State variables written after the call(s):
+	- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#659)
+	- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#658)
+	- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+		- rewards[msg.sender] = 0 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#714)
+		- rewards[account] = earned(account) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#661)
+	- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#662)
+Reentrancy in DegenPizzaFactory.initUNI() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#921-930):
+	External calls:
+	- uniswap = uniswapFactory.createPair(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,address(degenPizza)) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#923)
+	State variables written after the call(s):
+	- uniswapPool = new OVENPool(address(degenPizza),uniswap,10368000,now + 172800) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#924)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+DegenPizzaFactory.initSEED() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#860-868) ignores return value by degenPizza.transfer(address(usdcSeedPool),1000000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#864)
+DegenPizzaFactory.initWBTC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#870-878) ignores return value by degenPizza.transfer(address(wbtcPool),600000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#874)
+DegenPizzaFactory.initWETH() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#880-888) ignores return value by degenPizza.transfer(address(wethPool),600000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#884)
+DegenPizzaFactory.initYFV() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#890-898) ignores return value by degenPizza.transfer(address(yfvPool),800000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#894)
+DegenPizzaFactory.initMBN() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#900-908) ignores return value by degenPizza.transfer(address(mbnPool),400000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#904)
+DegenPizzaFactory.initUSDC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#910-918) ignores return value by degenPizza.transfer(address(usdcPool),400000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#914)
+DegenPizzaFactory.initUNI() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#921-930) ignores return value by degenPizza.transfer(address(uniswapPool),400000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#926)
+DegenPizzaFactory.transferToDegenDevs() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#932-937) ignores return value by degenPizza.transfer(0x315045A5eA1192d517D89E0880Dd45eEB051e45C,100000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#936)
+DegenPizzaFactory.transferRestToForPhase2() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#939-942) ignores return value by degenPizza.transfer(msg.sender,degenPizza.retrieve(address(this))) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#941)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in OVENPool.exit() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#706-709):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#707)
+		- lpt.safeTransfer(msg.sender,amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#624)
+		- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+	- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+		- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+		- degenPizza.safeTransfer(msg.sender,reward) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#715)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#716)
+		- getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#708)
+Reentrancy in OVENPool.getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#711-718):
+	External calls:
+	- degenPizza.safeTransfer(msg.sender,reward) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#715)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#716)
+Reentrancy in OVENPool.stake(uint256) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#694-698):
+	External calls:
+	- super.stake(amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#696)
+		- lpt.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#618)
+		- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#697)
+Reentrancy in OVENPool.withdraw(uint256) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#700-704):
+	External calls:
+	- super.withdraw(amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#702)
+		- lpt.safeTransfer(msg.sender,amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#624)
+		- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#703)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+OVENPool.getReward() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#711-718) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#713)
+OVENPool.notifyRewardAmount(uint256) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#720-742) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > starttime (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#725)
+	- block.timestamp >= periodFinish (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#726)
+DegenPizzaFactory.initSEED() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#860-868) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(usdcSeedPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#861)
+DegenPizzaFactory.initWBTC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#870-878) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(wbtcPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#871)
+DegenPizzaFactory.initWETH() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#880-888) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(wethPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#881)
+DegenPizzaFactory.initYFV() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#890-898) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(yfvPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#891)
+DegenPizzaFactory.initMBN() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#900-908) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(mbnPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#901)
+DegenPizzaFactory.initUSDC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#910-918) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(usdcPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#911)
+DegenPizzaFactory.initUNI() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#921-930) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(address(uniswapPool) == address(0),Already initialized) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#922)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#441-454) uses assembly
+	- INLINE ASM (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#452-453)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+DegenPizzaFactory.transferToDegenDevs() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#932-937) compares to a boolean constant:
+	-require(bool,string)(sended == false,Cannot send multiple times) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#934)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#46) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#78) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#237) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#267) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#345) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#424) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#495) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#572) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#596) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#484-490):
+	- (success) = recipient.call.value(amount)() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#488)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#548-567):
+	- (success,returndata) = address(token).call(data) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#560)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#586) is not in mixedCase
+Variable OVENPool.DURATION (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#630) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+DegenPizzaToken.constructor(address) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#786-790) uses literals with too many digits:
+	- totalSupply = 10000000000000000000000000 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#788)
+DegenPizzaToken.constructor(address) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#786-790) uses literals with too many digits:
+	- balanceOf[chef] = 10000000000000000000000000 (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#789)
+DegenPizzaFactory.initSEED() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#860-868) uses literals with too many digits:
+	- degenPizza.transfer(address(usdcSeedPool),1000000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#864)
+DegenPizzaFactory.initWBTC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#870-878) uses literals with too many digits:
+	- degenPizza.transfer(address(wbtcPool),600000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#874)
+DegenPizzaFactory.initWETH() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#880-888) uses literals with too many digits:
+	- degenPizza.transfer(address(wethPool),600000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#884)
+DegenPizzaFactory.initYFV() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#890-898) uses literals with too many digits:
+	- degenPizza.transfer(address(yfvPool),800000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#894)
+DegenPizzaFactory.initMBN() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#900-908) uses literals with too many digits:
+	- degenPizza.transfer(address(mbnPool),400000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#904)
+DegenPizzaFactory.initUSDC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#910-918) uses literals with too many digits:
+	- degenPizza.transfer(address(usdcPool),400000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#914)
+DegenPizzaFactory.initUNI() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#921-930) uses literals with too many digits:
+	- degenPizza.transfer(address(uniswapPool),400000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#926)
+DegenPizzaFactory.transferToDegenDevs() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#932-937) uses literals with too many digits:
+	- degenPizza.transfer(0x315045A5eA1192d517D89E0880Dd45eEB051e45C,100000000000000000000000) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#936)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+DegenPizzaToken.decimals (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#783) should be constant
+DegenPizzaToken.name (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#784) should be constant
+DegenPizzaToken.symbol (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#782) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#294-296)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#320-323)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#329-331)
+initSEED() should be declared external:
+	- DegenPizzaFactory.initSEED() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#860-868)
+initWBTC() should be declared external:
+	- DegenPizzaFactory.initWBTC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#870-878)
+initWETH() should be declared external:
+	- DegenPizzaFactory.initWETH() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#880-888)
+initYFV() should be declared external:
+	- DegenPizzaFactory.initYFV() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#890-898)
+initMBN() should be declared external:
+	- DegenPizzaFactory.initMBN() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#900-908)
+initUSDC() should be declared external:
+	- DegenPizzaFactory.initUSDC() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#910-918)
+initUNI() should be declared external:
+	- DegenPizzaFactory.initUNI() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#921-930)
+transferToDegenDevs() should be declared external:
+	- DegenPizzaFactory.transferToDegenDevs() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#932-937)
+transferRestToForPhase2() should be declared external:
+	- DegenPizzaFactory.transferRestToForPhase2() (noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol#939-942)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol analyzed (14 contracts with 46 detectors), 73 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf3ce0c622b004b0f11636edbd082d1d4718c2cae.sol
+Tool Runtime = 1.5556433480014675 seconds
+#############################################

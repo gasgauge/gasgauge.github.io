@@ -1,0 +1,287 @@
+Compilation warnings/errors on ./loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol:
+./loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol:1756:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282) sends eth to arbitrary user
+	Dangerous calls:
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+Nest_NToken_OfferMain.sendEthBuyErc(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#446-570) sends eth to arbitrary user
+	Dangerous calls:
+	- _abonus.switchToEth.value(serviceCharge)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#566)
+Nest_NToken_OfferMain.sendErcBuyEth(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#592-698) sends eth to arbitrary user
+	Dangerous calls:
+	- _abonus.switchToEth.value(serviceCharge)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#694)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282):
+	External calls:
+	- createOffer(ethAmount,erc20Amount,erc20Address,isDeviate,ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#258)
+		- _offerPrice.addPrice(ethAmount,erc20Amount,block.number.add(_blockLimit),erc20Address,address(msg.sender)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#344)
+	- ERC20(erc20Address).safeTransferFrom(address(msg.sender),address(this),erc20Amount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#262)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	- miningAmount = oreDrawing(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#270)
+		- miningToken.increaseTotal(miningAmount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#734)
+	- nToken.transfer(nToken.checkBidder(),miningAmount.mul(_ownerMining).div(100)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#274)
+	External calls sending eth:
+	- repayEth(address(msg.sender),subValue) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#252)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	State variables written after the call(s):
+	- _blockOfferAmount[block.number][erc20Address] = _blockOfferAmount[block.number][erc20Address].add(ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#280)
+Reentrancy in Nest_NToken_OfferMain.turnOut(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#378-424):
+	External calls:
+	- ERC20(address(offerPriceData.tokenAddress)).safeTransfer(address(offerPriceData.owner),payErc) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#408)
+	- mining(offerPriceData.blockNum,offerPriceData.tokenAddress,offerPriceData.serviceCharge,offerPriceData.owner) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#418)
+		- require(bool,string)(nToken.transfer(address(owner),miningAmount),Transfer failure) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#762)
+	External calls sending eth:
+	- repayEth(offerPriceData.owner,payEth) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#396)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	State variables written after the call(s):
+	- offerPriceData.serviceCharge = 0 (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#420)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282) ignores return value by nToken.transfer(nToken.checkBidder(),miningAmount.mul(_ownerMining).div(100)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#274)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Nest_NToken_OfferMain.createOffer(uint256,uint256,address,bool,uint256).mining (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#298) shadows:
+	- Nest_NToken_OfferMain.mining(uint256,address,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#752-770) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282):
+	External calls:
+	- createOffer(ethAmount,erc20Amount,erc20Address,isDeviate,ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#258)
+		- _offerPrice.addPrice(ethAmount,erc20Amount,block.number.add(_blockLimit),erc20Address,address(msg.sender)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#344)
+	- ERC20(erc20Address).safeTransferFrom(address(msg.sender),address(this),erc20Amount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#262)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	- miningAmount = oreDrawing(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#270)
+		- miningToken.increaseTotal(miningAmount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#734)
+	- nToken.transfer(nToken.checkBidder(),miningAmount.mul(_ownerMining).div(100)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#274)
+	External calls sending eth:
+	- repayEth(address(msg.sender),subValue) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#252)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	State variables written after the call(s):
+	- _blockMining[block.number][erc20Address] = miningAmount.sub(miningAmount.mul(_ownerMining).div(100)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#276)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Nest_NToken_OfferMain.mining(uint256,address,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#752-770):
+	External calls:
+	- require(bool,string)(nToken.transfer(address(owner),miningAmount),Transfer failure) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#762)
+	Event emitted after the call(s):
+	- MiningLog(blockNum,token,_blockOfferAmount[blockNum][token]) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#766)
+Reentrancy in Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282):
+	External calls:
+	- createOffer(ethAmount,erc20Amount,erc20Address,isDeviate,ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#258)
+		- _offerPrice.addPrice(ethAmount,erc20Amount,block.number.add(_blockLimit),erc20Address,address(msg.sender)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#344)
+	- ERC20(erc20Address).safeTransferFrom(address(msg.sender),address(this),erc20Amount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#262)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	- miningAmount = oreDrawing(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#270)
+		- miningToken.increaseTotal(miningAmount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#734)
+	External calls sending eth:
+	- repayEth(address(msg.sender),subValue) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#252)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	Event emitted after the call(s):
+	- OreDrawingLog(block.number,miningAmount,ntoken) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#736)
+		- miningAmount = oreDrawing(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#270)
+Reentrancy in Nest_NToken_OfferMain.oreDrawing(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#710-740):
+	External calls:
+	- miningToken.increaseTotal(miningAmount) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#734)
+	Event emitted after the call(s):
+	- OreDrawingLog(block.number,miningAmount,ntoken) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#736)
+Reentrancy in Nest_NToken_OfferMain.sendErcBuyEth(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#592-698):
+	External calls:
+	- createOffer(ethAmount,tokenAmount,tranTokenAddress,isDeviate,0) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#676)
+		- _offerPrice.addPrice(ethAmount,erc20Amount,block.number.add(_blockLimit),erc20Address,address(msg.sender)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#344)
+	- ERC20(tranTokenAddress).safeTransferFrom(address(msg.sender),address(this),tranTokenAmount.add(tokenAmount)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#680)
+	- _offerPrice.changePrice(tranEthAmount,tranTokenAmount,tranTokenAddress,offerPriceData.blockNum.add(_blockLimit)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#684)
+	Event emitted after the call(s):
+	- OfferTran(address(msg.sender),address(tranTokenAddress),tranTokenAmount,address(0x0),tranEthAmount,contractAddress,offerPriceData.owner) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#686)
+Reentrancy in Nest_NToken_OfferMain.sendEthBuyErc(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#446-570):
+	External calls:
+	- createOffer(ethAmount,tokenAmount,tranTokenAddress,isDeviate,0) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#536)
+		- _offerPrice.addPrice(ethAmount,erc20Amount,block.number.add(_blockLimit),erc20Address,address(msg.sender)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#344)
+	- ERC20(tranTokenAddress).safeTransferFrom(address(msg.sender),address(this),tokenAmount.sub(tranTokenAmount)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#542)
+	- ERC20(tranTokenAddress).safeTransfer(address(msg.sender),tranTokenAmount.sub(tokenAmount)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#546)
+	- _offerPrice.changePrice(tranEthAmount,tranTokenAmount,tranTokenAddress,offerPriceData.blockNum.add(_blockLimit)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#554)
+	Event emitted after the call(s):
+	- OfferTran(address(msg.sender),address(0x0),tranEthAmount,address(tranTokenAddress),tranTokenAmount,contractAddress,offerPriceData.owner) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#556)
+Reentrancy in Nest_NToken_OfferMain.turnOut(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#378-424):
+	External calls:
+	- ERC20(address(offerPriceData.tokenAddress)).safeTransfer(address(offerPriceData.owner),payErc) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#408)
+	- mining(offerPriceData.blockNum,offerPriceData.tokenAddress,offerPriceData.serviceCharge,offerPriceData.owner) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#418)
+		- require(bool,string)(nToken.transfer(address(owner),miningAmount),Transfer failure) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#762)
+	External calls sending eth:
+	- repayEth(offerPriceData.owner,payEth) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#396)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	Event emitted after the call(s):
+	- MiningLog(blockNum,token,_blockOfferAmount[blockNum][token]) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#766)
+		- mining(offerPriceData.blockNum,offerPriceData.tokenAddress,offerPriceData.serviceCharge,offerPriceData.owner) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#418)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1750-1760) uses assembly
+	- INLINE ASM (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1756-1758)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Nest_NToken_OfferMain.sendEthBuyErc(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#446-570) compares to a boolean constant:
+	-offerPriceData.deviate == true (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#470)
+Nest_NToken_OfferMain.sendErcBuyEth(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#592-698) compares to a boolean constant:
+	-offerPriceData.deviate == true (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#614)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#18) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(ERC20,bytes) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1706-1720):
+	- (success,returndata) = address(token).call(data) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1710)
+Low level call in Address.sendValue(address,uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1762-1770):
+	- (success) = recipient.call.value(amount)() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1766)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Contract Nest_NToken_OfferMain (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#30-1456) is not in CapWords
+Struct Nest_NToken_OfferMain.Nest_NToken_OfferPriceData (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#44-74) is not in CapWords
+Variable Nest_NToken_OfferMain._prices (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#78) is not in mixedCase
+Variable Nest_NToken_OfferMain._voteFactory (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#80) is not in mixedCase
+Variable Nest_NToken_OfferMain._offerPrice (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#82) is not in mixedCase
+Variable Nest_NToken_OfferMain._tokenMapping (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#84) is not in mixedCase
+Variable Nest_NToken_OfferMain._nestToken (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#86) is not in mixedCase
+Variable Nest_NToken_OfferMain._abonus (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#88) is not in mixedCase
+Variable Nest_NToken_OfferMain._miningETH (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#90) is not in mixedCase
+Variable Nest_NToken_OfferMain._tranEth (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#92) is not in mixedCase
+Variable Nest_NToken_OfferMain._tranAddition (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#94) is not in mixedCase
+Variable Nest_NToken_OfferMain._leastEth (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#96) is not in mixedCase
+Variable Nest_NToken_OfferMain._offerSpan (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#98) is not in mixedCase
+Variable Nest_NToken_OfferMain._deviate (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#100) is not in mixedCase
+Variable Nest_NToken_OfferMain._deviationFromScale (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#102) is not in mixedCase
+Variable Nest_NToken_OfferMain._ownerMining (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#104) is not in mixedCase
+Variable Nest_NToken_OfferMain._afterMiningAmount (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#106) is not in mixedCase
+Variable Nest_NToken_OfferMain._blockLimit (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#108) is not in mixedCase
+Variable Nest_NToken_OfferMain._blockAttenuation (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#112) is not in mixedCase
+Variable Nest_NToken_OfferMain._blockOfferAmount (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#114) is not in mixedCase
+Variable Nest_NToken_OfferMain._blockMining (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#116) is not in mixedCase
+Variable Nest_NToken_OfferMain._attenuationAmount (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#118) is not in mixedCase
+Contract Nest_3_OfferPrice (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1462-1474) is not in CapWords
+Contract Nest_3_VoteFactory (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1480-1490) is not in CapWords
+Contract Nest_NToken (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1496-1526) is not in CapWords
+Contract Nest_NToken_TokenMapping (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1532-1538) is not in CapWords
+Contract Nest_3_Abonus (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1544-1550) is not in CapWords
+Contract address_make_payable (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1638-1646) is not in CapWords
+Function address_make_payable.make_payable(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1640-1644) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282):
+	External calls:
+	- repayEth(address(msg.sender),subValue) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#252)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	State variables written after the call(s):
+	- createOffer(ethAmount,erc20Amount,erc20Address,isDeviate,ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#258)
+		- _prices.push(Nest_NToken_OfferPriceData(msg.sender,isDeviate,erc20Address,ethAmount,erc20Amount,ethAmount,erc20Amount,block.number,mining)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#314-340)
+	Event emitted after the call(s):
+	- OfferContractAddress(toAddress(_prices.length),address(erc20Address),ethAmount,erc20Amount,_blockLimit,mining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#312)
+		- createOffer(ethAmount,erc20Amount,erc20Address,isDeviate,ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#258)
+Reentrancy in Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282):
+	External calls:
+	- repayEth(address(msg.sender),subValue) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#252)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	External calls sending eth:
+	- repayEth(address(msg.sender),subValue) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#252)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	- _abonus.switchToEthForNTokenOffer.value(ethMining)(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#264)
+	State variables written after the call(s):
+	- _blockMining[block.number][erc20Address] = miningAmount.sub(miningAmount.mul(_ownerMining).div(100)) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#276)
+	- _blockOfferAmount[block.number][erc20Address] = _blockOfferAmount[block.number][erc20Address].add(ethMining) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#280)
+	Event emitted after the call(s):
+	- OreDrawingLog(block.number,miningAmount,ntoken) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#736)
+		- miningAmount = oreDrawing(nTokenAddress) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#270)
+Reentrancy in Nest_NToken_OfferMain.turnOut(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#378-424):
+	External calls:
+	- repayEth(offerPriceData.owner,payEth) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#396)
+		- addr.transfer(asset) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#828)
+	State variables written after the call(s):
+	- offerPriceData.tokenAmount = 0 (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#406)
+	- offerPriceData.serviceCharge = 0 (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#420)
+	Event emitted after the call(s):
+	- MiningLog(blockNum,token,_blockOfferAmount[blockNum][token]) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#766)
+		- mining(offerPriceData.blockNum,offerPriceData.tokenAddress,offerPriceData.serviceCharge,offerPriceData.owner) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#418)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+Nest_NToken_OfferMain.getPrice(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1084-1106) uses literals with too many digits:
+	- buf = new bytes(500000) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1088)
+Nest_NToken_OfferMain.find(address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1128-1182) uses literals with too many digits:
+	- buf = new bytes(500000) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1132)
+Nest_NToken_OfferMain.list(uint256,uint256,uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1202-1302) uses literals with too many digits:
+	- buf = new bytes(500000) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1208)
+Nest_NToken_OfferMain.slitherConstructorVariables() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#30-1456) uses literals with too many digits:
+	- _blockAttenuation = 2400000 (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#112)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+Nest_NToken_OfferMain._afterMiningAmount (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#106) should be constant
+Nest_NToken_OfferMain._blockAttenuation (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#112) should be constant
+Nest_NToken_OfferMain._miningETH (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#90) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+changeMapping(address) should be declared external:
+	- Nest_NToken_OfferMain.changeMapping(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#190-204)
+offer(uint256,uint256,address) should be declared external:
+	- Nest_NToken_OfferMain.offer(uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#220-282)
+turnOut(address) should be declared external:
+	- Nest_NToken_OfferMain.turnOut(address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#378-424)
+sendEthBuyErc(uint256,uint256,address,uint256,uint256,address) should be declared external:
+	- Nest_NToken_OfferMain.sendEthBuyErc(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#446-570)
+sendErcBuyEth(uint256,uint256,address,uint256,uint256,address) should be declared external:
+	- Nest_NToken_OfferMain.sendErcBuyEth(uint256,uint256,address,uint256,uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#592-698)
+checkBlockLimit() should be declared external:
+	- Nest_NToken_OfferMain.checkBlockLimit() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#836-840)
+checkTranEth() should be declared external:
+	- Nest_NToken_OfferMain.checkTranEth() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#846-850)
+checkTranAddition() should be declared external:
+	- Nest_NToken_OfferMain.checkTranAddition() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#856-860)
+checkleastEth() should be declared external:
+	- Nest_NToken_OfferMain.checkleastEth() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#866-870)
+checkOfferSpan() should be declared external:
+	- Nest_NToken_OfferMain.checkOfferSpan() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#876-880)
+checkBlockOfferAmount(uint256,address) should be declared external:
+	- Nest_NToken_OfferMain.checkBlockOfferAmount(uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#886-890)
+checkBlockMining(uint256,address) should be declared external:
+	- Nest_NToken_OfferMain.checkBlockMining(uint256,address) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#896-900)
+checkOfferMining(uint256,address,uint256) should be declared external:
+	- Nest_NToken_OfferMain.checkOfferMining(uint256,address,uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#906-918)
+checkOwnerMining() should be declared external:
+	- Nest_NToken_OfferMain.checkOwnerMining() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#924-928)
+checkAttenuationAmount(uint256) should be declared external:
+	- Nest_NToken_OfferMain.checkAttenuationAmount(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#934-938)
+changeTranEth(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeTranEth(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#944-948)
+changeBlockLimit(uint32) should be declared external:
+	- Nest_NToken_OfferMain.changeBlockLimit(uint32) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#954-958)
+changeTranAddition(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeTranAddition(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#964-970)
+changeLeastEth(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeLeastEth(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#976-982)
+changeOfferSpan(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeOfferSpan(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#988-994)
+changekDeviate(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changekDeviate(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1000-1004)
+changeDeviationFromScale(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeDeviationFromScale(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1010-1014)
+changeOwnerMining(uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeOwnerMining(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1020-1024)
+changeAttenuationAmount(uint256,uint256,uint256) should be declared external:
+	- Nest_NToken_OfferMain.changeAttenuationAmount(uint256,uint256,uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1030-1042)
+getPriceCount() should be declared external:
+	- Nest_NToken_OfferMain.getPriceCount() (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1066-1070)
+getPrice(uint256) should be declared external:
+	- Nest_NToken_OfferMain.getPrice(uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1084-1106)
+list(uint256,uint256,uint256) should be declared external:
+	- Nest_NToken_OfferMain.list(uint256,uint256,uint256) (loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol#1202-1302)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol analyzed (11 contracts with 46 detectors), 87 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x1542e790a742333ea6a2f171c5d07a2e7794eef4.sol
+Tool Runtime = 2.3300423119981133 seconds
+#############################################

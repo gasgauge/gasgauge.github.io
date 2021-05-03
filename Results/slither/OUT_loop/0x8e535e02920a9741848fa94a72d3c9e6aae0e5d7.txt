@@ -1,0 +1,120 @@
+Compilation warnings/errors on ./loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol:
+./loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol:140:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+pFDIVault.rewardUpdate() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#490-544) performs a multiplication on the result of a division:
+	-timedAmount = _rewards[i].amount.mul(duration).div(delayDuration) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#522)
+	-addAmount = timedAmount.mul(depositBalances[addressIndices[j]]).div(totalDeposit) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#528)
+pFDIVault.availableRewardAmount(address) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#706-754) performs a multiplication on the result of a division:
+	-timedAmount = _rewards[i].amount.mul(duration).div(delayDuration) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#736)
+	-addAmount = timedAmount.mul(depositBalances[owner]).div(totalDeposit) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#738)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in pFDIVault.claimReward(uint256) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#668-702):
+	External calls:
+	- token1.safeTransfer(msg.sender,_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#694)
+	State variables written after the call(s):
+	- rewardBalances[msg.sender] = rewardBalances[msg.sender].sub(_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#698)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in pFDIVault.sendReward(uint256) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#624-652):
+	External calls:
+	- token1.safeTransferFrom(msg.sender,address(this),_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#634)
+	State variables written after the call(s):
+	- _rewardCount ++ (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#648)
+	- rewardUpdate() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#638)
+		- _rewards[i].startTime = uint256(- 1) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#512)
+		- _rewards[i].checkTime = block.timestamp (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#520)
+	- _rewards[_rewardCount].amount = _amount (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#642)
+	- _rewards[_rewardCount].startTime = block.timestamp (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#644)
+	- _rewards[_rewardCount].checkTime = block.timestamp (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#646)
+	- rewardUpdate() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#638)
+		- rewardBalances[addressIndices[j]] = rewardBalances[addressIndices[j]].add(addAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#530)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in pFDIVault.claimReward(uint256) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#668-702):
+	External calls:
+	- token1.safeTransfer(msg.sender,_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#694)
+	Event emitted after the call(s):
+	- ClaimedReward(msg.sender,_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#700)
+Reentrancy in pFDIVault.sendReward(uint256) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#624-652):
+	External calls:
+	- token1.safeTransferFrom(msg.sender,address(this),_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#634)
+	Event emitted after the call(s):
+	- SentReward(_amount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#650)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+pFDIVault.rewardUpdate() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#490-544) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _rewards[i].startTime < block.timestamp (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#504)
+	- block.timestamp.sub(_rewards[i].startTime) > delayDuration (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#508)
+pFDIVault.claimReward(uint256) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#668-702) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _amount > rewardBalances[msg.sender] (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#682)
+	- require(bool,string)(_amount > 0,can't claim reward 0) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#690)
+pFDIVault.availableRewardAmount(address) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#706-754) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _rewards[i].startTime < block.timestamp (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#722)
+	- block.timestamp.sub(_rewards[i].startTime) > delayDuration (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#726)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#132-144) uses assembly
+	- INLINE ASM (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#140-142)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#14) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#152-164):
+	- (success) = recipient.call.value(amount)() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#160)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#226-248):
+	- (success,returndata) = address(token).call(data) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#234)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Contract pFDIVault (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#254-756) is not in CapWords
+Parameter pFDIVault.setGovernance(address)._gov (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#346) is not in mixedCase
+Parameter pFDIVault.setToken1(address)._token (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#360) is not in mixedCase
+Parameter pFDIVault.setFeeAddress(address)._feeAddress (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#374) is not in mixedCase
+Parameter pFDIVault.setVaultAddress(address)._vaultAddress (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#388) is not in mixedCase
+Parameter pFDIVault.setFeePermill(uint32)._feePermill (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#402) is not in mixedCase
+Parameter pFDIVault.setDelayDuration(uint32)._delayDuration (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#416) is not in mixedCase
+Parameter pFDIVault.setWithdrawable(bool)._withdrawable (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#430) is not in mixedCase
+Parameter pFDIVault.sendReward(uint256)._amount (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#624) is not in mixedCase
+Parameter pFDIVault.claimReward(uint256)._amount (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#668) is not in mixedCase
+Variable pFDIVault._vaultName (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#276) is not in mixedCase
+Variable pFDIVault._rewards (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#304) is not in mixedCase
+Variable pFDIVault._rewardCount (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#306) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in pFDIVault.deposit() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#548-620):
+	External calls:
+	- ! feeAddress.send(feeAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#598)
+	- feeAddress.transfer(feeAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#600)
+	- ! vaultAddress.send(realAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#606)
+	- vaultAddress.transfer(realAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#608)
+	State variables written after the call(s):
+	- depositBalances[msg.sender] = depositBalances[msg.sender].add(realAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#616)
+	- totalDeposit = totalDeposit.add(realAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#614)
+	Event emitted after the call(s):
+	- Deposited(msg.sender,realAmount) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#618)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+balance0() should be declared external:
+	- pFDIVault.balance0() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#458-470)
+balance1() should be declared external:
+	- pFDIVault.balance1() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#474-486)
+deposit() should be declared external:
+	- pFDIVault.deposit() (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#548-620)
+availableRewardAmount(address) should be declared external:
+	- pFDIVault.availableRewardAmount(address) (loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol#706-754)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol analyzed (5 contracts with 46 detectors), 32 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8e535e02920a9741848fa94a72d3c9e6aae0e5d7.sol
+Tool Runtime = 0.8695123159996001 seconds
+#############################################

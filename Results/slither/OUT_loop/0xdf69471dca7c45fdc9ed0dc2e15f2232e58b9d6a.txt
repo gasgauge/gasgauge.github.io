@@ -1,0 +1,181 @@
+Compilation warnings/errors on ./loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol:
+./loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol:7:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol:1195:9: Warning: Unused local variable.
+        uint256 supplyAfterRebase = kassiahotel.rebase(epoch, indexDelta, positive);
+        ^-----------------------^
+
+INFO:Detectors:[93m
+KASSIAHOTELRebaser.rebase() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1149-1200) performs a multiplication on the result of a division:
+	-indexDelta = indexDelta.div(rebaseLag) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1175)
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1189)
+KASSIAHOTELRebaser.rebase() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1149-1200) performs a multiplication on the result of a division:
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1189)
+	-mintAmount = currSupply.mul(mintPerc).div(10 ** 18) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1191)
+KASSIAHOTELRebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1335-1364) performs a multiplication on the result of a division:
+	-token0.mul(offPegPerc / 3).div(10 ** 18) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1355)
+KASSIAHOTELRebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1335-1364) performs a multiplication on the result of a division:
+	-token1.mul(offPegPerc / 3).div(10 ** 18) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1361)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+FixedPoint.mul(FixedPoint.uq112x112,uint256).z (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#587) is a local variable never initialized
+KASSIAHOTELRebaser.rebase().mintAmount (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1186) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245) ignores return value by kassiahotel.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1221)
+KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245) ignores return value by kassiahotel.mint(uniswap_pair,uniVars.kassiahotelsToUni.sub(uniVars.amountFromReserves)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1225)
+KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245) ignores return value by kassiahotel.mint(uniswap_pair,uniVars.kassiahotelsToUni) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1229)
+KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245) ignores return value by kassiahotel.mint(reservesContract,uniVars.mintToReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1234)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in KASSIAHOTELRebaser.afterRebase(uint256,uint256) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1392-1420):
+	External calls:
+	- UniswapPair(uniswap_pair).sync() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1399)
+	- buyReserveAndTransfer(mintAmount,offPegPerc) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1402-1405)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1286)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1294)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1302)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1312)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1321)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1329)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1415)
+Reentrancy in KASSIAHOTELRebaser.rebase() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1149-1200):
+	External calls:
+	- supplyAfterRebase = kassiahotel.rebase(epoch,indexDelta,positive) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1195)
+	- afterRebase(mintAmount,offPegPerc) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1199)
+		- UniswapPair(uniswap_pair).sync() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1399)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1286)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1294)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1302)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1312)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1321)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1329)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1415)
+		- afterRebase(mintAmount,offPegPerc) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1199)
+Reentrancy in KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245):
+	External calls:
+	- kassiahotel.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1221)
+	- kassiahotel.mint(uniswap_pair,uniVars.kassiahotelsToUni.sub(uniVars.amountFromReserves)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1225)
+	- kassiahotel.mint(uniswap_pair,uniVars.kassiahotelsToUni) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1229)
+	- kassiahotel.mint(reservesContract,uniVars.mintToReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1234)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount1) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1239)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount1,uniVars.kassiahotelsToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1240)
+Reentrancy in KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245):
+	External calls:
+	- kassiahotel.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1221)
+	- kassiahotel.mint(uniswap_pair,uniVars.kassiahotelsToUni.sub(uniVars.amountFromReserves)) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1225)
+	- kassiahotel.mint(uniswap_pair,uniVars.kassiahotelsToUni) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1229)
+	- kassiahotel.mint(reservesContract,uniVars.mintToReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1234)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount0) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1242)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount0,uniVars.kassiahotelsToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1243)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniswapV2OracleLibrary.currentCumulativePrices(address,bool) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#632-661) uses timestamp for comparisons
+	Dangerous comparisons:
+	- blockTimestampLast != blockTimestamp (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#642)
+	- blockTimestampLast != blockTimestamp (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#652)
+KASSIAHOTELRebaser.activate_rebasing() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1132-1140) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= timeOfTWAPInit + rebaseDelay,!end_delay) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1137)
+KASSIAHOTELRebaser.rebase() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1149-1200) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(lastRebaseTimestampSec.add(minRebaseTimeIntervalSec) < now) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1158)
+KASSIAHOTELRebaser._inRebaseWindow() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1555-1562) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) >= rebaseWindowOffsetSec,too early) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1560)
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) < (rebaseWindowOffsetSec.add(rebaseWindowLengthSec)),too late) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1561)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#278-287) uses assembly
+	- INLINE ASM (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#285-286)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#371-392) uses assembly
+	- INLINE ASM (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#384-388)
+KASSIAHOTELRebaser.externalCall(address,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1689-1719) uses assembly
+	- INLINE ASM (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1694-1718)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#94) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#255) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#465) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#519) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#524) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#529) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#665) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#668) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#744) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#305-311):
+	- (success) = recipient.call.value(amount)() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#309)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#371-392):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#375)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function UniswapPair.DOMAIN_SEPARATOR() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#482) is not in mixedCase
+Function UniswapPair.PERMIT_TYPEHASH() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#483) is not in mixedCase
+Function UniswapPair.MINIMUM_LIQUIDITY() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#500) is not in mixedCase
+Struct FixedPoint.uq112x112 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#554-556) is not in CapWords
+Struct FixedPoint.uq144x112 (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#560-562) is not in CapWords
+Variable KASSIAHOTELTokenStorage._notEntered (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#678) is not in mixedCase
+Constant KASSIAHOTELTokenStorage.internalDecimals (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#723) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable KASSIAHOTELTokenStorage._kassiahotelBalances (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#735) is not in mixedCase
+Variable KASSIAHOTELTokenStorage._allowedFragments (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#737) is not in mixedCase
+Variable KASSIAHOTELGovernanceStorage._delegates (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#748) is not in mixedCase
+Function KASSIAHOTELTokenInterface._setRebaser(address) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#847) is not in mixedCase
+Function KASSIAHOTELTokenInterface._setIncentivizer(address) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#848) is not in mixedCase
+Function KASSIAHOTELTokenInterface._setPendingGov(address) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#849) is not in mixedCase
+Function KASSIAHOTELTokenInterface._acceptGov() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#850) is not in mixedCase
+Function KASSIAHOTELRebaser._setPendingGov(address) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1092-1099) is not in mixedCase
+Function KASSIAHOTELRebaser._acceptGov() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1104-1112) is not in mixedCase
+Function KASSIAHOTELRebaser.init_twap() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1117-1127) is not in mixedCase
+Function KASSIAHOTELRebaser.activate_rebasing() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1132-1140) is not in mixedCase
+Constant KASSIAHOTELRebaser.rebaseDelay (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#958) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable KASSIAHOTELRebaser.uniswap_pair (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#973) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+KASSIAHOTELTokenStorage._notEntered (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#678) should be constant
+KASSIAHOTELTokenStorage.decimals (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#693) should be constant
+KASSIAHOTELTokenStorage.gov (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#698) should be constant
+KASSIAHOTELTokenStorage.incentivizer (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#713) should be constant
+KASSIAHOTELTokenStorage.initSupply (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#739) should be constant
+KASSIAHOTELTokenStorage.kassiahotelsScalingFactor (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#733) should be constant
+KASSIAHOTELTokenStorage.name (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#683) should be constant
+KASSIAHOTELTokenStorage.pendingGov (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#703) should be constant
+KASSIAHOTELTokenStorage.rebaser (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#708) should be constant
+KASSIAHOTELTokenStorage.symbol (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#688) should be constant
+KASSIAHOTELTokenStorage.totalSupply (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#718) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setMaxSlippageFactor(uint256) should be declared external:
+	- KASSIAHOTELRebaser.setMaxSlippageFactor(uint256) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1050-1057)
+setRebaseMintPerc(uint256) should be declared external:
+	- KASSIAHOTELRebaser.setRebaseMintPerc(uint256) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1064-1071)
+setReserveContract(address) should be declared external:
+	- KASSIAHOTELRebaser.setReserveContract(address) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1079-1086)
+init_twap() should be declared external:
+	- KASSIAHOTELRebaser.init_twap() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1117-1127)
+activate_rebasing() should be declared external:
+	- KASSIAHOTELRebaser.activate_rebasing() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1132-1140)
+rebase() should be declared external:
+	- KASSIAHOTELRebaser.rebase() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1149-1200)
+uniswapV2Call(address,uint256,uint256,bytes) should be declared external:
+	- KASSIAHOTELRebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1203-1245)
+getCurrentTWAP() should be declared external:
+	- KASSIAHOTELRebaser.getCurrentTWAP() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1455-1471)
+inRebaseWindow() should be declared external:
+	- KASSIAHOTELRebaser.inRebaseWindow() (loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol#1548-1553)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol analyzed (12 contracts with 46 detectors), 74 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xdf69471dca7c45fdc9ed0dc2e15f2232e58b9d6a.sol
+Tool Runtime = 2.4439058800016937 seconds
+#############################################

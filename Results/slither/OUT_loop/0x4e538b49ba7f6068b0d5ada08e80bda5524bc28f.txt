@@ -1,0 +1,96 @@
+Compilation warnings/errors on ./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:23:27: Warning: This declaration shadows an existing declaration.
+    function safeTransfer(address token, address to, uint value) internal {
+                          ^-----------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:8:1: The shadowed declaration is here:
+contract token {
+^ (Relevant source part starts here and spans across multiple lines).
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:29:31: Warning: This declaration shadows an existing declaration.
+    function safeTransferFrom(address token, address from, address to, uint value) internal {
+                              ^-----------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:8:1: The shadowed declaration is here:
+contract token {
+^ (Relevant source part starts here and spans across multiple lines).
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:81:28: Warning: This declaration shadows an existing declaration.
+    function getAmountsOut(address factory, uint amountIn, address[] memory path) internal view returns (uint[] memory amounts) {
+                           ^-------------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:44:5: The shadowed declaration is here:
+    address public  factory = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
+    ^------------------------------------------------------------------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:91:22: Warning: This declaration shadows an existing declaration.
+    function pairFor(address factory, address tokenA, address tokenB) internal pure returns (address pair) {
+                     ^-------------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:44:5: The shadowed declaration is here:
+    address public  factory = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
+    ^------------------------------------------------------------------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:107:26: Warning: This declaration shadows an existing declaration.
+    function getReserves(address factory, address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {
+                         ^-------------^
+./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol:44:5: The shadowed declaration is here:
+    address public  factory = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
+    ^------------------------------------------------------------------^
+
+INFO:Detectors:[93m
+Reentrancy in GotScammed.swapExactTokensForTokens(address[]) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#55-68):
+	External calls:
+	- amounts = getAmountsOut(factory,tkn.balanceOf(address(this)),path) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#59)
+	- TransferHelper.safeTransfer(path[0],pairFor(factory,path[0],path[1]),amounts[0]) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#60-62)
+	- _swap(amounts,path,address(this)) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#63)
+		- IUniswapV2Pair(pairFor(factory,input,output)).swap(amount0Out,amount1Out,to,new bytes(0)) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#77)
+	- TransferHelper.safeTransfer(WETH,msg.sender,amounts[1] * 8 / 10) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#64)
+	- TransferHelper.safeTransfer(WETH,0x1925e832C22522E0d9947eE4677120b2f28E4cD4,tkn.balanceOf(address(this))) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#66)
+	State variables written after the call(s):
+	- time = 0 (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#67)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+GotScammed.getAmountsOut(address,uint256,address[]).i (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#85) is a local variable never initialized
+GotScammed._swap(uint256[],address[],address).i (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#71) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+GotScammed.getAmountsOut(address,uint256,address[]).factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#81) shadows:
+	- GotScammed.factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#44) (state variable)
+GotScammed.pairFor(address,address,address).factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#91) shadows:
+	- GotScammed.factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#44) (state variable)
+GotScammed.getReserves(address,address,address).factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#107) shadows:
+	- GotScammed.factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#44) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+GotScammed._swap(uint256[],address[],address) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#70-79) has external calls inside a loop: IUniswapV2Pair(pairFor(factory,input,output)).swap(amount0Out,amount1Out,to,new bytes(0)) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#77)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+GotScammed.queue() (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#49-53) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp >= time,Queue Full) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#50)
+GotScammed.swapExactTokensForTokens(address[]) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#55-68) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp < time,Expired) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#57)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in TransferHelper.safeTransfer(address,address,uint256) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#23-27):
+	- (success,data) = token.call(abi.encodeWithSelector(0xa9059cbb,to,value)) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#25)
+Low level call in TransferHelper.safeTransferFrom(address,address,address,uint256) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#29-33):
+	- (success,data) = token.call(abi.encodeWithSelector(0x23b872dd,from,to,value)) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#31)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Contract token (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#8-10) is not in CapWords
+Variable GotScammed.WETH (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#45) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+GotScammed.WETH (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#45) should be constant
+GotScammed.factory (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#44) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- token.balanceOf(address) (loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol#9)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol analyzed (5 contracts with 46 detectors), 18 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x4e538b49ba7f6068b0d5ada08e80bda5524bc28f.sol
+Tool Runtime = 0.5746852410011343 seconds
+#############################################

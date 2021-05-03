@@ -1,0 +1,99 @@
+INFO:Detectors:[93m
+Staker.stake(address,address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#152-182) performs a multiplication on the result of a division:
+	-referralEarned[ref] = referralEarned[ref] + ((address(this).balance / 10) * DECIMAL) / price() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#157)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in Staker.withdrawLPTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#184-195):
+	External calls:
+	- IERC20(poolAddress).transfer(msg.sender,amount) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#192)
+	State variables written after the call(s):
+	- timePooled[tokenAddress][msg.sender] = now (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#194)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Staker.stake(address,address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#152-182) ignores return value by IERC20(tokenAddress).approve(UNIROUTER,amountTokenDesired) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#172)
+Staker.stake(address,address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#152-182) ignores return value by Uniswap(UNIROUTER).addLiquidityETH.value(address(this).balance)(tokenAddress,amountTokenDesired,1,1,address(this),INF) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#173)
+Staker.withdrawLPTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#184-195) ignores return value by IERC20(poolAddress).transfer(msg.sender,amount) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#192)
+Staker.withdrawRewardTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#197-209) ignores return value by IERC20(KYE_TOKEN_ADDRESS).transfer(msg.sender,amount) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#208)
+Staker.withdrawReferralEarned(uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#211-218) ignores return value by IERC20(KYE_TOKEN_ADDRESS).transfer(msg.sender,amount) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#217)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Staker.receive() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#118-123) (function) shadows built-in symbol"
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#builtin-symbol-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Staker.stake(address,address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#152-182):
+	External calls:
+	- sendValue(routerAddress(),address(this).balance / 2) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#160)
+		- (success) = recipient.call.value(amount)() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#126)
+	- Router(routerAddress()).mint(tokenAddress,toMint) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#167)
+	- IERC20(tokenAddress).approve(UNIROUTER,amountTokenDesired) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#172)
+	- Uniswap(UNIROUTER).addLiquidityETH.value(address(this).balance)(tokenAddress,amountTokenDesired,1,1,address(this),INF) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#173)
+	External calls sending eth:
+	- sendValue(routerAddress(),address(this).balance / 2) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#160)
+		- (success) = recipient.call.value(amount)() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#126)
+	- Uniswap(UNIROUTER).addLiquidityETH.value(address(this).balance)(tokenAddress,amountTokenDesired,1,1,address(this),INF) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#173)
+	State variables written after the call(s):
+	- LPTokenBalance[tokenAddress][msg.sender] = LPTokenBalance[tokenAddress][msg.sender].add(poolTokenGot) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#181)
+	- rewards[tokenAddress][msg.sender] = rewards[tokenAddress][msg.sender].add(viewRecentRewardTokenAmount(tokenAddress,msg.sender)) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#178)
+	- timePooled[tokenAddress][msg.sender] = now (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#179)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Staker.mintingPeriodOver() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#130-132) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now > timeOver (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#131)
+Staker.withdrawLPTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#184-195) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! mintingPeriodOver() || _paused (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#185)
+	- require(bool)(amount <= rewards[tokenAddress][msg.sender].add(viewRecentRewardTokenAmount(tokenAddress,msg.sender))) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#186)
+Staker.withdrawRewardTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#197-209) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(amount <= viewRewardTokenAmount(tokenAddress,msg.sender)) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#199)
+Staker.viewRecentRewardTokenAmount(address,address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#220-232) uses timestamp for comparisons
+	Dangerous comparisons:
+	- timePooled[tokenAddress][who] > timeOver (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#224)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#5) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Staker.sendValue(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#125-128):
+	- (success) = recipient.call.value(amount)() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#126)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function Uniswap.WETH() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#60) is not in mixedCase
+Function Staker.Pause(bool) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#138-140) is not in mixedCase
+Parameter Staker.updateRewardValue(uint256)._rewardValue (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#142) is not in mixedCase
+Parameter Staker.updateKyePromo(uint256)._kyePromo (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#147) is not in mixedCase
+Variable Staker.LPTokenBalance (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#108) is not in mixedCase
+Variable Staker.WETHAddress (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#116) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Staker.WETHAddress (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#116) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+closeMinting() should be declared external:
+	- Staker.closeMinting() (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#134-136)
+Pause(bool) should be declared external:
+	- Staker.Pause(bool) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#138-140)
+updateRewardValue(uint256) should be declared external:
+	- Staker.updateRewardValue(uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#142-145)
+updateKyePromo(uint256) should be declared external:
+	- Staker.updateKyePromo(uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#147-150)
+withdrawLPTokens(address,uint256) should be declared external:
+	- Staker.withdrawLPTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#184-195)
+withdrawRewardTokens(address,uint256) should be declared external:
+	- Staker.withdrawRewardTokens(address,uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#197-209)
+withdrawReferralEarned(uint256) should be declared external:
+	- Staker.withdrawReferralEarned(uint256) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#211-218)
+viewPooledTokenAmount(address,address) should be declared external:
+	- Staker.viewPooledTokenAmount(address,address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#250-256)
+viewReferralEarned(address) should be declared external:
+	- Staker.viewReferralEarned(address) (noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol#258-260)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol analyzed (7 contracts with 46 detectors), 32 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x7354f36fd74a656b4db8429c3fd937b99cd69e45.sol
+Tool Runtime = 0.8447010160016362 seconds
+#############################################

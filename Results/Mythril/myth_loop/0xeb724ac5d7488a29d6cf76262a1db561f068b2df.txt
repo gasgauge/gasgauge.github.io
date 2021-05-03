@@ -1,0 +1,58 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: etherATM
+Function name: persons(uint256)
+PC address: 753
+Estimated Gas Usage: 1078 - 1173
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0xeb724ac5d7488a29d6cf76262a1db561f068b2df.sol:28
+
+Person[] public persons
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: persons(uint256), txdata: 0xa2f9eac60000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: etherATM
+Function name: enter(address)
+PC address: 1455
+Estimated Gas Usage: 38123 - 207535
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0xeb724ac5d7488a29d6cf76262a1db561f068b2df.sol:106
+
+referrer.transfer(totalAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40080000008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: enter(address), txdata: 0xd014c01f0000000000000000000000000000000000000000000000000000000000000000, value: 0xb1a2bc2ec50000
+
+
+
+---------------------------------------------
+For contract 0xeb724ac5d7488a29d6cf76262a1db561f068b2df.sol
+Tool Runtime = 996.9312051250017 seconds
+#############################################

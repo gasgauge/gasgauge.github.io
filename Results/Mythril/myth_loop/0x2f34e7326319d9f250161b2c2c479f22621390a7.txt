@@ -1,0 +1,59 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: TrickleDownSplitter
+Function name: participants(uint256)
+PC address: 2855
+Estimated Gas Usage: 1146 - 1241
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop1/0x2f34e7326319d9f250161b2c2c479f22621390a7.sol:258
+
+address payable[] public participants
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc00c0442002464, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: participants(uint256), txdata: 0x35c1d3490000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: TrickleDownSplitter
+Function name: withdrawAllFunds()
+PC address: 3484
+Estimated Gas Usage: 2890 - 37691
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop1/0x2f34e7326319d9f250161b2c2c479f22621390a7.sol:323
+
+msg.sender.call.value(address(this).balance)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000004010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addWhitelisted(address), txdata: 0x10154bad000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: withdrawAllFunds(), txdata: 0x49649fbf, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x2f34e7326319d9f250161b2c2c479f22621390a7.sol
+Tool Runtime = 1748.9982322950018 seconds
+#############################################

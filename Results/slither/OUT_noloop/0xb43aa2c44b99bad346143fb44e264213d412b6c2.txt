@@ -1,0 +1,163 @@
+Compilation warnings/errors on ./noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol:
+./noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol:363:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+SNXRewardUniLPStrategy.rewardToken (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1080) shadows:
+	- RewardTokenProfitNotifier.rewardToken (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#925)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+SNXRewardUniLPStrategy._liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1161-1227) ignores return value by IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(remainingRewardBalance / 2,amountOutMin,uniswapRoutes[address(uniLPComponentToken0)],address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1186-1192)
+SNXRewardUniLPStrategy._liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1161-1227) ignores return value by IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(remainingRewardBalance,amountOutMin,uniswapRoutes[uniLPComponentToken1],address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1198-1204)
+SNXRewardUniLPStrategy.investAllUnderlying() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1232-1239) ignores return value by underlying.approve(address(rewardPool),underlying.balanceOf(address(this))) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1236)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#293) shadows:
+	- ERC20Detailed.name() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#302-304) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#293) shadows:
+	- ERC20Detailed.symbol() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#310-312) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#293) shadows:
+	- ERC20Detailed.decimals() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#326-328) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in SNXRewardUniLPStrategy.emergencyExit() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1141-1144):
+	External calls:
+	- rewardPool.exit() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1142)
+	State variables written after the call(s):
+	- pausedInvesting = true (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1143)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in SNXRewardUniLPStrategy.doHardWork() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1302-1306):
+	External calls:
+	- rewardPool.getReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1303)
+	- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1304)
+		- (success,returndata) = address(token).call(data) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#471)
+		- IERC20(rewardToken).safeApprove(controller(),0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#944)
+		- IERC20(rewardToken).safeApprove(controller(),feeAmount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#945)
+		- IController(controller()).notifyFee(rewardToken,feeAmount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#947-950)
+		- IERC20(rewardToken).safeApprove(uniswapRouterV2,0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1180)
+		- IERC20(rewardToken).safeApprove(uniswapRouterV2,remainingRewardBalance) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1181)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(remainingRewardBalance / 2,amountOutMin,uniswapRoutes[address(uniLPComponentToken0)],address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1186-1192)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(remainingRewardBalance,amountOutMin,uniswapRoutes[uniLPComponentToken1],address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1198-1204)
+		- IERC20(uniLPComponentToken0).safeApprove(uniswapRouterV2,0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1209)
+		- IERC20(uniLPComponentToken0).safeApprove(uniswapRouterV2,token0Amount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1210)
+		- IERC20(uniLPComponentToken1).safeApprove(uniswapRouterV2,0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1212)
+		- IERC20(uniLPComponentToken1).safeApprove(uniswapRouterV2,token1Amount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1213)
+		- (None,None,liquidity) = IUniswapV2Router02(uniswapRouterV2).addLiquidity(uniLPComponentToken0,uniLPComponentToken1,token0Amount,token1Amount,1,1,address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1216-1225)
+	Event emitted after the call(s):
+	- ProfitLogInReward(_rewardBalance,feeAmount,block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#943)
+		- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1304)
+	- ProfitLogInReward(0,0,block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#952)
+		- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1304)
+	- ProfitsNotCollected() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1165)
+		- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1304)
+Reentrancy in SNXRewardUniLPStrategy.withdrawAllToVault() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1244-1250):
+	External calls:
+	- rewardPool.exit() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1246)
+	- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1248)
+		- (success,returndata) = address(token).call(data) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#471)
+		- IERC20(rewardToken).safeApprove(controller(),0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#944)
+		- IERC20(rewardToken).safeApprove(controller(),feeAmount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#945)
+		- IController(controller()).notifyFee(rewardToken,feeAmount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#947-950)
+		- IERC20(rewardToken).safeApprove(uniswapRouterV2,0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1180)
+		- IERC20(rewardToken).safeApprove(uniswapRouterV2,remainingRewardBalance) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1181)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(remainingRewardBalance / 2,amountOutMin,uniswapRoutes[address(uniLPComponentToken0)],address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1186-1192)
+		- IUniswapV2Router02(uniswapRouterV2).swapExactTokensForTokens(remainingRewardBalance,amountOutMin,uniswapRoutes[uniLPComponentToken1],address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1198-1204)
+		- IERC20(uniLPComponentToken0).safeApprove(uniswapRouterV2,0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1209)
+		- IERC20(uniLPComponentToken0).safeApprove(uniswapRouterV2,token0Amount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1210)
+		- IERC20(uniLPComponentToken1).safeApprove(uniswapRouterV2,0) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1212)
+		- IERC20(uniLPComponentToken1).safeApprove(uniswapRouterV2,token1Amount) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1213)
+		- (None,None,liquidity) = IUniswapV2Router02(uniswapRouterV2).addLiquidity(uniLPComponentToken0,uniLPComponentToken1,token0Amount,token1Amount,1,1,address(this),block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1216-1225)
+	Event emitted after the call(s):
+	- ProfitLogInReward(_rewardBalance,feeAmount,block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#943)
+		- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1248)
+	- ProfitLogInReward(0,0,block.timestamp) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#952)
+		- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1248)
+	- ProfitsNotCollected() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1165)
+		- _liquidateReward() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1248)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#356-365) uses assembly
+	- INLINE ASM (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#363-364)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#7) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#39) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#198) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#277) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#333) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#406) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#483) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#520) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#549) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#575) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#673) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#811) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#837) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#870) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#883) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#912) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#966) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1021) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#395-401):
+	- (success) = recipient.call.value(amount)() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#399)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#459-478):
+	- (success,returndata) = address(token).call(data) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#471)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Storage.setGovernance(address)._governance (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#499) is not in mixedCase
+Parameter Storage.setController(address)._controller (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#504) is not in mixedCase
+Parameter Governable.setStorage(address)._store (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#537) is not in mixedCase
+Function IUniswapV2Router01.WETH() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#579) is not in mixedCase
+Function IUniswapV2Router02.WETH() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#678) is not in mixedCase
+Parameter RewardTokenProfitNotifier.notifyProfitInRewardToken(uint256)._rewardBalance (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#940) is not in mixedCase
+Function IUniswapV2Pair.DOMAIN_SEPARATOR() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#983) is not in mixedCase
+Function IUniswapV2Pair.PERMIT_TYPEHASH() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#984) is not in mixedCase
+Function IUniswapV2Pair.MINIMUM_LIQUIDITY() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1001) is not in mixedCase
+Parameter SNXRewardUniLPStrategy.setLiquidationPaths(address[],address[])._uniswapRouteToToken0 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1155) is not in mixedCase
+Parameter SNXRewardUniLPStrategy.setLiquidationPaths(address[],address[])._uniswapRouteToToken1 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1155) is not in mixedCase
+Constant SNXRewardUniLPStrategy.uniswapRouterV2 (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1089) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#302-304)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#310-312)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#326-328)
+setGovernance(address) should be declared external:
+	- Storage.setGovernance(address) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#499-502)
+setController(address) should be declared external:
+	- Storage.setController(address) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#504-507)
+isController(address) should be declared external:
+	- Storage.isController(address) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#513-515)
+setStorage(address) should be declared external:
+	- Governable.setStorage(address) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#537-540)
+depositArbCheck() should be declared external:
+	- SNXRewardUniLPStrategy.depositArbCheck() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1132-1134)
+emergencyExit() should be declared external:
+	- SNXRewardUniLPStrategy.emergencyExit() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1141-1144)
+continueInvesting() should be declared external:
+	- SNXRewardUniLPStrategy.continueInvesting() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1150-1152)
+setLiquidationPaths(address[],address[]) should be declared external:
+	- SNXRewardUniLPStrategy.setLiquidationPaths(address[],address[]) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1155-1158)
+withdrawAllToVault() should be declared external:
+	- SNXRewardUniLPStrategy.withdrawAllToVault() (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1244-1250)
+withdrawToVault(uint256) should be declared external:
+	- SNXRewardUniLPStrategy.withdrawToVault(uint256) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1255-1266)
+setSell(bool) should be declared external:
+	- SNXRewardUniLPStrategy.setSell(bool) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1312-1314)
+setSellFloor(uint256) should be declared external:
+	- SNXRewardUniLPStrategy.setSellFloor(uint256) (noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol#1319-1321)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol analyzed (18 contracts with 46 detectors), 59 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xb43aa2c44b99bad346143fb44e264213d412b6c2.sol
+Tool Runtime = 1.7047069519976503 seconds
+#############################################

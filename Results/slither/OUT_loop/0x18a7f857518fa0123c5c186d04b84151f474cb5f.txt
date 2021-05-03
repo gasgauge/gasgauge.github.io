@@ -1,0 +1,239 @@
+INFO:Detectors:[91m
+CtPublicSale._weiRefRewarded (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#312) is never initialized. It is used in:
+	- CtPublicSale.status() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#442-478)
+	- CtPublicSale.fallback() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#602-684)
+CtPublicSale._accountWeiRefRewarded (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#341) is never initialized. It is used in:
+	- CtPublicSale.accountQuery(address) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#577-585)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+Reentrancy in CtPublicSale.fallback() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#602-684):
+	External calls:
+	- assert(bool)(CT.transfer(msg.sender,__CTIssued)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#632)
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+	State variables written after the call(s):
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- _CTUsdPrice = stageCTUsdPrice(_stage) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#846)
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- _stage = _stage.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#845)
+		- _stage = STAGE_MAX.sub(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#850)
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- _stageCTIssued[_stage] = _stageCTIssued[_stage].add(__transferCT) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#820)
+		- _stageCTIssued[_stage] = _stageCTIssued[_stage].add(__remainCT) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#827)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+CtPublicSale.setTemporaryVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#700-727) has external calls inside a loop: __refAccount = CT.referrer(__cursor) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#710)
+CtPublicSale.sendWhitelistReferralRewards(uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#860-880) has external calls inside a loop: assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in CtPublicSale._mint(address,uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#686-695):
+	External calls:
+	- assert(bool)(CT.transfer(account,value)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#690)
+	State variables written after the call(s):
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _CTBonus = _CTBonus.add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#834)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _CTBonusTxs = _CTBonusTxs.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#809)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _CTIssued = _CTIssued.add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#833)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _CTUsdPrice = stageCTUsdPrice(_stage) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#846)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _CTWhitelist = _CTWhitelist.add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#829)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _accountCTWhitelisted[msg.sender] = _accountCTWhitelisted[msg.sender].add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#831)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _stage = _stage.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#845)
+		- _stage = STAGE_MAX.sub(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#850)
+	- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+		- _stageCTIssued[_stage] = _stageCTIssued[_stage].add(__transferCT) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#820)
+		- _stageCTIssued[_stage] = _stageCTIssued[_stage].add(__remainCT) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#827)
+Reentrancy in CtPublicSale.fallback() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#602-684):
+	External calls:
+	- assert(bool)(CT.transfer(msg.sender,__CTIssued)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#632)
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+	External calls sending eth:
+	- msg.sender.transfer(__weiRemain) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#656)
+	State variables written after the call(s):
+	- _accountWeiPurchased[msg.sender] = _accountWeiPurchased[msg.sender].add(__weiUsed) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#666)
+	- _txs = _txs.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#662)
+	- _weiSold = _weiSold.add(__weiUsed) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#664)
+	- _weiTeam = _weiTeam.add(__weiTeam) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#678)
+Reentrancy in CtPublicSale.sendWhitelistReferralRewards(uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#860-880):
+	External calls:
+	- assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+	State variables written after the call(s):
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _CTBonus = _CTBonus.add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#834)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _CTBonusTxs = _CTBonusTxs.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#809)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _CTIssued = _CTIssued.add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#833)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _CTUsdPrice = stageCTUsdPrice(_stage) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#846)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _CTWhitelist = _CTWhitelist.add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#829)
+	- _CTWhitelistTxs = _CTWhitelistTxs.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#871)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _accountCTWhitelisted[msg.sender] = _accountCTWhitelisted[msg.sender].add(amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#831)
+	- _ctRefRewarded = _ctRefRewarded.add(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#870)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _stage = _stage.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#845)
+		- _stage = STAGE_MAX.sub(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#850)
+	- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+		- _stageCTIssued[_stage] = _stageCTIssued[_stage].add(__transferCT) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#820)
+		- _stageCTIssued[_stage] = _stageCTIssued[_stage].add(__remainCT) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#827)
+	- _stageCTRewarded[_stage] = _stageCTRewarded[_stage].add(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#872)
+	- _stageCTRewardedTx[_stage] = _stageCTRewardedTx[_stage].add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#874)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in CtPublicSale._mint(address,uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#686-695):
+	External calls:
+	- assert(bool)(CT.transfer(account,value)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#690)
+	Event emitted after the call(s):
+	- CTWhitelistTransfered(msg.sender,amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#836)
+		- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+	- StageClosed(_stage,msg.sender) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#844)
+		- transferCTWhitelisted(value) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#692)
+Reentrancy in CtPublicSale.fallback() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#602-684):
+	External calls:
+	- assert(bool)(CT.transfer(msg.sender,__CTIssued)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#632)
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+	Event emitted after the call(s):
+	- CTWhitelistTransfered(msg.sender,amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#836)
+		- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+	- StageClosed(_stage,msg.sender) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#844)
+		- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+Reentrancy in CtPublicSale.fallback() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#602-684):
+	External calls:
+	- assert(bool)(CT.transfer(msg.sender,__CTIssued)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#632)
+	- sendWhitelistReferralRewards(__CTIssued) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#646)
+		- assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+	External calls sending eth:
+	- msg.sender.transfer(__weiRemain) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#656)
+	Event emitted after the call(s):
+	- CTWhitelistTransfered(msg.sender,_weiSold) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#669)
+	- CTWhitelistTransfered(msg.sender,_weiRefRewarded) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#671)
+Reentrancy in CtPublicSale.sendWhitelistReferralRewards(uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#860-880):
+	External calls:
+	- assert(bool)(CT.transfer(_referrers_[i],__ctReward)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#867)
+	Event emitted after the call(s):
+	- CTWhitelistTransfered(msg.sender,amount) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#836)
+		- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+	- StageClosed(_stage,msg.sender) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#844)
+		- transferCTWhitelisted(__ctReward) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#869)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#18) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable Ownable._receiver (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#138) is not in mixedCase
+Function CtPublicSale.CT2usd(uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#422-425) is not in mixedCase
+Function CtPublicSale._mint(address,uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#686-695) is not in mixedCase
+Variable CtPublicSale.CT (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#258) is not in mixedCase
+Variable CtPublicSale._startTimestamp (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#261) is not in mixedCase
+Variable CtPublicSale.WHITELIST_REF_REWARDS_PCT (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#268-272) is not in mixedCase
+Variable CtPublicSale.WEI_MIN (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#276) is not in mixedCase
+Variable CtPublicSale.WEI_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#277) is not in mixedCase
+Variable CtPublicSale.WEI_BONUS (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#278) is not in mixedCase
+Variable CtPublicSale.GAS_MIN (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#279) is not in mixedCase
+Variable CtPublicSale.GAS_EX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#280) is not in mixedCase
+Variable CtPublicSale.CT_USD_PRICE_START (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#283) is not in mixedCase
+Variable CtPublicSale.CT_USD_PRICE_STEP (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#284) is not in mixedCase
+Variable CtPublicSale.STAGE_USD_CAP_START (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#286) is not in mixedCase
+Variable CtPublicSale.STAGE_USD_CAP_STEP (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#287) is not in mixedCase
+Variable CtPublicSale.STAGE_USD_CAP_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#288) is not in mixedCase
+Variable CtPublicSale.STAGE_CT_CAP_START (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#290) is not in mixedCase
+Variable CtPublicSale.STAGE_CT_CAP_STEP (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#291) is not in mixedCase
+Variable CtPublicSale.STAGE_CT_CAP_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#292) is not in mixedCase
+Variable CtPublicSale._CTUsdPrice (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#294) is not in mixedCase
+Variable CtPublicSale.STAGE_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#296) is not in mixedCase
+Variable CtPublicSale._CTTxs (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#304) is not in mixedCase
+Variable CtPublicSale._CTBonusTxs (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#305) is not in mixedCase
+Variable CtPublicSale._CTWhitelistTxs (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#306) is not in mixedCase
+Variable CtPublicSale._CTIssued (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#307) is not in mixedCase
+Variable CtPublicSale._CTBonus (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#308) is not in mixedCase
+Variable CtPublicSale._CTWhitelist (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#309) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in CtPublicSale.fallback() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#602-684):
+	External calls:
+	- msg.sender.transfer(__weiRemain) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#656)
+	State variables written after the call(s):
+	- _accountWeiPurchased[msg.sender] = _accountWeiPurchased[msg.sender].add(__weiUsed) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#666)
+	- _txs = _txs.add(1) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#662)
+	- _weiSold = _weiSold.add(__weiUsed) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#664)
+	- _weiTeam = _weiTeam.add(__weiTeam) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#678)
+	Event emitted after the call(s):
+	- CTWhitelistTransfered(msg.sender,_weiSold) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#669)
+	- CTWhitelistTransfered(msg.sender,_weiRefRewarded) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#671)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+CtPublicSale.usd2CT(uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#414-417) uses literals with too many digits:
+	- usdAmount.mul(1000000).div(_CTUsdPrice) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#416)
+CtPublicSale.CT2usd(uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#422-425) uses literals with too many digits:
+	- usdAmount.mul(_CTUsdPrice).div(1000000) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#424)
+CtPublicSale.usd2CTByStage(uint256,uint16) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#430-436) uses literals with too many digits:
+	- usdAmount.mul(1000000).div(stageCTUsdPrice(stageIndex)) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#435)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- GAS_MIN = 3000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#279)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- GAS_EX = 1500000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#280)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- CT_USD_PRICE_START = 100000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#283)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- STAGE_USD_CAP_START = 10000000000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#286)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- STAGE_USD_CAP_STEP = 1000000000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#287)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- STAGE_USD_CAP_MAX = 100000000000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#288)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- STAGE_CT_CAP_START = 1000000000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#290)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- STAGE_CT_CAP_STEP = 1000000000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#291)
+CtPublicSale.slitherConstructorVariables() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881) uses literals with too many digits:
+	- STAGE_CT_CAP_MAX = 100000000000000 (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#292)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+CtPublicSale.WEI_BONUS (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#278) is never used in CtPublicSale (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881)
+CtPublicSale._accountCTBonus (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#338) is never used in CtPublicSale (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#253-881)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+CtPublicSale.CT_USD_PRICE_START (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#283) should be constant
+CtPublicSale.CT_USD_PRICE_STEP (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#284) should be constant
+CtPublicSale.GAS_EX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#280) should be constant
+CtPublicSale.GAS_MIN (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#279) should be constant
+CtPublicSale.STAGE_CT_CAP_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#292) should be constant
+CtPublicSale.STAGE_CT_CAP_START (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#290) should be constant
+CtPublicSale.STAGE_CT_CAP_STEP (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#291) should be constant
+CtPublicSale.STAGE_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#296) should be constant
+CtPublicSale.STAGE_USD_CAP_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#288) should be constant
+CtPublicSale.STAGE_USD_CAP_START (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#286) should be constant
+CtPublicSale.STAGE_USD_CAP_STEP (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#287) should be constant
+CtPublicSale.WEI_BONUS (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#278) should be constant
+CtPublicSale.WEI_MAX (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#277) should be constant
+CtPublicSale.WEI_MIN (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#276) should be constant
+CtPublicSale._weiRefRewarded (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#312) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#156-158)
+startTimestamp() should be declared external:
+	- CtPublicSale.startTimestamp() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#363-365)
+status() should be declared external:
+	- CtPublicSale.status() (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#442-478)
+accountQuery(address) should be declared external:
+	- CtPublicSale.accountQuery(address) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#577-585)
+_mint(address,uint256) should be declared external:
+	- CtPublicSale._mint(address,uint256) (loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol#686-695)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol analyzed (7 contracts with 46 detectors), 76 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x18a7f857518fa0123c5c186d04b84151f474cb5f.sol
+Tool Runtime = 1.5281008780002594 seconds
+#############################################

@@ -1,0 +1,275 @@
+Compilation warnings/errors on ./loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol:
+./loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol:12:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol:586:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+State.priceFeeds (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#768) is never initialized. It is used in:
+	- SwapsUser._loanSwap(bytes32,address,address,address,uint256,uint256,uint256,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1345-1396)
+	- SwapsUser._swapsExpectedReturn(address,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1513-1540)
+	- SwapsUser._checkSwapSize(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1542-1558)
+	- FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1127-1172)
+State.swapsImpl (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#769) is never initialized. It is used in:
+	- SwapsUser._swapsCall_internal(address[5],uint256[3]) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1489-1511)
+	- SwapsUser._swapsExpectedReturn(address,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1513-1540)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1398-1487) uses a dangerous strict equality:
+	- vals[2] == 0 (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1423)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1398-1487) uses a dangerous strict equality:
+	- vals[1] == 0 (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1450)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1398-1487) uses a dangerous strict equality:
+	- vals[2] == 0 (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1462)
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1398-1487) uses a dangerous strict equality:
+	- require(bool,string)(sourceTokenAmountUsed == vals[0],swap too large to fill) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1464)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1398-1487):
+	External calls:
+	- _payTradingFee(addrs[4],loanId,addrs[0],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1428-1433)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall_internal(addrs,vals) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1457-1460)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1507)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	State variables written after the call(s):
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+		- protocolTokenHeld = tokenBalance.sub(withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#946-947)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+		- protocolTokenPaid = protocolTokenPaid.add(rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1161-1162)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+		- tradingFeeTokensHeld[feeToken] = tradingFeeTokensHeld[feeToken].add(tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1024-1025)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes).tradingFee (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1421) is a local variable never initialized
+FeesHelper._settleFeeRewardForInterestExpense(LoanInterestStruct.LoanInterest,bytes32,address,address,uint256).interestExpenseFee (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1103) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+State._setTarget(bytes4,address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#827-839) ignores return value by logicTargetsSet.addBytes32(bytes32(sig)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#835)
+State._setTarget(bytes4,address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#827-839) ignores return value by logicTargetsSet.removeBytes32(bytes32(sig)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#837)
+GasTokenUser.usesGasToken(address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1572-1598) ignores return value by tokenHolder.freeUpTo(gasCalcValue) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1585-1587)
+GasTokenUser.usesGasToken(address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1572-1598) ignores return value by tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1589-1592)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1127-1172):
+	External calls:
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+	- (rewardToken,rewardAmount) = _withdrawProtocolToken(user,rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1156-1159)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	State variables written after the call(s):
+	- protocolTokenPaid = protocolTokenPaid.add(rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1161-1162)
+Reentrancy in SwapsExternal.swapExternalWithGasToken(address,address,address,address,address,uint256,uint256,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1651-1675):
+	External calls:
+	- usesGasToken(gasTokenUser) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1662)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1585-1587)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1589-1592)
+	State variables written after the call(s):
+	- nonReentrant() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1663)
+		- reentrancyLock = REENTRANCY_GUARD_LOCKED (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#282)
+		- reentrancyLock = REENTRANCY_GUARD_FREE (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#284)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in SwapsUser._loanSwap(bytes32,address,address,address,uint256,uint256,uint256,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1345-1396):
+	External calls:
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall((sourceToken,destToken,address(this),address(this),user),(minSourceTokenAmount,maxSourceTokenAmount,requiredDestTokenAmount),loanId,bypassFee,loanDataBytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1358-1374)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1507)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	Event emitted after the call(s):
+	- LoanSwap(loanId,sourceToken,destToken,user,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1388-1395)
+Reentrancy in FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1127-1172):
+	External calls:
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+	- (rewardToken,rewardAmount) = _withdrawProtocolToken(user,rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1156-1159)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	Event emitted after the call(s):
+	- EarnReward(user,rewardToken,loanId,rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1164-1169)
+Reentrancy in SwapsExternal._swapExternal(address,address,address,address,uint256,uint256,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1677-1739):
+	External calls:
+	- wethToken.deposit.value(sourceTokenAmount)() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1697)
+	- sourceTokenContract.safeTransferFrom(msg.sender,address(this),sourceTokenAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1703-1707)
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall((sourceToken,destToken,receiver,returnToSender,msg.sender),(sourceTokenAmount,sourceTokenAmount,requiredDestTokenAmount),0,false,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1714-1730)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1507)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	External calls sending eth:
+	- wethToken.deposit.value(sourceTokenAmount)() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1697)
+	Event emitted after the call(s):
+	- EarnReward(user,rewardToken,loanId,rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1164-1169)
+		- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall((sourceToken,destToken,receiver,returnToSender,msg.sender),(sourceTokenAmount,sourceTokenAmount,requiredDestTokenAmount),0,false,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1714-1730)
+	- ExternalSwap(msg.sender,sourceToken,destToken,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1732-1738)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1027-1032)
+		- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall((sourceToken,destToken,receiver,returnToSender,msg.sender),(sourceTokenAmount,sourceTokenAmount,requiredDestTokenAmount),0,false,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1714-1730)
+Reentrancy in SwapsUser._swapsCall(address[5],uint256[3],bytes32,bool,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1398-1487):
+	External calls:
+	- _payTradingFee(addrs[4],loanId,addrs[0],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1428-1433)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	- (destTokenAmountReceived,sourceTokenAmountUsed) = _swapsCall_internal(addrs,vals) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1457-1460)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1507)
+	- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+	Event emitted after the call(s):
+	- EarnReward(user,rewardToken,loanId,rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1164-1169)
+		- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1027-1032)
+		- _payTradingFee(addrs[4],loanId,addrs[1],tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1475-1480)
+Reentrancy in SwapsExternal.swapExternalWithGasToken(address,address,address,address,address,uint256,uint256,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1651-1675):
+	External calls:
+	- _swapExternal(sourceToken,destToken,receiver,returnToSender,sourceTokenAmount,requiredDestTokenAmount,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1666-1674)
+		- (success,data) = swapsImpl.delegatecall(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1507)
+		- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+		- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+		- wethToken.deposit.value(sourceTokenAmount)() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1697)
+		- IERC20(vbzrxTokenAddress).safeTransfer(receiver,withdrawAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#949-952)
+		- sourceTokenContract.safeTransferFrom(msg.sender,address(this),sourceTokenAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1703-1707)
+	- usesGasToken(gasTokenUser) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1662)
+		- tokenHolder.freeUpTo(gasCalcValue) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1585-1587)
+		- tokenHolder.freeFromUpTo(holder,gasCalcValue) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1589-1592)
+	External calls sending eth:
+	- _swapExternal(sourceToken,destToken,receiver,returnToSender,sourceTokenAmount,requiredDestTokenAmount,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1666-1674)
+		- wethToken.deposit.value(sourceTokenAmount)() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1697)
+	Event emitted after the call(s):
+	- EarnReward(user,rewardToken,loanId,rewardAmount) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1164-1169)
+		- _swapExternal(sourceToken,destToken,receiver,returnToSender,sourceTokenAmount,requiredDestTokenAmount,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1666-1674)
+	- ExternalSwap(msg.sender,sourceToken,destToken,sourceTokenAmountUsed,destTokenAmountReceived) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1732-1738)
+		- _swapExternal(sourceToken,destToken,receiver,returnToSender,sourceTokenAmount,requiredDestTokenAmount,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1666-1674)
+	- PayTradingFee(user,feeToken,loanId,tradingFee) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1027-1032)
+		- _swapExternal(sourceToken,destToken,receiver,returnToSender,sourceTokenAmount,requiredDestTokenAmount,swapData) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1666-1674)
+Reentrancy in VaultController.vaultDeposit(address,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1225-1244):
+	External calls:
+	- IERC20(token).safeTransferFrom(from,address(this),value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1232-1236)
+	Event emitted after the call(s):
+	- VaultDeposit(token,from,value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1238-1242)
+Reentrancy in VaultController.vaultEtherDeposit(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1189-1202):
+	External calls:
+	- _wethToken.deposit.value(value)() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1195)
+	Event emitted after the call(s):
+	- VaultDeposit(address(_wethToken),from,value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1197-1201)
+Reentrancy in VaultController.vaultEtherWithdraw(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1204-1223):
+	External calls:
+	- _wethToken.withdraw(value - balance) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1213)
+	- Address.sendValue(to,value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1215)
+	Event emitted after the call(s):
+	- VaultWithdraw(address(_wethToken),to,value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1217-1221)
+Reentrancy in VaultController.vaultWithdraw(address,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1246-1264):
+	External calls:
+	- IERC20(token).safeTransfer(to,value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1253-1256)
+	Event emitted after the call(s):
+	- VaultWithdraw(token,to,value) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1258-1262)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+EnumerableBytes32Set.addAddress(EnumerableBytes32Set.Bytes32Set,address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#74-83) uses assembly
+	- INLINE ASM (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#79-82)
+EnumerableBytes32Set.removeAddress(EnumerableBytes32Set.Bytes32Set,address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#105-114) uses assembly
+	- INLINE ASM (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#110-113)
+EnumerableBytes32Set.containsAddress(EnumerableBytes32Set.Bytes32Set,address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#164-174) uses assembly
+	- INLINE ASM (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#170-173)
+EnumerableBytes32Set.getAddress(EnumerableBytes32Set.Bytes32Set,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#238-249) uses assembly
+	- INLINE ASM (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#245-248)
+Address.isContract(address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#579-588) uses assembly
+	- INLINE ASM (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#586-587)
+FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1127-1172) uses assembly
+	- INLINE ASM (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1148-1154)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#11) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#618-624):
+	- (success) = recipient.call.value(amount)() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#622)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#675-694):
+	- (success,returndata) = address(token).call(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#687)
+Low level call in FeesHelper._payFeeReward(address,bytes32,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1127-1172):
+	- (success,data) = _priceFeeds.staticcall(abi.encodeWithSelector(IPriceFeeds(_priceFeeds).queryReturn.selector,feeToken,bzrxTokenAddress,feeAmount / 2)) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1140-1147)
+Low level call in SwapsUser._swapsCall_internal(address[5],uint256[3]) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1489-1511):
+	- (success,data) = swapsImpl.delegatecall(data) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1507)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Constant Constants.wethToken (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#44) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Constants.bzrxTokenAddress (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#45) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Constants.vbzrxTokenAddress (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#46) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter SafeMath.min256(uint256,uint256)._a (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#553) is not in mixedCase
+Parameter SafeMath.min256(uint256,uint256)._b (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#553) is not in mixedCase
+Parameter IPriceFeeds.amountInEth(address,uint256).Token (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#876) is not in mixedCase
+Function SwapsUser._swapsCall_internal(address[5],uint256[3]) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1489-1511) is not in mixedCase
+Constant GasTokenUser.gasToken (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1569) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant GasTokenUser.tokenHolder (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1570) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SwapsExternal.slitherConstructorConstantVariables() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755) uses literals with too many digits:
+	- gasToken = ITokenHolderLike(0x0000000000004946c0e9F43F4Dee607b0eF1fA1c) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1569)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+Constants.WEI_PRECISION (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#38) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+Constants.DAYS_IN_A_YEAR (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#41) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+Constants.ONE_MONTH (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#42) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+State.activeLoansSet (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#787) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+State.lenderLoanSets (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#789) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+State.borrowerLoanSets (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#790) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+State.userLoanParamSets (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#791) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+State.loanPoolsSet (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#816) is never used in SwapsExternal (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1615-1755)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+IERC20.decimals (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#22) should be constant
+IERC20.name (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#21) should be constant
+IERC20.symbol (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#23) should be constant
+State.affiliateFeePercent (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#810) should be constant
+State.borrowingFeePercent (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#803) should be constant
+State.feesController (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#793) should be constant
+State.lendingFeePercent (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#795) should be constant
+State.maxDisagreement (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#820) should be constant
+State.maxSwapSize (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#824) should be constant
+State.priceFeeds (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#768) should be constant
+State.sourceBufferPercent (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#822) should be constant
+State.swapsImpl (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#769) should be constant
+State.tradingFeePercent (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#799) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- IERC20.totalSupply() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#24)
+balanceOf(address) should be declared external:
+	- IERC20.balanceOf(address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#25)
+allowance(address,address) should be declared external:
+	- IERC20.allowance(address,address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#26)
+approve(address,uint256) should be declared external:
+	- IERC20.approve(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#27)
+transfer(address,uint256) should be declared external:
+	- IERC20.transfer(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#28)
+transferFrom(address,address,uint256) should be declared external:
+	- IERC20.transferFrom(address,address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#29)
+owner() should be declared external:
+	- Ownable.owner() (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#340-342)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#363-365)
+balanceOf(address) should be declared external:
+	- ITokenHolderLike.balanceOf(address) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1562)
+freeUpTo(uint256) should be declared external:
+	- ITokenHolderLike.freeUpTo(uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1563)
+freeFromUpTo(address,uint256) should be declared external:
+	- ITokenHolderLike.freeFromUpTo(address,uint256) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1564)
+swapExternal(address,address,address,address,uint256,uint256,bytes) should be declared external:
+	- SwapsExternal.swapExternal(address,address,address,address,uint256,uint256,bytes) (loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol#1627-1649)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xf10ed760794d40fd7142daaa66ec4c4676301296.sol analyzed (29 contracts with 46 detectors), 79 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf10ed760794d40fd7142daaa66ec4c4676301296.sol
+Tool Runtime = 5.115814528999181 seconds
+#############################################

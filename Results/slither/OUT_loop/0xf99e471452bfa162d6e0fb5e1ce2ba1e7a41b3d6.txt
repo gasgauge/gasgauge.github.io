@@ -1,0 +1,63 @@
+INFO:Detectors:[92m
+SmartWay.syncWithOldSC(uint256) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#226-258) has external calls inside a loop: user = oldSC.userList(oldSCUserId) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#231)
+SmartWay.syncWithOldSC(uint256) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#226-258) has external calls inside a loop: (id,referrerId) = oldSC.users(user) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#232)
+SmartWay.syncWithOldSC(uint256) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#226-258) has external calls inside a loop: ref = oldSC.userList(referrerId) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#237)
+SmartWay.syncWithOldSC(uint256) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#226-258) has external calls inside a loop: levelExpired = oldSC.viewUserLevelExpired(user,j) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#247)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+SmartWay.buyLevel(uint8) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#112-131) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(users[msg.sender].levelExpired[i] >= now,Buy the previous level) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#119)
+	- users[msg.sender].levelExpired[level] == 0 || users[msg.sender].levelExpired[level] < now (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#122)
+SmartWay.payForLevel(uint8,address) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#134-158) uses timestamp for comparisons
+	Dangerous comparisons:
+	- users[referrer].levelExpired[level] >= now (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#147)
+SmartWay.syncWithOldSC(uint256) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#226-258) uses timestamp for comparisons
+	Dangerous comparisons:
+	- levelExpired > now (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#248)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+SmartWay.bytesToAddress(bytes) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#275-279) uses assembly
+	- INLINE ASM (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#276-279)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#19) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter SmartWay.findFreeReferrer(address)._user (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#188) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in SmartWay.buyLevel(uint8) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#112-131):
+	External calls:
+	- payForLevel(level,msg.sender) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#128)
+		- referrer.send(levelPrice[level]) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#148)
+	Event emitted after the call(s):
+	- LevelBought(msg.sender,level) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#130)
+Reentrancy in SmartWay.payForLevel(uint8,address) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#134-158):
+	External calls:
+	- referrer.send(levelPrice[level]) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#148)
+	Event emitted after the call(s):
+	- GetMoneyForLevel(referrer,msg.sender,level) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#149)
+Reentrancy in SmartWay.regUser(uint64) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#82-110):
+	External calls:
+	- payForLevel(1,msg.sender) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#107)
+		- referrer.send(levelPrice[level]) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#148)
+	Event emitted after the call(s):
+	- Registration(msg.sender,userList[referrerId]) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#109)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+syncWithOldSC(uint256) should be declared external:
+	- SmartWay.syncWithOldSC(uint256) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#226-258)
+viewUserReferral(address) should be declared external:
+	- SmartWay.viewUserReferral(address) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#267-269)
+viewUserLevelExpired(address,uint8) should be declared external:
+	- SmartWay.viewUserLevelExpired(address,uint8) (loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol#271-273)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol analyzed (1 contracts with 46 detectors), 17 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf99e471452bfa162d6e0fb5e1ce2ba1e7a41b3d6.sol
+Tool Runtime = 0.7579836270015221 seconds
+#############################################

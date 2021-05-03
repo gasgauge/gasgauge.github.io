@@ -1,0 +1,242 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SpellAction
+Function name: execute()
+PC address: 183
+Estimated Gas Usage: 233 - 328
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1056
+
+require(day < 5, "Can only be cast on a weekday")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: execute(), txdata: 0x61461954, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: DssSpell
+Function name: constructor
+PC address: 584
+Estimated Gas Usage: 66509 - 209864
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1342
+
+block.timestamp + 30 days
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: DssSpell
+Function name: schedule()
+PC address: 2023
+Estimated Gas Usage: 1026 - 1121
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1404
+
+require(block.timestamp <= expiration, "DSSSpell/spell-has-expired")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: DssSpell
+Function name: schedule()
+PC address: 2447
+Estimated Gas Usage: 16883 - 107286
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1408
+
+block.timestamp + DSPauseAbstract(pause).delay()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: DssSpell
+Function name: schedule()
+PC address: 2837
+Estimated Gas Usage: 16883 - 107286
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1410
+
+pause.plot(action, tag, sig, eta)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: schedule(), txdata: 0xb0604a26, value: 0x0
+Caller: [SOMEGUY], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DssSpell
+Function name: schedule()
+PC address: 2837
+Estimated Gas Usage: 16883 - 107286
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1410
+
+pause.plot(action, tag, sig, eta)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: schedule(), txdata: 0xb0604a26, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: DssSpell
+Function name: nextCastTime()
+PC address: 2999
+Estimated Gas Usage: 1896 - 1991
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1352
+
+block.timestamp > eta ? block.timestamp : eta
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: schedule(), txdata: 0xb0604a26, value: 0x0
+Caller: [ATTACKER], function: nextCastTime(), txdata: 0xfe7d47bb, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: DssSpell
+Function name: nextCastTime()
+PC address: 3326
+Estimated Gas Usage: 4669 - 39561
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol:1368
+
+if (day >= 5) {
+
+                castTime += (6 - day) * 1 days;                 // Go to Sunday XX:YY
+
+                castTime += (24 - hour + 14) * 1 hours;         // Go to 14:YY UTC Monday
+
+                castTime -= minute * 1 minutes + second;        // Go to 14:00 UTC
+
+            } else {
+
+                if (hour >= 21) {
+
+                    if (day == 4) castTime += 2 days;           // If Friday, fast forward to Sunday XX:YY
+
+                    castTime += (24 - hour + 14) * 1 hours;     // Go to 14:YY UTC next day
+
+                    castTime -= minute * 1 minutes + second;    // Go to 14:00 UTC
+
+                } else if (hour < 14) {
+
+                    castTime += (14 - hour) * 1 hours;          // Go to 14:YY UTC same day
+
+                    castTime -= minute * 1 minutes + second;    // Go to 14:00 UTC
+
+                }
+
+            }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc000004001010c, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: schedule(), txdata: 0xb0604a26, value: 0x0
+Caller: [ATTACKER], function: nextCastTime(), txdata: 0xfe7d47bb, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x437f5aaf195c97a01f85e672bb8e371484d96c57.sol
+Tool Runtime = 549.8975170410122 seconds
+#############################################

@@ -1,0 +1,183 @@
+Compilation warnings/errors on ./loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol:
+./loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol:7:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol:1197:9: Warning: Unused local variable.
+        uint256 supplyAfterRebase = solarite.rebase(epoch, indexDelta, positive);
+        ^-----------------------^
+
+INFO:Detectors:[93m
+SOLARITERebaser.rebase() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1151-1202) performs a multiplication on the result of a division:
+	-indexDelta = indexDelta.div(rebaseLag) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1177)
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1191)
+SOLARITERebaser.rebase() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1151-1202) performs a multiplication on the result of a division:
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1191)
+	-mintAmount = currSupply.mul(mintPerc).div(10 ** 18) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1193)
+SOLARITERebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1337-1366) performs a multiplication on the result of a division:
+	-token0.mul(offPegPerc / 3).div(10 ** 18) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1357)
+SOLARITERebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1337-1366) performs a multiplication on the result of a division:
+	-token1.mul(offPegPerc / 3).div(10 ** 18) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1363)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+SOLARITERebaser.rebase().mintAmount (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1188) is a local variable never initialized
+FixedPoint.mul(FixedPoint.uq112x112,uint256).z (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#589) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247) ignores return value by solarite.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1223)
+SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247) ignores return value by solarite.mint(uniswap_pair,uniVars.solaritesToUni.sub(uniVars.amountFromReserves)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1227)
+SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247) ignores return value by solarite.mint(uniswap_pair,uniVars.solaritesToUni) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1231)
+SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247) ignores return value by solarite.mint(reservesContract,uniVars.mintToReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1236)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in SOLARITERebaser.afterRebase(uint256,uint256) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1394-1422):
+	External calls:
+	- UniswapPair(uniswap_pair).sync() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1401)
+	- buyReserveAndTransfer(mintAmount,offPegPerc) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1404-1407)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1288)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1296)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1304)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1314)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1323)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1331)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1417)
+Reentrancy in SOLARITERebaser.rebase() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1151-1202):
+	External calls:
+	- supplyAfterRebase = solarite.rebase(epoch,indexDelta,positive) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1197)
+	- afterRebase(mintAmount,offPegPerc) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1201)
+		- UniswapPair(uniswap_pair).sync() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1401)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1288)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1296)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1304)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1314)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1323)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1331)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1417)
+		- afterRebase(mintAmount,offPegPerc) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1201)
+Reentrancy in SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247):
+	External calls:
+	- solarite.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1223)
+	- solarite.mint(uniswap_pair,uniVars.solaritesToUni.sub(uniVars.amountFromReserves)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1227)
+	- solarite.mint(uniswap_pair,uniVars.solaritesToUni) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1231)
+	- solarite.mint(reservesContract,uniVars.mintToReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1236)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount1) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1241)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount1,uniVars.solaritesToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1242)
+Reentrancy in SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247):
+	External calls:
+	- solarite.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1223)
+	- solarite.mint(uniswap_pair,uniVars.solaritesToUni.sub(uniVars.amountFromReserves)) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1227)
+	- solarite.mint(uniswap_pair,uniVars.solaritesToUni) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1231)
+	- solarite.mint(reservesContract,uniVars.mintToReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1236)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount0) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1244)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount0,uniVars.solaritesToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1245)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniswapV2OracleLibrary.currentCumulativePrices(address,bool) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#634-663) uses timestamp for comparisons
+	Dangerous comparisons:
+	- blockTimestampLast != blockTimestamp (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#644)
+	- blockTimestampLast != blockTimestamp (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#654)
+SOLARITERebaser.activate_rebasing() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1134-1142) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= timeOfTWAPInit + rebaseDelay,!end_delay) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1139)
+SOLARITERebaser.rebase() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1151-1202) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(lastRebaseTimestampSec.add(minRebaseTimeIntervalSec) < now) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1160)
+SOLARITERebaser._inRebaseWindow() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1557-1564) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) >= rebaseWindowOffsetSec,too early) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1562)
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) < (rebaseWindowOffsetSec.add(rebaseWindowLengthSec)),too late) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1563)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#280-289) uses assembly
+	- INLINE ASM (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#287-288)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#373-394) uses assembly
+	- INLINE ASM (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#386-390)
+SOLARITERebaser.externalCall(address,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1691-1721) uses assembly
+	- INLINE ASM (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1696-1720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#12) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#17) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#96) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#257) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#467) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#521) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#526) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#531) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#667) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#670) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#746) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#307-313):
+	- (success) = recipient.call.value(amount)() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#311)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#373-394):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#377)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function UniswapPair.DOMAIN_SEPARATOR() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#484) is not in mixedCase
+Function UniswapPair.PERMIT_TYPEHASH() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#485) is not in mixedCase
+Function UniswapPair.MINIMUM_LIQUIDITY() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#502) is not in mixedCase
+Struct FixedPoint.uq112x112 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#556-558) is not in CapWords
+Struct FixedPoint.uq144x112 (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#562-564) is not in CapWords
+Variable SOLARITETokenStorage._notEntered (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#680) is not in mixedCase
+Constant SOLARITETokenStorage.internalDecimals (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#725) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable SOLARITETokenStorage._solariteBalances (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#737) is not in mixedCase
+Variable SOLARITETokenStorage._allowedFragments (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#739) is not in mixedCase
+Variable SOLARITEGovernanceStorage._delegates (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#750) is not in mixedCase
+Function SOLARITETokenInterface._setRebaser(address) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#849) is not in mixedCase
+Function SOLARITETokenInterface._setIncentivizer(address) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#850) is not in mixedCase
+Function SOLARITETokenInterface._setPendingGov(address) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#851) is not in mixedCase
+Function SOLARITETokenInterface._acceptGov() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#852) is not in mixedCase
+Function SOLARITERebaser._setPendingGov(address) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1094-1101) is not in mixedCase
+Function SOLARITERebaser._acceptGov() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1106-1114) is not in mixedCase
+Function SOLARITERebaser.init_twap() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1119-1129) is not in mixedCase
+Function SOLARITERebaser.activate_rebasing() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1134-1142) is not in mixedCase
+Constant SOLARITERebaser.rebaseDelay (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#960) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable SOLARITERebaser.uniswap_pair (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#975) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SOLARITETokenStorage._notEntered (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#680) should be constant
+SOLARITETokenStorage.decimals (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#695) should be constant
+SOLARITETokenStorage.gov (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#700) should be constant
+SOLARITETokenStorage.incentivizer (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#715) should be constant
+SOLARITETokenStorage.initSupply (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#741) should be constant
+SOLARITETokenStorage.name (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#685) should be constant
+SOLARITETokenStorage.pendingGov (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#705) should be constant
+SOLARITETokenStorage.rebaser (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#710) should be constant
+SOLARITETokenStorage.solaritesScalingFactor (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#735) should be constant
+SOLARITETokenStorage.symbol (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#690) should be constant
+SOLARITETokenStorage.totalSupply (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#720) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setMaxSlippageFactor(uint256) should be declared external:
+	- SOLARITERebaser.setMaxSlippageFactor(uint256) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1052-1059)
+setRebaseMintPerc(uint256) should be declared external:
+	- SOLARITERebaser.setRebaseMintPerc(uint256) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1066-1073)
+setReserveContract(address) should be declared external:
+	- SOLARITERebaser.setReserveContract(address) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1081-1088)
+init_twap() should be declared external:
+	- SOLARITERebaser.init_twap() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1119-1129)
+activate_rebasing() should be declared external:
+	- SOLARITERebaser.activate_rebasing() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1134-1142)
+rebase() should be declared external:
+	- SOLARITERebaser.rebase() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1151-1202)
+uniswapV2Call(address,uint256,uint256,bytes) should be declared external:
+	- SOLARITERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1205-1247)
+getCurrentTWAP() should be declared external:
+	- SOLARITERebaser.getCurrentTWAP() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1457-1473)
+inRebaseWindow() should be declared external:
+	- SOLARITERebaser.inRebaseWindow() (loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol#1550-1555)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol analyzed (12 contracts with 46 detectors), 76 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x19c36da0293e6dccd1e5fba44a7a2d7eaff030e82.sol
+Tool Runtime = 2.4290832949991454 seconds
+#############################################

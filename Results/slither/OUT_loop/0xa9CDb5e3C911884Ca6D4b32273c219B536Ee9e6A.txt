@@ -1,0 +1,93 @@
+Compilation warnings/errors on ./loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol:
+./loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol:428:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+./loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol:708:33: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+    function notifyRewardAmount(uint256 reward, uint256 _duration) external { return; }
+                                ^------------^
+./loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol:708:49: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+    function notifyRewardAmount(uint256 reward, uint256 _duration) external { return; }
+                                                ^---------------^
+
+INFO:Detectors:[92m
+Reentrancy in BATTLEPool.addRewards(address[],uint256[]) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#679-689):
+	External calls:
+	- war.safeTransferFrom(msg.sender,address(this),total) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#686)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#688)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in BATTLEPool.exit() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#657-660):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#658)
+		- (success,returndata) = address(token).call(data) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#531)
+		- lpToken.safeTransfer(msg.sender,transferAmount) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#654)
+	- getReward() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#659)
+		- war.safeTransfer(msg.sender,reward) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#674)
+		- (success,returndata) = address(token).call(data) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#531)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#675)
+		- getReward() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#659)
+Reentrancy in BATTLEPool.getReward() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#670-677):
+	External calls:
+	- war.safeTransfer(msg.sender,reward) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#674)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#675)
+Reentrancy in BATTLEPool.stake(uint256) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#633-637):
+	External calls:
+	- super.stake(amount) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#635)
+		- lpToken.safeTransferFrom(msg.sender,address(this),amount) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#582)
+		- (success,returndata) = address(token).call(data) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#531)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#636)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+BATTLEPool.updateTimes(uint256,uint256) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#617-622) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp < starttime,started) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#618)
+BATTLEPool.withdraw(uint256) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#639-655) uses timestamp for comparisons
+	Dangerous comparisons:
+	- battleDay() != 0 (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#643)
+BATTLEPool.battleDay() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#662-668) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < _starttime || block.timestamp >= endtime (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#664)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#417-430) uses assembly
+	- INLINE ASM (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#428-429)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#460-466):
+	- (success) = recipient.call.value(amount)() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#464)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#519-538):
+	- (success,returndata) = address(token).call(data) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#531)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#552) is not in mixedCase
+Variable LPTokenWrapper._totalSupply (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#564) is not in mixedCase
+Variable LPTokenWrapper._balances (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#565) is not in mixedCase
+Parameter BATTLEPool.updateTimes(uint256,uint256)._starttime (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#617) is not in mixedCase
+Parameter BATTLEPool.updateTimes(uint256,uint256)._endtime (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#617) is not in mixedCase
+Constant BATTLEPool.war (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#593) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#277-279)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#303-306)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#312-314)
+totalSupply() should be declared external:
+	- LPTokenWrapper.totalSupply() (loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol#571-573)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol analyzed (10 contracts with 46 detectors), 22 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xa9CDb5e3C911884Ca6D4b32273c219B536Ee9e6A.sol
+Tool Runtime = 1.009518777998892 seconds
+#############################################

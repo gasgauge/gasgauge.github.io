@@ -1,0 +1,58 @@
+==== Unprotected Selfdestruct ====
+SWC ID: 106
+Severity: High
+Contract: DigiExchange
+Function name: kill(address)
+PC address: 16526
+Estimated Gas Usage: 1319 - 1934
+Any sender can cause the contract to self-destruct.
+Any sender can trigger execution of the SELFDESTRUCT instruction to destroy this contract account and withdraw its balance to an arbitrary address. Review the transaction trace generated for this issue and make sure that appropriate security controls are in place to prevent unrestricted access.
+--------------------
+In file: ./new_contracts/m_loop/5/0x0bc1e9770d4445fb49e3e474555cc15c667a5dd5.sol:667
+
+selfdestruct(addr)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: kill(address), txdata: 0xcbf0b0c0000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DigiExchange
+Function name: withdrawCommission(uint256)
+PC address: 19695
+Estimated Gas Usage: 9997 - 99381
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/5/0x0bc1e9770d4445fb49e3e474555cc15c667a5dd5.sol:926
+
+address(uint160(_receiver)).transfer(_amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdrawCommission(uint256), txdata: 0x17face840000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x0bc1e9770d4445fb49e3e474555cc15c667a5dd5.sol
+Tool Runtime = 10889.42790589499 seconds
+#############################################

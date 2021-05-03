@@ -1,0 +1,114 @@
+Compilation warnings/errors on ./noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol:
+./noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol:448:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+JGNRewards.notifyRewardAmount(uint256) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#715-730) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#721)
+	-leftover = remaining.mul(rewardRate) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#724)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in JGNRewards.exit() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#696-699):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#697)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#625)
+		- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+	- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+		- jgn.safeTransfer(msg.sender,reward) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#705)
+		- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+	State variables written after the call(s):
+	- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#649)
+	- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#648)
+	- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+		- rewards[msg.sender] = 0 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#704)
+		- rewards[account] = earned(account) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#651)
+	- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#652)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in JGNRewards.exit() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#696-699):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#697)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#625)
+		- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+	- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+		- jgn.safeTransfer(msg.sender,reward) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#705)
+		- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#706)
+		- getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#698)
+Reentrancy in JGNRewards.getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#701-708):
+	External calls:
+	- jgn.safeTransfer(msg.sender,reward) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#705)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#706)
+Reentrancy in JGNRewards.stake(uint256) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#684-688):
+	External calls:
+	- super.stake(amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#686)
+		- y.safeTransferFrom(msg.sender,address(this),amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#619)
+		- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#687)
+Reentrancy in JGNRewards.withdraw(uint256) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#690-694):
+	External calls:
+	- super.withdraw(amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#692)
+		- y.safeTransfer(msg.sender,amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#625)
+		- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#693)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+JGNRewards.getReward() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#701-708) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#703)
+JGNRewards.notifyRewardAmount(uint256) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#715-730) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#437-450) uses assembly
+	- INLINE ASM (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#448-449)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#42) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#74) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#263) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#341) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#420) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#491) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#568) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#592) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#480-486):
+	- (success) = recipient.call.value(amount)() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#484)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#544-563):
+	- (success,returndata) = address(token).call(data) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#556)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#582) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+JGNRewards.initreward (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#633) should be constant
+JGNRewards.starttime (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#634) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#290-292)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#316-319)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol#325-327)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol analyzed (10 contracts with 46 detectors), 27 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xd0d0a97de14d676eb2e2bc9a007e9b191d478f4f.sol
+Tool Runtime = 0.9993332520025433 seconds
+#############################################

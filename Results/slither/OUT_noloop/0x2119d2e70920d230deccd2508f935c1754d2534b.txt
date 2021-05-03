@@ -1,0 +1,113 @@
+INFO:Detectors:[93m
+Reentrancy in MoshiachCoinStaking.deposit(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#506-538):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#510)
+	- updateAccount(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#514)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#522)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].add(amountAfterFee) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#526)
+Reentrancy in MoshiachCoinStaking.updateAccount(address) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#442-460):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	State variables written after the call(s):
+	- lastClaimedTime[account] = now (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#458)
+Reentrancy in MoshiachCoinStaking.withdraw(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#542-578):
+	External calls:
+	- updateAccount(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#552)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer withdraw fee.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#562)
+	- require(bool,string)(Token(tokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#564)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].sub(amountToWithdraw) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#568)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+MoshiachCoinStaking.deposit(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#506-538) ignores return value by holders.add(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#532)
+MoshiachCoinStaking.withdraw(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#542-578) ignores return value by holders.remove(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#574)
+MoshiachCoinStaking.transferAnyERC20Tokens(address,address,uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#614-630) ignores return value by Token(_tokenAddr).transfer(_to,_amount) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#628)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in MoshiachCoinStaking.deposit(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#506-538):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#510)
+	- updateAccount(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#514)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#522)
+	State variables written after the call(s):
+	- stakingTime[msg.sender] = now (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#534)
+Reentrancy in MoshiachCoinStaking.updateAccount(address) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#442-460):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	State variables written after the call(s):
+	- totalClaimedRewards = totalClaimedRewards.add(pendingDivs) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#452)
+	- totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#450)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in MoshiachCoinStaking.deposit(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#506-538):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#510)
+	- updateAccount(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#514)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#454)
+		- updateAccount(msg.sender) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#514)
+Reentrancy in MoshiachCoinStaking.updateAccount(address) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#442-460):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#454)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+MoshiachCoinStaking.updateAccount(address) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#442-460) uses timestamp for comparisons
+	Dangerous comparisons:
+	- pendingDivs > 0 (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#446)
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#448)
+MoshiachCoinStaking.withdraw(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#542-578) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.sub(stakingTime[msg.sender]) > cliffTime,You recently staked, please wait before withdrawing.) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#548)
+MoshiachCoinStaking.getStakingAndDaoAmount() (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#596-608) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalClaimedRewards >= stakingAndDaoTokens (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#598)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter MoshiachCoinStaking.getPendingDivs(address)._holder (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#464) is not in mixedCase
+Parameter MoshiachCoinStaking.transferAnyERC20Tokens(address,address,uint256)._tokenAddr (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#614) is not in mixedCase
+Parameter MoshiachCoinStaking.transferAnyERC20Tokens(address,address,uint256)._to (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#614) is not in mixedCase
+Parameter MoshiachCoinStaking.transferAnyERC20Tokens(address,address,uint256)._amount (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#614) is not in mixedCase
+Constant MoshiachCoinStaking.tokenAddress (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#394) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MoshiachCoinStaking.rewardRate (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#400) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MoshiachCoinStaking.rewardInterval (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#402) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MoshiachCoinStaking.stakingFeeRate (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#408) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MoshiachCoinStaking.unstakingFeeRate (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#414) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MoshiachCoinStaking.cliffTime (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#420) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MoshiachCoinStaking.stakingAndDaoTokens (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#592) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+MoshiachCoinStaking.slitherConstructorConstantVariables() (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#380-632) uses literals with too many digits:
+	- stakingAndDaoTokens = 60000000e18 (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#592)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#354-362)
+getNumberOfHolders() should be declared external:
+	- MoshiachCoinStaking.getNumberOfHolders() (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#496-500)
+deposit(uint256) should be declared external:
+	- MoshiachCoinStaking.deposit(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#506-538)
+withdraw(uint256) should be declared external:
+	- MoshiachCoinStaking.withdraw(uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#542-578)
+claimDivs() should be declared external:
+	- MoshiachCoinStaking.claimDivs() (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#582-586)
+transferAnyERC20Tokens(address,address,uint256) should be declared external:
+	- MoshiachCoinStaking.transferAnyERC20Tokens(address,address,uint256) (noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol#614-630)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x2119d2e70920d230deccd2508f935c1754d2534b.sol analyzed (5 contracts with 46 detectors), 33 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x2119d2e70920d230deccd2508f935c1754d2534b.sol
+Tool Runtime = 0.7505084320000606 seconds
+#############################################

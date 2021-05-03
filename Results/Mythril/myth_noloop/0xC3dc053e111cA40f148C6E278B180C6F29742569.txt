@@ -1,0 +1,32 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: UniForRewardCheckerKovan
+Function name: check(address)
+PC address: 512
+Estimated Gas Usage: 5365 - 75434
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/1/0xC3dc053e111cA40f148C6E278B180C6F29742569.sol:402
+
+UniswapV2PairLike(gem).token1()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42206420c220e0000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: check(address), txdata: 0xc23697a88080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xC3dc053e111cA40f148C6E278B180C6F29742569.sol
+Tool Runtime = 161.51179818100354 seconds
+#############################################

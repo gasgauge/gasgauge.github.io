@@ -1,0 +1,32 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PriceConsumerV3
+Function name: priceOfBatch(address[])
+PC address: 1144
+Estimated Gas Usage: 5081 - 82274
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops10/0xFf1B56597a71F2317746EA430f73ac3475cBc46c.sol:164
+
+priceFeed.latestRoundData()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000800000570b0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: priceOfBatch(address[]), txdata: 0x3abc59b80000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xFf1B56597a71F2317746EA430f73ac3475cBc46c.sol
+Tool Runtime = 144.907390709006 seconds
+#############################################

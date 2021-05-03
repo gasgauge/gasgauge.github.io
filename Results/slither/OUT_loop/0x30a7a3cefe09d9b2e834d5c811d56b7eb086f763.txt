@@ -1,0 +1,370 @@
+Compilation warnings/errors on ./loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol:
+./loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol:404:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+ERC20Detailed.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#208) shadows:
+	- Initializable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#148)
+Ownable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#829) shadows:
+	- Initializable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#148)
+CurveFiProtocol.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1393) shadows:
+	- Ownable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#829)
+	- Initializable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#148)
+CurveFiProtocol.MAX_UINT256 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1100) shadows:
+	- ProtocolBase.MAX_UINT256 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1021)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[91m
+CurveFiProtocol.curveFiDeposit (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1110) is never initialized. It is used in:
+	- CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156)
+	- CurveFiProtocol.deposit_remove_liquidity_one_coin(uint256,uint256,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1330-1332)
+	- CurveFiProtocol._registerToken(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1371-1381)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-state-variables[0m
+INFO:Detectors:[93m
+Reentrancy in CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156):
+	External calls:
+	- _unregisterToken(_registeredTokens[i]) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1134)
+		- curveFiLPGauge.withdraw(amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1368)
+		- curveFiDeposit.remove_liquidity_one_coin(_token_amount,int128(i),min_uamount,DONATE_DUST) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1331)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+		- ltoken.safeTransfer(beneficiary,amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1211)
+	State variables written after the call(s):
+	- _registeredTokens[i] = address(0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1135)
+Reentrancy in CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156):
+	External calls:
+	- lpToken = curveFiLPGauge.lp_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1145)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1147)
+	- IERC20(curveFiToken).safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1149)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1150)
+	- _registerToken(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1153)
+		- ltoken.safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1374)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+	State variables written after the call(s):
+	- _registerToken(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1153)
+		- _registeredTokens[idx] = token (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1372)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- _unregisterToken_SBTC(_registeredTokens[i]) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1438)
+		- curveFiLPGauge.withdraw(amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1368)
+		- ICurveFiSwap_SBTC(address(curveFiSwap)).remove_liquidity_imbalance(amnts,_token_amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1464)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+		- ltoken.safeTransfer(beneficiary,amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1211)
+	State variables written after the call(s):
+	- _registeredTokens[i] = address(0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1439)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- curveFiToken = IERC20(curveFiLPGauge.lp_token()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1447)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1449)
+	- IERC20(curveFiToken).safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1451)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1452)
+	- _registerToken_SBTC(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1455)
+		- ltoken.safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1470)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+	State variables written after the call(s):
+	- _registerToken_SBTC(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1455)
+		- _registeredTokens[idx] = token (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1468)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+ProtocolBase.claimRewards().j (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1062) is a local variable never initialized
+ProtocolBase.claimRewards().receivedRewardTokensCount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1047) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+ERC20Detailed.initialize(string,string,uint8).name (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#171) shadows:
+	- ERC20Detailed.name() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#180-182) (function)
+ERC20Detailed.initialize(string,string,uint8).symbol (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#171) shadows:
+	- ERC20Detailed.symbol() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#188-190) (function)
+ERC20Detailed.initialize(string,string,uint8).decimals (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#171) shadows:
+	- ERC20Detailed.decimals() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#204-206) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458) has external calls inside a loop: token = curveFiSwap.coins(int128(i_scope_0)) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1454)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in CurveFiProtocol._registerToken(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1371-1381):
+	External calls:
+	- ltoken.safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1374)
+	State variables written after the call(s):
+	- decimals[token] = ERC20Detailed(token).decimals() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1379)
+Reentrancy in CurveFiProtocol_SBTC._registerToken_SBTC(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1467-1477):
+	External calls:
+	- ltoken.safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1470)
+	State variables written after the call(s):
+	- decimals[token] = ERC20Detailed(token).decimals() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1475)
+Reentrancy in CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156):
+	External calls:
+	- lpToken = curveFiLPGauge.lp_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1145)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1147)
+	State variables written after the call(s):
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1147)
+Reentrancy in CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156):
+	External calls:
+	- lpToken = curveFiLPGauge.lp_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1145)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1147)
+	- IERC20(curveFiToken).safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1149)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1150)
+	- _registerToken(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1153)
+		- ltoken.safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1374)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+	State variables written after the call(s):
+	- _registerToken(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1153)
+		- decimals[token] = ERC20Detailed(token).decimals() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1379)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- curveFiToken = IERC20(curveFiLPGauge.lp_token()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1447)
+	State variables written after the call(s):
+	- curveFiMinter = ICurveFiMinter(curveFiLPGauge.minter()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1448)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- curveFiToken = IERC20(curveFiLPGauge.lp_token()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1447)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1449)
+	State variables written after the call(s):
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1449)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- curveFiToken = IERC20(curveFiLPGauge.lp_token()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1447)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1449)
+	- IERC20(curveFiToken).safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1451)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1452)
+	- _registerToken_SBTC(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1455)
+		- ltoken.safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1470)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+	State variables written after the call(s):
+	- _registerToken_SBTC(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1455)
+		- decimals[token] = ERC20Detailed(token).decimals() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1475)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in CurveFiProtocol._registerToken(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1371-1381):
+	External calls:
+	- ltoken.safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1374)
+	Event emitted after the call(s):
+	- TokenRegistered(token) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1380)
+Reentrancy in CurveFiProtocol_SBTC._registerToken_SBTC(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1467-1477):
+	External calls:
+	- ltoken.safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1470)
+	Event emitted after the call(s):
+	- TokenRegistered(token) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1476)
+Reentrancy in CurveFiProtocol._unregisterToken(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1383-1391):
+	External calls:
+	- withdraw(token,_msgSender(),balance) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1388)
+		- curveFiLPGauge.withdraw(amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1368)
+		- curveFiDeposit.remove_liquidity_one_coin(_token_amount,int128(i),min_uamount,DONATE_DUST) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1331)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+		- ltoken.safeTransfer(beneficiary,amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1211)
+	Event emitted after the call(s):
+	- TokenUnregistered(token) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1390)
+Reentrancy in CurveFiProtocol_SBTC._unregisterToken_SBTC(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1479-1487):
+	External calls:
+	- withdraw(token,_msgSender(),balance) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1484)
+		- curveFiLPGauge.withdraw(amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1368)
+		- ICurveFiSwap_SBTC(address(curveFiSwap)).remove_liquidity_imbalance(amnts,_token_amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1464)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+		- ltoken.safeTransfer(beneficiary,amount) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1211)
+	Event emitted after the call(s):
+	- TokenUnregistered(token) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1486)
+Reentrancy in CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156):
+	External calls:
+	- lpToken = curveFiLPGauge.lp_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1145)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1147)
+	- IERC20(curveFiToken).safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1149)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1150)
+	- _registerToken(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1153)
+		- ltoken.safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1374)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+	Event emitted after the call(s):
+	- TokenRegistered(token) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1380)
+		- _registerToken(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1153)
+Reentrancy in CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156):
+	External calls:
+	- lpToken = curveFiLPGauge.lp_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1145)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1147)
+	- IERC20(curveFiToken).safeApprove(address(curveFiDeposit),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1149)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1150)
+	Event emitted after the call(s):
+	- CurveFiSetup(address(curveFiSwap),address(curveFiDeposit),address(curveFiLPGauge)) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1155)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- curveFiToken = IERC20(curveFiLPGauge.lp_token()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1447)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1449)
+	- IERC20(curveFiToken).safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1451)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1452)
+	- _registerToken_SBTC(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1455)
+		- ltoken.safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1470)
+		- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+	Event emitted after the call(s):
+	- TokenRegistered(token) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1476)
+		- _registerToken_SBTC(token,i_scope_0) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1455)
+Reentrancy in CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458):
+	External calls:
+	- curveFiToken = IERC20(curveFiLPGauge.lp_token()) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1447)
+	- crvToken = curveFiLPGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1449)
+	- IERC20(curveFiToken).safeApprove(address(curveFiSwap),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1451)
+	- IERC20(curveFiToken).safeApprove(address(curveFiLPGauge),MAX_UINT256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1452)
+	Event emitted after the call(s):
+	- CurveFiSetup(address(curveFiSwap),address(0),address(curveFiLPGauge)) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1457)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#135-145) uses assembly
+	- INLINE ASM (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#143-144)
+Address.isContract(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#397-406) uses assembly
+	- INLINE ASM (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#404-405)
+Module.getModuleAddress(string) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#897-911) uses assembly
+	- INLINE ASM (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#902-906)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#88) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#154) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#214) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#374) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#448) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#526) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#615) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#632) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#644) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#664) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#673) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#709) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#720) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#752) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#835) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#855) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#875) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#918) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#958) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1009) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1083) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1399) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1411) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#436-442):
+	- (success) = recipient.call.value(amount)() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#440)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#501-520):
+	- (success,returndata) = address(token).call(data) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#513)
+Low level call in Module.getModuleAddress(string) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#897-911):
+	- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#899)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#148) is not in mixedCase
+Variable ERC20Detailed.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#208) is not in mixedCase
+Function ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#618) is not in mixedCase
+Parameter ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256)._token_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#618) is not in mixedCase
+Parameter ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256).min_uamount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#618) is not in mixedCase
+Function ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256,bool) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#619) is not in mixedCase
+Parameter ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256,bool)._token_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#619) is not in mixedCase
+Parameter ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256,bool).min_uamount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#619) is not in mixedCase
+Parameter ICurveFiDeposit.remove_liquidity_one_coin(uint256,int128,uint256,bool).donate_dust (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#619) is not in mixedCase
+Function ICurveFiDeposit.withdraw_donated_dust() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#620) is not in mixedCase
+Function ICurveFiDeposit.underlying_coins(int128) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#623) is not in mixedCase
+Function ICurveFiDeposit.calc_withdraw_one_coin(uint256,int128) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#626) is not in mixedCase
+Parameter ICurveFiDeposit.calc_withdraw_one_coin(uint256,int128)._token_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#626) is not in mixedCase
+Function ICurveFiSwap.A() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#636) is not in mixedCase
+Function ICurveFiLiquidityGauge.lp_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#648) is not in mixedCase
+Function ICurveFiLiquidityGauge.crv_token() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#649) is not in mixedCase
+Function ICurveFiLiquidityGauge.claimable_tokens(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#657) is not in mixedCase
+Parameter ICurveFiMinter.mint(address).gauge_addr (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#667) is not in mixedCase
+Variable Ownable.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#829) is not in mixedCase
+Parameter Module.initialize(address)._pool (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#886) is not in mixedCase
+Parameter Module.setPool(address)._pool (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#891) is not in mixedCase
+Parameter ProtocolBase.initialize(address)._pool (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1030) is not in mixedCase
+Function CurveFiProtocol.deposit_add_liquidity(uint256[],uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1120) is not in mixedCase
+Parameter CurveFiProtocol.deposit_add_liquidity(uint256[],uint256).min_mint_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1120) is not in mixedCase
+Function CurveFiProtocol.deposit_remove_liquidity_imbalance(uint256[],uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1121) is not in mixedCase
+Parameter CurveFiProtocol.deposit_remove_liquidity_imbalance(uint256[],uint256).max_burn_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1121) is not in mixedCase
+Parameter CurveFiProtocol.initialize(address)._pool (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1123) is not in mixedCase
+Parameter CurveFiProtocol.setSlippageMultiplier(uint256)._slippageMultiplier (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1158) is not in mixedCase
+Function CurveFiProtocol.deposit_remove_liquidity_one_coin(uint256,uint256,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1330-1332) is not in mixedCase
+Parameter CurveFiProtocol.deposit_remove_liquidity_one_coin(uint256,uint256,uint256)._token_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1330) is not in mixedCase
+Parameter CurveFiProtocol.deposit_remove_liquidity_one_coin(uint256,uint256,uint256).min_uamount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1330) is not in mixedCase
+Variable CurveFiProtocol.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1393) is not in mixedCase
+Variable CurveFiProtocol._registeredTokens (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1115) is not in mixedCase
+Contract ICurveFiSwap_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1401-1406) is not in CapWords
+Function ICurveFiSwap_SBTC.add_liquidity(uint256[3],uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1402) is not in mixedCase
+Parameter ICurveFiSwap_SBTC.add_liquidity(uint256[3],uint256).min_mint_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1402) is not in mixedCase
+Function ICurveFiSwap_SBTC.remove_liquidity(uint256,uint256[3]) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1403) is not in mixedCase
+Parameter ICurveFiSwap_SBTC.remove_liquidity(uint256,uint256[3]).min_amounts (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1403) is not in mixedCase
+Function ICurveFiSwap_SBTC.remove_liquidity_imbalance(uint256[3],uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1404) is not in mixedCase
+Parameter ICurveFiSwap_SBTC.remove_liquidity_imbalance(uint256[3],uint256).max_burn_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1404) is not in mixedCase
+Function ICurveFiSwap_SBTC.calc_token_amount(uint256[3],bool) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1405) is not in mixedCase
+Contract CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509) is not in CapWords
+Function CurveFiProtocol_SBTC.upgrade_withdraw_token(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1428-1430) is not in mixedCase
+Parameter CurveFiProtocol_SBTC.upgrade_withdraw_token(address,uint256)._token (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1428) is not in mixedCase
+Function CurveFiProtocol_SBTC.deposit_remove_liquidity_one_coin(uint256,uint256,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1460-1465) is not in mixedCase
+Parameter CurveFiProtocol_SBTC.deposit_remove_liquidity_one_coin(uint256,uint256,uint256)._token_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1460) is not in mixedCase
+Parameter CurveFiProtocol_SBTC.deposit_remove_liquidity_one_coin(uint256,uint256,uint256).min_uamount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1460) is not in mixedCase
+Function CurveFiProtocol_SBTC._registerToken_SBTC(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1467-1477) is not in mixedCase
+Function CurveFiProtocol_SBTC._unregisterToken_SBTC(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1479-1487) is not in mixedCase
+Function CurveFiProtocol_SBTC.deposit_add_liquidity(uint256[],uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1501-1503) is not in mixedCase
+Parameter CurveFiProtocol_SBTC.deposit_add_liquidity(uint256[],uint256).min_mint_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1501) is not in mixedCase
+Function CurveFiProtocol_SBTC.deposit_remove_liquidity_imbalance(uint256[],uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1505-1507) is not in mixedCase
+Parameter CurveFiProtocol_SBTC.deposit_remove_liquidity_imbalance(uint256[],uint256).max_burn_amount (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1505) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ERC20Detailed.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#208) is never used in ERC20Detailed (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#161-209)
+CurveFiProtocol.______gap (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1393) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+ModuleNames.MODULE_ACCESS (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#862) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+ModuleNames.MODULE_SAVINGS (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#863) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+ModuleNames.MODULE_INVESTING (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#864) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+ModuleNames.MODULE_STAKING (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#865) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+ModuleNames.MODULE_DCA (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#866) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+ModuleNames.CONTRACT_RAY (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#869) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+CurveFiProtocol_SBTC.balRewardToken (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1422) is never used in CurveFiProtocol_SBTC (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1419-1509)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+CurveFiProtocol_SBTC.balRewardToken (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1422) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+initialize(string,string,uint8) should be declared external:
+	- ERC20Detailed.initialize(string,string,uint8) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#171-175)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#180-182)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#188-190)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#204-206)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#807-810)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#816-818)
+getModuleAddress(string) should be declared external:
+	- Module.getModuleAddress(string) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#897-911)
+addDefiOperator(address) should be declared external:
+	- DefiOperatorRole.addDefiOperator(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#982-984)
+renounceDefiOperator() should be declared external:
+	- DefiOperatorRole.renounceDefiOperator() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#986-988)
+claimRewards() should be declared external:
+	- ProtocolBase.claimRewards() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1041-1071)
+withdrawReward(address,address,uint256) should be declared external:
+	- ProtocolBase.withdrawReward(address,address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1073-1077)
+setCurveFi(address,address) should be declared external:
+	- CurveFiProtocol.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1129-1156)
+	- CurveFiProtocol_SBTC.setCurveFi(address,address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1432-1458)
+setSlippageMultiplier(uint256) should be declared external:
+	- CurveFiProtocol.setSlippageMultiplier(uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1158-1161)
+handleDeposit(address,uint256) should be declared external:
+	- CurveFiProtocol.handleDeposit(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1163-1174)
+handleDeposit(address[],uint256[]) should be declared external:
+	- CurveFiProtocol.handleDeposit(address[],uint256[]) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1176-1187)
+withdraw(address,uint256[]) should be declared external:
+	- CurveFiProtocol.withdraw(address,uint256[]) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1214-1244)
+balanceOf(address) should be declared external:
+	- CurveFiProtocol.balanceOf(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1260-1268)
+optimalProportions() should be declared external:
+	- CurveFiProtocol.optimalProportions() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1290-1301)
+supportedTokens() should be declared external:
+	- CurveFiProtocol.supportedTokens() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1304-1306)
+supportedTokensCount() should be declared external:
+	- CurveFiProtocol.supportedTokensCount() (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1308-1310)
+canSwapToToken(address) should be declared external:
+	- CurveFiProtocol.canSwapToToken(address) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1321-1328)
+upgrade_withdraw_token(address,uint256) should be declared external:
+	- CurveFiProtocol_SBTC.upgrade_withdraw_token(address,uint256) (loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol#1428-1430)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol analyzed (24 contracts with 46 detectors), 146 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x30a7a3cefe09d9b2e834d5c811d56b7eb086f763.sol
+Tool Runtime = 7.541963621999457 seconds
+#############################################

@@ -1,0 +1,243 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: Migrator
+Function name: migrate(address)
+PC address: 881
+Estimated Gas Usage: 2015 - 2440
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:110
+
+require(block.number >= notBeforeBlock, "too early to migrate")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c00000000dbfbe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Migrator
+Function name: migrate(address)
+PC address: 1447
+Estimated Gas Usage: 29710 - 382652
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:112
+
+orig.token0()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20b87ba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Migrator
+Function name: migrate(address)
+PC address: 1608
+Estimated Gas Usage: 29710 - 382652
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:113
+
+orig.token1()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20400000020f3ffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Migrator
+Function name: migrate(address)
+PC address: 2265
+Estimated Gas Usage: 29710 - 382652
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:116
+
+factory.createPair(token0, token1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400410000020a65b6, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefbbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Migrator
+Function name: migrate(address)
+PC address: 2567
+Estimated Gas Usage: 29710 - 382652
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:120
+
+desiredLiquidity = lp
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf7d7e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefbbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Migrator
+Function name: migrate(address)
+PC address: 2786
+Estimated Gas Usage: 29710 - 382652
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:121
+
+orig.transferFrom(msg.sender, address(orig), lp)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400020f2ffe, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb020202020202020202020202deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Migrator
+Function name: migrate(address)
+PC address: 2786
+Estimated Gas Usage: 29710 - 382652
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:121
+
+orig.transferFrom(msg.sender, address(orig), lp)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf7d7e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefbbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Migrator
+Function name: migrate(address)
+PC address: 3000
+Estimated Gas Usage: 29710 - 382652
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:122
+
+orig.burn(address(pair))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf7d7e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefbbbbbbbbbbbbbbbbbbbbbbbb0000000000000000000000000000000000000000bbbbbbbbbbbbbbbbbbbbbbbbdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: migrate(address), txdata: 0xce5494bb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Migrator
+Function name: migrate(address)
+PC address: 3321
+Estimated Gas Usage: 29710 - 382652
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/4/0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol:124
+
+desiredLiquidity = uint256(-1)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf3ef6, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: migrate(address), txdata: 0xce5494bb000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x7bd1EA1d70079928b3b3469c327Be718F972F588.sol
+Tool Runtime = 53.15419685400411 seconds
+#############################################

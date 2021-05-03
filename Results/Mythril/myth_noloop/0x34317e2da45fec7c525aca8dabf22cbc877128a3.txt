@@ -1,0 +1,141 @@
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: VidyaFLUX
+Function name: feedInventory()
+PC address: 6890
+Estimated Gas Usage: 14115 - 105930
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol:794
+
+erc20
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: feedInventory(), txdata: 0x7529c202, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: VidyaFLUX
+Function name: feedInventory()
+PC address: 7084
+Estimated Gas Usage: 14115 - 105930
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol:794
+
+erc20.transfer(msg.sender, bonus)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: feedInventory(), txdata: 0x7529c202, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: VidyaFLUX
+Function name: multiData()
+PC address: 8829
+Estimated Gas Usage: 15657 - 88097
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol:848
+
+erc20.balanceOf(msg.sender)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42040000000000302, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: multiData(), txdata: 0xf2b79df9, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: VidyaFLUX
+Function name: calculateTokensReceived(uint256)
+PC address: 9645
+Estimated Gas Usage: 1247 - 1342
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol:66
+
+assert(c / a == b)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2100040000000041, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8408, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: totalVIDYABalance(), txdata: 0x15eaeaf0, value: 0x0
+Caller: [CREATOR], function: calculateTokensReceived(uint256), txdata: 0x10d0ffdd80000400001b4800699f352666ce0666666666800004073340032e866cce0023, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: VidyaFLUX
+Function name: buy(uint256,address)
+PC address: 10180
+Estimated Gas Usage: 3797 - 38974
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol:144
+
+if (now >= ACTIVATION_TIME) {
+
+         onlyAmbassadors = false;
+
+      }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: buy(uint256,address), txdata: 0x7deb602500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x34317e2da45fec7c525aca8dabf22cbc877128a3.sol
+Tool Runtime = 549.8294013600098 seconds
+#############################################

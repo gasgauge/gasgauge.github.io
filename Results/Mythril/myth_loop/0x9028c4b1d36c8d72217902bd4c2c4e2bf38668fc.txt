@@ -1,0 +1,242 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: SpacePodsUSDT
+Function name: depositSZTokenTerm(address,uint256,uint256)
+PC address: 6753
+Estimated Gas Usage: 2086 - 2511
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:330
+
+amount % (10 ** decimal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000001122, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: setAdminControl(bool), txdata: 0xad07d0ac0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: depositSZTokenTerm(address,uint256,uint256), txdata: 0x2daf9d4a070707070707070707070707deadbeefdeadbeefdeadbeefdeadbeefdeadbeef07070707070707070707070707070707070707070707070707070707070707074000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SpacePodsUSDT
+Function name: depositToken(address,uint256)
+PC address: 7715
+Estimated Gas Usage: 4860 - 40223
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:312
+
+token
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000140000a01, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: depositToken(address,uint256), txdata: 0x338b5dea000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa7a1200000000000000002002ba438ee4ea9d0c000000989a70a01f4e3f1f7200, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: SpacePodsUSDT
+Function name: depositTokenTerm(address,uint256,uint256)
+PC address: 7968
+Estimated Gas Usage: 8486 - 79971
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:312
+
+token.intTransfer(_from,address(this),amount * (10 ** 12))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80040000010001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: depositTokenTerm(address,uint256,uint256), txdata: 0x2ecbbf2b00000000000000000000000002012010014002010004042080020400000120041e88509000000000000000001506c99a1491da40094c127fdb8950a022cf4b400100208000020400002040020080100110800000042000000080000120000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SpacePodsUSDT
+Function name: depositTokenTerm(address,uint256,uint256)
+PC address: 7968
+Estimated Gas Usage: 6569 - 77014
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:312
+
+token.intTransfer(_from,address(this),amount * (10 ** 12))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: depositTokenTerm(address,uint256,uint256), txdata: 0x2ecbbf2b000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe3d089c6697520bc2ea8a686000cbbc8b58de8000000003f4d10c4bc9f6649b000000000000000000000000800401000020000000000000000000000204000080, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: SpacePodsUSDT
+Function name: withdrawStupidUser(uint256,address,address)
+PC address: 8737
+Estimated Gas Usage: 3962 - 39564
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:204
+
+stupid.transfer(_to,amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdrawStupidUser(uint256,address,address), txdata: 0x686a9dd20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: SpacePodsUSDT
+Function name: supplyInterest()
+PC address: 9639
+Estimated Gas Usage: 1879 - 2304
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:620
+
+totalSupply / (10 ** decimal)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000931c6, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: setAdminControl(bool), txdata: 0xad07d0ac0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: supplyInterest(), txdata: 0x8abc0a0d, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: SpacePodsUSDT
+Function name: interests(uint256)
+PC address: 11449
+Estimated Gas Usage: 1146 - 1241
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:146
+
+InterestStruct[] public interests
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x140080000000818, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: interests(uint256), txdata: 0xaa097f150000000000000000000000000000000100000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SpacePodsUSDT
+Function name: depositToken(address,uint256)
+PC address: 18667
+Estimated Gas Usage: 9354 - 80839
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:249
+
+totalSupply
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x20, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: depositToken(address,uint256), txdata: 0x338b5dea0000000000000000000000000000000000000000000000000000000000000000042c1d8000000002137e9f4042490e240b6680000000000000000aba95000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: SpacePodsUSDT
+Function name: depositToken(address,uint256)
+PC address: 18670
+Estimated Gas Usage: 7437 - 77882
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol:249
+
+POOL_HARDCAP
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: depositToken(address,uint256), txdata: 0x338b5dea000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffef4a2275b255e8000000000000000001406d57ba06cc8006ad2a8003aeb450400, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x9028c4b1d36c8d72217902bd4c2c4e2bf38668fc.sol
+Tool Runtime = 10897.485522159986 seconds
+#############################################

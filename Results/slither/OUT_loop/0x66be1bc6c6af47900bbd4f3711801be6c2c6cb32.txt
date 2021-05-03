@@ -1,0 +1,135 @@
+INFO:Detectors:[93m
+ThreeFMutual.updateMasks(address,uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471-486) performs a multiplication on the result of a division:
+	-_ppt = _div.mul(1000000000000000000) / shares (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#476)
+	-_pearn = (_ppt.mul(_shares)) / 1000000000000000000 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#481)
+ThreeFMutual.updateMasks(address,uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471-486) performs a multiplication on the result of a division:
+	-_ppt = _div.mul(1000000000000000000) / shares (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#476)
+	-(_div.sub(_ppt.mul(shares) / 1000000000000000000)) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#485)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in ThreeFMutual.tick() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#219-244):
+	External calls:
+	- vat.live() == 0 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#229)
+	State variables written after the call(s):
+	- ended = true (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#230)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in ThreeFMutual.claim() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#491-502):
+	External calls:
+	- require(bool,string)(tick(),not yet) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#495)
+		- vat.live() == 0 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#229)
+	State variables written after the call(s):
+	- updatePlayerUnit(beneficiary) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#498)
+		- player[_player].units = player[_player].units.sub(expiredUnit) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#425)
+		- player[_player].plyrLastSeen = today (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#427)
+	- player[beneficiary].claimed = true (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#500)
+	- updatePlayerUnit(beneficiary) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#498)
+		- unitToExpirePlayer[_player][_today] = 0 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#422)
+Reentrancy in ThreeFMutual.tick() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#219-244):
+	External calls:
+	- vat.live() == 0 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#229)
+	State variables written after the call(s):
+	- end = now (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#231)
+	- issuedInsurance = issuedInsurance.sub(unitToExpire[today]) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#236)
+	- today += 1 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#238)
+	- unitToExpire[today] = 0 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#237)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+ThreeFMutual.tick() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#219-244) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _now != now (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#224)
+	- today < _today (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#235)
+ThreeFMutual.updatePlayerUnit(address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#416-428) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _today < today (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#420)
+ThreeFMutual.getCurrentUnit(address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#563-579) uses timestamp for comparisons
+	Dangerous comparisons:
+	- _today < today (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#572)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in ThreeFMutual.sendHuman(address,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#634-637):
+	- (success,None) = recipient.call.value(amount)() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#636)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter ThreeFMutual.register(string)._nameString (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#250) is not in mixedCase
+Parameter ThreeFMutual.buy(address,uint256)._agent (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#294) is not in mixedCase
+Parameter ThreeFMutual.buy(address,uint256)._date (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#294) is not in mixedCase
+Parameter ThreeFMutual.buy(uint256,uint256)._agentId (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#314) is not in mixedCase
+Parameter ThreeFMutual.buy(uint256,uint256)._date (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#314) is not in mixedCase
+Parameter ThreeFMutual.buy(bytes32,uint256)._agentName (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#332) is not in mixedCase
+Parameter ThreeFMutual.buy(bytes32,uint256)._date (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#332) is not in mixedCase
+Parameter ThreeFMutual.buyCore(address,uint256,uint256,address)._buyer (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374) is not in mixedCase
+Parameter ThreeFMutual.buyCore(address,uint256,uint256,address)._eth (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374) is not in mixedCase
+Parameter ThreeFMutual.buyCore(address,uint256,uint256,address)._date (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374) is not in mixedCase
+Parameter ThreeFMutual.buyCore(address,uint256,uint256,address)._agent (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374) is not in mixedCase
+Parameter ThreeFMutual.updatePlayerUnit(address)._player (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#416) is not in mixedCase
+Parameter ThreeFMutual.distributeEx(uint256,address)._eth (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#433) is not in mixedCase
+Parameter ThreeFMutual.distributeEx(uint256,address)._agent (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#433) is not in mixedCase
+Parameter ThreeFMutual.distributeIn(address,uint256,uint256)._buyer (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#455) is not in mixedCase
+Parameter ThreeFMutual.distributeIn(address,uint256,uint256)._eth (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#455) is not in mixedCase
+Parameter ThreeFMutual.distributeIn(address,uint256,uint256)._shares (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#455) is not in mixedCase
+Parameter ThreeFMutual.updateMasks(address,uint256,uint256)._player (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471) is not in mixedCase
+Parameter ThreeFMutual.updateMasks(address,uint256,uint256)._div (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471) is not in mixedCase
+Parameter ThreeFMutual.updateMasks(address,uint256,uint256)._shares (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471) is not in mixedCase
+Parameter ThreeFMutual.withdrawEarnings(address)._player (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#523) is not in mixedCase
+Parameter ThreeFMutual.calcUnMaskedEarnings(address)._player (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#539) is not in mixedCase
+Parameter ThreeFMutual.getCurrentUnit(address)._player (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#563) is not in mixedCase
+Parameter ThreeFMutual.getExpiringUnitListPlayer(address)._player (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#585) is not in mixedCase
+Constant ThreeFMutual.hakka (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#38) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable ThreeFMutual._now (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#55) is not in mixedCase
+Constant ThreeFMutual.maxInsurePeriod (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#65) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant ThreeFMutual.maxLevel (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#66) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ThreeFMutual.register(string) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#250-273) uses literals with too many digits:
+	- require(bool,string)(msg.value >= 10000000000000000,insufficient amount) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#257)
+ThreeFMutual.buyCore(address,uint256,uint256,address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374-411) uses literals with too many digits:
+	- require(bool,string)(_eth >= 1000000000,pocket lint: not a valid currency) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#378)
+ThreeFMutual.buyCore(address,uint256,uint256,address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374-411) uses literals with too many digits:
+	- require(bool,string)(_eth <= 10000000000000000000000,no vitalik, no) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#379)
+ThreeFMutual.buyCore(address,uint256,uint256,address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374-411) uses literals with too many digits:
+	- _rate = rate[_date] + 1000000000000000000 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#384)
+ThreeFMutual.buyCore(address,uint256,uint256,address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#374-411) uses literals with too many digits:
+	- ethToBuyShare = _eth.mul(1000000000000000000) / _rate (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#385)
+ThreeFMutual.updateMasks(address,uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471-486) uses literals with too many digits:
+	- _ppt = _div.mul(1000000000000000000) / shares (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#476)
+ThreeFMutual.updateMasks(address,uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471-486) uses literals with too many digits:
+	- _pearn = (_ppt.mul(_shares)) / 1000000000000000000 (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#481)
+ThreeFMutual.updateMasks(address,uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471-486) uses literals with too many digits:
+	- player[_player].mask = (((mask.mul(_shares)) / 1000000000000000000).sub(_pearn)).add(player[_player].mask) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#482)
+ThreeFMutual.updateMasks(address,uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#471-486) uses literals with too many digits:
+	- (_div.sub(_ppt.mul(shares) / 1000000000000000000)) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#485)
+ThreeFMutual.calcUnMaskedEarnings(address) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#539-545) uses literals with too many digits:
+	- (mask.mul(player[_player].shares) / 1000000000000000000).sub(player[_player].mask) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#544)
+ThreeFMutual.getBuyPrice() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#555-557) uses literals with too many digits:
+	- underwriter.burnShare(shares.add(1000000000000000000),1000000000000000000) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#556)
+ThreeFMutual.slitherConstructorVariables() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#8-645) uses literals with too many digits:
+	- rate = (0,1000000000000000000,1990000000000000000,2970100000000000000,3940399000000000000,4900995010000000000,5851985059900000000,6793465209301000000,7725530557207990000,8648275251635910100,9561792499119550999,10466174574128355489,11361512828387071934,12247897700103201215,13125418723102169203,13994164535871147511,14854222890512436036,15705680661607311676,16548623854991238559,17383137616441326173,18209306240276912911,19027213177874143782,19836941046095402344,20638571635634448321,21432185919278103838,22217864060085322800,22995685419484469572,23765728565289624876,24528071279636728627,25282790566840361341,26029962661171957728,26769663034560238151,27501966404214635769,28226946740172489411,28944677272770764517,29655230500043056872,30358678195042626303,31055091413092200040,31744540498961278040,32427095093971665260,33102824143031948607,33771795901601629121,34434077942585612830,35089737163159756702,35738839791528159135,36381451393612877544,37017636879676748769,37647460510879981281,38270985905771181468,38888276046713469653,39499393286246334956,40104399353383871606,40703355359850032890,41296321806251532561,41883358588189017235,42464525002307127063,43039879752284055792,43609480954761215234,44173386145213603082,44731652283761467051,45284335760923852380,45831492403314613856,46373177479281467717,46909445704488653040,47440351247443766510,47965947734969328845,48486288257619635557,49001425375043439201,49511411121293004809,50016297010080074761,50516134039979274013,51010972699579481273,51500862972583686460,51985854342857849595,52465995799429271099,52941335841434978388,53411922483020628604,53877803258190422318,54339025225608518095,54795634973352432914,55247678623618908585,55695201837382719499,56138249819008892304,56576867320818803381,57011098647610615347,57440987661134509194,57866577784523164102,58287912006677932461,58705032886611153136,59117982557745041605,59526802732167591189,59931534704845915277,60332219357797456124,60728897164219481563,61121608192577286747,61510392110651513880,61895288189544998741,62276335307649548754,62653571954573053266,63027036235027322733,63396765872677049506) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#69-170)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+buy(uint256,uint256) should be declared external:
+	- ThreeFMutual.buy(uint256,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#314-329)
+buy(bytes32,uint256) should be declared external:
+	- ThreeFMutual.buy(bytes32,uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#332-347)
+claim() should be declared external:
+	- ThreeFMutual.claim() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#491-502)
+withdraw() should be declared external:
+	- ThreeFMutual.withdraw() (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#507-521)
+shares(uint256) should be declared external:
+	- Underwriter.shares(uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#660)
+eth(uint256) should be declared external:
+	- Underwriter.eth(uint256) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#661)
+register(string) should be declared external:
+	- Agency.register(string) (loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol#666)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol analyzed (6 contracts with 46 detectors), 58 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x66be1bc6c6af47900bbd4f3711801be6c2c6cb32.sol
+Tool Runtime = 1.1000837210012833 seconds
+#############################################

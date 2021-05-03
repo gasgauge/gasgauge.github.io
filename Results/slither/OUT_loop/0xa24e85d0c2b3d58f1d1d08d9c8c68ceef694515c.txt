@@ -1,0 +1,206 @@
+Compilation warnings/errors on ./loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol:
+./loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol:36:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+Reentrancy in MSTX.processActionProposal(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1042-1108):
+	External calls:
+	- (success,returnData) = proposal.applicant.call.value(proposal.tributeOffered)(action) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1084)
+	State variables written after the call(s):
+	- unsafeSubtractFromBalance(GUILD,proposal.applicant,proposal.paymentRequested) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1088)
+		- userTokenBalances[user][token] -= amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1768)
+		- userTokenBalances[TOTAL][token] -= amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1770)
+Reentrancy in MSTX.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#520-596):
+	External calls:
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+	- IERC20(wETH).transfer(address(this),msg.value) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#570)
+	- IERC20(tributeToken).safeTransferFrom(msg.sender,address(this),tributeOffered) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#574)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+	State variables written after the call(s):
+	- unsafeAddToBalance(ESCROW,tributeToken,tributeOffered) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#580)
+		- userTokenBalances[user][token] += amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1748)
+		- userTokenBalances[TOTAL][token] += amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1750)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+MSTX.fairShare(uint256,uint256,uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1646-1670) performs a multiplication on the result of a division:
+	-(balance / totalSharesAndLoot) * shares (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1668)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+MSTX._validateProposalForProcessing(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1308-1320) uses a dangerous strict equality:
+	- require(bool,string)(proposal.flags[1] == 0,processed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1316)
+MSTX.canRagequit(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1552-1558) uses a dangerous strict equality:
+	- proposals[proposalQueue[highestIndexYesVote]].flags[1] == 1 (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1556)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in MSTX._withdrawBalance(address,uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1450-1460):
+	External calls:
+	- IERC20(token).safeTransfer(msg.sender,amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1454)
+	State variables written after the call(s):
+	- unsafeSubtractFromBalance(msg.sender,token,amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1456)
+		- userTokenBalances[user][token] -= amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1768)
+		- userTokenBalances[TOTAL][token] -= amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1770)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+MSTX.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#520-596) ignores return value by IERC20(wETH).transfer(address(this),msg.value) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#570)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+MSTX.receive() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1642) (function) shadows built-in symbol"
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#builtin-symbol-shadowing[0m
+INFO:Detectors:[92m
+MSTX.withdrawBalances(address[],uint256[],bool).max (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1428) shadows:
+	- MSTX.max(uint256,uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1576-1580) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in MSTX.processActionProposal(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1042-1108):
+	External calls:
+	- (success,returnData) = proposal.applicant.call.value(proposal.tributeOffered)(action) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1084)
+	State variables written after the call(s):
+	- totalGuildBankTokens -= 1 (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1092)
+Reentrancy in MSTX.sponsorProposal(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#780-860):
+	External calls:
+	- IERC20(depositToken).safeTransferFrom(msg.sender,address(this),proposalDeposit) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#784)
+	State variables written after the call(s):
+	- proposalQueue.push(proposalId) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#854)
+	- proposal.startingPeriod = startingPeriod (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#846)
+	- proposal.sponsor = memberAddressByDelegateKey[msg.sender] (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#848)
+	- proposal.flags[0] = 1 (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#850)
+	- proposedToKick[proposal.applicant] = true (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#828)
+	- proposedToWhitelist[address(proposal.tributeToken)] = true (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#818)
+	- unsafeAddToBalance(ESCROW,depositToken,proposalDeposit) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#786)
+		- userTokenBalances[user][token] += amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1748)
+		- userTokenBalances[TOTAL][token] += amount (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1750)
+Reentrancy in MSTX.stakeTokenForShares(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1812-1822):
+	External calls:
+	- IERC20(stakeToken).safeTransferFrom(msg.sender,address(this),amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1814)
+	State variables written after the call(s):
+	- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+		- balanceOf[account] = balanceOf[account].add(sharesAndLoot) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1730)
+	- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+		- memberAddressByDelegateKey[memberToOverride] = memberToOverride (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1696)
+		- memberAddressByDelegateKey[account] = account (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1720)
+	- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+		- members[account].shares = members[account].shares.add(shares) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1680)
+		- members[account].loot = members[account].loot.add(loot) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1682)
+		- members[memberToOverride].delegateKey = memberToOverride (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1698)
+		- members[account] = Member(account,1,shares,loot.add(members[account].loot),0,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1704-1718)
+	- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+		- totalLoot = totalLoot.add(loot) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1734)
+	- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+		- totalShares = totalShares.add(shares) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1732)
+	- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+		- totalSupply = totalShares.add(totalLoot) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1736)
+Reentrancy in MSTX.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#520-596):
+	External calls:
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+	- IERC20(wETH).transfer(address(this),msg.value) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#570)
+	- IERC20(tributeToken).safeTransferFrom(msg.sender,address(this),tributeOffered) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#574)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+	State variables written after the call(s):
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#590)
+		- actions[proposalCount] = data (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#760)
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#590)
+		- proposalCount += 1 (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#774)
+	- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#590)
+		- proposals[proposalCount] = proposal (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#766)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in MSTX._withdrawBalance(address,uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1450-1460):
+	External calls:
+	- IERC20(token).safeTransfer(msg.sender,amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1454)
+	Event emitted after the call(s):
+	- Withdraw(msg.sender,token,amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1458)
+Reentrancy in MSTX.sponsorProposal(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#780-860):
+	External calls:
+	- IERC20(depositToken).safeTransferFrom(msg.sender,address(this),proposalDeposit) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#784)
+	Event emitted after the call(s):
+	- SponsorProposal(msg.sender,proposal.sponsor,proposalId,proposalQueue.length - 1,startingPeriod) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#858)
+Reentrancy in MSTX.stakeTokenForShares(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1812-1822):
+	External calls:
+	- IERC20(stakeToken).safeTransferFrom(msg.sender,address(this),amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1814)
+	Event emitted after the call(s):
+	- StakeTokenForShares(msg.sender,amount) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1820)
+	- Transfer(address(0),account,sharesAndLoot) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1740)
+		- growGuild(msg.sender,amount,0) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1816)
+Reentrancy in MSTX.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#520-596):
+	External calls:
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+	- IERC20(wETH).transfer(address(this),msg.value) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#570)
+	- IERC20(tributeToken).safeTransferFrom(msg.sender,address(this),tributeOffered) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#574)
+	External calls sending eth:
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+	Event emitted after the call(s):
+	- SubmitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,data,proposalCount,msg.sender,memberAddressByDelegateKey[msg.sender]) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#770)
+		- _submitProposal(applicant,sharesRequested,lootRequested,tributeOffered,tributeToken,paymentRequested,paymentToken,details,flags,) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#590)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+MSTX.sponsorProposal(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#780-860) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(proposal.proposer != address(0),!proposed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#790)
+	- require(bool,string)(proposal.flags[0] == 0,sponsored) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#792)
+	- require(bool,string)(proposal.flags[3] == 0,cancelled) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#794)
+	- require(bool,string)(members[proposal.applicant].jailed == 0,applicant jailed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#796)
+	- require(bool,string)(! tokenWhitelist[address(proposal.tributeToken)],whitelisted) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#812)
+	- require(bool,string)(! proposedToWhitelist[address(proposal.tributeToken)],whitelist proposed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#814)
+	- require(bool,string)(! proposedToKick[proposal.applicant],kick proposed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#826)
+MSTX.submitVote(uint256,uint8) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#866-932) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(getCurrentPeriod() >= proposal.startingPeriod,pending) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#882)
+MSTX._didPass(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1264-1304) uses timestamp for comparisons
+	Dangerous comparisons:
+	- proposal.yesVotes > proposal.noVotes (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1270)
+	- (totalSupply.mul(dilutionBound)) < proposal.maxTotalSharesAndLootAtYesVote (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1280)
+MSTX._validateProposalForProcessing(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1308-1320) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(getCurrentPeriod() >= proposal.startingPeriod.add(votingPeriodLength).add(gracePeriodLength),!ready) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1314)
+	- require(bool,string)(proposal.flags[1] == 0,processed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1316)
+	- require(bool,string)(proposalIndex == 0 || proposals[proposalQueue[proposalIndex - 1]].flags[1] == 1,prior !processed) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1318)
+MSTX.canRagequit(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1552-1558) uses timestamp for comparisons
+	Dangerous comparisons:
+	- proposals[proposalQueue[highestIndexYesVote]].flags[1] == 1 (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1556)
+MSTX.hasVotingPeriodExpired(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1562-1566) uses timestamp for comparisons
+	Dangerous comparisons:
+	- getCurrentPeriod() >= startingPeriod.add(votingPeriodLength) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1564)
+MSTX.max(uint256,uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1576-1580) uses timestamp for comparisons
+	Dangerous comparisons:
+	- x >= y (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1578)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#30-40) uses assembly
+	- INLINE ASM (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#36-38)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#12) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20._callOptionalReturn(IERC20,bytes) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#68-84):
+	- (success,returnData) = address(token).call(data) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#72)
+Low level call in MSTX.submitProposal(address,uint256,uint256,uint256,address,uint256,address,bytes32) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#520-596):
+	- (success) = wETH.call.value(msg.value)() (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#566)
+Low level call in MSTX.processActionProposal(uint256) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1042-1108):
+	- (success,returnData) = proposal.applicant.call.value(proposal.tributeOffered)(action) (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#1084)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._depositToken (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#430) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._stakeToken (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#432) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._summoner (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#434) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._summonerShares (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#436) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._summonerDeposit (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#438) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._proposalDeposit (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#440) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._processingReward (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#442) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._periodDuration (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#444) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._votingPeriodLength (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#446) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._gracePeriodLength (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#448) is not in mixedCase
+Parameter MSTX.init(address,address,address[],uint256[],uint256,uint256,uint256,uint256,uint256,uint256,uint256)._dilutionBound (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#450) is not in mixedCase
+Constant MSTX.wETH (loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol#210) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Slither:./loops/0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol analyzed (6 contracts with 46 detectors), 42 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xa24e85d0c2b3d58f1d1d08d9c8c68ceef694515c.sol
+Tool Runtime = 2.7593898749983055 seconds
+#############################################

@@ -1,0 +1,462 @@
+Compilation warnings/errors on ./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol:
+./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol:1848:27: Warning: This declaration shadows an existing declaration.
+    function changeOwner1(address owner1) public;
+                          ^------------^
+./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol:1836:5: The shadowed declaration is here:
+    function owner1() public view returns (address);
+    ^----------------------------------------------^
+./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol:1850:27: Warning: This declaration shadows an existing declaration.
+    function changeOwner2(address owner2) public;
+                          ^------------^
+./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol:1838:5: The shadowed declaration is here:
+    function owner2() public view returns (address);
+    ^----------------------------------------------^
+./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol:2498:60: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) notPaused public payable returns (bool) {
+                                                           ^-----------^
+
+INFO:Detectors:[91m
+GameBalance.withdraw(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2258-2268) sends eth to arbitrary user
+	Dangerous calls:
+	- _owner.transfer(amount) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2267)
+GameBalance.singleWithdraw(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2302-2368) sends eth to arbitrary user
+	Dangerous calls:
+	- gasUser.transfer(gasRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2365)
+GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461) sends eth to arbitrary user
+	Dangerous calls:
+	- gasUser.transfer(collectedGas) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2458)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in GameBalance.fulfillUsername(bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463-2481):
+	External calls:
+	- bzn.transfer(linkedAddress,req.bzn) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2470)
+	External calls sending eth:
+	- linkedAddress.transfer(req.eth) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2475)
+	State variables written after the call(s):
+	- delete pendingRequests[_requestId] (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2480)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[91m
+Ownable.______gap (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2119) shadows:
+	- Initializable.______gap (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2004)
+GameBalance.pendingRequests (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2168) shadows:
+	- ChainlinkClient.pendingRequests (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1051)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+Reentrancy in ChainlinkClient.sendChainlinkRequestTo(address,Chainlink.Request,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1097-1109):
+	External calls:
+	- require(bool,string)(link.transferAndCall(_oracle,_payment,encodeRequest(_req)),unable to transferAndCall to oracle) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1105)
+	State variables written after the call(s):
+	- requestCount += 1 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1106)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+Buffer.fromBytes(bytes).buf (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#357) is a local variable never initialized
+ChainlinkClient.buildChainlinkRequest(bytes32,address,bytes4).req (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1069) is a local variable never initialized
+Buffer_Chainlink.fromBytes(bytes).buf (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#57) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendUint8(uint8((major << 5) | value)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#629)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendUint8(uint8((major << 5) | 24)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#631)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendInt(value,1) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#632)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendUint8(uint8((major << 5) | 25)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#634)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendInt(value,2) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#635)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendUint8(uint8((major << 5) | 26)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#637)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendInt(value,4) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#638)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendUint8(uint8((major << 5) | 27)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#640)
+CBOR_Chainlink.encodeType(Buffer_Chainlink.buffer,uint8,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#627-643) ignores return value by buf.appendInt(value,8) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#641)
+CBOR_Chainlink.encodeIndefiniteLengthType(Buffer_Chainlink.buffer,uint8) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#645-647) ignores return value by buf.appendUint8(uint8((major << 5) | 31)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#646)
+CBOR_Chainlink.encodeBytes(Buffer_Chainlink.buffer,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#661-664) ignores return value by buf.append(value) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#663)
+CBOR_Chainlink.encodeString(Buffer_Chainlink.buffer,string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#666-669) ignores return value by buf.append(bytes(value)) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#668)
+Chainlink.initialize(Chainlink.Request,bytes32,address,bytes4) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#717-728) ignores return value by Buffer_Chainlink.init(self.buf,defaultBufferSize) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#723)
+Chainlink.setBuffer(Chainlink.Request,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#736-741) ignores return value by Buffer_Chainlink.init(self.buf,_data.length) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#739)
+Chainlink.setBuffer(Chainlink.Request,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#736-741) ignores return value by Buffer_Chainlink.append(self.buf,_data) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#740)
+GameBalance.singleWithdraw(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2302-2368) ignores return value by bzn.transfer(address(gamePool),leftOverBZN) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2362)
+GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461) ignores return value by bzn.transfer(address(gamePool),totalBznSpent) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2455)
+GameBalance.fulfillUsername(bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463-2481) ignores return value by bzn.transfer(linkedAddress,req.bzn) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2470)
+GameBalance.deposit(address,uint256,string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2483-2496) ignores return value by bzn.transferFrom(from,address(this),amount) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2486)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+DualOracleOwnerInterface.changeOwner1(address).owner1 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1848) shadows:
+	- DualOracleOwnerInterface.owner1() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1836) (function)
+DualOracleOwnerInterface.changeOwner2(address).owner2 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1850) shadows:
+	- DualOracleOwnerInterface.owner2() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1838) (function)
+GameBalance.initialize(address,address,address,address,address).owner (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2193) shadows:
+	- Ownable.owner() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2071-2073) (function)
+GameBalance.withdraw(uint256)._owner (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2265) shadows:
+	- Ownable._owner (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2056) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461) has external calls inside a loop: linkToken.balanceOf(address(this)) < linkRequirement (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2428)
+GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461) has external calls inside a loop: oracleProxy.withdraw(address(this),linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2430)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461):
+	External calls:
+	- oracleProxy.withdraw(address(this),linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2430)
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2434)
+		- require(bool,string)(link.transferAndCall(_oracle,_payment,encodeRequest(_req)),unable to transferAndCall to oracle) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1105)
+	State variables written after the call(s):
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2434)
+		- pendingRequests[requestId] = _oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1103)
+	- pendingRequests[requestId] = WithdrawlRequest(username,userhash,bznWithdraw,ethWithdraw) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2436)
+Reentrancy in GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461):
+	External calls:
+	- gamePool.rewardPlayer(address(this),totalBZNMined) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2446)
+	- bzn.burn(bznBurned) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2452)
+	- bzn.transfer(address(gamePool),totalBznSpent) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2455)
+	External calls sending eth:
+	- gasUser.transfer(collectedGas) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2458)
+	State variables written after the call(s):
+	- withdrawableEth += totalEthSpent (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2460)
+Reentrancy in GameBalance.deposit(address,uint256,string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2483-2496):
+	External calls:
+	- bzn.transferFrom(from,address(this),amount) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2486)
+	State variables written after the call(s):
+	- bznHoldings[userhash] += amount (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2488)
+	- ethHoldings[userhash] += msg.value (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2489)
+	- hashToUser[userhash] = username (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2490)
+Reentrancy in GameBalance.fulfillUsername(bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463-2481):
+	External calls:
+	- bzn.transfer(linkedAddress,req.bzn) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2470)
+	State variables written after the call(s):
+	- ethHoldings[req.userhash] -= req.eth (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2474)
+Reentrancy in GameBalance.singleWithdraw(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2302-2368):
+	External calls:
+	- oracleProxy.withdraw(address(this),linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2338)
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2342)
+		- require(bool,string)(link.transferAndCall(_oracle,_payment,encodeRequest(_req)),unable to transferAndCall to oracle) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1105)
+	State variables written after the call(s):
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2342)
+		- pendingRequests[requestId] = _oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1103)
+	- pendingRequests[requestId] = WithdrawlRequest(username,userhash,bznWithdraw,ethWithdraw) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2344)
+Reentrancy in GameBalance.singleWithdraw(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2302-2368):
+	External calls:
+	- oracleProxy.withdraw(address(this),linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2338)
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2342)
+		- require(bool,string)(link.transferAndCall(_oracle,_payment,encodeRequest(_req)),unable to transferAndCall to oracle) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1105)
+	- gamePool.rewardPlayer(address(this),bznMined) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2353)
+	- bzn.burn(bznBurned) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2359)
+	- bzn.transfer(address(gamePool),leftOverBZN) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2362)
+	External calls sending eth:
+	- gasUser.transfer(gasRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2365)
+	State variables written after the call(s):
+	- withdrawableEth += ethSpent (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2367)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461):
+	External calls:
+	- oracleProxy.withdraw(address(this),linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2430)
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2434)
+		- require(bool,string)(link.transferAndCall(_oracle,_payment,encodeRequest(_req)),unable to transferAndCall to oracle) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1105)
+	Event emitted after the call(s):
+	- ChainlinkRequested(requestId) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1104)
+		- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2434)
+Reentrancy in GameBalance.deposit(address,uint256,string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2483-2496):
+	External calls:
+	- bzn.transferFrom(from,address(this),amount) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2486)
+	Event emitted after the call(s):
+	- depositEvent(from,username,amount,msg.value) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2495)
+Reentrancy in GameBalance.fulfillUsername(bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463-2481):
+	External calls:
+	- bzn.transfer(linkedAddress,req.bzn) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2470)
+	External calls sending eth:
+	- linkedAddress.transfer(req.eth) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2475)
+	Event emitted after the call(s):
+	- withdrawEvent(linkedAddress,req.username,req.bzn,req.eth) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2478)
+Reentrancy in GameBalance.singleWithdraw(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2302-2368):
+	External calls:
+	- oracleProxy.withdraw(address(this),linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2338)
+	- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2342)
+		- require(bool,string)(link.transferAndCall(_oracle,_payment,encodeRequest(_req)),unable to transferAndCall to oracle) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1105)
+	Event emitted after the call(s):
+	- ChainlinkRequested(requestId) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1104)
+		- requestId = sendChainlinkRequest(req,linkRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2342)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Buffer_Chainlink.init(Buffer_Chainlink.buffer,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#35-48) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#41-47)
+Buffer_Chainlink.truncate(Buffer_Chainlink.buffer) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#81-87) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#82-86)
+Buffer_Chainlink.write(Buffer_Chainlink.buffer,uint256,bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#98-139) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#107-122)
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#123-126)
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#132-138)
+Buffer_Chainlink.writeUint8(Buffer_Chainlink.buffer,uint256,uint8) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#172-191) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#177-190)
+Buffer_Chainlink.write(Buffer_Chainlink.buffer,uint256,bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#213-233) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#221-232)
+Buffer_Chainlink.writeInt(Buffer_Chainlink.buffer,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#278-296) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#284-295)
+Buffer.init(Buffer.buffer,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#335-348) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#341-347)
+Buffer.truncate(Buffer.buffer) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#381-387) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#382-386)
+Buffer.write(Buffer.buffer,uint256,bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#398-439) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#407-422)
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#423-426)
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#432-438)
+Buffer.writeUint8(Buffer.buffer,uint256,uint8) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#472-491) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#477-490)
+Buffer.write(Buffer.buffer,uint256,bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#513-533) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#521-532)
+Buffer.writeInt(Buffer.buffer,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#578-596) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#584-595)
+strings.memcpy(uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1350-1367) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1353-1356)
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1362-1367)
+strings.toSlice(string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1374-1380) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1376-1379)
+strings.concat(strings.slice,strings.slice) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1389-1396) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1392-1393)
+BytesLib.concat(bytes,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1405-1472) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1414-1471)
+BytesLib.concatStorage(bytes,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1473-1595) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1474-1595)
+BytesLib.slice(bytes,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1596-1650) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1607-1649)
+BytesLib.toAddress(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1651-1658) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1654-1657)
+BytesLib.toUint8(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1659-1666) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1662-1665)
+BytesLib.toUint16(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1667-1674) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1670-1673)
+BytesLib.toUint32(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1675-1682) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1678-1681)
+BytesLib.toUint64(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1683-1690) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1686-1689)
+BytesLib.toUint96(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1691-1698) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1694-1697)
+BytesLib.toUint128(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1699-1706) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1702-1705)
+BytesLib.toUint(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1707-1714) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1710-1713)
+BytesLib.toBytes32(bytes,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1715-1722) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1718-1721)
+BytesLib.equal(bytes,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1723-1759) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1725-1758)
+BytesLib.equalStorage(bytes,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1760-1823) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1769-1822)
+Initializable.isConstructor() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1991-2001) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1999-2000)
+GameBalance.stringToBytes32(string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2212-2221) uses assembly
+	- INLINE ASM (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2218-2221)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#613) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#687) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#816) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#846) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#866) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#891) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#900) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#909) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1020) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1286) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1306) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1402) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1829) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1858) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1883) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1892) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1904) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1923) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1934) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1944) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2010) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2042) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2125) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Contract Buffer_Chainlink (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#18-308) is not in CapWords
+Struct Buffer_Chainlink.buffer (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#24-27) is not in CapWords
+Struct Buffer.buffer (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#324-327) is not in CapWords
+Contract CBOR_Chainlink (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#616-682) is not in CapWords
+Parameter Chainlink.initialize(Chainlink.Request,bytes32,address,bytes4)._id (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#719) is not in mixedCase
+Parameter Chainlink.initialize(Chainlink.Request,bytes32,address,bytes4)._callbackAddress (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#720) is not in mixedCase
+Parameter Chainlink.initialize(Chainlink.Request,bytes32,address,bytes4)._callbackFunction (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#721) is not in mixedCase
+Parameter Chainlink.setBuffer(Chainlink.Request,bytes)._data (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#736) is not in mixedCase
+Parameter Chainlink.add(Chainlink.Request,string,string)._key (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#749) is not in mixedCase
+Parameter Chainlink.add(Chainlink.Request,string,string)._value (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#749) is not in mixedCase
+Parameter Chainlink.addBytes(Chainlink.Request,string,bytes)._key (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#762) is not in mixedCase
+Parameter Chainlink.addBytes(Chainlink.Request,string,bytes)._value (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#762) is not in mixedCase
+Parameter Chainlink.addInt(Chainlink.Request,string,int256)._key (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#775) is not in mixedCase
+Parameter Chainlink.addInt(Chainlink.Request,string,int256)._value (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#775) is not in mixedCase
+Parameter Chainlink.addUint(Chainlink.Request,string,uint256)._key (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#788) is not in mixedCase
+Parameter Chainlink.addUint(Chainlink.Request,string,uint256)._value (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#788) is not in mixedCase
+Parameter Chainlink.addStringArray(Chainlink.Request,string,string[])._key (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#801) is not in mixedCase
+Parameter Chainlink.addStringArray(Chainlink.Request,string,string[])._values (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#801) is not in mixedCase
+Constant Chainlink.defaultBufferSize (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#696) is not in UPPER_CASE_WITH_UNDERSCORES
+Contract ENSResolver_Chainlink (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#902-904) is not in CapWords
+Contract SafeMath_Chainlink (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#924-1015) is not in CapWords
+Parameter ChainlinkClient.buildChainlinkRequest(bytes32,address,bytes4)._specId (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1065) is not in mixedCase
+Parameter ChainlinkClient.buildChainlinkRequest(bytes32,address,bytes4)._callbackAddress (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1066) is not in mixedCase
+Parameter ChainlinkClient.buildChainlinkRequest(bytes32,address,bytes4)._callbackFunctionSignature (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1067) is not in mixedCase
+Parameter ChainlinkClient.sendChainlinkRequest(Chainlink.Request,uint256)._req (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1080) is not in mixedCase
+Parameter ChainlinkClient.sendChainlinkRequest(Chainlink.Request,uint256)._payment (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1080) is not in mixedCase
+Parameter ChainlinkClient.sendChainlinkRequestTo(address,Chainlink.Request,uint256)._oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1097) is not in mixedCase
+Parameter ChainlinkClient.sendChainlinkRequestTo(address,Chainlink.Request,uint256)._req (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1097) is not in mixedCase
+Parameter ChainlinkClient.sendChainlinkRequestTo(address,Chainlink.Request,uint256)._payment (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1097) is not in mixedCase
+Parameter ChainlinkClient.cancelChainlinkRequest(bytes32,uint256,bytes4,uint256)._requestId (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1122) is not in mixedCase
+Parameter ChainlinkClient.cancelChainlinkRequest(bytes32,uint256,bytes4,uint256)._payment (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1123) is not in mixedCase
+Parameter ChainlinkClient.cancelChainlinkRequest(bytes32,uint256,bytes4,uint256)._callbackFunc (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1124) is not in mixedCase
+Parameter ChainlinkClient.cancelChainlinkRequest(bytes32,uint256,bytes4,uint256)._expiration (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1125) is not in mixedCase
+Parameter ChainlinkClient.setChainlinkOracle(address)._oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1139) is not in mixedCase
+Parameter ChainlinkClient.setChainlinkToken(address)._link (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1147) is not in mixedCase
+Parameter ChainlinkClient.addChainlinkExternalRequest(address,bytes32)._oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1189) is not in mixedCase
+Parameter ChainlinkClient.addChainlinkExternalRequest(address,bytes32)._requestId (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1189) is not in mixedCase
+Parameter ChainlinkClient.useChainlinkWithENS(address,bytes32)._ens (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1202) is not in mixedCase
+Parameter ChainlinkClient.useChainlinkWithENS(address,bytes32)._node (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1202) is not in mixedCase
+Parameter ChainlinkClient.encodeRequest(Chainlink.Request)._req (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1232) is not in mixedCase
+Parameter ChainlinkClient.validateChainlinkCallback(bytes32)._requestId (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1254) is not in mixedCase
+Contract strings (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1344-1397) is not in CapWords
+Struct strings.slice (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1345-1348) is not in CapWords
+Parameter BytesLib.slice(bytes,uint256,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1597) is not in mixedCase
+Parameter BytesLib.slice(bytes,uint256,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1598) is not in mixedCase
+Parameter BytesLib.slice(bytes,uint256,uint256)._length (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1599) is not in mixedCase
+Parameter BytesLib.toAddress(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1651) is not in mixedCase
+Parameter BytesLib.toAddress(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1651) is not in mixedCase
+Parameter BytesLib.toUint8(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1659) is not in mixedCase
+Parameter BytesLib.toUint8(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1659) is not in mixedCase
+Parameter BytesLib.toUint16(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1667) is not in mixedCase
+Parameter BytesLib.toUint16(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1667) is not in mixedCase
+Parameter BytesLib.toUint32(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1675) is not in mixedCase
+Parameter BytesLib.toUint32(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1675) is not in mixedCase
+Parameter BytesLib.toUint64(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1683) is not in mixedCase
+Parameter BytesLib.toUint64(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1683) is not in mixedCase
+Parameter BytesLib.toUint96(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1691) is not in mixedCase
+Parameter BytesLib.toUint96(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1691) is not in mixedCase
+Parameter BytesLib.toUint128(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1699) is not in mixedCase
+Parameter BytesLib.toUint128(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1699) is not in mixedCase
+Parameter BytesLib.toUint(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1707) is not in mixedCase
+Parameter BytesLib.toUint(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1707) is not in mixedCase
+Parameter BytesLib.toBytes32(bytes,uint256)._bytes (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1715) is not in mixedCase
+Parameter BytesLib.toBytes32(bytes,uint256)._start (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1715) is not in mixedCase
+Function GamePoolInterface.BZNclaimed(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1865) is not in mixedCase
+Function GamePoolInterface._preorderFill() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1867) is not in mixedCase
+Variable Initializable.______gap (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2004) is not in mixedCase
+Variable Ownable.______gap (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2119) is not in mixedCase
+Event GameBalancedepositEvent(address,string,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2142) is not in CapWords
+Event GameBalancewithdrawEvent(address,string,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2143) is not in CapWords
+Parameter GameBalance.initialize(address,address,address,address,address)._link (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2193) is not in mixedCase
+Parameter GameBalance.initialize(address,address,address,address,address)._gamepool (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2193) is not in mixedCase
+Parameter GameBalance.initialize(address,address,address,address,address)._oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2193) is not in mixedCase
+Parameter GameBalance.initialize(address,address,address,address,address)._bzn (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2193) is not in mixedCase
+Parameter GameBalance.lower(string)._base (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2233) is not in mixedCase
+Parameter GameBalance.fulfillUsername(bytes32,uint256)._requestId (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463) is not in mixedCase
+Parameter GameBalance.fulfillUsername(bytes32,uint256)._address (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463) is not in mixedCase
+Parameter GameBalance.updateOracleProxy(address).new_oracle (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2516) is not in mixedCase
+Constant GameBalance.usernameJobId (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2145) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant GameBalance.usernameApiURL (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2146) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in GameBalance.batchWithdraw(bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2370-2461):
+	External calls:
+	- gasUser.transfer(collectedGas) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2458)
+	State variables written after the call(s):
+	- withdrawableEth += totalEthSpent (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2460)
+Reentrancy in GameBalance.fulfillUsername(bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463-2481):
+	External calls:
+	- linkedAddress.transfer(req.eth) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2475)
+	State variables written after the call(s):
+	- delete pendingRequests[_requestId] (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2480)
+	Event emitted after the call(s):
+	- withdrawEvent(linkedAddress,req.username,req.bzn,req.eth) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2478)
+Reentrancy in GameBalance.singleWithdraw(bytes32,uint256,uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2302-2368):
+	External calls:
+	- gasUser.transfer(gasRequirement) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2365)
+	State variables written after the call(s):
+	- withdrawableEth += ethSpent (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2367)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+GameBalance.amountWithdrawable() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2278-2281) uses literals with too many digits:
+	- withdrawableEth - 500000000000000 (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2280)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+Ownable.______gap (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2119) is never used in GameBalance (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2138-2521)
+ChainlinkClient.LINK (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1038) is never used in GameBalance (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2138-2521)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+addr(bytes32) should be declared external:
+	- ENSResolver_Chainlink.addr(bytes32) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#903)
+owner1() should be declared external:
+	- DualOracleOwnerInterface.owner1() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1836)
+owner2() should be declared external:
+	- DualOracleOwnerInterface.owner2() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1838)
+oracle() should be declared external:
+	- DualOracleOwnerInterface.oracle() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1840)
+changeOwner1(address) should be declared external:
+	- DualOracleOwnerInterface.changeOwner1(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1848)
+changeOwner2(address) should be declared external:
+	- DualOracleOwnerInterface.changeOwner2(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1850)
+transferOwnership(address) should be declared external:
+	- DualOracleOwnerInterface.transferOwnership(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1852)
+initialize(address,address,address) should be declared external:
+	- GamePoolInterface.initialize(address,address,address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1861-1863)
+BZNclaimed(uint256) should be declared external:
+	- GamePoolInterface.BZNclaimed(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1865)
+_preorderFill() should be declared external:
+	- GamePoolInterface._preorderFill() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1867)
+migrate(address) should be declared external:
+	- GamePoolInterface.migrate(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1869)
+setGameBalance(address) should be declared external:
+	- GamePoolInterface.setGameBalance(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1871)
+setLimitAndStart(uint256) should be declared external:
+	- GamePoolInterface.setLimitAndStart(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1873)
+dailyLimit() should be declared external:
+	- GamePoolInterface.dailyLimit() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1875)
+rewardPlayer(address,uint256) should be declared external:
+	- GamePoolInterface.rewardPlayer(address,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1877)
+receiveApproval(address,uint256,address,bytes) should be declared external:
+	- ApproveAndCallFallBack.receiveApproval(address,uint256,address,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1886)
+	- GameBalance.receiveApproval(address,uint256,address,bytes) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2498-2506)
+totalSupply() should be declared external:
+	- ERC20Basic.totalSupply() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1895)
+balanceOf(address) should be declared external:
+	- ERC20Basic.balanceOf(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1896)
+transfer(address,uint256) should be declared external:
+	- ERC20Basic.transfer(address,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1897)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1908-1909)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1910-1911)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1912)
+burn(uint256) should be declared external:
+	- BurnableToken.burn(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1928)
+burnFrom(address,uint256) should be declared external:
+	- StandardBurnableToken.burnFrom(address,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#1938)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2097-2100)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2106-2108)
+initialize(address,address,address,address,address) should be declared external:
+	- GameBalance.initialize(address,address,address,address,address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2193-2210)
+stringToUint(string) should be declared external:
+	- GameBalance.stringToUint(string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2244-2256)
+withdraw(uint256) should be declared external:
+	- GameBalance.withdraw(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2258-2268)
+setGasRequirement(uint256) should be declared external:
+	- GameBalance.setGasRequirement(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2270-2272)
+setGasUser(address) should be declared external:
+	- GameBalance.setGasUser(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2274-2276)
+setPause(bool) should be declared external:
+	- GameBalance.setPause(bool) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2283-2285)
+setLimits(uint256,uint256,uint256,uint256) should be declared external:
+	- GameBalance.setLimits(uint256,uint256,uint256,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2287-2292)
+fulfillUsername(bytes32,uint256) should be declared external:
+	- GameBalance.fulfillUsername(bytes32,uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2463-2481)
+setLinkPayment(uint256) should be declared external:
+	- GameBalance.setLinkPayment(uint256) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2508-2510)
+changeJobId(string) should be declared external:
+	- GameBalance.changeJobId(string) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2512-2514)
+updateOracleProxy(address) should be declared external:
+	- GameBalance.updateOracleProxy(address) (loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol#2516-2520)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol analyzed (25 contracts with 46 detectors), 224 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x269081c519c270a5e57f06e22c1c9e050d395d8e.sol
+Tool Runtime = 4.045023351001873 seconds
+#############################################

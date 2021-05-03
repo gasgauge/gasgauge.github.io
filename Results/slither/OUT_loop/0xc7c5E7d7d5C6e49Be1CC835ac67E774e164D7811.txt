@@ -1,0 +1,268 @@
+INFO:Detectors:[93m
+CollateralPool.transferPaybackBalances(address,uint256,address[],uint256[],uint256[],uint256[]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1880-1958) performs a multiplication on the result of a division:
+	-amount = redeemWorth / prices[i] (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1898)
+	-amount = amount * userInputCollateral[account][tmpWhiteList[i]] / colBalances[i] (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1914)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+TransactionFee._transferPayback(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1413-1441) uses a dangerous strict equality:
+	- require(bool,string)(preBalance - afterBalance == payback,settlement token transfer error!) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1435)
+CollateralPool.getPayableAmount(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2134-2156) uses a dangerous strict equality:
+	- require(bool,string)(afterBalance - preBalance == settlementAmount,settlement token transfer error!) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2150)
+TransactionFee.redeem(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1315-1343) uses a dangerous strict equality:
+	- require(bool,string)(preBalance - afterBalance == fee,settlement token transfer error!) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1337)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+TransactionFee.redeem(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1315-1343) ignores return value by currencyToken.transfer(msg.sender,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1333)
+TransactionFee._transferPayback(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1413-1441) ignores return value by collateralToken.transfer(recieptor,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1431)
+CollateralPool.getPayableAmount(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2134-2156) ignores return value by oToken.transferFrom(msg.sender,address(this),settlementAmount) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2146)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+CollateralPool.addNetWorthBalances(address[],int256[]).whiteList (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1618) shadows:
+	- AddressWhiteList.whiteList (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#853) (state variable)
+CollateralPool.getAllRealBalance(address[]).whiteList (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2062) shadows:
+	- AddressWhiteList.whiteList (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#853) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+CollateralPool.getAllRealBalance(address[]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2062-2078) has external calls inside a loop: latestWorth = _optionsPool.getNetWrothLatestWorth(whiteList[i]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2070)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in TransactionFee._transferPaybackAndFee(address,address,uint256,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1385-1399):
+	External calls:
+	- _transferPayback(recieptor,settlement,payback - fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1395)
+		- collateralToken.transfer(recieptor,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1431)
+	External calls sending eth:
+	- _transferPayback(recieptor,settlement,payback - fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1395)
+		- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	State variables written after the call(s):
+	- _addTransactionFee(settlement,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1397)
+		- feeBalances[settlement] = feeBalances[settlement] + amount (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1359)
+Reentrancy in CollateralPool.addNetBalance(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2120-2126):
+	External calls:
+	- amount = getPayableAmount(settlement,amount) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2122)
+		- oToken.transferFrom(msg.sender,address(this),settlementAmount) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2146)
+	State variables written after the call(s):
+	- netWorthBalances[settlement] = netWorthBalances[settlement].add(int256(amount)) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2124)
+Reentrancy in CollateralPool.setSharedPayment(address[],int256[],int256[],uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2202-2208):
+	External calls:
+	- _optionsPool.setSharedState(firstOption,sharedBalances,_whiteList) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2204)
+	State variables written after the call(s):
+	- addNetWorthBalances(_whiteList,newNetworth) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2206)
+		- netWorthBalances[whiteList[i]] = netWorthBalances[whiteList[i]].add(newNetworth[i]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1622)
+Reentrancy in CollateralPool.transferPaybackAndFee(address,address,uint256,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1806-1814):
+	External calls:
+	- _transferPaybackAndFee(recieptor,settlement,payback,feeType) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1810)
+		- collateralToken.transfer(recieptor,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1431)
+	External calls sending eth:
+	- _transferPaybackAndFee(recieptor,settlement,payback,feeType) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1810)
+		- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	State variables written after the call(s):
+	- netWorthBalances[settlement] = netWorthBalances[settlement].sub(int256(payback)) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1812)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in TransactionFee._transferPayback(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1413-1441):
+	External calls:
+	- collateralToken.transfer(recieptor,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1431)
+	External calls sending eth:
+	- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	Event emitted after the call(s):
+	- TransferPayback(recieptor,settlement,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1439)
+Reentrancy in TransactionFee._transferPaybackAndFee(address,address,uint256,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1385-1399):
+	External calls:
+	- _transferPayback(recieptor,settlement,payback - fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1395)
+		- collateralToken.transfer(recieptor,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1431)
+	External calls sending eth:
+	- _transferPayback(recieptor,settlement,payback - fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1395)
+		- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	Event emitted after the call(s):
+	- AddFee(settlement,amount) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1361)
+		- _addTransactionFee(settlement,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1397)
+Reentrancy in TransactionFee.redeem(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1315-1343):
+	External calls:
+	- currencyToken.transfer(msg.sender,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1333)
+	External calls sending eth:
+	- msg.sender.transfer(fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1325)
+	Event emitted after the call(s):
+	- RedeemFee(msg.sender,currency,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1341)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#14) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#49) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#90) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#247) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#404) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#473) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#532) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#821) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#936) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1011) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1144) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1225) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1452) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable Ownable._owner (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#271) is not in mixedCase
+Contract whiteListUint32 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#540-636) is not in CapWords
+Contract whiteListUint256 (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#644-724) is not in CapWords
+Contract whiteListAddress (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#732-812) is not in CapWords
+Constant AddressWhiteList.allPermission (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#839) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowBuyOptions (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#841) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowSellOptions (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#843) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowExerciseOptions (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#845) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowAddCollateral (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#847) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant AddressWhiteList.allowRedeemCollateral (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#849) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter IOptionsPool.createOptions(address,address,uint256,uint128,uint128,uint128,uint128).type_ly_expiration (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#948) is not in mixedCase
+Variable ImportOptionsPool._optionsPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#988) is not in mixedCase
+Variable CollateralData.FeeRates (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1170) is not in mixedCase
+Constant CollateralData.buyFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1178) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CollateralData.sellFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1180) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CollateralData.exerciseFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1182) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CollateralData.addColFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1184) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant CollateralData.redeemColFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1186) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter CollateralPool.transferPaybackBalances(address,uint256,address[],uint256[],uint256[],uint256[]).PremiumBalances (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1882) is not in mixedCase
+Parameter CollateralPool.getCollateralAndPremiumBalances(address,uint256,address[],uint256[],uint256[])._RealBalances (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1980) is not in mixedCase
+Parameter CollateralPool.calSharedPayment(address[])._whiteList (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2166) is not in mixedCase
+Parameter CollateralPool.setSharedPayment(address[],int256[],int256[],uint256)._whiteList (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2202) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in TransactionFee._transferPayback(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1413-1441):
+	External calls:
+	- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	Event emitted after the call(s):
+	- TransferPayback(recieptor,settlement,payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1439)
+Reentrancy in TransactionFee._transferPaybackAndFee(address,address,uint256,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1385-1399):
+	External calls:
+	- _transferPayback(recieptor,settlement,payback - fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1395)
+		- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	State variables written after the call(s):
+	- _addTransactionFee(settlement,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1397)
+		- feeBalances[settlement] = feeBalances[settlement] + amount (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1359)
+	Event emitted after the call(s):
+	- AddFee(settlement,amount) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1361)
+		- _addTransactionFee(settlement,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1397)
+Reentrancy in TransactionFee.redeem(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1315-1343):
+	External calls:
+	- msg.sender.transfer(fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1325)
+	Event emitted after the call(s):
+	- RedeemFee(msg.sender,currency,fee) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1341)
+Reentrancy in CollateralPool.transferPaybackAndFee(address,address,uint256,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1806-1814):
+	External calls:
+	- _transferPaybackAndFee(recieptor,settlement,payback,feeType) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1810)
+		- recieptor.transfer(payback) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1423)
+	State variables written after the call(s):
+	- netWorthBalances[settlement] = netWorthBalances[settlement].sub(int256(payback)) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1812)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+AddressWhiteList.allowBuyOptions (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#841) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+AddressWhiteList.allowSellOptions (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#843) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+AddressWhiteList.allowExerciseOptions (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#845) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+AddressWhiteList.allowAddCollateral (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#847) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+AddressWhiteList.allowRedeemCollateral (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#849) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+CollateralData.buyFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1178) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+CollateralData.sellFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1180) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+CollateralData.exerciseFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1182) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+CollateralData.addColFee (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1184) is never used in CollateralPool (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1468-2210)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#301-305)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#353-359)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#371-375)
+setManager(address) should be declared external:
+	- Managerable.setManager(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#438-448)
+getManager() should be declared external:
+	- Managerable.getManager() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#458-462)
+setHalt(bool) should be declared external:
+	- Halt.setHalt(bool) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#511-521)
+addWhiteList(address) should be declared external:
+	- AddressWhiteList.addWhiteList(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#865-871)
+modifyPermission(address,uint256) should be declared external:
+	- AddressWhiteList.modifyPermission(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#873-877)
+removeWhiteList(address) should be declared external:
+	- AddressWhiteList.removeWhiteList(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#887-893)
+getWhiteList() should be declared external:
+	- AddressWhiteList.getWhiteList() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#901-905)
+isEligibleAddress(address) should be declared external:
+	- AddressWhiteList.isEligibleAddress(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#915-919)
+checkAddressPermission(address,uint256) should be declared external:
+	- AddressWhiteList.checkAddressPermission(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#921-925)
+getOptionsPoolAddress() should be declared external:
+	- ImportOptionsPool.getOptionsPoolAddress() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#990-994)
+setOptionsPoolAddress(address) should be declared external:
+	- ImportOptionsPool.setOptionsPoolAddress(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#996-1000)
+addOperator(address) should be declared external:
+	- Operator.addOperator(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1073-1077)
+setOperator(uint256,address) should be declared external:
+	- Operator.setOperator(uint256,address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1087-1091)
+removeOperator(address) should be declared external:
+	- Operator.removeOperator(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1101-1105)
+getOperator() should be declared external:
+	- Operator.getOperator() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1115-1119)
+setOperators(address[]) should be declared external:
+	- Operator.setOperators(address[]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1129-1133)
+getFeeRateAll() should be declared external:
+	- TransactionFee.getFeeRateAll() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1263-1267)
+getFeeRate(uint256) should be declared external:
+	- TransactionFee.getFeeRate(uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1269-1273)
+setTransactionFee(uint256,uint32) should be declared external:
+	- TransactionFee.setTransactionFee(uint256,uint32) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1287-1291)
+getFeeBalance(address) should be declared external:
+	- TransactionFee.getFeeBalance(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1295-1299)
+getAllFeeBalances() should be declared external:
+	- TransactionFee.getAllFeeBalances() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1301-1313)
+redeemAll() should be declared external:
+	- TransactionFee.redeemAll() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1345-1353)
+calculateFee(uint256,uint256) should be declared external:
+	- TransactionFee.calculateFee(uint256,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1367-1371)
+update() should be declared external:
+	- CollateralPool.update() (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1500-1502)
+getUserPayingUsd(address) should be declared external:
+	- CollateralPool.getUserPayingUsd(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1536-1540)
+getUserInputCollateral(address,address) should be declared external:
+	- CollateralPool.getUserInputCollateral(address,address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1552-1556)
+getCollateralBalance(address) should be declared external:
+	- CollateralPool.getCollateralBalance(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1568-1572)
+addUserPayingUsd(address,uint256) should be declared external:
+	- CollateralPool.addUserPayingUsd(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1584-1588)
+addUserInputCollateral(address,address,uint256) should be declared external:
+	- CollateralPool.addUserInputCollateral(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1602-1606)
+addNetWorthBalance(address,int256) should be declared external:
+	- CollateralPool.addNetWorthBalance(address,int256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1638-1642)
+addCollateralBalance(address,uint256) should be declared external:
+	- CollateralPool.addCollateralBalance(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1654-1658)
+subUserPayingUsd(address,uint256) should be declared external:
+	- CollateralPool.subUserPayingUsd(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1670-1674)
+subUserInputCollateral(address,address,uint256) should be declared external:
+	- CollateralPool.subUserInputCollateral(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1688-1692)
+subNetWorthBalance(address,int256) should be declared external:
+	- CollateralPool.subNetWorthBalance(address,int256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1704-1708)
+subCollateralBalance(address,uint256) should be declared external:
+	- CollateralPool.subCollateralBalance(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1720-1724)
+setUserPayingUsd(address,uint256) should be declared external:
+	- CollateralPool.setUserPayingUsd(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1736-1740)
+setUserInputCollateral(address,address,uint256) should be declared external:
+	- CollateralPool.setUserInputCollateral(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1754-1758)
+setNetWorthBalance(address,int256) should be declared external:
+	- CollateralPool.setNetWorthBalance(address,int256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1770-1774)
+setCollateralBalance(address,uint256) should be declared external:
+	- CollateralPool.setCollateralBalance(address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1786-1790)
+transferPayback(address,address,uint256) should be declared external:
+	- CollateralPool.transferPayback(address,address,uint256) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#1854-1858)
+getAllRealBalance(address[]) should be declared external:
+	- CollateralPool.getAllRealBalance(address[]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2062-2078)
+getRealBalance(address) should be declared external:
+	- CollateralPool.getRealBalance(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2086-2092)
+getNetWorthBalance(address) should be declared external:
+	- CollateralPool.getNetWorthBalance(address) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2094-2108)
+calSharedPayment(address[]) should be declared external:
+	- CollateralPool.calSharedPayment(address[]) (loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol#2166-2186)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol analyzed (16 contracts with 46 detectors), 113 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xc7c5E7d7d5C6e49Be1CC835ac67E774e164D7811.sol
+Tool Runtime = 4.799469098998088 seconds
+#############################################

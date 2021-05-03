@@ -1,0 +1,84 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: DarkOffersV1
+Function name: deposit(uint256)
+PC address: 4920
+Estimated Gas Usage: 1218 - 1503
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x448ff6d5ca4cdf28f9c61de671108df310903eb1.sol:963
+
+require(now > canWithdrawTime[msg.sender],"!1 days")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: deposit(uint256), txdata: 0xb6b55f250000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DarkOffersV1
+Function name: getMark(uint256)
+PC address: 8949
+Estimated Gas Usage: 5860 - 76394
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x448ff6d5ca4cdf28f9c61de671108df310903eb1.sol:932
+
+IUniswapV2Pair(markEthUniLp).getReserves()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4004004010000c004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: getMark(uint256), txdata: 0x3e0089770000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: DarkOffersV1
+Function name: inCaseLpStuck()
+PC address: 10862
+Estimated Gas Usage: 7944 - 80551
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x448ff6d5ca4cdf28f9c61de671108df310903eb1.sol:698
+
+target.call.value(value)(data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: inCaseLpStuck(), txdata: 0xc1ae771e, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x448ff6d5ca4cdf28f9c61de671108df310903eb1.sol
+Tool Runtime = 4562.312459846001 seconds
+#############################################

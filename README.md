@@ -41,6 +41,11 @@ $ npm install -g ganache-cli
 ```
 
 ### 3. [solc-select](https://github.com/crytic/solc-select) : 
+(Recommneded Method) Clone this repository and navigate to the folder "solc-select"
+```bash
+$ python3 setup.py
+```
+Method 2:
 
 ```bash
 $ pip3 install solc-select
@@ -56,7 +61,7 @@ $ solc-select install 0.8.1
 
 1. Clone the repository
 2. Modify run.py as needed
-3. run run.py 
+3. run run.py :
 
 ```bash
 $ python3 run.py

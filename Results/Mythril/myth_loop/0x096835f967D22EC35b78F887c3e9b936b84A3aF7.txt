@@ -1,0 +1,86 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: GemForRewardChecker
+Function name: checkers(uint256)
+PC address: 468
+Estimated Gas Usage: 1034 - 1129
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops6/0x096835f967D22EC35b78F887c3e9b936b84A3aF7.sol:13
+
+address[] public checkers
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: checkers(uint256), txdata: 0x0584fd8d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: GemForRewardChecker
+Function name: check(address)
+PC address: 830
+Estimated Gas Usage: 4227 - 41048
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops6/0x096835f967D22EC35b78F887c3e9b936b84A3aF7.sol:26
+
+checkers.length
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addChecker(address), txdata: 0x916473ab000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: check(address), txdata: 0xc23697a80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: GemForRewardChecker
+Function name: check(address)
+PC address: 1210
+Estimated Gas Usage: 4160 - 40698
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops6/0x096835f967D22EC35b78F887c3e9b936b84A3aF7.sol:27
+
+checkers[i].call(abi.encodeWithSignature("check(address)", gem))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x41f3880000007a00e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addChecker(address), txdata: 0x916473ab000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: check(address), txdata: 0xc23697a80000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x096835f967D22EC35b78F887c3e9b936b84A3aF7.sol
+Tool Runtime = 19.39765183000418 seconds
+#############################################

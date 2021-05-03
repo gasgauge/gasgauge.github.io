@@ -1,0 +1,147 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: SimpleAuction
+Function name: constructor
+PC address: 142
+Estimated Gas Usage: 11269 - 56676
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/9/0x0f416bd36fdee5e6afc88a6238bff5a5fad6c7fb.sol:219
+
+now + _biddingTime
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 80, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SimpleAuction
+Function name: bid()
+PC address: 498
+Estimated Gas Usage: 937 - 1032
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/9/0x0f416bd36fdee5e6afc88a6238bff5a5fad6c7fb.sol:235
+
+require(
+            now <= auctionEndTime,
+            "Auction already ended."
+        )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x82000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: bid(), txdata: 0x1998aeef, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: SimpleAuction
+Function name: auctionEnd()
+PC address: 1048
+Estimated Gas Usage: 983 - 1078
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/9/0x0f416bd36fdee5e6afc88a6238bff5a5fad6c7fb.sol:295
+
+require(now >= auctionEndTime, "Auction not yet ended.")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x21c00000000c5040, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: auctionEnd(), txdata: 0x2a24f46c, value: 0x0
+
+==== Jump to an arbitrary instruction ====
+SWC ID: 127
+Severity: High
+Contract: ReceiverPays
+Function name: claimPayment(uint256,uint256,bytes)
+PC address: 1101
+Estimated Gas Usage: 9951 - 71013
+The caller can redirect execution to arbitrary bytecode locations.
+It is possible to redirect the control flow to arbitrary locations in the code. This may allow an attacker to bypass security controls or manipulate the business logic of the smart contract. Avoid using low-level-operations and assembly to prevent this issue.
+--------------------
+In file: ./new_contracts/m_noloop/9/0x0f416bd36fdee5e6afc88a6238bff5a5fad6c7fb.sol:352
+
+function recoverSigner(bytes32 message, bytes memory sig)
+        internal
+        pure
+        returns (address)
+    {
+        (uint8 v, bytes32 r, bytes32 s) = splitSignature(sig);
+
+        return ecrecover(message, v, r, s);
+    }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: claimPayment(uint256,uint256,bytes), txdata: 0xa90ae88700000000000000000000000000000000000000000000000000000000000000410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: SimpleAuction
+Function name: auctionEnd()
+PC address: 1515
+Estimated Gas Usage: 12654 - 68887
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/9/0x0f416bd36fdee5e6afc88a6238bff5a5fad6c7fb.sol:303
+
+beneficiary.transfer(highestBid)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200400080d1d4300, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1ffffffffffffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00f285ebe3e0002e4f7327f73073d8ae280210011e400b0282030a0d050b4200191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: bid(), txdata: 0x1998aeef, value: 0x1
+Caller: [ATTACKER], function: auctionEnd(), txdata: 0x2a24f46c, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x0f416bd36fdee5e6afc88a6238bff5a5fad6c7fb.sol
+Tool Runtime = 529.393477095 seconds
+#############################################

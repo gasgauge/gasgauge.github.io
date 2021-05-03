@@ -1,0 +1,140 @@
+Compilation warnings/errors on ./loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol:
+./loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol:5:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[93m
+TokenStake.startStake(uint256,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#115-137) performs a multiplication on the result of a division:
+	-reward = (amount * (_apr / 100)) * year (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#120)
+TokenStake.stakeCanClaim(address,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#167-175) performs a multiplication on the result of a division:
+	-totalDay = (now - tk.timeDeposit) / 86400 (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#170)
+	-totalDayReward = (_aprPerDay * totalDay) / 100 (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#171)
+TokenStake.stakeCanClaim(address,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#167-175) performs a multiplication on the result of a division:
+	-totalDayReward = (_aprPerDay * totalDay) / 100 (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#171)
+	-reward = tk.amount * totalDayReward (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#172)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166):
+	External calls:
+	- ERC20(_token).transfer(msg.sender,_staker[msg.sender][stakeId].amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#153)
+	State variables written after the call(s):
+	- _staker[msg.sender][stakeId].locked = false (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#154)
+Reentrancy in TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166):
+	External calls:
+	- ERC20(_token).transfer(msg.sender,_staker[msg.sender][stakeId].amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#160)
+	State variables written after the call(s):
+	- _staker[msg.sender][stakeId].locked = false (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#161)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+TokenStake.totalPoolToken().total (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#183) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+TokenStake.startStake(uint256,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#115-137) ignores return value by ERC20(_token).transferFrom(msg.sender,address(this),amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#134)
+TokenStake.claimStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#141-149) ignores return value by ERC20(_token).transfer(msg.sender,claim / thousand) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#146)
+TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166) ignores return value by ERC20(_token).transfer(msg.sender,_staker[msg.sender][stakeId].amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#153)
+TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166) ignores return value by ERC20(_token).transfer(msg.sender,_staker[msg.sender][stakeId].amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#160)
+TokenStake.withdrawToken(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#193-196) ignores return value by ERC20(_token).transfer(msg.sender,amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#194)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in TokenStake.claimStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#141-149):
+	External calls:
+	- ERC20(_token).transfer(msg.sender,claim / thousand) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#146)
+	Event emitted after the call(s):
+	- ClaimStake(msg.sender,id,claim) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#147)
+Reentrancy in TokenStake.startStake(uint256,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#115-137):
+	External calls:
+	- ERC20(_token).transferFrom(msg.sender,address(this),amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#134)
+	Event emitted after the call(s):
+	- NewStake(msg.sender,amount,year) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#135)
+Reentrancy in TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166):
+	External calls:
+	- ERC20(_token).transfer(msg.sender,_staker[msg.sender][stakeId].amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#153)
+	Event emitted after the call(s):
+	- UnLockStake(msg.sender,stakeId) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#155)
+Reentrancy in TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166):
+	External calls:
+	- ERC20(_token).transfer(msg.sender,_staker[msg.sender][stakeId].amount) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#160)
+	Event emitted after the call(s):
+	- UnLockStake(msg.sender,stakeId) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#162)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+TokenStake.claimStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#141-149) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(claim > 0,NOTHING_CAN_CLAIM) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#143)
+	- require(bool,string)(_staker[msg.sender][id].claimed.add(claim) <= _staker[msg.sender][id].reward,hmm is this bug ?) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#144)
+TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalDay > _staker[msg.sender][stakeId].year * 365 (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#159)
+TokenStake.stakeCanClaim(address,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#167-175) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > tk.reward (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#173)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166) compares to a boolean constant:
+	-require(bool,string)(_staker[msg.sender][stakeId].locked == true,ALREADY_CLAIMED) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#151)
+TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166) compares to a boolean constant:
+	-_staker[msg.sender][stakeId].openLockForce == true (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#152)
+TokenStake.notFreezing() (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#94-97) compares to a boolean constant:
+	-require(bool,string)(_freeze == false,ITS_COLD) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#95)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#7) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable TokenStake._owner (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#64) is not in mixedCase
+Variable TokenStake._token (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#65) is not in mixedCase
+Variable TokenStake._apr (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#66) is not in mixedCase
+Variable TokenStake._aprPerDay (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#67) is not in mixedCase
+Variable TokenStake._poolLimit (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#69) is not in mixedCase
+Variable TokenStake._openLockForce (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#85) is not in mixedCase
+Variable TokenStake._staker (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#86) is not in mixedCase
+Variable TokenStake._activeAddress (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#87) is not in mixedCase
+Variable TokenStake._freeze (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#88) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+TokenStake.slitherConstructorVariables() (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#60-224) uses literals with too many digits:
+	- thousand = 1000000 (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#68)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+TokenStake.thousand (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#68) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+getApr() should be declared external:
+	- TokenStake.getApr() (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#106-108)
+getPoolLimit() should be declared external:
+	- TokenStake.getPoolLimit() (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#109-111)
+getPoolLockForce() should be declared external:
+	- TokenStake.getPoolLockForce() (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#112-114)
+startStake(uint256,uint256) should be declared external:
+	- TokenStake.startStake(uint256,uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#115-137)
+stakesOf(address) should be declared external:
+	- TokenStake.stakesOf(address) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#138-140)
+claimStake(uint256) should be declared external:
+	- TokenStake.claimStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#141-149)
+unlockStake(uint256) should be declared external:
+	- TokenStake.unlockStake(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#150-166)
+totalActiveAddressCount() should be declared external:
+	- TokenStake.totalActiveAddressCount() (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#179-181)
+withdrawToken(uint256) should be declared external:
+	- TokenStake.withdrawToken(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#193-196)
+setFreeze(bool) should be declared external:
+	- TokenStake.setFreeze(bool) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#198-201)
+setOpenLockForce(bool) should be declared external:
+	- TokenStake.setOpenLockForce(bool) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#202-205)
+setOpenLockForce(address,uint256,bool) should be declared external:
+	- TokenStake.setOpenLockForce(address,uint256,bool) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#206-209)
+setAPR(uint256) should be declared external:
+	- TokenStake.setAPR(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#210-214)
+setPoolLimit(uint256) should be declared external:
+	- TokenStake.setPoolLimit(uint256) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#215-218)
+setOwner(address) should be declared external:
+	- TokenStake.setOwner(address) (loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol#219-222)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol analyzed (3 contracts with 46 detectors), 49 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xa605e1e5627cd55f31c10623e3b1697bcfef0762.sol
+Tool Runtime = 0.7658667139985482 seconds
+#############################################

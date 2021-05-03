@@ -1,0 +1,215 @@
+Compilation warnings/errors on ./noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol:
+./noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol:449:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+LPTokenWrapper.stake(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#618-625) performs a multiplication on the result of a division:
+	-realamount = amount.div(100).mul(99) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#619)
+SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724) performs a multiplication on the result of a division:
+	-solarite.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#719)
+SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724) performs a multiplication on the result of a division:
+	-RewardPaid(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#720)
+SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724) performs a multiplication on the result of a division:
+	-solarite.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#721)
+SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724) performs a multiplication on the result of a division:
+	-RewardPaid(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#722)
+SOLARITEIncentivizer.notifyRewardAmount(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#746-770) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#753)
+	-leftover = remaining.mul(rewardRate) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#756)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+SOLARITEIncentivizer.notifyRewardAmount(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#746-770) uses a dangerous strict equality:
+	- require(bool,string)(solarite.balanceOf(address(this)) == 0,already initialized) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#763)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in SOLARITEIncentivizer.checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#726-738):
+	External calls:
+	- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+	- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#734)
+Reentrancy in SOLARITEIncentivizer.exit() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#707-710):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#708)
+		- uni_lp.safeTransfer(msg.sender,amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#630)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#716)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+		- solarite.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#719)
+		- solarite.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#721)
+	State variables written after the call(s):
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#660)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- periodFinish = block.timestamp.add(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#734)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#659)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- rewardRate = initreward.div(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#733)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- rewards[msg.sender] = 0 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#715)
+		- rewards[account] = earned(account) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#662)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#663)
+Reentrancy in SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724):
+	External calls:
+	- checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#715)
+Reentrancy in SOLARITEIncentivizer.notifyRewardAmount(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#746-770):
+	External calls:
+	- solarite.mint(address(this),initreward) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#764)
+	State variables written after the call(s):
+	- lastUpdateTime = starttime (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#766)
+	- periodFinish = starttime.add(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#767)
+	- rewardRate = initreward.div(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#765)
+Reentrancy in SOLARITEIncentivizer.stake(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#695-699):
+	External calls:
+	- super.stake(amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#697)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+		- uni_lp.safeTransferFrom(msg.sender,address(this),realamount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#623)
+		- uni_lp.safeTransferFrom(msg.sender,fundpool,amount.div(100)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#624)
+	- checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#695)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	State variables written after the call(s):
+	- super.stake(amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#697)
+		- _balances[msg.sender] = _balances[msg.sender].add(realamount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#621)
+	- super.stake(amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#697)
+		- _totalSupply = _totalSupply.add(realamount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#620)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in SOLARITEIncentivizer.checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#726-738):
+	External calls:
+	- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+	- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	State variables written after the call(s):
+	- rewardRate = initreward.div(DURATION) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#733)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in SOLARITEIncentivizer.checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#726-738):
+	External calls:
+	- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+	- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#735)
+Reentrancy in SOLARITEIncentivizer.exit() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#707-710):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#708)
+		- uni_lp.safeTransfer(msg.sender,amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#630)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+	- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#716)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+		- solarite.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#719)
+		- solarite.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#721)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#735)
+		- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+	- RewardPaid(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#720)
+		- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+	- RewardPaid(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#722)
+		- getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#709)
+Reentrancy in SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724):
+	External calls:
+	- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#716)
+	- solarite.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#719)
+	- checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#720)
+Reentrancy in SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724):
+	External calls:
+	- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#716)
+	- solarite.safeTransfer(msg.sender,trueReward.div(100).mul(80)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#719)
+	- solarite.safeTransfer(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#721)
+	- checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	Event emitted after the call(s):
+	- RewardPaid(fundpool,trueReward.div(100).mul(20)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#722)
+Reentrancy in SOLARITEIncentivizer.notifyRewardAmount(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#746-770):
+	External calls:
+	- solarite.mint(address(this),initreward) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#764)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#768)
+Reentrancy in SOLARITEIncentivizer.stake(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#695-699):
+	External calls:
+	- super.stake(amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#697)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+		- uni_lp.safeTransferFrom(msg.sender,address(this),realamount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#623)
+		- uni_lp.safeTransferFrom(msg.sender,fundpool,amount.div(100)) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#624)
+	- checkhalve() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#695)
+		- scalingFactor = SOLARITE(address(solarite)).solaritesScalingFactor() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#729)
+		- solarite.mint(address(this),newRewards) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#731)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#698)
+Reentrancy in SOLARITEIncentivizer.withdraw(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#701-705):
+	External calls:
+	- super.withdraw(amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#703)
+		- uni_lp.safeTransfer(msg.sender,amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#630)
+		- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#704)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+SOLARITEIncentivizer.getReward() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#712-724) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#714)
+SOLARITEIncentivizer.notifyRewardAmount(uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#746-770) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > starttime (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#751)
+	- block.timestamp >= periodFinish (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#752)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#438-451) uses assembly
+	- INLINE ASM (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#449-450)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#42) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#74) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#263) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#341) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#421) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#492) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#569) uses lesser than
+Pragma version>=0.5<0.7.17 (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#593) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#481-487):
+	- (success) = recipient.call.value(amount)() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#485)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#545-564):
+	- (success,returndata) = address(token).call(data) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#557)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#583) is not in mixedCase
+Variable LPTokenWrapper.uni_lp (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#604) is not in mixedCase
+Parameter SOLARITEIncentivizer.governanceRecoverUnsupported(IERC20,uint256,address)._token (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#778) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SOLARITEIncentivizer.starttime (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#644) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#316-319)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol#325-327)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol analyzed (11 contracts with 46 detectors), 41 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x7a6d7959861ece56f93335cfd6fe0c5c2c961b6e.sol
+Tool Runtime = 1.178388680997159 seconds
+#############################################

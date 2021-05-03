@@ -1,0 +1,183 @@
+Compilation warnings/errors on ./loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol:
+./loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol:7:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol:1197:9: Warning: Unused local variable.
+        uint256 supplyAfterRebase = kassiahome.rebase(epoch, indexDelta, positive);
+        ^-----------------------^
+
+INFO:Detectors:[93m
+KASSIAHOMERebaser.rebase() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1151-1202) performs a multiplication on the result of a division:
+	-indexDelta = indexDelta.div(rebaseLag) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1177)
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1191)
+KASSIAHOMERebaser.rebase() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1151-1202) performs a multiplication on the result of a division:
+	-mintPerc = indexDelta.mul(rebaseMintPerc).div(10 ** 18) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1191)
+	-mintAmount = currSupply.mul(mintPerc).div(10 ** 18) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1193)
+KASSIAHOMERebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1337-1366) performs a multiplication on the result of a division:
+	-token0.mul(offPegPerc / 3).div(10 ** 18) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1357)
+KASSIAHOMERebaser.uniswapMaxSlippage(uint256,uint256,uint256) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1337-1366) performs a multiplication on the result of a division:
+	-token1.mul(offPegPerc / 3).div(10 ** 18) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1363)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+KASSIAHOMERebaser.rebase().mintAmount (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1188) is a local variable never initialized
+FixedPoint.mul(FixedPoint.uq112x112,uint256).z (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#589) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247) ignores return value by kassiahome.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1223)
+KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247) ignores return value by kassiahome.mint(uniswap_pair,uniVars.kassiahomesToUni.sub(uniVars.amountFromReserves)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1227)
+KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247) ignores return value by kassiahome.mint(uniswap_pair,uniVars.kassiahomesToUni) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1231)
+KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247) ignores return value by kassiahome.mint(reservesContract,uniVars.mintToReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1236)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in KASSIAHOMERebaser.afterRebase(uint256,uint256) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1394-1422):
+	External calls:
+	- UniswapPair(uniswap_pair).sync() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1401)
+	- buyReserveAndTransfer(mintAmount,offPegPerc) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1404-1407)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1288)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1296)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1304)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1314)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1323)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1331)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1417)
+Reentrancy in KASSIAHOMERebaser.rebase() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1151-1202):
+	External calls:
+	- supplyAfterRebase = kassiahome.rebase(epoch,indexDelta,positive) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1197)
+	- afterRebase(mintAmount,offPegPerc) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1201)
+		- UniswapPair(uniswap_pair).sync() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1401)
+		- pair.swap(0,buyTokens,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1288)
+		- pair.swap(0,buyTokens_scope_0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1296)
+		- pair.swap(0,buyTokens_scope_1,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1304)
+		- pair.swap(buyTokens_scope_2,0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1314)
+		- pair.swap(buyTokens_scope_3,0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1323)
+		- pair.swap(buyTokens_scope_4,0,address(this),abi.encode(uniVars)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1331)
+	Event emitted after the call(s):
+	- TransactionFailed(t.destination,i,t.data) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1417)
+		- afterRebase(mintAmount,offPegPerc) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1201)
+Reentrancy in KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247):
+	External calls:
+	- kassiahome.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1223)
+	- kassiahome.mint(uniswap_pair,uniVars.kassiahomesToUni.sub(uniVars.amountFromReserves)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1227)
+	- kassiahome.mint(uniswap_pair,uniVars.kassiahomesToUni) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1231)
+	- kassiahome.mint(reservesContract,uniVars.mintToReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1236)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount1) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1241)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount1,uniVars.kassiahomesToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1242)
+Reentrancy in KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247):
+	External calls:
+	- kassiahome.transferFrom(reservesContract,uniswap_pair,uniVars.amountFromReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1223)
+	- kassiahome.mint(uniswap_pair,uniVars.kassiahomesToUni.sub(uniVars.amountFromReserves)) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1227)
+	- kassiahome.mint(uniswap_pair,uniVars.kassiahomesToUni) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1231)
+	- kassiahome.mint(reservesContract,uniVars.mintToReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1236)
+	- SafeERC20.safeTransfer(IERC20(reserveToken),reservesContract,amount0) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1244)
+	Event emitted after the call(s):
+	- TreasuryIncreased(amount0,uniVars.kassiahomesToUni,uniVars.amountFromReserves,uniVars.mintToReserves) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1245)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniswapV2OracleLibrary.currentCumulativePrices(address,bool) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#634-663) uses timestamp for comparisons
+	Dangerous comparisons:
+	- blockTimestampLast != blockTimestamp (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#644)
+	- blockTimestampLast != blockTimestamp (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#654)
+KASSIAHOMERebaser.activate_rebasing() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1134-1142) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now >= timeOfTWAPInit + rebaseDelay,!end_delay) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1139)
+KASSIAHOMERebaser.rebase() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1151-1202) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(lastRebaseTimestampSec.add(minRebaseTimeIntervalSec) < now) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1160)
+KASSIAHOMERebaser._inRebaseWindow() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1557-1564) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) >= rebaseWindowOffsetSec,too early) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1562)
+	- require(bool,string)(now.mod(minRebaseTimeIntervalSec) < (rebaseWindowOffsetSec.add(rebaseWindowLengthSec)),too late) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1563)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#280-289) uses assembly
+	- INLINE ASM (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#287-288)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#373-394) uses assembly
+	- INLINE ASM (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#386-390)
+KASSIAHOMERebaser.externalCall(address,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1691-1721) uses assembly
+	- INLINE ASM (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1696-1720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#12) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#17) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#96) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#257) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#467) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#521) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#526) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#531) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#667) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#670) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#746) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#307-313):
+	- (success) = recipient.call.value(amount)() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#311)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#373-394):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#377)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function UniswapPair.DOMAIN_SEPARATOR() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#484) is not in mixedCase
+Function UniswapPair.PERMIT_TYPEHASH() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#485) is not in mixedCase
+Function UniswapPair.MINIMUM_LIQUIDITY() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#502) is not in mixedCase
+Struct FixedPoint.uq112x112 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#556-558) is not in CapWords
+Struct FixedPoint.uq144x112 (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#562-564) is not in CapWords
+Variable KASSIAHOMETokenStorage._notEntered (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#680) is not in mixedCase
+Constant KASSIAHOMETokenStorage.internalDecimals (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#725) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable KASSIAHOMETokenStorage._kassiahomeBalances (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#737) is not in mixedCase
+Variable KASSIAHOMETokenStorage._allowedFragments (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#739) is not in mixedCase
+Variable KASSIAHOMEGovernanceStorage._delegates (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#750) is not in mixedCase
+Function KASSIAHOMETokenInterface._setRebaser(address) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#849) is not in mixedCase
+Function KASSIAHOMETokenInterface._setIncentivizer(address) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#850) is not in mixedCase
+Function KASSIAHOMETokenInterface._setPendingGov(address) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#851) is not in mixedCase
+Function KASSIAHOMETokenInterface._acceptGov() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#852) is not in mixedCase
+Function KASSIAHOMERebaser._setPendingGov(address) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1094-1101) is not in mixedCase
+Function KASSIAHOMERebaser._acceptGov() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1106-1114) is not in mixedCase
+Function KASSIAHOMERebaser.init_twap() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1119-1129) is not in mixedCase
+Function KASSIAHOMERebaser.activate_rebasing() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1134-1142) is not in mixedCase
+Constant KASSIAHOMERebaser.rebaseDelay (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#960) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable KASSIAHOMERebaser.uniswap_pair (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#975) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+KASSIAHOMETokenStorage._notEntered (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#680) should be constant
+KASSIAHOMETokenStorage.decimals (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#695) should be constant
+KASSIAHOMETokenStorage.gov (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#700) should be constant
+KASSIAHOMETokenStorage.incentivizer (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#715) should be constant
+KASSIAHOMETokenStorage.initSupply (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#741) should be constant
+KASSIAHOMETokenStorage.kassiahomesScalingFactor (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#735) should be constant
+KASSIAHOMETokenStorage.name (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#685) should be constant
+KASSIAHOMETokenStorage.pendingGov (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#705) should be constant
+KASSIAHOMETokenStorage.rebaser (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#710) should be constant
+KASSIAHOMETokenStorage.symbol (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#690) should be constant
+KASSIAHOMETokenStorage.totalSupply (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#720) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+setMaxSlippageFactor(uint256) should be declared external:
+	- KASSIAHOMERebaser.setMaxSlippageFactor(uint256) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1052-1059)
+setRebaseMintPerc(uint256) should be declared external:
+	- KASSIAHOMERebaser.setRebaseMintPerc(uint256) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1066-1073)
+setReserveContract(address) should be declared external:
+	- KASSIAHOMERebaser.setReserveContract(address) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1081-1088)
+init_twap() should be declared external:
+	- KASSIAHOMERebaser.init_twap() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1119-1129)
+activate_rebasing() should be declared external:
+	- KASSIAHOMERebaser.activate_rebasing() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1134-1142)
+rebase() should be declared external:
+	- KASSIAHOMERebaser.rebase() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1151-1202)
+uniswapV2Call(address,uint256,uint256,bytes) should be declared external:
+	- KASSIAHOMERebaser.uniswapV2Call(address,uint256,uint256,bytes) (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1205-1247)
+getCurrentTWAP() should be declared external:
+	- KASSIAHOMERebaser.getCurrentTWAP() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1457-1473)
+inRebaseWindow() should be declared external:
+	- KASSIAHOMERebaser.inRebaseWindow() (loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol#1550-1555)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol analyzed (12 contracts with 46 detectors), 76 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x73f6B7419281D7D39C70357161cf40D29ca9619d.sol
+Tool Runtime = 2.438247901001887 seconds
+#############################################

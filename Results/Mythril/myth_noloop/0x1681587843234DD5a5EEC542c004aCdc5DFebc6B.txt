@@ -1,0 +1,139 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: vnxManager
+Function name: transferContractOwnership(address,address)
+PC address: 2359
+Estimated Gas Usage: 6463 - 76297
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/3/0x1681587843234DD5a5EEC542c004aCdc5DFebc6B.sol:333
+
+c.transferOwnership(newOwner)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addRootRole(string), txdata: 0xf616970500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000021000000018008804001800080040020400201400840080820000001204000020000, value: 0x0
+Caller: [CREATOR], function: transferContractOwnership(address,address), txdata: 0x59f5a164c0c0c0c0c0c0c0c0c0c0c0c0deadbeefdeadbeefdeadbeefdeadbeefdeadbeefc0c0c0c0c0c0c0c0c0c0c0c00101010101010101010101010101010101010101, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: vnxManager
+Function name: transferContractOwnership(address,address)
+PC address: 2359
+Estimated Gas Usage: 6463 - 76297
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x1681587843234DD5a5EEC542c004aCdc5DFebc6B.sol:333
+
+c.transferOwnership(newOwner)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferContractOwnership(address,address), txdata: 0x59f5a16400000000000000000000000001010101010101010101010101010101010101010000000000000000000000000101010101010101010101010101010101010101, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: vnxManager
+Function name: roles(uint256)
+PC address: 3998
+Estimated Gas Usage: 1078 - 1173
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/3/0x1681587843234DD5a5EEC542c004aCdc5DFebc6B.sol:383
+
+Role[] public roles
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: roles(uint256), txdata: 0xbfda4a490000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: vnxManager
+Function name: roles(uint256)
+PC address: 4037
+Estimated Gas Usage: 6879 - 9283
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/3/0x1681587843234DD5a5EEC542c004aCdc5DFebc6B.sol:383
+
+Role[] public roles
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addRootRole(string), txdata: 0xf616970500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000021040800024010008000080201011040800420001000800200011001020420800001, value: 0x0
+Caller: [SOMEGUY], function: roles(uint256), txdata: 0xbfda4a490000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: vnxManager
+Function name: roles(uint256)
+PC address: 4089
+Estimated Gas Usage: 6879 - 9283
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/3/0x1681587843234DD5a5EEC542c004aCdc5DFebc6B.sol:383
+
+Role[] public roles
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addRootRole(string), txdata: 0xf616970500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000021040800024010008000080201011040800420001000800200011001020420800001, value: 0x0
+Caller: [SOMEGUY], function: roles(uint256), txdata: 0xbfda4a490000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x1681587843234DD5a5EEC542c004aCdc5DFebc6B.sol
+Tool Runtime = 3218.0178471830004 seconds
+#############################################

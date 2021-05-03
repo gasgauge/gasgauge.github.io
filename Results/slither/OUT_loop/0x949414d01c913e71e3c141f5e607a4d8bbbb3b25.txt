@@ -1,0 +1,249 @@
+Compilation warnings/errors on ./loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol:
+./loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol:418:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+dBalancerPool.notifyRewardAmount(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#800-820) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#806)
+	-leftover = remaining.mul(rewardRate) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#809)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in dBalancerPool.checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#782-792):
+	External calls:
+	- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- periodFinish = block.timestamp.add(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#788)
+Reentrancy in dBalancerPool.exit() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#715-721):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#716)
+		- bpt.safeTransfer(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#598)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+		- syfi.safeTransfer(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#777)
+	State variables written after the call(s):
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- initreward = initreward.mul(50).div(100) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#784)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- lastUpdateTime = lastTimeRewardApplicable() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#732)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- periodFinish = block.timestamp.add(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#788)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- rewardPerTokenStored = rewardPerToken() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#731)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- rewardRate = initreward.div(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#787)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- rewards[msg.sender] = 0 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#775)
+		- rewards[account] = earned(account) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#734)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#735)
+Reentrancy in dBalancerPool.getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772-780):
+	External calls:
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- rewards[msg.sender] = 0 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#775)
+Reentrancy in dBalancerPool.notifyRewardAmount(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#800-820):
+	External calls:
+	- syfi.mint(address(this),reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#812)
+	State variables written after the call(s):
+	- lastUpdateTime = block.timestamp (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#813)
+	- periodFinish = starttime.add(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#815)
+	- periodFinish = block.timestamp.add(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#817)
+Reentrancy in dBalancerPool.stake(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#665-674):
+	External calls:
+	- super.stake(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#672)
+		- bpt.safeTransferFrom(msg.sender,address(this),amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#592)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#665)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- super.stake(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#672)
+		- _balances[msg.sender] = _balances[msg.sender].add(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#591)
+	- super.stake(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#672)
+		- _totalSupply = _totalSupply.add(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#590)
+Reentrancy in dBalancerPool.withdraw(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#766-770):
+	External calls:
+	- super.withdraw(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#768)
+		- bpt.safeTransfer(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#598)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#766)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- super.withdraw(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#768)
+		- _balances[msg.sender] = _balances[msg.sender].sub(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#597)
+	- super.withdraw(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#768)
+		- _totalSupply = _totalSupply.sub(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#596)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in dBalancerPool.checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#782-792):
+	External calls:
+	- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- rewardRate = initreward.div(DURATION) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#787)
+Reentrancy in dBalancerPool.getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772-780):
+	External calls:
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- claimRewards[msg.sender] = claimRewards[msg.sender].add(reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#776)
+Reentrancy in dBalancerPool.stake(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#665-674):
+	External calls:
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#665)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	State variables written after the call(s):
+	- invAddrs[superPerson].push(msg.sender) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#670)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in dBalancerPool.checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#782-792):
+	External calls:
+	- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#789)
+Reentrancy in dBalancerPool.exit() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#715-721):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#716)
+		- bpt.safeTransfer(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#598)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+		- syfi.safeTransfer(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#777)
+	Event emitted after the call(s):
+	- RewardAdded(initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#789)
+		- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+	- RewardPaid(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#778)
+		- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+Reentrancy in dBalancerPool.exit() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#715-721):
+	External calls:
+	- withdraw(balanceOf(msg.sender)) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#716)
+		- bpt.safeTransfer(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#598)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#717)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+		- syfi.safeTransfer(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#777)
+	- getInvRewards() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#719)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+		- inv.safeTransfer(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#710)
+	Event emitted after the call(s):
+	- RewardINVPaid(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#711)
+		- getInvRewards() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#719)
+Reentrancy in dBalancerPool.getInvRewards() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#705-713):
+	External calls:
+	- inv.safeTransfer(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#710)
+	Event emitted after the call(s):
+	- RewardINVPaid(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#711)
+Reentrancy in dBalancerPool.getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772-780):
+	External calls:
+	- syfi.safeTransfer(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#777)
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#778)
+Reentrancy in dBalancerPool.notifyRewardAmount(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#800-820):
+	External calls:
+	- syfi.mint(address(this),reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#812)
+	Event emitted after the call(s):
+	- RewardAdded(reward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#819)
+Reentrancy in dBalancerPool.stake(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#665-674):
+	External calls:
+	- super.stake(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#672)
+		- bpt.safeTransferFrom(msg.sender,address(this),amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#592)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#665)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#673)
+Reentrancy in dBalancerPool.withdraw(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#766-770):
+	External calls:
+	- super.withdraw(amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#768)
+		- bpt.safeTransfer(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#598)
+		- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+	- checkhalve() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#766)
+		- syfi.mint(address(this),initreward) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#785)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#769)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+dBalancerPool.getInvRewards() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#705-713) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#708)
+dBalancerPool.getReward() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#772-780) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#774)
+dBalancerPool.notifyRewardAmount(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#800-820) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#805)
+	- block.timestamp < starttime (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#814)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#407-420) uses assembly
+	- INLINE ASM (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#418-419)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+dBalancerPool.getInvRewards() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#705-713) compares to a boolean constant:
+	-require(bool,string)(isOpenWithdraw == true,Not open inv claim) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#706)
+dBalancerPool.exit() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#715-721) compares to a boolean constant:
+	-isOpenWithdraw == true (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#718)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#39) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#199) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#230) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#309) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#390) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#462) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#540) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#565) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#450-456):
+	- (success) = recipient.call.value(amount)() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#454)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#515-534):
+	- (success,returndata) = address(token).call(data) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#527)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter IRewardDistributionRecipient.setRewardDistribution(address)._rewardDistribution (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#554) is not in mixedCase
+Contract dBalancerPool (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#602-821) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+dBalancerPool.oneFactor (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#619) should be constant
+dBalancerPool.starttime (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#609) should be constant
+dBalancerPool.threeFactor (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#621) should be constant
+dBalancerPool.twoFactor (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#620) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#257-259)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#283-286)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#292-294)
+openWithdraw() should be declared external:
+	- dBalancerPool.openWithdraw() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#635-637)
+closeWithdraw() should be declared external:
+	- dBalancerPool.closeWithdraw() (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#639-641)
+levelEmergencyChange(uint256) should be declared external:
+	- dBalancerPool.levelEmergencyChange(uint256) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#643-645)
+setInvCode(bytes32,bytes32) should be declared external:
+	- dBalancerPool.setInvCode(bytes32,bytes32) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#647-654)
+getInvAddrs(address) should be declared external:
+	- dBalancerPool.getInvAddrs(address) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#656-659)
+getInvCount(address) should be declared external:
+	- dBalancerPool.getInvCount(address) (loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol#661-663)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol analyzed (10 contracts with 46 detectors), 51 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x949414d01c913e71e3c141f5e607a4d8bbbb3b25.sol
+Tool Runtime = 1.316556436002429 seconds
+#############################################

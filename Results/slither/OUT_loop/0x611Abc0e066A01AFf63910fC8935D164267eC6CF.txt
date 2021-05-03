@@ -1,0 +1,92 @@
+INFO:Detectors:[93m
+Issuer._collateralisationRatio(address) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1885-1894) uses a dangerous strict equality:
+	- totalOwnedSynthetix == 0 (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1891)
+Issuer._removeFromDebtRegister(address,uint256,uint256,uint256) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2371-2411) uses a dangerous strict equality:
+	- debtToRemove == existingDebt (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2397)
+Issuer.liquidateDelinquentAccount(address,uint256,address) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2150-2207) uses a dangerous strict equality:
+	- amountToLiquidate == amountToFixRatio (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2203)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[92m
+AddressResolver.rebuildCaches(MixinResolver[]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#244-248) has external calls inside a loop: destinations[i].rebuildCache() (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#246)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in Issuer.removeSynth(bytes32) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2081-2089):
+	External calls:
+	- cache.updateCachedSynthDebtWithRate(currencyKey,0) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2085)
+	- cache.updateDebtCacheValidity(true) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2086)
+	State variables written after the call(s):
+	- _removeSynth(currencyKey) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2088)
+		- delete availableSynths[i] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2060)
+		- availableSynths[i] = availableSynths[availableSynths.length - 1] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2065)
+		- availableSynths.length -- (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2068)
+	- _removeSynth(currencyKey) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2088)
+		- delete synths[currencyKey] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2076)
+	- _removeSynth(currencyKey) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2088)
+		- delete synthsByAddress[synthToRemove] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2075)
+Reentrancy in Issuer.removeSynths(bytes32[]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2091-2104):
+	External calls:
+	- cache.updateCachedSynthDebtsWithRates(currencyKeys,zeroRates) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2098)
+	- cache.updateDebtCacheValidity(true) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2099)
+	State variables written after the call(s):
+	- _removeSynth(currencyKeys[i]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2102)
+		- delete availableSynths[i] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2060)
+		- availableSynths[i] = availableSynths[availableSynths.length - 1] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2065)
+		- availableSynths.length -- (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2068)
+	- _removeSynth(currencyKeys[i]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2102)
+		- delete synths[currencyKey] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2076)
+	- _removeSynth(currencyKeys[i]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2102)
+		- delete synthsByAddress[synthToRemove] (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2075)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Issuer.removeSynth(bytes32) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2081-2089):
+	External calls:
+	- cache.updateCachedSynthDebtWithRate(currencyKey,0) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2085)
+	- cache.updateDebtCacheValidity(true) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2086)
+	Event emitted after the call(s):
+	- SynthRemoved(currencyKey,synthToRemove) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2078)
+		- _removeSynth(currencyKey) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2088)
+Reentrancy in Issuer.removeSynths(bytes32[]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2091-2104):
+	External calls:
+	- cache.updateCachedSynthDebtsWithRates(currencyKeys,zeroRates) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2098)
+	- cache.updateDebtCacheValidity(true) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2099)
+	Event emitted after the call(s):
+	- SynthRemoved(currencyKey,synthToRemove) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2078)
+		- _removeSynth(currencyKeys[i]) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#2102)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Issuer._canBurnSynths(address) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1837-1839) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now >= _lastIssueEvent(account).add(getMinimumStakeTime()) (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1838)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+ReadProxy.fallback() (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#296-311) uses assembly
+	- INLINE ASM (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#299-311)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#57) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.nominateNewOwner(address)._owner (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#71) is not in mixedCase
+Parameter ReadProxy.setTarget(address)._target (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#291) is not in mixedCase
+Constant SafeDecimalMath.highPrecisionDecimals (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#717) is not in UPPER_CASE_WITH_UNDERSCORES
+Function IFeePool.FEE_ADDRESS() (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1035) is not in mixedCase
+Parameter Issuer.collateralisationRatio(address)._issuer (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1938) is not in mixedCase
+Parameter Issuer.collateralisationRatioAndAnyRatesInvalid(address)._issuer (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1942) is not in mixedCase
+Parameter Issuer.debtBalanceOf(address,bytes32)._issuer (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1954) is not in mixedCase
+Parameter Issuer.remainingIssuableSynths(address)._issuer (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1966) is not in mixedCase
+Parameter Issuer.maxIssuableSynths(address)._issuer (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1978) is not in mixedCase
+Constant Issuer.sUSD (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1647) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Issuer.sETH (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#1648) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+rebuildCache() should be declared external:
+	- MixinResolver.rebuildCache() (loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol#356-369)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol analyzed (28 contracts with 46 detectors), 24 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x611Abc0e066A01AFf63910fC8935D164267eC6CF.sol
+Tool Runtime = 4.537558198997431 seconds
+#############################################

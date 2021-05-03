@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: VIX
+Function name: transfer(address,uint256,bytes)
+PC address: 3895
+Estimated Gas Usage: 17588 - 98578
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/5/0x4ed07051b9d053e442b42cb6b6083bcd7031729e.sol:71
+
+ERC223ReceivingContract(_to).tokenFallback(msg.sender, _value, _data)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2040400, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transfer(address,uint256,bytes), txdata: 0xbe45fd62000000000000000000000000100002000000000000000000000000000000000000000000000000000000000000000000000000000028000000000000000000000000000000000000000000000000000000000000000000000000000000000016, value: 0x0
+Caller: [CREATOR], function: transfer(address,uint256,bytes), txdata: 0xbe45fd62fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: VIX
+Function name: transfer(address,uint256)
+PC address: 4285
+Estimated Gas Usage: 2071 - 2356
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/5/0x4ed07051b9d053e442b42cb6b6083bcd7031729e.sol:142
+
+assert(b <= a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transfer(address,uint256), txdata: 0xa9059cbb00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x4ed07051b9d053e442b42cb6b6083bcd7031729e.sol
+Tool Runtime = 3776.024872602022 seconds
+#############################################

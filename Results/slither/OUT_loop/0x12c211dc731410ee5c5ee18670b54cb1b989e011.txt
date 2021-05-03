@@ -1,0 +1,237 @@
+INFO:Detectors:[91m
+UtahSilver.sendETHDividends(address,address,uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#465-480) sends eth to arbitrary user
+	Dangerous calls:
+	- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in UtahSilver.registration(address,address) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#238-271):
+	External calls:
+	- updateG3Referrer(userAddress,freeG3Referrer,1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#266)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	State variables written after the call(s):
+	- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+		- users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[0]].G4Matrix[level].firstLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#387)
+		- users[referrerAddress].G4Matrix[level].firstLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#309)
+		- users[userAddress].G4Matrix[level].currentReferrer = referrerAddress (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#313)
+		- users[userAddress].G4Matrix[level].currentReferrer = users[referrerAddress].G4Matrix[level].firstLevelReferrals[0] (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#391)
+		- users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[1]].G4Matrix[level].firstLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#393)
+		- users[users[referrerAddress].G4Matrix[level].currentReferrer].G4Matrix[level].closedPart = referrerAddress (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#411)
+		- users[userAddress].G4Matrix[level].currentReferrer = users[referrerAddress].G4Matrix[level].firstLevelReferrals[1] (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#397)
+		- users[ref].G4Matrix[level].secondLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#320)
+		- users[users[referrerAddress].G4Matrix[level].currentReferrer].G4Matrix[level].closedPart = referrerAddress (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#414)
+		- users[referrerAddress].G4Matrix[level].firstLevelReferrals = new address[](0) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#418)
+		- users[referrerAddress].G4Matrix[level].secondLevelReferrals = new address[](0) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#419)
+		- users[referrerAddress].G4Matrix[level].closedPart = address(0) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#420)
+		- users[referrerAddress].G4Matrix[level].blocked = true (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#423)
+		- users[referrerAddress].G4Matrix[level].reinvestCount = users[referrerAddress].G4Matrix[level].reinvestCount.add(1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#426)
+		- users[referrerAddress].G4Matrix[level].secondLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#348)
+Reentrancy in UtahSilver.updateG3Referrer(address,address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#273-303):
+	External calls:
+	- sendETHDividends(ownerAddress,userAddress,1,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#299)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	State variables written after the call(s):
+	- users[ownerAddress].G3Matrix[level].reinvestCount = users[ownerAddress].G3Matrix[level].reinvestCount.add(1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#300)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+UtahSilver.findEthReceiver(address,address,uint8,uint8).isExtraDividends (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#441) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+Reentrancy in UtahSilver.buyNewLevel(uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#148-174):
+	External calls:
+	- updateG3Referrer(msg.sender,freeG3Referrer,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#162)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- Upgrade(msg.sender,freeG3Referrer,1,level,msg.value,now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#163)
+Reentrancy in UtahSilver.buyNewLevel(uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#148-174):
+	External calls:
+	- updateG4Referrer(msg.sender,freeG4Referrer,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#171)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- Upgrade(msg.sender,freeG4Referrer,2,level,msg.value,now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#172)
+Reentrancy in UtahSilver.registration(address,address) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#238-271):
+	External calls:
+	- updateG3Referrer(userAddress,freeG3Referrer,1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#266)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- MissedEthReceive(receiver,_from,1,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#445)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- MissedEthReceive(receiver,_from,2,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#455)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,users[referrerAddress].G4Matrix[level].firstLevelReferrals[0],2,level,uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[0]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#388)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,referrerAddress,2,level,2 + uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[0]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#389)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,referrerAddress,2,level,uint8(users[referrerAddress].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#310)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,users[referrerAddress].G4Matrix[level].firstLevelReferrals[1],2,level,uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[1]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#394)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,referrerAddress,2,level,4 + uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[1]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#395)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,5) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#327)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,6) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#329)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,3) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#334)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,4) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#336)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,5) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#340)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,6) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#342)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- RecievedEth(receiver,_from,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#478)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- Registration(userAddress,referrerAddress,users[userAddress].id,users[referrerAddress].id,msg.value,now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#270)
+	- Reinvest(referrerAddress,freeReferrerAddress,userAddress,2,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#431)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- Reinvest(ownerAddress,address(0),userAddress,2,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#434)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- SentExtraEthDividends(_from,receiver,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#475)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+Reentrancy in UtahSilver.sendETHDividends(address,address,uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#465-480):
+	External calls:
+	- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- RecievedEth(receiver,_from,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#478)
+	- SentExtraEthDividends(_from,receiver,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#475)
+Reentrancy in UtahSilver.updateG3Referrer(address,address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#273-303):
+	External calls:
+	- sendETHDividends(ownerAddress,userAddress,1,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#299)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- Reinvest(ownerAddress,address(0),userAddress,1,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#301)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UtahSilver.registration(address,address) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#238-271) uses assembly
+	- INLINE ASM (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#244-247)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+UtahSilver.isLock() (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#93-96) compares to a boolean constant:
+	-require(bool,string)(lockStatus == false,Contract Locked) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#94)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter UtahSilver.failSafe(address,uint256)._toUser (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#177) is not in mixedCase
+Parameter UtahSilver.failSafe(address,uint256)._amount (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#177) is not in mixedCase
+Parameter UtahSilver.contractLock(bool)._lockStatus (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#184) is not in mixedCase
+Parameter UtahSilver.findEthReceiver(address,address,uint8,uint8)._from (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#439) is not in mixedCase
+Parameter UtahSilver.sendETHDividends(address,address,uint8,uint8)._from (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#465) is not in mixedCase
+Variable UtahSilver.Token (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#76) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in UtahSilver.buyNewLevel(uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#148-174):
+	External calls:
+	- updateG3Referrer(msg.sender,freeG3Referrer,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#162)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- Upgrade(msg.sender,freeG3Referrer,1,level,msg.value,now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#163)
+Reentrancy in UtahSilver.buyNewLevel(uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#148-174):
+	External calls:
+	- updateG4Referrer(msg.sender,freeG4Referrer,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#171)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- Upgrade(msg.sender,freeG4Referrer,2,level,msg.value,now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#172)
+Reentrancy in UtahSilver.registration(address,address) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#238-271):
+	External calls:
+	- updateG3Referrer(userAddress,freeG3Referrer,1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#266)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	State variables written after the call(s):
+	- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+		- users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[0]].G4Matrix[level].firstLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#387)
+		- users[referrerAddress].G4Matrix[level].firstLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#309)
+		- users[userAddress].G4Matrix[level].currentReferrer = referrerAddress (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#313)
+		- users[userAddress].G4Matrix[level].currentReferrer = users[referrerAddress].G4Matrix[level].firstLevelReferrals[0] (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#391)
+		- users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[1]].G4Matrix[level].firstLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#393)
+		- users[users[referrerAddress].G4Matrix[level].currentReferrer].G4Matrix[level].closedPart = referrerAddress (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#411)
+		- users[userAddress].G4Matrix[level].currentReferrer = users[referrerAddress].G4Matrix[level].firstLevelReferrals[1] (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#397)
+		- users[ref].G4Matrix[level].secondLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#320)
+		- users[users[referrerAddress].G4Matrix[level].currentReferrer].G4Matrix[level].closedPart = referrerAddress (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#414)
+		- users[referrerAddress].G4Matrix[level].firstLevelReferrals = new address[](0) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#418)
+		- users[referrerAddress].G4Matrix[level].secondLevelReferrals = new address[](0) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#419)
+		- users[referrerAddress].G4Matrix[level].closedPart = address(0) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#420)
+		- users[referrerAddress].G4Matrix[level].blocked = true (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#423)
+		- users[referrerAddress].G4Matrix[level].reinvestCount = users[referrerAddress].G4Matrix[level].reinvestCount.add(1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#426)
+		- users[referrerAddress].G4Matrix[level].secondLevelReferrals.push(userAddress) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#348)
+	Event emitted after the call(s):
+	- MissedEthReceive(receiver,_from,1,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#445)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- MissedEthReceive(receiver,_from,2,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#455)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,users[referrerAddress].G4Matrix[level].firstLevelReferrals[0],2,level,uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[0]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#388)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,referrerAddress,2,level,2 + uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[0]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#389)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,referrerAddress,2,level,uint8(users[referrerAddress].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#310)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,users[referrerAddress].G4Matrix[level].firstLevelReferrals[1],2,level,uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[1]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#394)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,referrerAddress,2,level,4 + uint8(users[users[referrerAddress].G4Matrix[level].firstLevelReferrals[1]].G4Matrix[level].firstLevelReferrals.length)) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#395)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,5) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#327)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,6) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#329)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,3) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#334)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,4) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#336)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,5) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#340)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- NewUserPlace(userAddress,ref,2,level,6) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#342)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- RecievedEth(receiver,_from,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#478)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- Registration(userAddress,referrerAddress,users[userAddress].id,users[referrerAddress].id,msg.value,now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#270)
+	- Reinvest(referrerAddress,freeReferrerAddress,userAddress,2,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#431)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- Reinvest(ownerAddress,address(0),userAddress,2,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#434)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+	- SentExtraEthDividends(_from,receiver,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#475)
+		- updateG4Referrer(userAddress,findFreeG4Referrer(userAddress,1),1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#268)
+Reentrancy in UtahSilver.sendETHDividends(address,address,uint8,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#465-480):
+	External calls:
+	- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	Event emitted after the call(s):
+	- RecievedEth(receiver,_from,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#478)
+	- SentExtraEthDividends(_from,receiver,matrix,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#475)
+Reentrancy in UtahSilver.updateG3Referrer(address,address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#273-303):
+	External calls:
+	- sendETHDividends(ownerAddress,userAddress,1,level) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#299)
+		- require(bool,string)((address(uint160(receiver)).send(levelPrice[level])) && Token.mint(msg.sender,tobeminted),Invalid Transaction) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#471-472)
+	State variables written after the call(s):
+	- users[ownerAddress].G3Matrix[level].reinvestCount = users[ownerAddress].G3Matrix[level].reinvestCount.add(1) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#300)
+	Event emitted after the call(s):
+	- Reinvest(ownerAddress,address(0),userAddress,1,level,levelPrice[level],now) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#301)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+mint(address,uint256) should be declared external:
+	- ERC20.mint(address,uint256) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#45)
+failSafe(address,uint256) should be declared external:
+	- UtahSilver.failSafe(address,uint256) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#177-182)
+contractLock(bool) should be declared external:
+	- UtahSilver.contractLock(bool) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#184-187)
+usersActiveG3Levels(address,uint8) should be declared external:
+	- UtahSilver.usersActiveG3Levels(address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#209-211)
+usersActiveG4Levels(address,uint8) should be declared external:
+	- UtahSilver.usersActiveG4Levels(address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#213-215)
+usersG3Matrix(address,uint8) should be declared external:
+	- UtahSilver.usersG3Matrix(address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#217-222)
+usersG4Matrix(address,uint8) should be declared external:
+	- UtahSilver.usersG4Matrix(address,uint8) (loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol#224-231)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol analyzed (3 contracts with 46 detectors), 31 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x12c211dc731410ee5c5ee18670b54cb1b989e011.sol
+Tool Runtime = 1.7614889149990631 seconds
+#############################################

@@ -1,0 +1,139 @@
+Compilation warnings/errors on ./loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol:
+./loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol:214:26: Warning: The "shr" instruction is only available for Constantinople-compatible VMs. You are currently compiling for "byzantium", where it will be interpreted as an invalid instruction.
+                shl(224, shr(224, calldataload(0))), // msg.sig
+                         ^-----------------------^
+./loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol:214:17: Warning: The "shl" instruction is only available for Constantinople-compatible VMs. You are currently compiling for "byzantium", where it will be interpreted as an invalid instruction.
+                shl(224, shr(224, calldataload(0))), // msg.sig
+                ^---------------------------------^
+./loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol:437:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+RewardProxyActions.claimReward(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1271-1274) ignores return value by IERC20(StakingRewards(rewarder).gov()).transfer(msg.sender,reward) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1273)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in StakingRewards.getReward() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1120-1137):
+	External calls:
+	- IERC20(gov).safeTransfer(msg.sender,reward) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1131)
+	State variables written after the call(s):
+	- totalRewards = totalRewards.add(reward) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1133)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in GemJoinWithReward.exit(address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1251-1267):
+	External calls:
+	- vat.slip(ilk,msg.sender,- int256(wad)) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1253)
+	- (ret) = address(rewarder).call(abi.encodeWithSelector(rewarder.withdraw.selector,wad,address(gem),msg.sender)) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1258-1261)
+	Event emitted after the call(s):
+	- withdrawError(wad,address(gem),msg.sender) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1263)
+Reentrancy in StakingRewards.getReward() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1120-1137):
+	External calls:
+	- IERC20(gov).safeTransfer(msg.sender,reward) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1131)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1132)
+Reentrancy in GemJoinWithReward.join(address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1229-1249):
+	External calls:
+	- vat.slip(ilk,urn,int256(wad)) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1232)
+	- (ret) = address(rewarder).call(abi.encodeWithSelector(rewarder.stake.selector,wad,address(gem),msg.sender)) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1235-1238)
+	Event emitted after the call(s):
+	- stakeError(wad,address(gem),msg.sender) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1240)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+StakingRewards.initialize(address,uint256,uint256,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#978-994) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(_starttime >= block.timestamp) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#987)
+StakingRewards.testFairDistributionByValue(address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1076-1083) uses timestamp for comparisons
+	Dangerous comparisons:
+	- balanceOf(usr).add(value) <= fairDistributionMaxValue || block.timestamp >= starttime.add(fairDistributionTime) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1078-1080)
+StakingRewards.checkFairDistribution(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1085-1093) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(balanceOf(usr) <= fairDistributionMaxValue || block.timestamp >= starttime.add(fairDistributionTime),Fair-distribution-limit) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1087-1091)
+StakingRewards.getReward() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1120-1137) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1129)
+StakingRewards.allowToStart() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1154-1156) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > starttime (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1155)
+StakingRewards.initRewardAmount(uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1158-1165) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(starttime >= block.timestamp) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1159)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#426-439) uses assembly
+	- INLINE ASM (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#437-438)
+Initializable.isConstructor() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#780-791) uses assembly
+	- INLINE ASM (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#787-790)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+StakingRewards.setupFairDistribution(uint256,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1001-1012) compares to a boolean constant:
+	-require(bool)(fairDistribution == false) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1007)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#7) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#469-475):
+	- (success) = recipient.call.value(amount)() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#473)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#529-548):
+	- (success,returndata) = address(token).call(data) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#541)
+Low level call in GemJoinWithReward.join(address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1229-1249):
+	- (ret) = address(rewarder).call(abi.encodeWithSelector(rewarder.stake.selector,wad,address(gem),msg.sender)) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1235-1238)
+Low level call in GemJoinWithReward.exit(address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1251-1267):
+	- (ret) = address(rewarder).call(abi.encodeWithSelector(rewarder.withdraw.selector,wad,address(gem),msg.sender)) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1258-1261)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#794) is not in mixedCase
+Parameter StakingRewards.initialize(address,uint256,uint256,uint256)._gov (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#979) is not in mixedCase
+Parameter StakingRewards.initialize(address,uint256,uint256,uint256)._duration (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#980) is not in mixedCase
+Parameter StakingRewards.initialize(address,uint256,uint256,uint256)._initreward (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#981) is not in mixedCase
+Parameter StakingRewards.initialize(address,uint256,uint256,uint256)._starttime (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#982) is not in mixedCase
+Parameter StakingRewards.setupFairDistribution(uint256,uint256)._fairDistributionMaxValue (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1002) is not in mixedCase
+Parameter StakingRewards.setupFairDistribution(uint256,uint256)._fairDistributionTime (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1003) is not in mixedCase
+Event GemJoinWithRewardstakeError(uint256,address,address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1199) is not in CapWords
+Event GemJoinWithRewardwithdrawError(uint256,address,address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1200) is not in CapWords
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Initializable.______gap (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#794) is never used in StakingRewards (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#938-1166)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+LPTokenWrapper.decimals (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#813) should be constant
+LPTokenWrapper.prec (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#815) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#689-691)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#715-718)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#724-726)
+initialize(address,uint256,uint256,uint256) should be declared external:
+	- StakingRewards.initialize(address,uint256,uint256,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#978-994)
+setupGemForRewardChecker(address) should be declared external:
+	- StakingRewards.setupGemForRewardChecker(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#996-999)
+setupFairDistribution(uint256,uint256) should be declared external:
+	- StakingRewards.setupFairDistribution(uint256,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1001-1012)
+registerPairDesc(address,address,uint256,address) should be declared external:
+	- StakingRewards.registerPairDesc(address,address,uint256,address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1014-1034)
+resetDeployer() should be declared external:
+	- StakingRewards.resetDeployer() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1036-1040)
+testFairDistribution(address,address,uint256) should be declared external:
+	- StakingRewards.testFairDistribution(address,address,uint256) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1068-1074)
+checkFairDistribution(address) should be declared external:
+	- StakingRewards.checkFairDistribution(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1085-1093)
+stake(uint256,address,address) should be declared external:
+	- StakingRewards.stake(uint256,address,address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1096-1106)
+withdraw(uint256,address,address) should be declared external:
+	- StakingRewards.withdraw(uint256,address,address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1108-1118)
+getReward() should be declared external:
+	- StakingRewards.getReward() (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1120-1137)
+claimReward(address) should be declared external:
+	- RewardProxyActions.claimReward(address) (loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol#1271-1274)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol analyzed (18 contracts with 46 detectors), 46 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xcEe014dE7992D0C5C8a10c6769A12C81b69d0063.sol
+Tool Runtime = 1.8067101220003678 seconds
+#############################################

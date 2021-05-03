@@ -1,0 +1,177 @@
+INFO:Detectors:[91m
+Reentrancy in YvsLiquidityPool.exit() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1081-1084):
+	External calls:
+	- withdraw(_balances[msg.sender].sub(_locked[msg.sender])) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1082)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#933)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1067)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#933)
+		- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1076)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+	External calls sending eth:
+	- withdraw(_balances[msg.sender].sub(_locked[msg.sender])) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1082)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+	State variables written after the call(s):
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- _status = _ENTERED (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#59)
+		- _status = _NOT_ENTERED (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#65)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- lastUpdateTime = lastTimeRewardApplicable() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1160)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- rewardPerTokenStored = rewardPerToken() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1159)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- rewards[msg.sender] = 0 (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1075)
+		- rewards[account] = earned(account) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1162)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- userRewardPerTokenPaid[account] = rewardPerTokenStored (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1163)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+YvsLiquidityPool.notifyRewardAmount(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1104-1130) performs a multiplication on the result of a division:
+	-rewardRate = reward.div(rewardsDuration) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1110)
+	-leftover = remaining.mul(rewardRate) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1113)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+YvsLiquidityPool.rewardPerToken() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1001-1013) uses a dangerous strict equality:
+	- _totalSupply == 0 (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1002)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in YvsLiquidityPool.stake(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1033-1054):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1042)
+	State variables written after the call(s):
+	- _balances[msg.sender] = _balances[msg.sender].add(actualReceived) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1049)
+	- _totalSupply = _totalSupply.add(actualReceived) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1048)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+ERC20.constructor(string,string).name (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#621) shadows:
+	- ERC20.name() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#630-632) (function)
+ERC20.constructor(string,string).symbol (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#621) shadows:
+	- ERC20.symbol() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#638-640) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in YvsLiquidityPool.stake(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1033-1054):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1042)
+	State variables written after the call(s):
+	- _locked[msg.sender] = _locked[msg.sender].add(lockedAmount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1050)
+	- _totalLocked = _totalLocked.add(lockedAmount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1051)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in YvsLiquidityPool.exit() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1081-1084):
+	External calls:
+	- withdraw(_balances[msg.sender].sub(_locked[msg.sender])) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1082)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#933)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+		- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1067)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- returndata = address(token).functionCall(data,SafeERC20: low-level call failed) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#933)
+		- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1076)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+	External calls sending eth:
+	- withdraw(_balances[msg.sender].sub(_locked[msg.sender])) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1082)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+	- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+		- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1077)
+		- getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1083)
+Reentrancy in YvsLiquidityPool.getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1072-1079):
+	External calls:
+	- rewardsToken.safeTransfer(msg.sender,reward) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1076)
+	Event emitted after the call(s):
+	- RewardPaid(msg.sender,reward) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1077)
+Reentrancy in YvsLiquidityPool.recoverERC20(address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1133-1145):
+	External calls:
+	- IERC20(tokenAddress).safeTransfer(owner(),tokenAmount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1143)
+	Event emitted after the call(s):
+	- Recovered(tokenAddress,tokenAmount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1144)
+Reentrancy in YvsLiquidityPool.stake(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1033-1054):
+	External calls:
+	- stakingToken.safeTransferFrom(msg.sender,address(this),amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1042)
+	Event emitted after the call(s):
+	- Staked(msg.sender,amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1053)
+Reentrancy in YvsLiquidityPool.withdraw(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1056-1070):
+	External calls:
+	- stakingToken.safeTransfer(msg.sender,amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1067)
+	Event emitted after the call(s):
+	- Withdrawn(msg.sender,amount) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1069)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+YvsLiquidityPool.min(uint256,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1027-1029) uses timestamp for comparisons
+	Dangerous comparisons:
+	- a < b (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1028)
+YvsLiquidityPool.getReward() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1072-1079) uses timestamp for comparisons
+	Dangerous comparisons:
+	- reward > 0 (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1074)
+YvsLiquidityPool.notifyRewardAmount(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1104-1130) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= periodFinish (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1109)
+	- require(bool,string)(rewardRate <= balance.div(rewardsDuration),Provided reward too high) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1122-1125)
+YvsLiquidityPool.setRewardsDuration(uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1147-1154) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp > periodFinish,Previous rewards period must be complete before changing the duration for the new period) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1148-1151)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#456-465) uses assembly
+	- INLINE ASM (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#463-464)
+Address._functionCallWithValue(address,bytes,uint256,string) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#549-570) uses assembly
+	- INLINE ASM (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#562-566)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#483-489):
+	- (success) = recipient.call.value(amount)() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#487)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#549-570):
+	- (success,returndata) = target.call.value(weiValue)(data) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#553)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Pausable.setPaused(bool)._paused (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#173) is not in mixedCase
+Parameter YvsLiquidityPool.setStakingToken(address)._stakingToken (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1088) is not in mixedCase
+Parameter YvsLiquidityPool.setController(address)._controller (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1096) is not in mixedCase
+Parameter YvsLiquidityPool.setRewardsDuration(uint256)._rewardsDuration (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#1147) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+YvsLiquidityPool.slitherConstructorVariables() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#942-1187) uses literals with too many digits:
+	- rewardsDuration = 52600000 (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#954)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#140-143)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#149-153)
+name() should be declared external:
+	- ERC20.name() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#630-632)
+symbol() should be declared external:
+	- ERC20.symbol() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#638-640)
+decimals() should be declared external:
+	- ERC20.decimals() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#655-657)
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#662-664)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#669-671)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#681-684)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#689-691)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#700-703)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#717-721)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#735-738)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x613f654c7bbb948219f3952173518debcd963718.sol#754-757)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x613f654c7bbb948219f3952173518debcd963718.sol analyzed (10 contracts with 46 detectors), 40 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x613f654c7bbb948219f3952173518debcd963718.sol
+Tool Runtime = 1.4483522030022868 seconds
+#############################################

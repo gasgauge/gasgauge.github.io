@@ -1,0 +1,136 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: FeeTo
+Function name: claim(address)
+PC address: 1891
+Estimated Gas Usage: 4793 - 75003
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xDAF819c2437a82f9e01f6586207ebF961a7f0970.sol:101
+
+IUniswapV2Pair(pair).token1()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: claim(address), txdata: 0x1e83409a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: FeeTo
+Function name: renounce(address)
+PC address: 3264
+Estimated Gas Usage: 11594 - 186338
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops9/0xDAF819c2437a82f9e01f6586207ebF961a7f0970.sol:66
+
+IUniswapV2Pair(pair).token1()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: renounce(address), txdata: 0x1f76a7af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: FeeTo
+Function name: renounce(address)
+PC address: 4051
+Estimated Gas Usage: 11594 - 186338
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops9/0xDAF819c2437a82f9e01f6586207ebF961a7f0970.sol:83
+
+IUniswapV2Pair(pair).transfer(pair, value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfa69e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: renounce(address), txdata: 0x1f76a7af000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: FeeTo
+Function name: renounce(address)
+PC address: 4349
+Estimated Gas Usage: 11594 - 186338
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xDAF819c2437a82f9e01f6586207ebF961a7f0970.sol:88
+
+token0AllowState.allowed
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbb16, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: renounce(address), txdata: 0x1f76a7af000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: FeeTo
+Function name: renounce(address)
+PC address: 4464
+Estimated Gas Usage: 11594 - 186338
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops9/0xDAF819c2437a82f9e01f6586207ebF961a7f0970.sol:92
+
+token1AllowState.allowed
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xfbb16, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: renounce(address), txdata: 0x1f76a7af000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xDAF819c2437a82f9e01f6586207ebF961a7f0970.sol
+Tool Runtime = 10826.361790636001 seconds
+#############################################

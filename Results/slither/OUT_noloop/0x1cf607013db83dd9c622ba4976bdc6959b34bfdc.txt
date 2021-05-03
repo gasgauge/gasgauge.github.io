@@ -1,0 +1,113 @@
+INFO:Detectors:[93m
+Reentrancy in UPLOADstaking.deposit(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#254-270):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#256)
+	- updateAccount(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#258)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#262)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].add(amountAfterFee) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#264)
+Reentrancy in UPLOADstaking.updateAccount(address) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#222-231):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	State variables written after the call(s):
+	- lastClaimedTime[account] = now (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#230)
+Reentrancy in UPLOADstaking.withdraw(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#272-290):
+	External calls:
+	- updateAccount(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#277)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer withdraw fee.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#282)
+	- require(bool,string)(Token(tokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#283)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].sub(amountToWithdraw) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#285)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+UPLOADstaking.deposit(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#254-270) ignores return value by holders.add(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#267)
+UPLOADstaking.withdraw(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#272-290) ignores return value by holders.remove(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#288)
+UPLOADstaking.transferAnyERC20Tokens(address,address,uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#308-316) ignores return value by Token(_tokenAddr).transfer(_to,_amount) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#315)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in UPLOADstaking.deposit(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#254-270):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#256)
+	- updateAccount(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#258)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	- require(bool,string)(Token(tokenAddress).transfer(owner,fee),Could not transfer deposit fee.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#262)
+	State variables written after the call(s):
+	- stakingTime[msg.sender] = now (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#268)
+Reentrancy in UPLOADstaking.updateAccount(address) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#222-231):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	State variables written after the call(s):
+	- totalClaimedRewards = totalClaimedRewards.add(pendingDivs) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#227)
+	- totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#226)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in UPLOADstaking.deposit(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#254-270):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transferFrom(msg.sender,address(this),amountToStake),Insufficient Token Allowance) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#256)
+	- updateAccount(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#258)
+		- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#228)
+		- updateAccount(msg.sender) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#258)
+Reentrancy in UPLOADstaking.updateAccount(address) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#222-231):
+	External calls:
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#228)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UPLOADstaking.updateAccount(address) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#222-231) uses timestamp for comparisons
+	Dangerous comparisons:
+	- pendingDivs > 0 (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#224)
+	- require(bool,string)(Token(tokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#225)
+UPLOADstaking.withdraw(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#272-290) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.sub(stakingTime[msg.sender]) > cliffTime,You recently staked, please wait before withdrawing.) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#275)
+UPLOADstaking.getStakingAndDaoAmount() (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#299-305) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalClaimedRewards >= stakingAndDaoTokens (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#300)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter UPLOADstaking.getPendingDivs(address)._holder (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#233) is not in mixedCase
+Parameter UPLOADstaking.transferAnyERC20Tokens(address,address,uint256)._tokenAddr (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#308) is not in mixedCase
+Parameter UPLOADstaking.transferAnyERC20Tokens(address,address,uint256)._to (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#308) is not in mixedCase
+Parameter UPLOADstaking.transferAnyERC20Tokens(address,address,uint256)._amount (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#308) is not in mixedCase
+Constant UPLOADstaking.tokenAddress (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#198) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant UPLOADstaking.rewardRate (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#201) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant UPLOADstaking.rewardInterval (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#202) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant UPLOADstaking.stakingFeeRate (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#205) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant UPLOADstaking.unstakingFeeRate (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#208) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant UPLOADstaking.cliffTime (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#211) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant UPLOADstaking.stakingAndDaoTokens (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#297) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+UPLOADstaking.slitherConstructorConstantVariables() (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#191-317) uses literals with too many digits:
+	- rewardRate = 100000 (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#201)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#178-182)
+getNumberOfHolders() should be declared external:
+	- UPLOADstaking.getNumberOfHolders() (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#249-251)
+deposit(uint256) should be declared external:
+	- UPLOADstaking.deposit(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#254-270)
+withdraw(uint256) should be declared external:
+	- UPLOADstaking.withdraw(uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#272-290)
+claimDivs() should be declared external:
+	- UPLOADstaking.claimDivs() (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#292-294)
+transferAnyERC20Tokens(address,address,uint256) should be declared external:
+	- UPLOADstaking.transferAnyERC20Tokens(address,address,uint256) (noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol#308-316)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol analyzed (5 contracts with 46 detectors), 33 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x1cf607013db83dd9c622ba4976bdc6959b34bfdc.sol
+Tool Runtime = 0.6941982489988732 seconds
+#############################################

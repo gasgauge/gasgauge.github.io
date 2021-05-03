@@ -1,0 +1,389 @@
+Compilation warnings/errors on ./loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol:
+./loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol:612:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[91m
+ERC20.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#576) shadows:
+	- Initializable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#68)
+Ownable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#811) shadows:
+	- Initializable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#68)
+CapperRole.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1293) shadows:
+	- Initializable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#68)
+StakingPoolBase.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1801) shadows:
+	- CapperRole.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1293)
+	- Ownable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#811)
+	- Initializable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#68)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+Reentrancy in StakingPool.createStake(address,uint256,uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1908-1911):
+	External calls:
+	- _withdrawRewards(_address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1909)
+		- IERC20(token).transfer(user,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1902)
+	- super.createStake(_address,_amount,_lockInDuration,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1910)
+		- require(bool,string)(stakingToken.transferFrom(_address,address(this),_amount),Stake required) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1396-1398)
+	State variables written after the call(s):
+	- super.createStake(_address,_amount,_lockInDuration,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1910)
+		- stakeHolders[_msgSender()].exists = true (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1738)
+		- stakeHolders[_address].totalStakedFor = stakeHolders[_address].totalStakedFor.add(_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1741)
+		- stakeHolders[_msgSender()].personalStakes.push(Stake(block.timestamp.add(_lockInDuration),_amount,_address)) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1742-1747)
+Reentrancy in StakingPoolBase.withdrawStake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1763-1799):
+	External calls:
+	- require(bool,string)(stakingToken.transfer(_msgSender(),_amount),Unable to withdraw stake) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1782-1784)
+	State variables written after the call(s):
+	- stakeHolders[personalStake.stakedFor].totalStakedFor = stakeHolders[personalStake.stakedFor].totalStakedFor.sub(personalStake.actualAmount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1786-1787)
+	- personalStake.actualAmount = 0 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1789)
+	- stakeHolders[_msgSender()].personalStakeIndex ++ (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1790)
+Reentrancy in StakingPool.withdrawStake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1913-1916):
+	External calls:
+	- _withdrawRewards(_msgSender()) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1914)
+		- IERC20(token).transfer(user,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1902)
+	- super.withdrawStake(_amount,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1915)
+		- require(bool,string)(stakingToken.transfer(_msgSender(),_amount),Unable to withdraw stake) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1782-1784)
+	State variables written after the call(s):
+	- super.withdrawStake(_amount,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1915)
+		- stakeHolders[personalStake.stakedFor].totalStakedFor = stakeHolders[personalStake.stakedFor].totalStakedFor.sub(personalStake.actualAmount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1786-1787)
+		- personalStake.actualAmount = 0 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1789)
+		- stakeHolders[_msgSender()].personalStakeIndex ++ (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1790)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+RewardVestingModule._claimRewards(address,address).claimAmount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1112) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+StakingPool._withdrawRewards(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1892-1906) ignores return value by IERC20(token).transfer(user,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1902)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+StakingPoolBase.isUserCapEnabledForStakeFor(uint256).stake (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1404) shadows:
+	- StakingPoolBase.stake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1591-1597) (function)
+	- IERC900.stake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1229) (function)
+StakingPoolBase.isUserCapEnabledForStakeFor(uint256).totalStaked (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1414) shadows:
+	- StakingPoolBase.totalStaked() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1667-1670) (function)
+	- IERC900.totalStaked() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1234) (function)
+StakingPool.registerRewardToken(address).token (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1844) shadows:
+	- StakingPoolBase.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1676-1678) (function)
+	- IERC900.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1235) (function)
+StakingPool.isRegisteredRewardToken(address).token (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1854) shadows:
+	- StakingPoolBase.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1676-1678) (function)
+	- IERC900.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1235) (function)
+StakingPool.rewardBalanceOf(address,address).token (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1869) shadows:
+	- StakingPoolBase.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1676-1678) (function)
+	- IERC900.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1235) (function)
+StakingPool._withdrawRewards(address,address).token (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1892) shadows:
+	- StakingPoolBase.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1676-1678) (function)
+	- IERC900.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1235) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+StakingPool._claimRewardsFromVesting() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1919-1939) has external calls inside a loop: actualBalance = IERC20(rt).balanceOf(address(this)) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1927)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in StakingPool._claimRewardsFromVesting() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1919-1939):
+	External calls:
+	- rewardVesting.claimRewards() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1920)
+	State variables written after the call(s):
+	- rewards[rt].distributions.push(RewardDistribution(totalShares,distributionAmount)) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1931-1934)
+	- rewards[rt].unclaimed = rewards[rt].unclaimed.add(distributionAmount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1935)
+Reentrancy in StakingPoolBase.createStake(address,uint256,uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1729-1755):
+	External calls:
+	- canStake(_msgSender(),_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1735)
+		- require(bool,string)(stakingToken.transferFrom(_address,address(this),_amount),Stake required) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1396-1398)
+	- canStake(_msgSender(),_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1735)
+		- require(bool,string)(stakingToken.transferFrom(_address,address(this),_amount),Stake required) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1396-1398)
+	State variables written after the call(s):
+	- stakeHolders[_msgSender()].exists = true (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1738)
+	- stakeHolders[_address].totalStakedFor = stakeHolders[_address].totalStakedFor.add(_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1741)
+	- stakeHolders[_msgSender()].personalStakes.push(Stake(block.timestamp.add(_lockInDuration),_amount,_address)) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1742-1747)
+	- totalStakedAmount = totalStakedAmount.add(_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1749)
+Reentrancy in StakingPoolBase.withdrawStake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1763-1799):
+	External calls:
+	- require(bool,string)(stakingToken.transfer(_msgSender(),_amount),Unable to withdraw stake) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1782-1784)
+	State variables written after the call(s):
+	- totalStakedAmount = totalStakedAmount.sub(_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1792)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in RewardVestingModule._claimRewards(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1096-1151):
+	External calls:
+	- IERC20(token).safeTransfer(protocol,claimAmount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1149)
+	Event emitted after the call(s):
+	- RewardClaimed(protocol,token,previousClaim,ri.lastClaim,claimAmount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1150)
+Reentrancy in StakingPool._claimRewardsFromVesting() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1919-1939):
+	External calls:
+	- rewardVesting.claimRewards() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1920)
+	Event emitted after the call(s):
+	- RewardDistributionCreated(rt,distributionAmount,totalShares) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1936)
+Reentrancy in StakingPool._withdrawRewards(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1892-1906):
+	External calls:
+	- IERC20(token).transfer(user,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1902)
+	Event emitted after the call(s):
+	- RewardWithdraw(user,token,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1903)
+Reentrancy in StakingPoolBase.createStake(address,uint256,uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1729-1755):
+	External calls:
+	- canStake(_msgSender(),_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1735)
+		- require(bool,string)(stakingToken.transferFrom(_address,address(this),_amount),Stake required) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1396-1398)
+	- canStake(_msgSender(),_amount) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1735)
+		- require(bool,string)(stakingToken.transferFrom(_address,address(this),_amount),Stake required) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1396-1398)
+	Event emitted after the call(s):
+	- Staked(_address,_amount,totalStakedFor(_address),_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1750-1754)
+Reentrancy in StakingPool.createStake(address,uint256,uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1908-1911):
+	External calls:
+	- _withdrawRewards(_address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1909)
+		- IERC20(token).transfer(user,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1902)
+	- super.createStake(_address,_amount,_lockInDuration,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1910)
+		- require(bool,string)(stakingToken.transferFrom(_address,address(this),_amount),Stake required) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1396-1398)
+	Event emitted after the call(s):
+	- Staked(_address,_amount,totalStakedFor(_address),_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1750-1754)
+		- super.createStake(_address,_amount,_lockInDuration,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1910)
+Reentrancy in StakingPoolBase.withdrawStake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1763-1799):
+	External calls:
+	- require(bool,string)(stakingToken.transfer(_msgSender(),_amount),Unable to withdraw stake) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1782-1784)
+	Event emitted after the call(s):
+	- Unstaked(personalStake.stakedFor,_amount,totalStakedFor(personalStake.stakedFor),_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1794-1798)
+Reentrancy in StakingPool.withdrawStake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1913-1916):
+	External calls:
+	- _withdrawRewards(_msgSender()) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1914)
+		- IERC20(token).transfer(user,rwrds) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1902)
+	- super.withdrawStake(_amount,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1915)
+		- require(bool,string)(stakingToken.transfer(_msgSender(),_amount),Unable to withdraw stake) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1782-1784)
+	Event emitted after the call(s):
+	- Unstaked(personalStake.stakedFor,_amount,totalStakedFor(personalStake.stakedFor),_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1794-1798)
+		- super.withdrawStake(_amount,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1915)
+	- UserCapChanged(_msgSender(),cap) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1445)
+		- super.withdrawStake(_amount,_data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1915)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+RewardVestingModule.registerRewardToken(address,address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1042-1054) uses timestamp for comparisons
+	Dangerous comparisons:
+	- firstEpochStart == 0 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1043)
+RewardVestingModule._claimRewards(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1096-1151) uses timestamp for comparisons
+	Dangerous comparisons:
+	- lastEpoch.end < block.timestamp (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1106)
+	- ep.end < block.timestamp (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1118)
+	- ep.end > block.timestamp (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1126)
+RewardVestingModule._addReward(address,address,uint256,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1189-1210) uses timestamp for comparisons
+	Dangerous comparisons:
+	- epochEnd < block.timestamp (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1197)
+	- require(bool,string)(ep.end > block.timestamp,RewardVesting: epoch already finished) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1205)
+StakingPoolBase.unstakeAllUnlocked(bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1629-1642) uses timestamp for comparisons
+	Dangerous comparisons:
+	- stakeHolders[_msgSender()].personalStakes[i].unlockedTimestamp <= block.timestamp (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1635)
+StakingPoolBase.withdrawStake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1763-1799) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(personalStake.unlockedTimestamp <= block.timestamp,The current stake hasn't unlocked yet) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1771-1773)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#55-65) uses assembly
+	- INLINE ASM (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#63-64)
+Address.isContract(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#605-614) uses assembly
+	- INLINE ASM (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#612-613)
+Module.getModuleAddress(string) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#884-898) uses assembly
+	- INLINE ASM (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#889-893)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+StakingPoolBase.checkUserCapDisabled() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1449-1452) compares to a boolean constant:
+	-require(bool,string)(isUserCapEnabled() == false,UserCapEnabled) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1450)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#74) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#106) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#186) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#346) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#582) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#656) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#734) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#817) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#837) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#862) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#905) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#945) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#996) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1218) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1247) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1299) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1807) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#644-650):
+	- (success) = recipient.call.value(amount)() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#648)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#709-728):
+	- (success,returndata) = address(token).call(data) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#721)
+Low level call in Module.getModuleAddress(string) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#884-898):
+	- (success,result) = pool.staticcall(abi.encodeWithSignature(get(string),module)) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#886)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#68) is not in mixedCase
+Variable ERC20.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#576) is not in mixedCase
+Variable Ownable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#811) is not in mixedCase
+Parameter Module.initialize(address)._pool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#873) is not in mixedCase
+Parameter Module.setPool(address)._pool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#878) is not in mixedCase
+Parameter RewardVestingModule.initialize(address)._pool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1030) is not in mixedCase
+Parameter RewardVestingModule.setDefaultEpochLength(uint256)._defaultEpochLength (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1056) is not in mixedCase
+Variable CapperRole.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1293) is not in mixedCase
+Event StakingPoolBasesetLockInDuration(uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1385) is not in CapWords
+Parameter StakingPoolBase.initialize(address,ERC20,uint256)._pool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1460) is not in mixedCase
+Parameter StakingPoolBase.initialize(address,ERC20,uint256)._stakingToken (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1460) is not in mixedCase
+Parameter StakingPoolBase.initialize(address,ERC20,uint256)._defaultLockInDuration (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1460) is not in mixedCase
+Parameter StakingPoolBase.setDefaultLockInDuration(uint256)._defaultLockInDuration (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1468) is not in mixedCase
+Parameter StakingPoolBase.setUserCapEnabled(bool)._userCapEnabled (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1473) is not in mixedCase
+Parameter StakingPoolBase.setStakingCapEnabled(bool)._stakingCapEnabled (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1478) is not in mixedCase
+Parameter StakingPoolBase.setDefaultUserCap(uint256)._newCap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1483) is not in mixedCase
+Parameter StakingPoolBase.setStakingCap(uint256)._newCap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1488) is not in mixedCase
+Parameter StakingPoolBase.setVipUserEnabled(bool)._vipUserEnabled (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1507) is not in mixedCase
+Parameter StakingPoolBase.getPersonalStakeUnlockedTimestamps(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1539) is not in mixedCase
+Parameter StakingPoolBase.getPersonalStakeActualAmounts(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1555) is not in mixedCase
+Parameter StakingPoolBase.getPersonalStakeTotalAmount(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1562) is not in mixedCase
+Parameter StakingPoolBase.getPersonalStakeForAddresses(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1578) is not in mixedCase
+Parameter StakingPoolBase.stake(uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1591) is not in mixedCase
+Parameter StakingPoolBase.stake(uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1591) is not in mixedCase
+Parameter StakingPoolBase.stakeFor(address,uint256,bytes)._user (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1606) is not in mixedCase
+Parameter StakingPoolBase.stakeFor(address,uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1606) is not in mixedCase
+Parameter StakingPoolBase.stakeFor(address,uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1606) is not in mixedCase
+Parameter StakingPoolBase.unstake(uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1623) is not in mixedCase
+Parameter StakingPoolBase.unstake(uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1623) is not in mixedCase
+Parameter StakingPoolBase.unstakeAllUnlocked(bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1629) is not in mixedCase
+Parameter StakingPoolBase.totalStakedFor(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1649) is not in mixedCase
+Parameter StakingPoolBase.totalScoresFor(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1658) is not in mixedCase
+Parameter StakingPoolBase.getPersonalStakes(address)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1696) is not in mixedCase
+Parameter StakingPoolBase.createStake(address,uint256,uint256,bytes)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1730) is not in mixedCase
+Parameter StakingPoolBase.createStake(address,uint256,uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1731) is not in mixedCase
+Parameter StakingPoolBase.createStake(address,uint256,uint256,bytes)._lockInDuration (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1732) is not in mixedCase
+Parameter StakingPoolBase.createStake(address,uint256,uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1733) is not in mixedCase
+Parameter StakingPoolBase.withdrawStake(uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1764) is not in mixedCase
+Parameter StakingPoolBase.withdrawStake(uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1765) is not in mixedCase
+Variable StakingPoolBase.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1801) is not in mixedCase
+Parameter StakingPool.setRewardVesting(address)._rewardVesting (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1840) is not in mixedCase
+Parameter StakingPool.createStake(address,uint256,uint256,bytes)._address (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1908) is not in mixedCase
+Parameter StakingPool.createStake(address,uint256,uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1908) is not in mixedCase
+Parameter StakingPool.createStake(address,uint256,uint256,bytes)._lockInDuration (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1908) is not in mixedCase
+Parameter StakingPool.createStake(address,uint256,uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1908) is not in mixedCase
+Parameter StakingPool.withdrawStake(uint256,bytes)._amount (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1913) is not in mixedCase
+Parameter StakingPool.withdrawStake(uint256,bytes)._data (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1913) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+ERC20.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#576) is never used in ERC20 (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#376-577)
+Initializable.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#68) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.MODULE_ACCESS (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#844) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.MODULE_SAVINGS (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#845) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.MODULE_INVESTING (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#846) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.MODULE_STAKING (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#847) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.MODULE_DCA (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#848) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.MODULE_REWARD (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#849) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.TOKEN_AKRO (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#852) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.TOKEN_ADEL (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#853) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+ModuleNames.CONTRACT_RAY (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#856) is never used in RewardVestingModule (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1004-1213)
+StakingPoolBase.______gap (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1801) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.MODULE_ACCESS (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#844) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.MODULE_SAVINGS (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#845) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.MODULE_INVESTING (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#846) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.MODULE_STAKING (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#847) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.MODULE_DCA (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#848) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.MODULE_REWARD (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#849) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.TOKEN_AKRO (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#852) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.TOKEN_ADEL (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#853) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+ModuleNames.CONTRACT_RAY (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#856) is never used in StakingPool (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1813-1941)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+totalSupply() should be declared external:
+	- ERC20.totalSupply() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#388-390)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#395-397)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#407-410)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#415-417)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#426-429)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#443-447)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#461-464)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#480-483)
+owner() should be declared external:
+	- Ownable.owner() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#763-765)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#789-792)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#798-800)
+getModuleAddress(string) should be declared external:
+	- Module.getModuleAddress(string) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#884-898)
+addRewardManager(address) should be declared external:
+	- RewardManagerRole.addRewardManager(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#969-971)
+renounceRewardManager() should be declared external:
+	- RewardManagerRole.renounceRewardManager() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#973-975)
+getRewardInfo(address,address) should be declared external:
+	- RewardVestingModule.getRewardInfo(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1036-1040)
+setDefaultEpochLength(uint256) should be declared external:
+	- RewardVestingModule.setDefaultEpochLength(uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1056-1058)
+getEpochInfo(address,address,uint256) should be declared external:
+	- RewardVestingModule.getEpochInfo(address,address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1060-1073)
+getLastCreatedEpoch(address,address) should be declared external:
+	- RewardVestingModule.getLastCreatedEpoch(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1075-1080)
+claimRewards() should be declared external:
+	- RewardVestingModule.claimRewards() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1082-1090)
+claimRewards(address,address) should be declared external:
+	- RewardVestingModule.claimRewards(address,address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1092-1094)
+createEpoch(address,address,uint256,uint256) should be declared external:
+	- RewardVestingModule.createEpoch(address,address,uint256,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1153-1165)
+addReward(address,address,uint256,uint256) should be declared external:
+	- RewardVestingModule.addReward(address,address,uint256,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1167-1169)
+addCapper(address) should be declared external:
+	- CapperRole.addCapper(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1275-1277)
+renounceCapper() should be declared external:
+	- CapperRole.renounceCapper() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1279-1281)
+initialize(address,ERC20,uint256) should be declared external:
+	- StakingPoolBase.initialize(address,ERC20,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1460-1466)
+setDefaultLockInDuration(uint256) should be declared external:
+	- StakingPoolBase.setDefaultLockInDuration(uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1468-1471)
+setUserCapEnabled(bool) should be declared external:
+	- StakingPoolBase.setUserCapEnabled(bool) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1473-1476)
+setStakingCapEnabled(bool) should be declared external:
+	- StakingPoolBase.setStakingCapEnabled(bool) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1478-1481)
+setDefaultUserCap(uint256) should be declared external:
+	- StakingPoolBase.setDefaultUserCap(uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1483-1486)
+setStakingCap(uint256) should be declared external:
+	- StakingPoolBase.setStakingCap(uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1488-1491)
+setUserCap(address,uint256) should be declared external:
+	- StakingPoolBase.setUserCap(address,uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1493-1496)
+setUserCap(address[],uint256[]) should be declared external:
+	- StakingPoolBase.setUserCap(address[],uint256[]) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1498-1504)
+setVipUserEnabled(bool) should be declared external:
+	- StakingPoolBase.setVipUserEnabled(bool) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1507-1510)
+setVipUser(address,bool) should be declared external:
+	- StakingPoolBase.setVipUser(address,bool) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1512-1515)
+setCoeffScore(uint256) should be declared external:
+	- StakingPoolBase.setCoeffScore(uint256) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1518-1522)
+iStakingCapEnabled() should be declared external:
+	- StakingPoolBase.iStakingCapEnabled() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1529-1531)
+stake(uint256,bytes) should be declared external:
+	- StakingPoolBase.stake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1591-1597)
+stakeFor(address,uint256,bytes) should be declared external:
+	- StakingPoolBase.stakeFor(address,uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1606-1612)
+unstake(uint256,bytes) should be declared external:
+	- StakingPoolBase.unstake(uint256,bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1623-1627)
+unstakeAllUnlocked(bytes) should be declared external:
+	- StakingPoolBase.unstakeAllUnlocked(bytes) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1629-1642)
+totalScoresFor(address) should be declared external:
+	- StakingPoolBase.totalScoresFor(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1658-1660)
+token() should be declared external:
+	- StakingPoolBase.token() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1676-1678)
+supportsHistory() should be declared external:
+	- StakingPoolBase.supportsHistory() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1685-1687)
+setRewardVesting(address) should be declared external:
+	- StakingPool.setRewardVesting(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1840-1842)
+registerRewardToken(address) should be declared external:
+	- StakingPool.registerRewardToken(address) (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1844-1848)
+claimRewardsFromVesting() should be declared external:
+	- StakingPool.claimRewardsFromVesting() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1850-1852)
+supportedRewardTokens() should be declared external:
+	- StakingPool.supportedRewardTokens() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1861-1863)
+withdrawRewards() should be declared external:
+	- StakingPool.withdrawRewards() (loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol#1865-1867)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x6C25086d3556F6B828b76C1540334996101A4B51.sol analyzed (18 contracts with 46 detectors), 173 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x6C25086d3556F6B828b76C1540334996101A4B51.sol
+Tool Runtime = 6.835960894997697 seconds
+#############################################

@@ -1,0 +1,129 @@
+INFO:Detectors:[93m
+SafeMath.ceil(uint256,uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#171-173) performs a multiplication on the result of a division:
+	-(a + m - 1) / m * m (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#172)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in Stake.CLAIMREWARD() (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#305-320):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transfer(msg.sender,owing),ERROR: error in sending reward from contract) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#312)
+	State variables written after the call(s):
+	- stakers[msg.sender].lastDividends = owing (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#316)
+	- stakers[msg.sender].round = round (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#317)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#318)
+Reentrancy in Stake.WITHDRAW(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#342-366):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#352)
+	State variables written after the call(s):
+	- _addPayout(_unstakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#363)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#296)
+	- stakers[msg.sender].stakedTokens = stakers[msg.sender].stakedTokens.sub(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#354)
+	- stakers[msg.sender].lastDividends = owing (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#355)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#356)
+	- stakers[msg.sender].round = round (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#357)
+	- _addPayout(_unstakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#363)
+		- totalDividends = totalDividends.add(dividendPerToken) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#295)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in Stake.ADDFUNDS(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#280-283):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#281)
+	State variables written after the call(s):
+	- _addPayout(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#282)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#296)
+	- _addPayout(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#282)
+		- round ++ (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#299)
+	- _addPayout(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#282)
+		- scaledRemainder = available.mod(totalStakes) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#293)
+	- _addPayout(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#282)
+		- totalDividends = totalDividends.add(dividendPerToken) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#295)
+Reentrancy in Stake.STAKE(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#251-274):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#252)
+	State variables written after the call(s):
+	- _addPayout(_stakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#260)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#296)
+	- _addPayout(_stakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#260)
+		- round ++ (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#299)
+	- _addPayout(_stakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#260)
+		- scaledRemainder = available.mod(totalStakes) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#293)
+	- owing = pendingReward(msg.sender) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#263)
+		- stakers[staker].remainder += ((totalDividends.sub(payouts[stakers[staker].round - 1])).mul(stakers[staker].stakedTokens)) % scaling (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#328)
+	- stakers[msg.sender].remainder += owing (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#264)
+	- stakers[msg.sender].stakedTokens = (tokens.sub(_stakingFee)).add(stakers[msg.sender].stakedTokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#266)
+	- stakers[msg.sender].lastDividends = owing (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#267)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#268)
+	- stakers[msg.sender].round = round (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#269)
+	- _addPayout(_stakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#260)
+		- totalDividends = totalDividends.add(dividendPerToken) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#295)
+	- totalStakes = totalStakes.add(tokens.sub(_stakingFee)) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#271)
+Reentrancy in Stake.WITHDRAW(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#342-366):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#352)
+	State variables written after the call(s):
+	- _addPayout(_unstakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#363)
+		- round ++ (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#299)
+	- _addPayout(_unstakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#363)
+		- scaledRemainder = available.mod(totalStakes) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#293)
+	- totalStakes = totalStakes.sub(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#359)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Stake.ADDFUNDS(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#280-283):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#281)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#298)
+		- _addPayout(tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#282)
+Reentrancy in Stake.CLAIMREWARD() (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#305-320):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transfer(msg.sender,owing),ERROR: error in sending reward from contract) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#312)
+	Event emitted after the call(s):
+	- CLAIMEDREWARD(msg.sender,owing) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#314)
+Reentrancy in Stake.STAKE(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#251-274):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#252)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#298)
+		- _addPayout(_stakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#260)
+	- STAKED(msg.sender,tokens.sub(_stakingFee),_stakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#273)
+Reentrancy in Stake.WITHDRAW(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#342-366):
+	External calls:
+	- require(bool,string)(IERC20(ERA).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#352)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#298)
+		- _addPayout(_unstakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#363)
+	- UNSTAKED(msg.sender,tokens.sub(_unstakingFee),_unstakingFee) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#365)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.transferOwnership(address)._newOwner (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#193) is not in mixedCase
+Function Stake.STAKE(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#251-274) is not in mixedCase
+Function Stake.ADDFUNDS(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#280-283) is not in mixedCase
+Function Stake.CLAIMREWARD() (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#305-320) is not in mixedCase
+Function Stake.WITHDRAW(uint256) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#342-366) is not in mixedCase
+Parameter Stake.onePercent(uint256)._tokens (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#371) is not in mixedCase
+Variable Stake.ERA (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#221) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Stake.ERA (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#221) should be constant
+Stake.scaling (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#228) should be constant
+Stake.stakingFee (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#224) should be constant
+Stake.unstakingFee (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#225) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Owned.transferOwnership(address) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#193-196)
+CLAIMREWARD() should be declared external:
+	- Stake.CLAIMREWARD() (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#305-320)
+getPendingReward(address) should be declared external:
+	- Stake.getPendingReward(address) (noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol#332-336)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol analyzed (4 contracts with 46 detectors), 26 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x84af7604ffd7800292bb657055ac20795aa7a1c1.sol
+Tool Runtime = 0.7617833670010441 seconds
+#############################################

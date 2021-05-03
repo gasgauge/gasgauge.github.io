@@ -1,0 +1,32 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TinlakeSpell
+Function name: cast()
+PC address: 2610
+Estimated Gas Usage: 23030 - 388495
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x47082A19EC51c5c4d3b3BD47e81e25D174e599a4.sol:89
+
+root.relyContract(ASSESSOR_ADMIN, ASSESSOR_ADMIN_ADMIN2)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: cast(), txdata: 0x96d373e5, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x47082A19EC51c5c4d3b3BD47e81e25D174e599a4.sol
+Tool Runtime = 27.1583401139942 seconds
+#############################################

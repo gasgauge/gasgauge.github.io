@@ -1,0 +1,151 @@
+INFO:Detectors:[93m
+VaultProRata.disburseTokens() (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#481-494) uses a dangerous strict equality:
+	- amount == 0 (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#489)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in VaultProRata.deposit(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#411-425):
+	External calls:
+	- updateAccount(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#414)
+		- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transferFrom(msg.sender,address(this),amountToDeposit),Insufficient Token Allowance) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#416)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].add(amountToDeposit) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#418)
+Reentrancy in VaultProRata.emergencyWithdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#449-469):
+	External calls:
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(owner,fee),Could not transfer fee!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#459)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#461)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].sub(amountToWithdraw) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#463)
+Reentrancy in VaultProRata.updateAccount(address) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#381-391):
+	External calls:
+	- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	State variables written after the call(s):
+	- lastDivPoints[account] = totalDivPoints (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#390)
+Reentrancy in VaultProRata.withdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#427-446):
+	External calls:
+	- updateAccount(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#431)
+		- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(owner,fee),Could not transfer fee!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#436)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#438)
+	State variables written after the call(s):
+	- depositedTokens[msg.sender] = depositedTokens[msg.sender].sub(amountToWithdraw) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#440)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+VaultProRata.deposit(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#411-425) ignores return value by holders.add(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#422)
+VaultProRata.withdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#427-446) ignores return value by holders.remove(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#444)
+VaultProRata.emergencyWithdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#449-469) ignores return value by holders.remove(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#467)
+VaultProRata.transferAnyERC20Tokens(address,address,uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#535-542) ignores return value by Token(_tokenAddr).transfer(_to,_amount) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#541)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in VaultProRata.addContractBalance(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#375-378):
+	External calls:
+	- require(bool,string)(Token(trustedRewardTokenAddress).transferFrom(msg.sender,address(this),amount),Cannot add balance!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#376)
+	State variables written after the call(s):
+	- contractBalance = contractBalance.add(amount) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#377)
+Reentrancy in VaultProRata.deposit(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#411-425):
+	External calls:
+	- updateAccount(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#414)
+		- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transferFrom(msg.sender,address(this),amountToDeposit),Insufficient Token Allowance) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#416)
+	State variables written after the call(s):
+	- depositTime[msg.sender] = now (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#423)
+	- totalTokens = totalTokens.add(amountToDeposit) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#419)
+Reentrancy in VaultProRata.emergencyWithdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#449-469):
+	External calls:
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(owner,fee),Could not transfer fee!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#459)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#461)
+	State variables written after the call(s):
+	- totalTokens = totalTokens.sub(amountToWithdraw) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#464)
+Reentrancy in VaultProRata.updateAccount(address) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#381-391):
+	External calls:
+	- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	State variables written after the call(s):
+	- lastClaimedTime[account] = now (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#389)
+	- totalClaimedRewards = totalClaimedRewards.add(pendingDivs) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#386)
+	- totalEarnedTokens[account] = totalEarnedTokens[account].add(pendingDivs) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#385)
+Reentrancy in VaultProRata.withdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#427-446):
+	External calls:
+	- updateAccount(msg.sender) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#431)
+		- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(owner,fee),Could not transfer fee!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#436)
+	- require(bool,string)(Token(trustedDepositTokenAddress).transfer(msg.sender,amountAfterFee),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#438)
+	State variables written after the call(s):
+	- totalTokens = totalTokens.sub(amountToWithdraw) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#441)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in VaultProRata.updateAccount(address) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#381-391):
+	External calls:
+	- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+	Event emitted after the call(s):
+	- RewardsTransferred(account,pendingDivs) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#387)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+VaultProRata.updateAccount(address) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#381-391) uses timestamp for comparisons
+	Dangerous comparisons:
+	- pendingDivs > 0 (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#383)
+	- require(bool,string)(Token(trustedRewardTokenAddress).transfer(account,pendingDivs),Could not transfer tokens.) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#384)
+VaultProRata.withdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#427-446) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.sub(depositTime[msg.sender]) > cliffTime,Please wait before withdrawing!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#429)
+VaultProRata.emergencyWithdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#449-469) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(now.sub(depositTime[msg.sender]) > cliffTime,Please wait before withdrawing!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#451)
+VaultProRata.disburseTokens() (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#481-494) uses timestamp for comparisons
+	Dangerous comparisons:
+	- contractBalance < amount (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#486)
+	- amount == 0 (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#489)
+VaultProRata.transferAnyERC20Tokens(address,address,uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#535-542) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)((_tokenAddr != trustedRewardTokenAddress) || (now > adminClaimableTime),Admin cannot Transfer out Reward Tokens yet!) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#539)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter VaultProRata.getPendingDivs(address)._holder (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#393) is not in mixedCase
+Parameter VaultProRata.transferAnyERC20Tokens(address,address,uint256)._tokenAddr (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#535) is not in mixedCase
+Parameter VaultProRata.transferAnyERC20Tokens(address,address,uint256)._to (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#535) is not in mixedCase
+Parameter VaultProRata.transferAnyERC20Tokens(address,address,uint256)._amount (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#535) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+VaultProRata.adminCanClaimAfter (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#337) should be constant
+VaultProRata.cliffTime (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#341) should be constant
+VaultProRata.disburseAmount (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#339) should be constant
+VaultProRata.disburseDuration (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#340) should be constant
+VaultProRata.disbursePercentX100 (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#344) should be constant
+VaultProRata.pointMultiplier (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#373) should be constant
+VaultProRata.totalTokensDisbursed (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#367) should be constant
+VaultProRata.trustedDepositTokenAddress (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#335) should be constant
+VaultProRata.trustedRewardTokenAddress (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#336) should be constant
+VaultProRata.withdrawFeePercentX100 (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#338) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#314-318)
+addContractBalance(uint256) should be declared external:
+	- VaultProRata.addContractBalance(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#375-378)
+getNumberOfHolders() should be declared external:
+	- VaultProRata.getNumberOfHolders() (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#406-408)
+deposit(uint256) should be declared external:
+	- VaultProRata.deposit(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#411-425)
+withdraw(uint256) should be declared external:
+	- VaultProRata.withdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#427-446)
+emergencyWithdraw(uint256) should be declared external:
+	- VaultProRata.emergencyWithdraw(uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#449-469)
+claim() should be declared external:
+	- VaultProRata.claim() (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#471-473)
+disburseTokens() should be declared external:
+	- VaultProRata.disburseTokens() (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#481-494)
+getDepositorsList(uint256,uint256) should be declared external:
+	- VaultProRata.getDepositorsList(uint256,uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#506-531)
+transferAnyERC20Tokens(address,address,uint256) should be declared external:
+	- VaultProRata.transferAnyERC20Tokens(address,address,uint256) (loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol#535-542)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol analyzed (5 contracts with 46 detectors), 46 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x8d704d4107cbe5ebe8c0236c5506b30bf8bad305.sol
+Tool Runtime = 0.8991402689971437 seconds
+#############################################

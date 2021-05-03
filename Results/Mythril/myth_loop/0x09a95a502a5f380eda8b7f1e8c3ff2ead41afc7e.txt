@@ -1,0 +1,138 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: seveninch
+Function name: multiTransferEqualAmount(address[],uint256)
+PC address: 5631
+Estimated Gas Usage: 19353 - 65359
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/loops3/0x09a95a502a5f380eda8b7f1e8c3ff2ead41afc7e.sol:570
+
+amount * 10**uint256(tokenDecimals)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: multiTransferEqualAmount(address[],uint256), txdata: 0xa8bea43e000000000000000000000000000000000000000000000000000000000000003a0000073cc63716d47bb8386e95a6e2335d305dcee47eb0419a400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: seveninch
+Function name: withdrawUnclaimedTokens(address)
+PC address: 6544
+Estimated Gas Usage: 12948 - 103912
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops3/0x09a95a502a5f380eda8b7f1e8c3ff2ead41afc7e.sol:660
+
+currentToken.transfer(_owner, amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: multiTransferEqualAmount(address[],uint256), txdata: 0xa8bea43e00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: withdrawUnclaimedTokens(address), txdata: 0xe3996410a4a4a4a4a4a4a4a4a4a4a4a4deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: seveninch
+Function name: withdrawUnclaimedTokens(address)
+PC address: 6544
+Estimated Gas Usage: 12948 - 103912
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops3/0x09a95a502a5f380eda8b7f1e8c3ff2ead41afc7e.sol:660
+
+currentToken.transfer(_owner, amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdrawUnclaimedTokens(address), txdata: 0xe39964100000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: seveninch
+Function name: decreaseAllowance(address,uint256)
+PC address: 8017
+Estimated Gas Usage: 1462 - 1937
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops3/0x09a95a502a5f380eda8b7f1e8c3ff2ead41afc7e.sol:200
+
+assert(b <= a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x180000002189, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: decreaseAllowance(address,uint256), txdata: 0xa457c2d700000000000000000000000000020000000000000000000100020001000200020000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: seveninch
+Function name: increaseAllowance(address,uint256)
+PC address: 8048
+Estimated Gas Usage: 1457 - 1932
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops3/0x09a95a502a5f380eda8b7f1e8c3ff2ead41afc7e.sol:212
+
+assert(c >= a)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000000004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: approve(address,uint256), txdata: 0x095ea7b3000000000000000000000000800808802080044040020140020440010202100400000000000000000000000000000000000439b8d140f26644b37771da956c54, value: 0x0
+Caller: [CREATOR], function: increaseAllowance(address,uint256), txdata: 0x39509351a7a7a7a7a7a7a7a7a7a7a7a78008088020800440400201400204400102021004fffffffffffffffffffffffffffffffffffc1103974f26245da62443128b49ac, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x09a95a502a5f380eda8b7f1e8c3ff2ead41afc7e.sol
+Tool Runtime = 4414.765852671 seconds
+#############################################

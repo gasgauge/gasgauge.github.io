@@ -1,0 +1,153 @@
+INFO:Detectors:[91m
+MountableToken.purchaseTokens(address) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#339-349) sends eth to arbitrary user
+	Dangerous calls:
+	- owner.transfer(address(this).balance) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#347)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+MountableToken.computeTokenAmount(uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#378-386) performs a multiplication on the result of a division:
+	-tokenBase = (ethAmount.mul(BASE_RATE) / 10000000000000) * 10000000000 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#379)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in MountableToken.close() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#411-428):
+	External calls:
+	- issueLockedTokens(lockedTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#418)
+		- lockedTeamTokens.tokenTimelock(this,owner,dateTeamTokensLockedTill) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#438)
+	State variables written after the call(s):
+	- issuePartnerTokens(partnerTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#419)
+		- balances[owner] = partnerTokens (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#451)
+	- tokenSaleClosed = true (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#424)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in MountableToken.close() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#411-428):
+	External calls:
+	- issueLockedTokens(lockedTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#418)
+		- lockedTeamTokens.tokenTimelock(this,owner,dateTeamTokensLockedTill) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#438)
+	State variables written after the call(s):
+	- totalSupply = totalSupply.add(lockedTokens + partnerTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#421)
+Reentrancy in MountableToken.issueLockedTokens(uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#435-444):
+	External calls:
+	- lockedTeamTokens.tokenTimelock(this,owner,dateTeamTokensLockedTill) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#438)
+	State variables written after the call(s):
+	- balances[timelockContractAddress] = balances[timelockContractAddress].add(lockedTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#440)
+	- timelockContractAddress = address(lockedTeamTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#439)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in MountableToken.close() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#411-428):
+	External calls:
+	- issueLockedTokens(lockedTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#418)
+		- lockedTeamTokens.tokenTimelock(this,owner,dateTeamTokensLockedTill) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#438)
+	Event emitted after the call(s):
+	- Transfer(address(0),owner,partnerTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#452)
+		- issuePartnerTokens(partnerTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#419)
+Reentrancy in MountableToken.issueLockedTokens(uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#435-444):
+	External calls:
+	- lockedTeamTokens.tokenTimelock(this,owner,dateTeamTokensLockedTill) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#438)
+	Event emitted after the call(s):
+	- Transfer(address(0),timelockContractAddress,lockedTokens) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#442)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+TokenTimelock.tokenTimelock(ERC20Basic,address,uint64) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#127-132) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(_releaseTime > uint64(block.timestamp)) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#128)
+TokenTimelock.release() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#137-144) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(uint64(block.timestamp) >= releaseTime) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#138)
+MountableToken.currentRoundIndexByDate() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#401-408) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool)(now <= endDate) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#402)
+	- now > tokenSale3 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#403)
+	- now > tokenSale2 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#404)
+	- now > tokenSale1 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#405)
+	- now > preSale (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#406)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#12) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter BasicToken.transfer(address,uint256)._to (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#63) is not in mixedCase
+Parameter BasicToken.transfer(address,uint256)._value (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#63) is not in mixedCase
+Parameter BasicToken.balanceOf(address)._owner (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#78) is not in mixedCase
+Parameter TokenTimelock.tokenTimelock(ERC20Basic,address,uint64)._token (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#127) is not in mixedCase
+Parameter TokenTimelock.tokenTimelock(ERC20Basic,address,uint64)._beneficiary (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#127) is not in mixedCase
+Parameter TokenTimelock.tokenTimelock(ERC20Basic,address,uint64)._releaseTime (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#127) is not in mixedCase
+Parameter StandardToken.transferFrom(address,address,uint256)._from (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#164) is not in mixedCase
+Parameter StandardToken.transferFrom(address,address,uint256)._to (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#164) is not in mixedCase
+Parameter StandardToken.transferFrom(address,address,uint256)._value (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#164) is not in mixedCase
+Parameter StandardToken.approve(address,uint256)._spender (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#182) is not in mixedCase
+Parameter StandardToken.approve(address,uint256)._value (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#182) is not in mixedCase
+Parameter StandardToken.allowance(address,address)._owner (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#194) is not in mixedCase
+Parameter StandardToken.allowance(address,address)._spender (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#194) is not in mixedCase
+Parameter StandardToken.increaseApproval(address,uint256)._spender (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#204) is not in mixedCase
+Parameter StandardToken.increaseApproval(address,uint256)._addedValue (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#204) is not in mixedCase
+Parameter StandardToken.decreaseApproval(address,uint256)._spender (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#210) is not in mixedCase
+Parameter StandardToken.decreaseApproval(address,uint256)._subtractedValue (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#210) is not in mixedCase
+Parameter BurnableToken.burn(uint256)._value (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#252) is not in mixedCase
+Parameter MountableToken.purchaseTokens(address)._beneficiary (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#339) is not in mixedCase
+Parameter MountableToken.issueTokens(address,uint256)._beneficiary (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#354) is not in mixedCase
+Parameter MountableToken.issueTokens(address,uint256)._tokens (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#354) is not in mixedCase
+Parameter MountableToken.doIssueTokens(address,uint256)._beneficiary (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#361) is not in mixedCase
+Parameter MountableToken.doIssueTokens(address,uint256)._tokens (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#361) is not in mixedCase
+Parameter MountableToken.transferFrom(address,address,uint256)._from (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#456) is not in mixedCase
+Parameter MountableToken.transferFrom(address,address,uint256)._to (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#456) is not in mixedCase
+Parameter MountableToken.transferFrom(address,address,uint256)._value (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#456) is not in mixedCase
+Parameter MountableToken.transfer(address,uint256)._to (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#461) is not in mixedCase
+Parameter MountableToken.transfer(address,uint256)._value (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#461) is not in mixedCase
+Constant MountableToken.dateHOTSale (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#277) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MountableToken.preSale (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#280) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MountableToken.tokenSale1 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#283) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MountableToken.tokenSale2 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#286) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MountableToken.tokenSale3 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#289) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MountableToken.endDate (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#292) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant MountableToken.dateTeamTokensLockedTill (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#305) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+MountableToken.computeTokenAmount(uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#378-386) uses literals with too many digits:
+	- tokenBase = (ethAmount.mul(BASE_RATE) / 10000000000000) * 10000000000 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#379)
+MountableToken.close() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#411-428) uses literals with too many digits:
+	- lockedTokens = 120000000000000000000000 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#414)
+MountableToken.close() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#411-428) uses literals with too many digits:
+	- partnerTokens = 130000000000000000000000 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#416)
+MountableToken.slitherConstructorVariables() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#263-465) uses literals with too many digits:
+	- roundCaps = (100000000000000000000000,200000000000000000000000,350000000000000000000000,550000000000000000000000,750000000000000000000000) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#295-301)
+MountableToken.slitherConstructorConstantVariables() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#263-465) uses literals with too many digits:
+	- TOKENS_SALE_HARD_CAP = 750000000000000000000000 (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#269)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- BasicToken.balanceOf(address) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#78-80)
+	- ERC20Basic.balanceOf(address) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#44)
+allowance(address,address) should be declared external:
+	- StandardToken.allowance(address,address) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#194-196)
+	- ERC20.allowance(address,address) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#89)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#91)
+	- StandardToken.approve(address,uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#182-186)
+tokenTimelock(ERC20Basic,address,uint64) should be declared external:
+	- TokenTimelock.tokenTimelock(ERC20Basic,address,uint64) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#127-132)
+release() should be declared external:
+	- TokenTimelock.release() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#137-144)
+increaseApproval(address,uint256) should be declared external:
+	- StandardToken.increaseApproval(address,uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#204-208)
+decreaseApproval(address,uint256) should be declared external:
+	- StandardToken.decreaseApproval(address,uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#210-219)
+owned() should be declared external:
+	- Owned.owned() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#228-230)
+transferOwnership(address) should be declared external:
+	- Owned.transferOwnership(address) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#236-240)
+burn(uint256) should be declared external:
+	- BurnableToken.burn(uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#252-260)
+issueTokens(address,uint256) should be declared external:
+	- MountableToken.issueTokens(address,uint256) (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#354-356)
+price() should be declared external:
+	- MountableToken.price() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#371-373)
+close() should be declared external:
+	- MountableToken.close() (loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol#411-428)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol analyzed (10 contracts with 46 detectors), 65 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xb09b1500e55b845966705f0881187f4d3d8b64d8.sol
+Tool Runtime = 0.9456905919978453 seconds
+#############################################

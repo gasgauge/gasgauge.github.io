@@ -1,0 +1,288 @@
+Compilation warnings/errors on ./loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:
+./loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:720:24: Warning: Unused local variable.
+        (bool success, bytes memory data) = staking.call(abi.encodeWithSignature("mint(address)", _stakeholder));
+                       ^---------------^
+./loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:727:24: Warning: Unused local variable.
+        (bool success, bytes memory data) = staking.call(abi.encodeWithSignature("mint(address)", _stakeholder));
+                       ^---------------^
+./loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:814:24: Warning: Unused local variable.
+        (bool success, bytes memory data) = staking.call(abi.encodeWithSignature("burn(uint256)", _tokenId));
+                       ^---------------^
+
+INFO:Detectors:[93m
+NFYStaking.getRewardPerBlock() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#605-607) performs a multiplication on the result of a division:
+	-NFYToken.balanceOf(rewardPool).div(6500).div(10000).mul(dailyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#606)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) performs a multiplication on the result of a division:
+	-stakeAfterFees = amountStaked.div(100).mul(95) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#803)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) performs a multiplication on the result of a division:
+	-userReceives = amountStaked.div(100).mul(95).add(_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#804)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) performs a multiplication on the result of a division:
+	-fee = amountStaked.div(100).mul(5) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#806)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+NFYStaking.decrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857-877) uses a dangerous strict equality:
+	- require(bool,string)(checkIfNFTInCirculation(_tokenId) == true,Token not in circulation) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#858)
+NFYStaking.incrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836-854) uses a dangerous strict equality:
+	- require(bool,string)(checkIfNFTInCirculation(_tokenId) == true,Token not in circulation) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#837)
+NFYStaking.updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#664-685) uses a dangerous strict equality:
+	- totalStaked == 0 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#669)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in NFYStaking.claimRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#734-750):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#738)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#745)
+	State variables written after the call(s):
+	- nft._rewardDebt = nft._NFYDeposited.mul(accNfyPerShare).div(1e18) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#747)
+Reentrancy in NFYStaking.compoundRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#753-770):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#757)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	State variables written after the call(s):
+	- nft._NFYDeposited = nft._NFYDeposited.add(_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#764)
+	- nft._rewardDebt = nft._NFYDeposited.mul(accNfyPerShare).div(1e18) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#767)
+	- totalStaked = totalStaked.add(_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#765)
+Reentrancy in NFYStaking.decrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857-877):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#861)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- NFYToken.transfer(StakingNFT.ownerOf(_tokenId),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#869)
+	State variables written after the call(s):
+	- NFTDetails[_tokenId]._NFYDeposited = NFTDetails[_tokenId]._NFYDeposited.sub(_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#874)
+	- nft._rewardDebt = nft._NFYDeposited.mul(accNfyPerShare).div(1e18) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#876)
+Reentrancy in NFYStaking.incrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836-854):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#838)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- NFYToken.transfer(StakingNFT.ownerOf(_tokenId),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#846)
+	State variables written after the call(s):
+	- NFTDetails[_tokenId]._NFYDeposited = NFTDetails[_tokenId]._NFYDeposited.add(_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#851)
+	- nft._rewardDebt = nft._NFYDeposited.mul(accNfyPerShare).div(1e18) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#853)
+Reentrancy in NFYStaking.stakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688-717):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#692)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- addStakeholder(_msgSender()) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#695)
+		- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#720)
+	- NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#704)
+	- NFYToken.transferFrom(_msgSender(),address(this),_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#709)
+	State variables written after the call(s):
+	- nft._NFYDeposited = nft._NFYDeposited.add(_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#710)
+	- nft._rewardDebt = nft._NFYDeposited.mul(accNfyPerShare).div(1e18) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#713)
+	- totalStaked = totalStaked.add(_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#711)
+Reentrancy in NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#796)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	State variables written after the call(s):
+	- nft._NFYDeposited = 0 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#809)
+	- nft._inCirculation = false (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#810)
+	- totalStaked = totalStaked.sub(beingWithdrawn) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#811)
+Reentrancy in NFYStaking.updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#664-685):
+	External calls:
+	- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	State variables written after the call(s):
+	- lastRewardBlock = block.number (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#682)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+NFYStaking.updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#664-685) ignores return value by NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+NFYStaking.stakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688-717) ignores return value by NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#704)
+NFYStaking.stakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688-717) ignores return value by NFYToken.transferFrom(_msgSender(),address(this),_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#709)
+NFYStaking.claimRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#734-750) ignores return value by NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#745)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) ignores return value by NFYToken.transfer(_msgSender(),userReceives) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#817)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) ignores return value by NFYToken.transfer(rewardPool,fee) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#818)
+NFYStaking.incrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836-854) ignores return value by NFYToken.transfer(StakingNFT.ownerOf(_tokenId),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#846)
+NFYStaking.decrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857-877) ignores return value by NFYToken.transfer(StakingNFT.ownerOf(_tokenId),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#869)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+NFYStaking.getTotalRewards(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#640-649) has external calls inside a loop: i < StakingNFT.balanceOf(_address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#643)
+NFYStaking.getTotalRewards(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#640-649) has external calls inside a loop: _rewardPerNFT = pendingRewards(StakingNFT.tokenOfOwnerByIndex(_address,i)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#644)
+NFYStaking.getTotalBalance(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#652-661) has external calls inside a loop: i < StakingNFT.balanceOf(_address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#655)
+NFYStaking.getTotalBalance(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#652-661) has external calls inside a loop: _balancePerNFT = getNFTBalance(StakingNFT.tokenOfOwnerByIndex(_address,i)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#656)
+NFYStaking.claimAllRewards() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#773-779) has external calls inside a loop: i < StakingNFT.balanceOf(_msgSender()) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#775)
+NFYStaking.claimAllRewards() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#773-779) has external calls inside a loop: _currentNFT = StakingNFT.tokenOfOwnerByIndex(_msgSender(),i) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#776)
+NFYStaking.compoundAllRewards() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#782-788) has external calls inside a loop: i < StakingNFT.balanceOf(_msgSender()) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#784)
+NFYStaking.compoundAllRewards() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#782-788) has external calls inside a loop: _currentNFT = StakingNFT.tokenOfOwnerByIndex(_msgSender(),i) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#785)
+NFYStaking.unstakeAll() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#825-833) has external calls inside a loop: StakingNFT.balanceOf(_msgSender()) > 0 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#828)
+NFYStaking.unstakeAll() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#825-833) has external calls inside a loop: _currentNFT = StakingNFT.tokenOfOwnerByIndex(_msgSender(),0) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#829)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in NFYStaking.addStakeholder(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#719-724):
+	External calls:
+	- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#720)
+	State variables written after the call(s):
+	- NFTDetails[StakingNFT.nftTokenId(_msgSender())]._addressOfMinter = _stakeholder (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#722)
+	- NFTDetails[StakingNFT.nftTokenId(_msgSender())]._inCirculation = true (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#723)
+Reentrancy in NFYStaking.addStakeholderExternal(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#726-731):
+	External calls:
+	- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#727)
+	State variables written after the call(s):
+	- NFTDetails[StakingNFT.nftTokenId(_msgSender())]._addressOfMinter = _stakeholder (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#729)
+	- NFTDetails[StakingNFT.nftTokenId(_msgSender())]._inCirculation = true (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#730)
+Reentrancy in NFYStaking.updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#664-685):
+	External calls:
+	- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	State variables written after the call(s):
+	- accNfyPerShare = accNfyPerShare.add(nfyReward.mul(1e18).div(totalStaked)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#681)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in NFYStaking.claimRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#734-750):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#738)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#745)
+	Event emitted after the call(s):
+	- RewardsClaimed(_msgSender(),_pendingRewards,_tokenId,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#749)
+Reentrancy in NFYStaking.compoundRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#753-770):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#757)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	Event emitted after the call(s):
+	- RewardsCompounded(_msgSender(),_pendingRewards,_tokenId,nft._NFYDeposited,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#769)
+Reentrancy in NFYStaking.decrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857-877):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#861)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- NFYToken.transfer(StakingNFT.ownerOf(_tokenId),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#869)
+	Event emitted after the call(s):
+	- RewardsClaimed(StakingNFT.ownerOf(_tokenId),_pendingRewards,_tokenId,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#870)
+Reentrancy in NFYStaking.incrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836-854):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#838)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- NFYToken.transfer(StakingNFT.ownerOf(_tokenId),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#846)
+	Event emitted after the call(s):
+	- RewardsClaimed(StakingNFT.ownerOf(_tokenId),_pendingRewards,_tokenId,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#847)
+Reentrancy in NFYStaking.stakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688-717):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#692)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- addStakeholder(_msgSender()) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#695)
+		- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#720)
+	- NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#704)
+	Event emitted after the call(s):
+	- RewardsClaimed(_msgSender(),_pendingRewards,StakingNFT.nftTokenId(_msgSender()),now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#705)
+Reentrancy in NFYStaking.stakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688-717):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#692)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- addStakeholder(_msgSender()) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#695)
+		- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#720)
+	- NFYToken.transfer(_msgSender(),_pendingRewards) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#704)
+	- NFYToken.transferFrom(_msgSender(),address(this),_amount) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#709)
+	Event emitted after the call(s):
+	- StakeCompleted(_msgSender(),_amount,StakingNFT.nftTokenId(_msgSender()),nft._NFYDeposited,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#715)
+Reentrancy in NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822):
+	External calls:
+	- updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#796)
+		- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	- StakingNFT.revertNftTokenId(_msgSender(),_tokenId) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#812)
+	- (success,data) = staking.call(abi.encodeWithSignature(burn(uint256),_tokenId)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#814)
+	- NFYToken.transfer(_msgSender(),userReceives) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#817)
+	- NFYToken.transfer(rewardPool,fee) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#818)
+	Event emitted after the call(s):
+	- RewardsClaimed(_msgSender(),_pendingRewards,_tokenId,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#821)
+	- WithdrawCompleted(_msgSender(),stakeAfterFees,_tokenId,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#820)
+Reentrancy in NFYStaking.updatePool() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#664-685):
+	External calls:
+	- NFYToken.transferFrom(rewardPool,address(this),nfyReward) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#679)
+	Event emitted after the call(s):
+	- PoolUpdated(blocksToReward,nfyReward,now) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#684)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#277-286) uses assembly
+	- INLINE ASM (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#284-285)
+Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#370-391) uses assembly
+	- INLINE ASM (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#383-387)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Ownable.onlyPlatform() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#518-521) compares to a boolean constant:
+	-require(bool,string)(platformAddress[_msgSender()] == true,Only Platform) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#519)
+NFYStaking.addStakeholder(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#719-724) compares to a boolean constant:
+	-require(bool,string)(success == true,Mint call failed) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#721)
+NFYStaking.addStakeholderExternal(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#726-731) compares to a boolean constant:
+	-require(bool,string)(success == true,Mint call failed) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#728)
+NFYStaking.claimRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#734-750) compares to a boolean constant:
+	-require(bool,string)(NFTDetails[_tokenId]._inCirculation == true,Stake has already been withdrawn) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#736)
+NFYStaking.compoundRewards(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#753-770) compares to a boolean constant:
+	-require(bool,string)(NFTDetails[_tokenId]._inCirculation == true,Stake has already been withdrawn) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#755)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) compares to a boolean constant:
+	-require(bool,string)(NFTDetails[_tokenId]._inCirculation == true,Stake has already been withdrawn) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#794)
+NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822) compares to a boolean constant:
+	-require(bool,string)(success == true,mint call failed) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#815)
+NFYStaking.incrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836-854) compares to a boolean constant:
+	-require(bool,string)(checkIfNFTInCirculation(_tokenId) == true,Token not in circulation) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#837)
+NFYStaking.decrementNFTValue(uint256,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857-877) compares to a boolean constant:
+	-require(bool,string)(checkIfNFTInCirculation(_tokenId) == true,Token not in circulation) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#858)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#10) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#91) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#254) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#399) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#477) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#503) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#547) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#304-310):
+	- (success) = recipient.call.value(amount)() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#308)
+Low level call in Address._functionCallWithValue(address,bytes,uint256,string) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#370-391):
+	- (success,returndata) = target.call.value(weiValue)(data) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#374)
+Low level call in NFYStaking.addStakeholder(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#719-724):
+	- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#720)
+Low level call in NFYStaking.addStakeholderExternal(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#726-731):
+	- (success,data) = staking.call(abi.encodeWithSignature(mint(address),_stakeholder)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#727)
+Low level call in NFYStaking.unstakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791-822):
+	- (success,data) = staking.call(abi.encodeWithSignature(burn(uint256),_tokenId)) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#814)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Ownable.transferOwnership(address)._owner (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#529) is not in mixedCase
+Parameter Ownable.addPlatformAddress(address)._platformAddress (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#535) is not in mixedCase
+Parameter NFYStaking.setDailyReward(uint256)._dailyReward (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#610) is not in mixedCase
+Parameter NFYStaking.getNFTBalance(uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#615) is not in mixedCase
+Parameter NFYStaking.checkIfNFTInCirculation(uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#620) is not in mixedCase
+Parameter NFYStaking.pendingRewards(uint256)._NFT (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#625) is not in mixedCase
+Parameter NFYStaking.getTotalRewards(address)._address (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#640) is not in mixedCase
+Parameter NFYStaking.getTotalBalance(address)._address (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#652) is not in mixedCase
+Parameter NFYStaking.stakeNFY(uint256)._amount (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688) is not in mixedCase
+Parameter NFYStaking.addStakeholder(address)._stakeholder (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#719) is not in mixedCase
+Parameter NFYStaking.addStakeholderExternal(address)._stakeholder (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#726) is not in mixedCase
+Parameter NFYStaking.claimRewards(uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#734) is not in mixedCase
+Parameter NFYStaking.compoundRewards(uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#753) is not in mixedCase
+Parameter NFYStaking.unstakeNFY(uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#791) is not in mixedCase
+Parameter NFYStaking.incrementNFTValue(uint256,uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836) is not in mixedCase
+Parameter NFYStaking.incrementNFTValue(uint256,uint256)._amount (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#836) is not in mixedCase
+Parameter NFYStaking.decrementNFTValue(uint256,uint256)._tokenId (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857) is not in mixedCase
+Parameter NFYStaking.decrementNFTValue(uint256,uint256)._amount (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#857) is not in mixedCase
+Variable NFYStaking.NFYToken (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#580) is not in mixedCase
+Variable NFYStaking.StakingNFT (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#581) is not in mixedCase
+Variable NFYStaking.NFTDetails (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#589) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#529-533)
+addPlatformAddress(address) should be declared external:
+	- Ownable.addPlatformAddress(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#535-539)
+getTotalRewards(address) should be declared external:
+	- NFYStaking.getTotalRewards(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#640-649)
+getTotalBalance(address) should be declared external:
+	- NFYStaking.getTotalBalance(address) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#652-661)
+stakeNFY(uint256) should be declared external:
+	- NFYStaking.stakeNFY(uint256) (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#688-717)
+claimAllRewards() should be declared external:
+	- NFYStaking.claimAllRewards() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#773-779)
+compoundAllRewards() should be declared external:
+	- NFYStaking.compoundAllRewards() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#782-788)
+unstakeAll() should be declared external:
+	- NFYStaking.unstakeAll() (loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol#825-833)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol analyzed (8 contracts with 46 detectors), 96 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol
+Tool Runtime = 1.7247960040003818 seconds
+#############################################

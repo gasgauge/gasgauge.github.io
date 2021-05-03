@@ -1,0 +1,101 @@
+INFO:Detectors:[91m
+NodeRunnersLiquidity.withdrawDust(uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#465-467) sends eth to arbitrary user
+	Dangerous calls:
+	- _treasury.transfer(amount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#466)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+NodeRunnersLiquidity.lockedSupply() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#432-440) performs a multiplication on the result of a division:
+	-percentOfLpTotalSupply = lpBalance.mul(1e12).div(lpTotalSupply) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#435)
+	-_lockedSupply = uniswapBalance.mul(percentOfLpTotalSupply).div(1e12) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#438)
+NodeRunnersLiquidity.burnedSupply() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#443-451) performs a multiplication on the result of a division:
+	-percentOfLpTotalSupply = lpBalance.mul(1e12).div(lpTotalSupply) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#446)
+	-_burnedSupply = uniswapBalance.mul(percentOfLpTotalSupply).div(1e12) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#449)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+NodeRunnersLiquidity.burnLiquidity() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#419-424) ignores return value by IERC20(_uniswapV2Pair).transfer(address(0),balance) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#422)
+NodeRunnersLiquidity.swapTokensForEth(uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#469-477) ignores return value by IERC20(_token).approve(_uniswapV2Router,tokenAmount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#474)
+NodeRunnersLiquidity.addLiquidity(uint256,uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#479-483) ignores return value by IERC20(_token).approve(_uniswapV2Router,tokenAmount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#480)
+NodeRunnersLiquidity.addLiquidity(uint256,uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#479-483) ignores return value by IUniswapV2Router02(_uniswapV2Router).addLiquidityETH.value(ethAmount)(_token,tokenAmount,0,0,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#481-482)
+NodeRunnersLiquidity.rewardLiquidityProviders(uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#485-490) ignores return value by IERC20(_token).transfer(_uniswapV2Pair,liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#487)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+NodeRunnersLiquidity.receive() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#493) (function) shadows built-in symbol"
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#builtin-symbol-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in NodeRunnersLiquidity.burnLiquidity() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#419-424):
+	External calls:
+	- IERC20(_uniswapV2Pair).transfer(address(0),balance) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#422)
+	Event emitted after the call(s):
+	- BurnLiquidity(balance) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#423)
+Reentrancy in NodeRunnersLiquidity.lockLiquidity(uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#379-407):
+	External calls:
+	- rewardLiquidityProviders(liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#394)
+		- IERC20(_token).transfer(_uniswapV2Pair,liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#487)
+		- IUniswapV2Pair(_uniswapV2Pair).sync() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#488)
+	- swapTokensForEth(amountToSwapForEth) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#402)
+		- IERC20(_token).approve(_uniswapV2Router,tokenAmount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#474)
+		- IUniswapV2Router02(_uniswapV2Router).swapExactTokensForETHSupportingFeeOnTransferTokens(tokenAmount,0,uniswapPairPath,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#475-476)
+	- addLiquidity(amountToAddLiquidity,ethReceived) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#405)
+		- IERC20(_token).approve(_uniswapV2Router,tokenAmount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#480)
+		- IUniswapV2Router02(_uniswapV2Router).addLiquidityETH.value(ethAmount)(_token,tokenAmount,0,0,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#481-482)
+	External calls sending eth:
+	- addLiquidity(amountToAddLiquidity,ethReceived) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#405)
+		- IUniswapV2Router02(_uniswapV2Router).addLiquidityETH.value(ethAmount)(_token,tokenAmount,0,0,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#481-482)
+	Event emitted after the call(s):
+	- LockLiquidity(amountToAddLiquidity,ethReceived) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#406)
+Reentrancy in NodeRunnersLiquidity.rewardLiquidityProviders() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#412-417):
+	External calls:
+	- require(bool,string)(KP3R.isKeeper(msg.sender),Keep3rJob::update: not a valid keeper) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#414)
+	- lockLiquidity(IERC20(_token).balanceOf(address(this))) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#415)
+		- IERC20(_token).approve(_uniswapV2Router,tokenAmount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#480)
+		- IERC20(_token).transfer(_uniswapV2Pair,liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#487)
+		- IUniswapV2Router02(_uniswapV2Router).addLiquidityETH.value(ethAmount)(_token,tokenAmount,0,0,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#481-482)
+		- IUniswapV2Pair(_uniswapV2Pair).sync() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#488)
+		- IERC20(_token).approve(_uniswapV2Router,tokenAmount) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#474)
+		- IUniswapV2Router02(_uniswapV2Router).swapExactTokensForETHSupportingFeeOnTransferTokens(tokenAmount,0,uniswapPairPath,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#475-476)
+	External calls sending eth:
+	- lockLiquidity(IERC20(_token).balanceOf(address(this))) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#415)
+		- IUniswapV2Router02(_uniswapV2Router).addLiquidityETH.value(ethAmount)(_token,tokenAmount,0,0,address(this),block.timestamp) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#481-482)
+	Event emitted after the call(s):
+	- LockLiquidity(amountToAddLiquidity,ethReceived) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#406)
+		- lockLiquidity(IERC20(_token).balanceOf(address(this))) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#415)
+	- RewardLiquidityProviders(liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#489)
+		- lockLiquidity(IERC20(_token).balanceOf(address(this))) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#415)
+Reentrancy in NodeRunnersLiquidity.rewardLiquidityProviders(uint256) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#485-490):
+	External calls:
+	- IERC20(_token).transfer(_uniswapV2Pair,liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#487)
+	- IUniswapV2Pair(_uniswapV2Pair).sync() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#488)
+	Event emitted after the call(s):
+	- RewardLiquidityProviders(liquidityRewards) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#489)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Function IUniswapV2Router02.WETH() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#324) is not in mixedCase
+Parameter NodeRunnersLiquidity.lockLiquidity(uint256)._lockableSupply (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#379) is not in mixedCase
+Variable NodeRunnersLiquidity._liquidityRewardsDivisor (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#354) is not in mixedCase
+Variable NodeRunnersLiquidity._treasury (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#356) is not in mixedCase
+Variable NodeRunnersLiquidity._token (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#357) is not in mixedCase
+Variable NodeRunnersLiquidity._uniswapV2Pair (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#358) is not in mixedCase
+Variable NodeRunnersLiquidity._uniswapV2Router (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#359) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+NodeRunnersLiquidity._uniswapV2Router (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#359) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#213-215)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#232-235)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol#241-245)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol analyzed (8 contracts with 46 detectors), 26 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x9d23ecca7473d02d64b703bfcd63bd1aea0b48ac.sol
+Tool Runtime = 0.7523046560017974 seconds
+#############################################

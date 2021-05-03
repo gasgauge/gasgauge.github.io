@@ -1,0 +1,129 @@
+INFO:Detectors:[93m
+SafeMath.ceil(uint256,uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#171-173) performs a multiplication on the result of a division:
+	-(a + m - 1) / m * m (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#172)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in FNSPStake.CLAIMREWARD() (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#309-324):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transfer(msg.sender,owing),ERROR: error in sending reward from contract) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#316)
+	State variables written after the call(s):
+	- stakers[msg.sender].lastDividends = owing (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#320)
+	- stakers[msg.sender].round = round (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#321)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#322)
+Reentrancy in FNSPStake.WITHDRAW(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#348-372):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#358)
+	State variables written after the call(s):
+	- _addPayout(_unstakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#369)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#300)
+	- stakers[msg.sender].stakedTokens = stakers[msg.sender].stakedTokens.sub(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#360)
+	- stakers[msg.sender].lastDividends = owing (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#361)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#362)
+	- stakers[msg.sender].round = round (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#363)
+	- _addPayout(_unstakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#369)
+		- totalDividends = totalDividends.add(dividendPerToken) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#299)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Reentrancy in FNSPStake.ADDFUNDS(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#283-286):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#284)
+	State variables written after the call(s):
+	- _addPayout(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#285)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#300)
+	- _addPayout(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#285)
+		- round ++ (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#303)
+	- _addPayout(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#285)
+		- scaledRemainder = available.mod(totalStakes) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#297)
+	- _addPayout(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#285)
+		- totalDividends = totalDividends.add(dividendPerToken) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#299)
+Reentrancy in FNSPStake.STAKE(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#254-277):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#255)
+	State variables written after the call(s):
+	- _addPayout(_stakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#263)
+		- payouts[round] = payouts[round - 1].add(dividendPerToken) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#300)
+	- _addPayout(_stakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#263)
+		- round ++ (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#303)
+	- _addPayout(_stakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#263)
+		- scaledRemainder = available.mod(totalStakes) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#297)
+	- owing = pendingReward(msg.sender) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#266)
+		- stakers[staker].remainder += ((totalDividends.sub(payouts[stakers[staker].round - 1])).mul(stakers[staker].stakedTokens)) % scaling (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#333)
+	- stakers[msg.sender].remainder += owing (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#267)
+	- stakers[msg.sender].stakedTokens = (tokens.sub(_stakingFee)).add(stakers[msg.sender].stakedTokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#269)
+	- stakers[msg.sender].lastDividends = owing (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#270)
+	- stakers[msg.sender].fromTotalDividend = totalDividends (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#271)
+	- stakers[msg.sender].round = round (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#272)
+	- _addPayout(_stakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#263)
+		- totalDividends = totalDividends.add(dividendPerToken) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#299)
+	- totalStakes = totalStakes.add(tokens.sub(_stakingFee)) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#274)
+Reentrancy in FNSPStake.WITHDRAW(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#348-372):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#358)
+	State variables written after the call(s):
+	- _addPayout(_unstakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#369)
+		- round ++ (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#303)
+	- _addPayout(_unstakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#369)
+		- scaledRemainder = available.mod(totalStakes) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#297)
+	- totalStakes = totalStakes.sub(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#365)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in FNSPStake.ADDFUNDS(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#283-286):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from funder account) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#284)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#302)
+		- _addPayout(tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#285)
+Reentrancy in FNSPStake.CLAIMREWARD() (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#309-324):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transfer(msg.sender,owing),ERROR: error in sending reward from contract) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#316)
+	Event emitted after the call(s):
+	- CLAIMEDREWARD(msg.sender,owing) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#318)
+Reentrancy in FNSPStake.STAKE(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#254-277):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transferFrom(msg.sender,address(this),tokens),Tokens cannot be transferred from user account) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#255)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#302)
+		- _addPayout(_stakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#263)
+	- STAKED(msg.sender,tokens.sub(_stakingFee),_stakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#276)
+Reentrancy in FNSPStake.WITHDRAW(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#348-372):
+	External calls:
+	- require(bool,string)(IERC20(FNSP).transfer(msg.sender,tokens.sub(_unstakingFee)),Error in un-staking tokens) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#358)
+	Event emitted after the call(s):
+	- PAYOUT(round,tokens,msg.sender) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#302)
+		- _addPayout(_unstakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#369)
+	- UNSTAKED(msg.sender,tokens.sub(_unstakingFee),_unstakingFee) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#371)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.transferOwnership(address)._newOwner (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#193) is not in mixedCase
+Function FNSPStake.STAKE(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#254-277) is not in mixedCase
+Function FNSPStake.ADDFUNDS(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#283-286) is not in mixedCase
+Function FNSPStake.CLAIMREWARD() (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#309-324) is not in mixedCase
+Function FNSPStake.WITHDRAW(uint256) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#348-372) is not in mixedCase
+Parameter FNSPStake.onePercent(uint256)._tokens (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#379) is not in mixedCase
+Variable FNSPStake.FNSP (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#224) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+FNSPStake.FNSP (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#224) should be constant
+FNSPStake.scaling (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#231) should be constant
+FNSPStake.stakingFee (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#227) should be constant
+FNSPStake.unstakingFee (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#228) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Owned.transferOwnership(address) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#193-196)
+CLAIMREWARD() should be declared external:
+	- FNSPStake.CLAIMREWARD() (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#309-324)
+getPendingReward(address) should be declared external:
+	- FNSPStake.getPendingReward(address) (noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol#337-341)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol analyzed (4 contracts with 46 detectors), 26 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x5c349cb56aa6ef6bc31386c6cfe1cdf411b5cc3e.sol
+Tool Runtime = 0.7678051659968332 seconds
+#############################################

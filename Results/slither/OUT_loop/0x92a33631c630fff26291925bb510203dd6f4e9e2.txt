@@ -1,0 +1,1275 @@
+Compilation warnings/errors on ./loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol:
+./loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol:1299:23: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+  function __callback(bytes32 myid, string memory result) public {
+                      ^----------^
+./loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol:1299:37: Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+  function __callback(bytes32 myid, string memory result) public {
+                                    ^------------------^
+
+INFO:Detectors:[91m
+YeldOracle.extractETHIfStuck() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1309-1311) sends eth to arbitrary user
+	Dangerous calls:
+	- owner().transfer(address(this).balance) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1310)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[91m
+Reentrancy in YeldOracle.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1299-1303):
+	External calls:
+	- msg.sender != provable_cbAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1300)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- IYeldContract(yDAI).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1334)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#322)
+		- IYeldContract(yTether).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1335)
+		- IYeldContract(yTrueUSD).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1336)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- IYeldContract(yUSDC).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1337)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#322)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	External calls sending eth:
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	State variables written after the call(s):
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- OAR = OracleAddrResolverI(0x1d3B2638a7cC9f2CB3D298A3DA7a90B67E5506ed) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#257)
+		- OAR = OracleAddrResolverI(0xc03A2615D5efaf5F49F60B7BB6583eaec212fdf1) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#262)
+		- OAR = OracleAddrResolverI(0xB7A07BcF2Ba2f2703b24C0691b5278999C59AC7e) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#267)
+		- OAR = OracleAddrResolverI(0x146500cfd35B22E4A392Fe0aDc06De1a1368Ed48) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#272)
+		- OAR = OracleAddrResolverI(0xa2998EFD205FB9D4B4963aFb70778D6354ad3A41) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#277)
+		- OAR = OracleAddrResolverI(0x6f485C8BF6fc43eA212E93BBF8ce046C7f1cb475) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#282)
+		- OAR = OracleAddrResolverI(0x20e12A1F859B3FeaE5Fb2A0A32C18F5a65555bBF) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#286)
+		- OAR = OracleAddrResolverI(0x51efaF4c8B3C9AfBD5aB9F4bbC82784Ab6ef8fAA) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#290)
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities[0m
+INFO:Detectors:[93m
+Reentrancy in usingProvable.provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#224-232):
+	External calls:
+	- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+	- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	State variables written after the call(s):
+	- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+usingProvable.stra2cbor(string[]).buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#986) is a local variable never initialized
+usingProvable.ba2cbor(bytes[]).buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#998) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+CBOR.encodeType(Buffer.buffer,uint8,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139-155) ignores return value by _buf.appendInt(_value,1) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#144)
+CBOR.encodeType(Buffer.buffer,uint8,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139-155) ignores return value by _buf.appendInt(_value,2) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#147)
+CBOR.encodeType(Buffer.buffer,uint8,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139-155) ignores return value by _buf.appendInt(_value,4) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#150)
+CBOR.encodeType(Buffer.buffer,uint8,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139-155) ignores return value by _buf.appendInt(_value,8) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#153)
+CBOR.encodeBytes(Buffer.buffer,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#173-176) ignores return value by _buf.append(_value) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#175)
+CBOR.encodeString(Buffer.buffer,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#178-181) ignores return value by _buf.append(bytes(_value)) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#180)
+YeldOracle.extractTokensIfStuck(address,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1305-1307) ignores return value by IERC20(_token).transfer(msg.sender,_amount) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1306)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in YeldOracle.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1299-1303):
+	External calls:
+	- msg.sender != provable_cbAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1300)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- IYeldContract(yDAI).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1334)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#322)
+		- IYeldContract(yTether).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1335)
+		- IYeldContract(yTrueUSD).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1336)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- IYeldContract(yUSDC).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1337)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	External calls sending eth:
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	State variables written after the call(s):
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in YeldOracle.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1299-1303):
+	External calls:
+	- msg.sender != provable_cbAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1300)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- IYeldContract(yDAI).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1334)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#322)
+		- IYeldContract(yTether).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1335)
+		- IYeldContract(yTrueUSD).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1336)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- IYeldContract(yUSDC).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1337)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#322)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	External calls sending eth:
+	- rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1301)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	State variables written after the call(s):
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1302)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_newRandomDSQuery(uint256,uint256,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1008-1045):
+	External calls:
+	- sessionKeyHash_bytes32 = provable_randomDS_getSessionPubKeyHash() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1015)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	- queryId = provable_query(random,args,_customGasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1030)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#601)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	External calls sending eth:
+	- queryId = provable_query(random,args,_customGasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1030)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	State variables written after the call(s):
+	- queryId = provable_query(random,args,_customGasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1030)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+	- provable_randomDS_setCommitment(queryId,keccak256(bytes)(abi.encodePacked(delay_bytes8_left,args[1],sha256(bytes)(args[0]),args[2]))) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1043)
+		- provable_randomDS_args[_queryId] = _commitment (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1048)
+Reentrancy in usingProvable.provable_query(string,string[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#413-417):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#416)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#378)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#413)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#416)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#416)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#419-423):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#422)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#387)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#419)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#422)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#422)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425-429):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#428)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#396)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#428)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#428)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#431-435):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#434)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#405)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#431)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#434)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#434)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#437-442):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#441)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#378)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#437)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#441)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#441)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#444-449):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#448)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#387)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#444)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#448)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#448)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451-456):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#455)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#396)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#455)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#455)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#458-463):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#462)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#405)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#458)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#462)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#462)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#465-471):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#470)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#378)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#465)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#470)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#470)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#473-479):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#478)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#387)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#473)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#478)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#478)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481-487):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#486)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#396)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#486)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#486)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#489-495):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#494)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#405)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#489)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#494)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#494)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#497-504):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#503)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#378)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#497)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#503)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#503)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#506-513):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#512)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#387)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#506)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#512)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#512)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515-522):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#521)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#396)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#521)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#521)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#524-531):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#530)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#405)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#524)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#530)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#530)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#533-541):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#540)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#378)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#533)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#540)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#383)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#540)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#543-551):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#550)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#387)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#543)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#550)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#392)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#550)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,string[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553-561):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#560)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#396)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#560)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#401)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#560)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,string[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#563-571):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#570)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#405)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#563)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#570)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#410)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#570)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#609-613):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#612)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#574)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#609)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#612)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#612)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#615-619):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#618)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#583)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#615)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#618)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#618)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621-625):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#624)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#592)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#624)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#624)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#627-631):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#630)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#601)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#627)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#630)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#630)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#633-638):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#637)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#574)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#633)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#637)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#637)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#640-645):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#644)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#583)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#640)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#644)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#644)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647-652):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#651)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#592)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#651)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#651)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#654-659):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#658)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#601)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#654)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#658)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#658)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#661-667):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#666)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#574)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#661)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#666)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#666)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#669-675):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#674)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#583)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#669)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#674)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#674)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677-683):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#682)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#592)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#682)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#682)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#685-691):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#690)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#601)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#685)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#690)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#690)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#693-700):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#699)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#574)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#693)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#699)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#699)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#702-709):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#708)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#583)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#702)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#708)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#708)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711-718):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#717)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#592)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#717)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#717)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#720-727):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#726)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#601)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#720)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#726)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#726)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#729-737):
+	External calls:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#736)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#574)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#729)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#736)
+		- provable.queryN.value(price)(0,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#579)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#736)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#739-747):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#746)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#583)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#739)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#746)
+		- provable.queryN.value(price)(_timestamp,_datasource,args) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#588)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#746)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(uint256,string,bytes[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749-757):
+	External calls:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#756)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#592)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#756)
+		- provable.queryN_withGasLimit.value(price)(_timestamp,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#597)
+	State variables written after the call(s):
+	- provable_query(_timestamp,_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#756)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in usingProvable.provable_query(string,bytes[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#759-767):
+	External calls:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#766)
+		- price = provable.getPrice(_datasource,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#601)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	- provableAPI() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#759)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+	External calls sending eth:
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#766)
+		- provable.queryN_withGasLimit.value(price)(0,_datasource,args,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#606)
+	State variables written after the call(s):
+	- provable_query(_datasource,dynargs,_gasLimit) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#766)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reentrancy in YeldOracle.rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1333-1340):
+	External calls:
+	- IYeldContract(yDAI).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1334)
+	- IYeldContract(yTether).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1335)
+	- IYeldContract(yTrueUSD).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1336)
+	- IYeldContract(yUSDC).rebalance() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1337)
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1339)
+		- price = provable.getPrice(_datasource) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#322)
+		- address(provable) != OAR.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#228)
+		- provable = ProvableI(OAR.getAddress()) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#229)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	External calls sending eth:
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1339)
+		- provable.query.value(price)(_timestamp,_datasource,_arg) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#326)
+	State variables written after the call(s):
+	- provable_query(updateTime,URL,) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1339)
+		- provable_network_name = _network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#248)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Buffer.init(Buffer.buffer,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#41-53) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#47-53)
+Buffer.append(Buffer.buffer,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#68-96) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#75-82)
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#83-86)
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#90-95)
+Buffer.append(Buffer.buffer,uint8) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#98-109) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#102-109)
+Buffer.appendInt(Buffer.buffer,uint256,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#111-124) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#116-123)
+usingProvable.getCodeSize(address) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#778-782) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#779-782)
+usingProvable.provable_newRandomDSQuery(uint256,uint256,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1008-1045) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1016-1023)
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1024-1027)
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1032-1043)
+usingProvable.verifySig(bytes32,bytes,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1051-1073) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1062-1066)
+usingProvable.copyBytes(bytes,uint256,uint256,bytes,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1163-1177) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1169-1173)
+usingProvable.safer_ecrecover(bytes32,uint8,bytes32,bytes32) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1179-1193) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1183-1192)
+usingProvable.ecrecovery(bytes32,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1195-1218) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1203-1211)
+usingProvable.safeMemoryCleaner() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1220-1225) uses assembly
+	- INLINE ASM (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1221-1225)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Contract solcChecker (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#9-11) is not in CapWords
+Function ProvableI.randomDS_getSessionPubKeyHash() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#20) is not in mixedCase
+Function ProvableI.query_withGasLimit(uint256,string,string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#25) is not in mixedCase
+Function ProvableI.queryN_withGasLimit(uint256,string,bytes,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#26) is not in mixedCase
+Function ProvableI.query2_withGasLimit(uint256,string,string,string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#27) is not in mixedCase
+Struct Buffer.buffer (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#36-39) is not in CapWords
+Parameter Buffer.init(Buffer.buffer,uint256)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#41) is not in mixedCase
+Parameter Buffer.init(Buffer.buffer,uint256)._capacity (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#41) is not in mixedCase
+Parameter Buffer.resize(Buffer.buffer,uint256)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#55) is not in mixedCase
+Parameter Buffer.resize(Buffer.buffer,uint256)._capacity (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#55) is not in mixedCase
+Parameter Buffer.max(uint256,uint256)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#61) is not in mixedCase
+Parameter Buffer.max(uint256,uint256)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#61) is not in mixedCase
+Parameter Buffer.append(Buffer.buffer,bytes)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#68) is not in mixedCase
+Parameter Buffer.append(Buffer.buffer,bytes)._data (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#68) is not in mixedCase
+Parameter Buffer.append(Buffer.buffer,uint8)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#98) is not in mixedCase
+Parameter Buffer.appendInt(Buffer.buffer,uint256,uint256)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#111) is not in mixedCase
+Parameter Buffer.appendInt(Buffer.buffer,uint256,uint256)._len (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#111) is not in mixedCase
+Parameter CBOR.encodeType(Buffer.buffer,uint8,uint256)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139) is not in mixedCase
+Parameter CBOR.encodeType(Buffer.buffer,uint8,uint256)._major (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139) is not in mixedCase
+Parameter CBOR.encodeType(Buffer.buffer,uint8,uint256)._value (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#139) is not in mixedCase
+Parameter CBOR.encodeIndefiniteLengthType(Buffer.buffer,uint8)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#157) is not in mixedCase
+Parameter CBOR.encodeIndefiniteLengthType(Buffer.buffer,uint8)._major (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#157) is not in mixedCase
+Parameter CBOR.encodeUInt(Buffer.buffer,uint256)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#161) is not in mixedCase
+Parameter CBOR.encodeUInt(Buffer.buffer,uint256)._value (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#161) is not in mixedCase
+Parameter CBOR.encodeInt(Buffer.buffer,int256)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#165) is not in mixedCase
+Parameter CBOR.encodeInt(Buffer.buffer,int256)._value (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#165) is not in mixedCase
+Parameter CBOR.encodeBytes(Buffer.buffer,bytes)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#173) is not in mixedCase
+Parameter CBOR.encodeBytes(Buffer.buffer,bytes)._value (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#173) is not in mixedCase
+Parameter CBOR.encodeString(Buffer.buffer,string)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#178) is not in mixedCase
+Parameter CBOR.encodeString(Buffer.buffer,string)._value (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#178) is not in mixedCase
+Parameter CBOR.startArray(Buffer.buffer)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#183) is not in mixedCase
+Parameter CBOR.startMap(Buffer.buffer)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#187) is not in mixedCase
+Parameter CBOR.endSequence(Buffer.buffer)._buf (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#191) is not in mixedCase
+Contract usingProvable (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#196-1226) is not in CapWords
+Function usingProvable.provable_setNetwork(uint8) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#242-245) is not in mixedCase
+Function usingProvable.provable_setNetworkName(string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#247-249) is not in mixedCase
+Parameter usingProvable.provable_setNetworkName(string)._network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#247) is not in mixedCase
+Function usingProvable.provable_getNetworkName() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#251-253) is not in mixedCase
+Function usingProvable.provable_setNetwork() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#255-294) is not in mixedCase
+Function usingProvable.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#296-298) is not in mixedCase
+Parameter usingProvable.__callback(bytes32,string)._myid (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#296) is not in mixedCase
+Parameter usingProvable.__callback(bytes32,string)._result (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#296) is not in mixedCase
+Function usingProvable.__callback(bytes32,string,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#300-303) is not in mixedCase
+Function usingProvable.provable_getPrice(string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#305-307) is not in mixedCase
+Parameter usingProvable.provable_getPrice(string)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#305) is not in mixedCase
+Function usingProvable.provable_getPrice(string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#309-311) is not in mixedCase
+Parameter usingProvable.provable_getPrice(string,uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#309) is not in mixedCase
+Parameter usingProvable.provable_getPrice(string,uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#309) is not in mixedCase
+Function usingProvable.provable_query(string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#313-319) is not in mixedCase
+Parameter usingProvable.provable_query(string,string)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#313) is not in mixedCase
+Parameter usingProvable.provable_query(string,string)._arg (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#313) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#321-327) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#321) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#321) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string)._arg (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#321) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#329-335) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#329) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#329) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,uint256)._arg (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#329) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#329) is not in mixedCase
+Function usingProvable.provable_query(string,string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#337-343) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#337) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,uint256)._arg (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#337) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#337) is not in mixedCase
+Function usingProvable.provable_query(string,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#345-351) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#345) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string)._arg1 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#345) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string)._arg2 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#345) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#353-359) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#353) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#353) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string)._arg1 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#353) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string)._arg2 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#353) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string,string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#361-367) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string,uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#361) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string,uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#361) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string,uint256)._arg1 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#361) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string,uint256)._arg2 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#361) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string,string,uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#361) is not in mixedCase
+Function usingProvable.provable_query(string,string,string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#369-375) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string,uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#369) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string,uint256)._arg1 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#369) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string,uint256)._arg2 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#369) is not in mixedCase
+Parameter usingProvable.provable_query(string,string,string,uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#369) is not in mixedCase
+Function usingProvable.provable_query(string,string[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#377-384) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#377) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[])._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#377) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#386-393) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#386) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#386) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[])._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#386) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#395-402) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#395) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#395) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[],uint256)._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#395) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#395) is not in mixedCase
+Function usingProvable.provable_query(string,string[],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#404-411) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#404) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[],uint256)._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#404) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#404) is not in mixedCase
+Function usingProvable.provable_query(string,string[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#413-417) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[1])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#413) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[1])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#413) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#419-423) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#419) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#419) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#419) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425-429) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[1],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#425) is not in mixedCase
+Function usingProvable.provable_query(string,string[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#431-435) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[1],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#431) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[1],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#431) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[1],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#431) is not in mixedCase
+Function usingProvable.provable_query(string,string[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#437-442) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[2])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#437) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[2])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#437) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#444-449) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#444) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#444) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#444) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451-456) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[2],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#451) is not in mixedCase
+Function usingProvable.provable_query(string,string[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#458-463) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[2],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#458) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[2],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#458) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[2],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#458) is not in mixedCase
+Function usingProvable.provable_query(string,string[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#465-471) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[3])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#465) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[3])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#465) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#473-479) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#473) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#473) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#473) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481-487) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[3],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#481) is not in mixedCase
+Function usingProvable.provable_query(string,string[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#489-495) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[3],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#489) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[3],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#489) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[3],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#489) is not in mixedCase
+Function usingProvable.provable_query(string,string[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#497-504) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[4])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#497) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[4])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#497) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#506-513) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#506) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#506) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#506) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515-522) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[4],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#515) is not in mixedCase
+Function usingProvable.provable_query(string,string[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#524-531) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[4],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#524) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[4],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#524) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[4],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#524) is not in mixedCase
+Function usingProvable.provable_query(string,string[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#533-541) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[5])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#533) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[5])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#533) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#543-551) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#543) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#543) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#543) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,string[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553-561) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,string[5],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#553) is not in mixedCase
+Function usingProvable.provable_query(string,string[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#563-571) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[5],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#563) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[5],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#563) is not in mixedCase
+Parameter usingProvable.provable_query(string,string[5],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#563) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#573-580) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#573) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[])._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#573) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#582-589) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#582) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#582) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[])._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#582) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#591-598) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#591) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#591) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[],uint256)._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#591) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#591) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#600-607) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#600) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[],uint256)._argN (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#600) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#600) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#609-613) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[1])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#609) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[1])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#609) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[1]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#615-619) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#615) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#615) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#615) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621-625) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[1],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#621) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[1],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#627-631) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[1],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#627) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[1],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#627) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[1],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#627) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#633-638) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[2])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#633) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[2])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#633) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[2]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#640-645) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#640) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#640) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#640) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647-652) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[2],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#647) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[2],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#654-659) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[2],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#654) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[2],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#654) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[2],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#654) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#661-667) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[3])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#661) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[3])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#661) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[3]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#669-675) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#669) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#669) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#669) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677-683) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[3],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#677) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[3],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#685-691) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[3],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#685) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[3],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#685) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[3],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#685) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#693-700) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[4])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#693) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[4])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#693) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[4]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#702-709) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#702) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#702) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#702) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711-718) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[4],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#711) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[4],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#720-727) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[4],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#720) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[4],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#720) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[4],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#720) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#729-737) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[5])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#729) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[5])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#729) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[5]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#739-747) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5])._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#739) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5])._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#739) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5])._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#739) is not in mixedCase
+Function usingProvable.provable_query(uint256,string,bytes[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749-757) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5],uint256)._timestamp (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749) is not in mixedCase
+Parameter usingProvable.provable_query(uint256,string,bytes[5],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#749) is not in mixedCase
+Function usingProvable.provable_query(string,bytes[5],uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#759-767) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[5],uint256)._datasource (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#759) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[5],uint256)._args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#759) is not in mixedCase
+Parameter usingProvable.provable_query(string,bytes[5],uint256)._gasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#759) is not in mixedCase
+Function usingProvable.provable_setProof(bytes1) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#769-771) is not in mixedCase
+Parameter usingProvable.provable_setProof(bytes1)._proofP (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#769) is not in mixedCase
+Function usingProvable.provable_cbAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#774-776) is not in mixedCase
+Function usingProvable.provable_setCustomGasPrice(uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#784-786) is not in mixedCase
+Parameter usingProvable.provable_setCustomGasPrice(uint256)._gasPrice (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#784) is not in mixedCase
+Function usingProvable.provable_randomDS_getSessionPubKeyHash() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#788-790) is not in mixedCase
+Parameter usingProvable.parseAddr(string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#792) is not in mixedCase
+Parameter usingProvable.strCompare(string,string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#820) is not in mixedCase
+Parameter usingProvable.strCompare(string,string)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#820) is not in mixedCase
+Parameter usingProvable.indexOf(string,string)._haystack (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#843) is not in mixedCase
+Parameter usingProvable.indexOf(string,string)._needle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#843) is not in mixedCase
+Parameter usingProvable.strConcat(string,string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#867) is not in mixedCase
+Parameter usingProvable.strConcat(string,string)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#867) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#871) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#871) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string)._c (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#871) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#875) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#875) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string)._c (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#875) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string)._d (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#875) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string,string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#879) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string,string)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#879) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string,string)._c (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#879) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string,string)._d (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#879) is not in mixedCase
+Parameter usingProvable.strConcat(string,string,string,string,string)._e (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#879) is not in mixedCase
+Parameter usingProvable.safeParseInt(string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#907) is not in mixedCase
+Parameter usingProvable.safeParseInt(string,uint256)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#911) is not in mixedCase
+Parameter usingProvable.safeParseInt(string,uint256)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#911) is not in mixedCase
+Parameter usingProvable.parseInt(string)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#936) is not in mixedCase
+Parameter usingProvable.parseInt(string,uint256)._a (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#940) is not in mixedCase
+Parameter usingProvable.parseInt(string,uint256)._b (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#940) is not in mixedCase
+Parameter usingProvable.uint2str(uint256)._i (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#965) is not in mixedCase
+Parameter usingProvable.stra2cbor(string[])._arr (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#984) is not in mixedCase
+Parameter usingProvable.ba2cbor(bytes[])._arr (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#996) is not in mixedCase
+Function usingProvable.provable_newRandomDSQuery(uint256,uint256,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1008-1045) is not in mixedCase
+Parameter usingProvable.provable_newRandomDSQuery(uint256,uint256,uint256)._delay (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1008) is not in mixedCase
+Parameter usingProvable.provable_newRandomDSQuery(uint256,uint256,uint256)._nbytes (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1008) is not in mixedCase
+Parameter usingProvable.provable_newRandomDSQuery(uint256,uint256,uint256)._customGasLimit (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1008) is not in mixedCase
+Function usingProvable.provable_randomDS_setCommitment(bytes32,bytes32) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1047-1049) is not in mixedCase
+Parameter usingProvable.provable_randomDS_setCommitment(bytes32,bytes32)._queryId (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1047) is not in mixedCase
+Parameter usingProvable.provable_randomDS_setCommitment(bytes32,bytes32)._commitment (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1047) is not in mixedCase
+Parameter usingProvable.verifySig(bytes32,bytes,bytes)._tosignh (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1051) is not in mixedCase
+Parameter usingProvable.verifySig(bytes32,bytes,bytes)._dersig (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1051) is not in mixedCase
+Parameter usingProvable.verifySig(bytes32,bytes,bytes)._pubkey (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1051) is not in mixedCase
+Function usingProvable.provable_randomDS_proofVerify__sessionKeyValidity(bytes,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1075-1100) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__sessionKeyValidity(bytes,uint256)._proof (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1075) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__sessionKeyValidity(bytes,uint256)._sig2offset (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1075) is not in mixedCase
+Function usingProvable.provable_randomDS_proofVerify__returnCode(bytes32,string,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1102-1112) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__returnCode(bytes32,string,bytes)._queryId (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1102) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__returnCode(bytes32,string,bytes)._result (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1102) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__returnCode(bytes32,string,bytes)._proof (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1102) is not in mixedCase
+Parameter usingProvable.matchBytes32Prefix(bytes32,bytes,uint256)._content (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1114) is not in mixedCase
+Parameter usingProvable.matchBytes32Prefix(bytes32,bytes,uint256)._prefix (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1114) is not in mixedCase
+Parameter usingProvable.matchBytes32Prefix(bytes32,bytes,uint256)._nRandomBytes (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1114) is not in mixedCase
+Function usingProvable.provable_randomDS_proofVerify__main(bytes,bytes32,bytes,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1125-1161) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__main(bytes,bytes32,bytes,string)._proof (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1125) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__main(bytes,bytes32,bytes,string)._queryId (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1125) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__main(bytes,bytes32,bytes,string)._result (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1125) is not in mixedCase
+Parameter usingProvable.provable_randomDS_proofVerify__main(bytes,bytes32,bytes,string)._contextName (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1125) is not in mixedCase
+Parameter usingProvable.copyBytes(bytes,uint256,uint256,bytes,uint256)._fromOffset (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1163) is not in mixedCase
+Parameter usingProvable.copyBytes(bytes,uint256,uint256,bytes,uint256)._length (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1163) is not in mixedCase
+Parameter usingProvable.copyBytes(bytes,uint256,uint256,bytes,uint256)._to (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1163) is not in mixedCase
+Parameter usingProvable.copyBytes(bytes,uint256,uint256,bytes,uint256)._toOffset (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1163) is not in mixedCase
+Function usingProvable.safer_ecrecover(bytes32,uint8,bytes32,bytes32) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1179-1193) is not in mixedCase
+Parameter usingProvable.ecrecovery(bytes32,bytes)._hash (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1195) is not in mixedCase
+Parameter usingProvable.ecrecovery(bytes32,bytes)._sig (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1195) is not in mixedCase
+Variable usingProvable.OAR (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#201) is not in mixedCase
+Constant usingProvable.day (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#203) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.week (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#204) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.month (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#205) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.proofType_NONE (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#207) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.proofType_Ledger (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#208) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.proofType_Native (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#209) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.proofStorage_IPFS (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#210) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.proofType_Android (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#211) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.proofType_TLSNotary (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#212) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable usingProvable.provable_network_name (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#214) is not in mixedCase
+Constant usingProvable.networkID_auto (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#215) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.networkID_morden (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#216) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.networkID_mainnet (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#217) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.networkID_testnet (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#218) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant usingProvable.networkID_consensys (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#219) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable usingProvable.provable_randomDS_args (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#221) is not in mixedCase
+Variable usingProvable.provable_randomDS_sessionKeysHashVerified (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#222) is not in mixedCase
+Modifier usingProvable.provable_randomDS_proofVerify(bytes32,string,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#234-240) is not in mixedCase
+Function YeldOracle.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1299-1303) is not in mixedCase
+Parameter YeldOracle.extractTokensIfStuck(address,uint256)._token (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1305) is not in mixedCase
+Parameter YeldOracle.extractTokensIfStuck(address,uint256)._amount (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1305) is not in mixedCase
+Parameter YeldOracle.setUpdateTime(uint256)._time (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1313) is not in mixedCase
+Parameter YeldOracle.setyDAI(address)._contract (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1317) is not in mixedCase
+Parameter YeldOracle.setyTether(address)._contract (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1321) is not in mixedCase
+Parameter YeldOracle.setyTrueUSD(address)._contract (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1325) is not in mixedCase
+Parameter YeldOracle.setyUSDC(address)._contract (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1329) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+usingProvable.provable_query(string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#313-319) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#315)
+usingProvable.provable_query(uint256,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#321-327) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#323)
+usingProvable.provable_query(string,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#345-351) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#347)
+usingProvable.provable_query(uint256,string,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#353-359) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#355)
+usingProvable.provable_query(string,string[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#377-384) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#379)
+usingProvable.provable_query(uint256,string,string[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#386-393) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#388)
+usingProvable.provable_query(string,bytes[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#573-580) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#575)
+usingProvable.provable_query(uint256,string,bytes[]) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#582-589) uses literals with too many digits:
+	- price > 1000000000000000000 + tx.gasprice * 200000 (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#584)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+usingProvable.day (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#203) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.week (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#204) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.month (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#205) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.proofType_NONE (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#207) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.proofType_Ledger (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#208) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.proofType_Native (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#209) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.proofStorage_IPFS (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#210) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.proofType_Android (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#211) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.proofType_TLSNotary (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#212) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.networkID_morden (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#216) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.networkID_mainnet (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#217) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.networkID_testnet (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#218) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+usingProvable.networkID_consensys (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#219) is never used in YeldOracle (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1282-1341)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+ProvableI.cbAddress (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#15) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+getPrice(string) should be declared external:
+	- ProvableI.getPrice(string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#19)
+getPrice(string,uint256) should be declared external:
+	- ProvableI.getPrice(string,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#21)
+queryN(uint256,string,bytes) should be declared external:
+	- ProvableI.queryN(uint256,string,bytes) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#22)
+query2(uint256,string,string,string) should be declared external:
+	- ProvableI.query2(uint256,string,string,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#24)
+getAddress() should be declared external:
+	- OracleAddrResolverI.getAddress() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#31)
+__callback(bytes32,string) should be declared external:
+	- usingProvable.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#296-298)
+	- YeldOracle.__callback(bytes32,string) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1299-1303)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1268-1271)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1272-1274)
+extractTokensIfStuck(address,uint256) should be declared external:
+	- YeldOracle.extractTokensIfStuck(address,uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1305-1307)
+extractETHIfStuck() should be declared external:
+	- YeldOracle.extractETHIfStuck() (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1309-1311)
+setUpdateTime(uint256) should be declared external:
+	- YeldOracle.setUpdateTime(uint256) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1313-1315)
+setyDAI(address) should be declared external:
+	- YeldOracle.setyDAI(address) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1317-1319)
+setyTether(address) should be declared external:
+	- YeldOracle.setyTether(address) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1321-1323)
+setyTrueUSD(address) should be declared external:
+	- YeldOracle.setyTrueUSD(address) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1325-1327)
+setyUSDC(address) should be declared external:
+	- YeldOracle.setyUSDC(address) (loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol#1329-1331)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x92a33631c630fff26291925bb510203dd6f4e9e2.sol analyzed (11 contracts with 46 detectors), 475 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x92a33631c630fff26291925bb510203dd6f4e9e2.sol
+Tool Runtime = 6.734687497999403 seconds
+#############################################

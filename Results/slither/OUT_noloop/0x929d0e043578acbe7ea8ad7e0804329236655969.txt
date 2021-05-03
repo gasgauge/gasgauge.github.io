@@ -1,0 +1,117 @@
+INFO:Detectors:[91m
+StakePool.transferETH(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#386-388) sends eth to arbitrary user
+	Dangerous calls:
+	- recipient.transfer(address(this).balance) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#387)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+StakePool.getBlockCountSinceLastIntreraction(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#516-523) uses a dangerous strict equality:
+	- lastInteractionBlockNum == 0 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#518)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in StakePool._withdrawReward(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#554-571):
+	External calls:
+	- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	State variables written after the call(s):
+	- userToStakes[user].lastInteractionBlockNumber = block.number (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#570)
+Reentrancy in StakePool.stake(uint256) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#430-473):
+	External calls:
+	- require(bool,string)(IERC20(stakeToken).transferFrom(_msgSender(),address(this),amount),#transferFrom failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#448-451)
+	- _withdrawReward(_msgSender()) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#453)
+		- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	State variables written after the call(s):
+	- totalStakedAmount = totalStakedAmount.add(amount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#455)
+	- currentStake.stakingPeriodEndTime = block.timestamp.add(stakingDuration) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#458-460)
+	- currentStake.stakeAmount = currentStake.stakeAmount.add(amount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#462-463)
+	- currentStake.totalStakedAmountByUser = currentStake.totalStakedAmountByUser.add(amount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#465-466)
+Reentrancy in StakePool.unstake() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#475-510):
+	External calls:
+	- _withdrawReward(_msgSender()) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#476)
+		- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	State variables written after the call(s):
+	- currentStake.stakeAmount = 0 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#495)
+	- currentStake.totalStakedAmountByUser = currentStake.totalStakedAmountByUser.sub(stakeAmount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#497-498)
+Reentrancy in StakePool.unstake() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#475-510):
+	External calls:
+	- _withdrawReward(_msgSender()) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#476)
+		- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	- require(bool,string)(IERC20(stakeToken).transfer(_msgSender(),stakeAmount),#transferFrom failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#502-505)
+	State variables written after the call(s):
+	- totalStakedAmount = totalStakedAmount.sub(stakeAmountToDeduct) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#509)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+StakePool.unstake().stakeAmountToDeduct (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#478) is a local variable never initialized
+StakePool.unstake().executeUnstaking (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#479) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+StakePool.receive() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#384) (function) shadows built-in symbol"
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#builtin-symbol-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in StakePool._withdrawReward(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#554-571):
+	External calls:
+	- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	Event emitted after the call(s):
+	- RewardWithdrawn(user,rewardAmount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#566)
+Reentrancy in StakePool.stake(uint256) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#430-473):
+	External calls:
+	- require(bool,string)(IERC20(stakeToken).transferFrom(_msgSender(),address(this),amount),#transferFrom failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#448-451)
+	- _withdrawReward(_msgSender()) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#453)
+		- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	Event emitted after the call(s):
+	- RewardWithdrawn(user,rewardAmount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#566)
+		- _withdrawReward(_msgSender()) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#453)
+	- Staked(stakeToken,_msgSender(),amount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#468-472)
+Reentrancy in StakePool.unstake() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#475-510):
+	External calls:
+	- _withdrawReward(_msgSender()) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#476)
+		- require(bool,string)(IMintable(rewardToken).mint(user,rewardAmount),#mint failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#562-565)
+	- require(bool,string)(IERC20(stakeToken).transfer(_msgSender(),stakeAmount),#transferFrom failed) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#502-505)
+	Event emitted after the call(s):
+	- Unstaked(stakeToken,_msgSender(),stakeAmount) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#507)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+StakePool.unstake() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#475-510) uses timestamp for comparisons
+	Dangerous comparisons:
+	- currentStake.stakingPeriodEndTime <= block.timestamp (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#486)
+StakePool.getBlockCountSinceLastIntreraction(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#516-523) uses timestamp for comparisons
+	Dangerous comparisons:
+	- lastInteractionBlockNum == 0 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#518)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#11) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Constant StakePool.rewardMultiplier (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#356) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+StakePool.slitherConstructorVariables() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#336-572) uses literals with too many digits:
+	- blockReward = 1000000000000000 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#372)
+StakePool.slitherConstructorVariables() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#336-572) uses literals with too many digits:
+	- minimumAmount = 10000000000 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#374)
+StakePool.slitherConstructorVariables() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#336-572) uses literals with too many digits:
+	- maximumAmount = 10000000000000000000000000 (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#375)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+StakePool.rewardMultiplier (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#356) is never used in StakePool (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#336-572)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#219-221)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#238-241)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#247-251)
+getBlockCountSinceLastIntreraction(address) should be declared external:
+	- StakePool.getBlockCountSinceLastIntreraction(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#516-523)
+getTotalStakeAmountByUser(address) should be declared external:
+	- StakePool.getTotalStakeAmountByUser(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#525-527)
+getStakeAmountByUser(address) should be declared external:
+	- StakePool.getStakeAmountByUser(address) (noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol#529-533)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x929d0e043578acbe7ea8ad7e0804329236655969.sol analyzed (7 contracts with 46 detectors), 27 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x929d0e043578acbe7ea8ad7e0804329236655969.sol
+Tool Runtime = 0.7627562149973528 seconds
+#############################################

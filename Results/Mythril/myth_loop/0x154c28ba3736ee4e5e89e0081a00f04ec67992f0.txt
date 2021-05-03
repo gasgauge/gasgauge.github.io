@@ -1,0 +1,381 @@
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8519
+Estimated Gas Usage: 24090 - 137339
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:614
+
+totalAssets
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x32088000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000000000000000000000000000000000000000004280000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: mint(uint256,address), txdata: 0x94bf804d2404624b081606aab00088229e484e94e80401564410080011288080808044848c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8538
+Estimated Gas Usage: 24090 - 137339
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:614
+
+totalAssets = totalAssets.add(usdDelta)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x32088000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000000000000000000000000000000000000000004280000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: mint(uint256,address), txdata: 0x94bf804d2404624b081606aab00088229e484e94e80401564410080011288080808044848c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8627
+Estimated Gas Usage: 34211 - 203411
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:540
+
+dusd
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000004800000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mint(uint256,address), txdata: 0x94bf804d00000000000000000000000000000200000000000815842e801d8301a04180888c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8756
+Estimated Gas Usage: 34211 - 203411
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:540
+
+dusd.totalSupply()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x48124000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000000000000000000000000000000000000000005f10000000000000000800000000000000000000000020000000000000000200000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: mint(uint256,address), txdata: 0x94bf804d06d4120000000000166c842020000000000009040240089420d001010022202eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8817
+Estimated Gas Usage: 24090 - 137339
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:541
+
+totalAssets
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x32088000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000000000000000000000000000000000000000004280000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: mint(uint256,address), txdata: 0x94bf804d2404624b081606aab00088229e484e94e80401564410080011288080808044848c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8918
+Estimated Gas Usage: 34211 - 203411
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:544
+
+inDeficit = true
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000004800000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mint(uint256,address), txdata: 0x94bf804d00000000000000000000000000000200000000000815842e801d8301a04180888c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 8932
+Estimated Gas Usage: 34211 - 203411
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:544
+
+inDeficit = true
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000004800000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mint(uint256,address), txdata: 0x94bf804d00000000000000000000000000000200000000000815842e801d8301a04180888c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 9002
+Estimated Gas Usage: 34211 - 203411
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:546
+
+totalAssets
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000004800000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: mint(uint256,address), txdata: 0x94bf804d00000000000000000000000000000200000000000815842e801d8301a04180888c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Core
+Function name: mint(uint256,address)
+PC address: 9134
+Estimated Gas Usage: 24090 - 137339
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:547
+
+inDeficit
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x32088000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b07000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000000000000000000000000000000000000000004280000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: mint(uint256,address), txdata: 0x94bf804d2404624b081606aab00088229e484e94e80401564410080011288080808044848c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Core
+Function name: systemCoins(uint256)
+PC address: 9429
+Estimated Gas Usage: 1101 - 1196
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:509
+
+address[] public systemCoins
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: systemCoins(uint256), txdata: 0xa019c64e0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Core
+Function name: peaksAddresses(uint256)
+PC address: 10280
+Estimated Gas Usage: 1145 - 1240
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:527
+
+address[] public peaksAddresses
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000000080, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: peaksAddresses(uint256), txdata: 0xcc3d44e20000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Core
+Function name: setPeakStatus(address,uint256,uint8)
+PC address: 10882
+Estimated Gas Usage: 8464 - 30070
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:798
+
+peaks[peak].state = state
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: whitelistPeak(address,uint256[],uint256,bool), txdata: 0x6a8c5b070000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d00000000000000000000000000000000000000000040088000800000018000100000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: setPeakStatus(address,uint256,uint8), txdata: 0xde8f810b070707070707070707070707800000000000000000000000000000000000000007070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707070707, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Core
+Function name: feed(uint256)
+PC address: 11845
+Estimated Gas Usage: 1122 - 1217
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:510
+
+uint[] public feed
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: feed(uint256), txdata: 0xf59dfdfb0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: Core
+Function name: dusdToUsd(uint256,bool)
+PC address: 13347
+Estimated Gas Usage: 1328 - 2034
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./contracts/m_loop/loop4/0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol:167
+
+a * b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: initialize(address,address,address,uint256,uint256), txdata: 0xa6b63eb800000000000000000000000001010101010101010101010101010101010101010000000000000000000000000002010101020101048010010101010101010101000000000000000000000000404080040420800120020801020801010408040800000000000000000000000000000000000000000000000000000000000014c80000000000000000000000000000000000000000000000000000000000000711, value: 0x0
+Caller: [ATTACKER], function: dusdToUsd(uint256,bool), txdata: 0x40779694040000c54000080092914100003002541199a8080204141112881c03000803200000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x154c28ba3736ee4e5e89e0081a00f04ec67992f0.sol
+Tool Runtime = 3485.950250365 seconds
+#############################################

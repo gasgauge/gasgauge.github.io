@@ -1,0 +1,60 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: GQCN
+Function name: recoverERC20(address,uint256)
+PC address: 7554
+Estimated Gas Usage: 3850 - 39262
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/m_loop/loop1/0x54b6dbae1e882c5d1fc3547c540f2cf881d9272a.sol:894
+
+IERC20(tokenAddress).transfer(owner(), tokenAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8082, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0xc00000002082, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: transferFrom(address,address,uint256), txdata: 0x23b872dd000000000000000000000000000000008000200000800000000000000000000100000000000000000000000000800000400100100000000020204000000000100000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: recoverERC20(address,uint256), txdata: 0x8980f11f080808080808080808080808deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0808080808080808080808080808080808080808080808080808080808080808, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: GQCN
+Function name: addTimeLock(address,uint256,uint256)
+PC address: 11069
+Estimated Gas Usage: 2310 - 3255
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./contracts/m_loop/loop1/0x54b6dbae1e882c5d1fc3547c540f2cf881d9272a.sol:768
+
+require(expiresAt > block.timestamp, "Time Lock: expire date must be later than now")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addLocker(address), txdata: 0x45cc5890000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: addTimeLock(address,uint256,uint256), txdata: 0x0d605482909090909090909090909090909090909090909090909090909090909090909001010101010101010101010101010101010101010101010101010101010101019090909090909090909090909090909090909090909090909090909090909090, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x54b6dbae1e882c5d1fc3547c540f2cf881d9272a.sol
+Tool Runtime = 3095.928061232 seconds
+#############################################

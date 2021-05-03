@@ -1,0 +1,326 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentHandler
+Function name: fallback
+PC address: 323
+Estimated Gas Usage: 5858 - 109832
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:290
+
+ownerAddress.transfer(msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1ba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: unknown, txdata: 0x01010101, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PaymentHandler
+Function name: fallback
+PC address: 597
+Estimated Gas Usage: 5775 - 109749
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:296
+
+master.firePaymentReceivedEvent(address(this), msg.sender, msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x6, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: unknown, txdata: 0x, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentHandler
+Function name: fallback
+PC address: 597
+Estimated Gas Usage: 5775 - 109749
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:296
+
+master.firePaymentReceivedEvent(address(this), msg.sender, msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: PaymentMaster
+Function name: multiHandlerSweep(address[],address)
+PC address: 1236
+Estimated Gas Usage: 6064 - 79656
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:483
+
+handlerMap[handlers[i]]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80002000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x41002800400000008, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: deployNewHandler(), txdata: 0xadbbea01, value: 0x0
+Caller: [CREATOR], function: multiHandlerSweep(address[],address), txdata: 0x0767abb800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002eaeaeaeaeaeaeaeaeaeaeaea72c68108a82e82617b93d1be0d7975d762035015eaeaeaeaeaeaeaeaeaeaeaea72c68108a82e82617b93d1be0d7975d762035015, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentHandler
+Function name: sweepTokens(address)
+PC address: 1306
+Estimated Gas Usage: 6066 - 110177
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:318
+
+token.balanceOf(address(this))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentMaster
+Function name: multiHandlerSweep(address[],address)
+PC address: 1514
+Estimated Gas Usage: 6064 - 79656
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:489
+
+PaymentHandler(address(uint160(handlers[i]))).sweepTokens(tokenContract)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4000000000000a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: deployNewHandler(), txdata: 0xadbbea01, value: 0x0
+Caller: [CREATOR], function: multiHandlerSweep(address[],address), txdata: 0x0767abb800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002eaeaeaeaeaeaeaeaeaeaeaea72c68108a82e82617b93d1be0d7975d762035015eaeaeaeaeaeaeaeaeaeaeaea72c68108a82e82617b93d1be0d7975d762035015, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PaymentHandler
+Function name: sweepTokens(address)
+PC address: 1530
+Estimated Gas Usage: 6066 - 110177
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:324
+
+token.transfer(ownerAddress, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: sweepTokens(address), txdata: 0xf5f6d3af000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentHandler
+Function name: sweepTokens(address)
+PC address: 1530
+Estimated Gas Usage: 6066 - 110177
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:324
+
+token.transfer(ownerAddress, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2140000000000020, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: PaymentMaster
+Function name: handlerList(uint256)
+PC address: 1950
+Estimated Gas Usage: 1056 - 1151
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:367
+
+address[] public handlerList
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000842, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: handlerList(uint256), txdata: 0xa453b36a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentMaster
+Function name: sweepTokens(address)
+PC address: 3142
+Estimated Gas Usage: 5304 - 109085
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:513
+
+this.owner()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2010514012a000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: PaymentMaster
+Function name: sweepTokens(address)
+PC address: 3335
+Estimated Gas Usage: 5304 - 109085
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:513
+
+token.transfer(this.owner(), balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x110a20508400000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PaymentMaster
+Function name: sweepTokens(address)
+PC address: 3335
+Estimated Gas Usage: 5304 - 109085
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol:513
+
+token.transfer(this.owner(), balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40400208000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: sweepTokens(address), txdata: 0xf5f6d3af0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xa3062fcbcde2540a9f24b04c76220a5a0db851e4.sol
+Tool Runtime = 371.3994611830003 seconds
+#############################################

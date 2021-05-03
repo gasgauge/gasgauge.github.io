@@ -1,0 +1,206 @@
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: hashelot_dayrings
+Function name: stackPlayers(uint256)
+PC address: 616
+Estimated Gas Usage: 1101 - 1196
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/2/0xa8e44bb386766f597a22fcdc14d82a9c700dfb70.sol:30
+
+address payable [] public stackPlayers
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2080040402000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: stackPlayers(uint256), txdata: 0x520d89210000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: hashelot_dayrings
+Function name: depositStack()
+PC address: 810
+Estimated Gas Usage: 1845 - 1940
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0xa8e44bb386766f597a22fcdc14d82a9c700dfb70.sol:204
+
+if (_block > stackTime+stackWait) { // There is no bet in progress
+
+
+
+          // Closing possible previous bets as owner and winner get their share
+
+          if (stackPlayers.length >= 1){
+
+            closeBet();
+
+          }
+
+
+
+          stackValue = msg.value; // New value one needs to enter the bet
+
+          stackTime = _block; // The game starts now!
+
+          stackPlayers.push(msg.sender);
+
+
+
+        }else{ // There actually is a bet in progress!
+
+
+
+          // Are you trying to play twice in the same round?
+
+          bool alreadyIn = false;
+
+          for (uint k = 0; k < stackPlayers.length; k++){
+
+            if (stackPlayers[k] == msg.sender){
+
+              alreadyIn = true;
+
+            }
+
+          }
+
+
+
+          if (alreadyIn){ // Hey, don't play twice!
+
+            msg.sender.transfer(msg.value);
+
+          }else{ // You can enter the round
+
+            // Check if msg.value >= stackValue
+
+            if (msg.value >= stackValue) {
+
+              uint playerChange = msg.value-stackValue;
+
+              if (playerChange > 0) {
+
+                msg.sender.transfer(playerChange);
+
+              }
+
+              stackPlayers.push(msg.sender); // Another player enters the bet
+
+            }else{ // Too poor to enter the bet
+
+              msg.sender.transfer(msg.value);
+
+            }
+
+          }
+
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400020010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: depositStack(), txdata: 0x781d7040, value: 0x38d7ea4c68000
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: hashelot_dayrings
+Function name: dustStack()
+PC address: 1575
+Estimated Gas Usage: 2700 - 3125
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0xa8e44bb386766f597a22fcdc14d82a9c700dfb70.sol:70
+
+require (block.number > stackTime+stackWait, "Unable to dust: there is an ongoing bet.")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: dustStack(), txdata: 0x7f8de170, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: hashelot_dayrings
+Function name: closeBet()
+PC address: 1901
+Estimated Gas Usage: 1838 - 1933
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0xa8e44bb386766f597a22fcdc14d82a9c700dfb70.sol:100
+
+_block > stackTime+stackWait && stackPlayers.length >= 1
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: closeBet(), txdata: 0xeaa968cc, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: hashelot_dayrings
+Function name: closeBet()
+PC address: 1918
+Estimated Gas Usage: 1858 - 1953
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/2/0xa8e44bb386766f597a22fcdc14d82a9c700dfb70.sol:100
+
+require (_block > stackTime+stackWait && stackPlayers.length >= 1, "Bet closing error: no bet to claim.")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: closeBet(), txdata: 0xeaa968cc, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xa8e44bb386766f597a22fcdc14d82a9c700dfb70.sol
+Tool Runtime = 264.9781966310002 seconds
+#############################################

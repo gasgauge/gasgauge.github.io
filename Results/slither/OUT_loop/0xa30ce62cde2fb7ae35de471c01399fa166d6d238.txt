@@ -1,0 +1,135 @@
+INFO:Detectors:[93m
+IUSDTToken (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#17-21) has incorrect ERC20 function interface:IUSDTToken.transferFrom(address,address,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#18)
+IUSDTToken (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#17-21) has incorrect ERC20 function interface:IUSDTToken.transfer(address,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#19)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-erc20-interface[0m
+INFO:Detectors:[93m
+WDXStacking.safeDivision(uint256,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#81-86) uses a dangerous strict equality:
+	- assert(bool)(a == b * c + a % b) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#84)
+WDXStacking.safeMultiply(uint256,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#71-79) uses a dangerous strict equality:
+	- a == 0 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#72)
+WDXStacking.safeMultiply(uint256,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#71-79) uses a dangerous strict equality:
+	- assert(bool)(c / a == b) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#76)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in WDXStacking.buyStatus(uint8,address[]) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#149-165):
+	External calls:
+	- usdtTokenContract.transferFrom(msg.sender,address(this),residue) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#161)
+	State variables written after the call(s):
+	- stakes[address(msg.sender)].status = status (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#163)
+Reentrancy in WDXStacking.getFromStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#214-228):
+	External calls:
+	- tokenContract.transfer(address(msg.sender),numberOfTokens) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#222)
+	State variables written after the call(s):
+	- stakes[address(msg.sender)].last_withdrawal_time = now (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#224)
+	- stakes[address(msg.sender)].amount = stakes[address(msg.sender)].amount - numberOfTokens (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#225)
+	- stakes[address(msg.sender)].week_withdrawal_amount += usd_amount (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#226)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+WDXStacking.sendToStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#167-194) ignores return value by tokenContract.transferFrom(msg.sender,address(this),numberOfTokens) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#174)
+WDXStacking.getFromStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#214-228) ignores return value by tokenContract.transfer(address(msg.sender),numberOfTokens) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#222)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+WDXStacking.buyStatus(uint8,address[]) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#149-165) has external calls inside a loop: usdtTokenContract.transferFrom(msg.sender,address(referrals[i]),amount_to_send) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#157)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in WDXStacking.sendToStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#167-194):
+	External calls:
+	- tokenContract.transferFrom(msg.sender,address(this),numberOfTokens) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#174)
+	State variables written after the call(s):
+	- computeAmount() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#176)
+		- stakes[address(msg.sender)].last_compute_time = now (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#136)
+		- stakes[address(msg.sender)].last_percent = profit_percent (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#137)
+		- i < duration_from_last_compute (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#141)
+		- stakes[address(msg.sender)].amount += profit (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#143)
+		- stakes[address(msg.sender)].pure_profit += profit (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#144)
+	- stakes[address(msg.sender)].amount = stakes[address(msg.sender)].amount + numberOfTokens (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#177)
+	- stakes[address(msg.sender)] = Stake(now,numberOfTokens,now,0,now,now,0,0,stakes[address(msg.sender)].status) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#180-192)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+WDXStacking.safeMultiply(uint256,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#71-79) uses timestamp for comparisons
+	Dangerous comparisons:
+	- a == 0 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#72)
+	- assert(bool)(c / a == b) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#76)
+WDXStacking.safeDivision(uint256,uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#81-86) uses timestamp for comparisons
+	Dangerous comparisons:
+	- assert(bool)(a == b * c + a % b) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#84)
+WDXStacking.computeAmount() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#88-147) uses timestamp for comparisons
+	Dangerous comparisons:
+	- duration_from_last_compute < 1 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#94)
+	- stake_duration >= 1 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#100)
+	- stake_duration >= 3 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#103)
+	- stake_duration >= 6 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#106)
+	- stake_duration >= 12 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#109)
+	- stake_duration >= 18 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#112)
+	- stake_amount >= 100000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#116)
+	- stake_duration >= 200000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#119)
+	- stake_duration >= 1000000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#122)
+	- stake_duration >= 2000000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#125)
+	- i < duration_from_last_compute (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#141)
+WDXStacking.buyStatus(uint8,address[]) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#149-165) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(status > stakes[address(msg.sender)].status,Status already bought. Or attemption to buy lower status) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#150)
+	- residue > 0 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#160)
+WDXStacking.sendToStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#167-194) uses timestamp for comparisons
+	Dangerous comparisons:
+	- stakes[address(msg.sender)].amount > 0 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#175)
+WDXStacking.set_valid_amount_by_status(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#196-212) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now - stakes[address(msg.sender)].week_starts_at > week (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#201)
+	- stakes[address(msg.sender)].week_withdrawal_amount + usd_amount > statuses[status].limit (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#207)
+	- require(bool,string)(usd_amount > 0,Limit is exceeded) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#210)
+WDXStacking.getFromStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#214-228) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(numberOfTokens > 0,You need to get at least some tokens) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#215)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Function WDXStacking.set_valid_amount_by_status(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#196-212) is not in mixedCase
+Variable WDXStacking.wdx_price (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#26) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- statuses[0] = Status(0,10000000,1) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#60)
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- statuses[1] = Status(100000000,50000000,2) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#61)
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- statuses[2] = Status(300000000,150000000,3) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#62)
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- statuses[3] = Status(1000000000,500000000,5) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#63)
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- statuses[4] = Status(3000000000,1500000000,7) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#64)
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- statuses[5] = Status(10000000000,5000000000,10) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#65)
+WDXStacking.constructor(IERC20Token,IUSDTToken) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#54-68) uses literals with too many digits:
+	- wdx_price = 1000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#67)
+WDXStacking.computeAmount() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#88-147) uses literals with too many digits:
+	- stake_amount >= 100000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#116)
+WDXStacking.computeAmount() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#88-147) uses literals with too many digits:
+	- stake_duration >= 200000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#119)
+WDXStacking.computeAmount() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#88-147) uses literals with too many digits:
+	- stake_duration >= 1000000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#122)
+WDXStacking.computeAmount() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#88-147) uses literals with too many digits:
+	- stake_duration >= 2000000000000000000000000 (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#125)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+buyStatus(uint8,address[]) should be declared external:
+	- WDXStacking.buyStatus(uint8,address[]) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#149-165)
+sendToStaking(uint256) should be declared external:
+	- WDXStacking.sendToStaking(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#167-194)
+getUSDT() should be declared external:
+	- WDXStacking.getUSDT() (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#230-235)
+updateWDXPrice(uint256) should be declared external:
+	- WDXStacking.updateWDXPrice(uint256) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#237-240)
+setStatusByAdmin(uint8,address) should be declared external:
+	- WDXStacking.setStatusByAdmin(uint8,address) (loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol#242-245)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol analyzed (3 contracts with 46 detectors), 38 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xa30ce62cde2fb7ae35de471c01399fa166d6d238.sol
+Tool Runtime = 0.7721503749999101 seconds
+#############################################

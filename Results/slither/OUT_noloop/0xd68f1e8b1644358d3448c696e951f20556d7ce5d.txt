@@ -1,0 +1,80 @@
+Compilation warnings/errors on ./noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol:
+./noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol:18:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[92m
+Depository.accounts(address).owner (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#536) shadows:
+	- Ownable.owner() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#418-422) (function)
+Depository.deposit(address,uint256).owner (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#544) shadows:
+	- Ownable.owner() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#418-422) (function)
+Depository.release(address).owner (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#578) shadows:
+	- Ownable.owner() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#418-422) (function)
+Depository.releasable(address).owner (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#610) shadows:
+	- Ownable.owner() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#418-422) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in Depository.release(address) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#578-606):
+	External calls:
+	- _token.safeTransfer(owner,unreleased) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#600)
+	Event emitted after the call(s):
+	- Released(owner,unreleased) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#604)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Depository.constructor(uint256) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#502-508) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(openingTime_ > block.timestamp,Depository: opening time is before current time) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#504)
+Depository.deposit(address,uint256) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#544-574) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp < _openingTime,Depository::deposit: already closed) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#546)
+Depository.release(address) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#578-606) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(unreleased > 0,Depository::release: no tokens are due) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#582)
+	- require(bool,string)(account.releasedTime.add(86400) < block.timestamp,Depository::release: can only be released once in 24 hours) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#588)
+Depository.releasable(address) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#610-642) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < _openingTime (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#618)
+	- block.timestamp >= _openingTime.add(_DURATION) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#628)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#126-134) uses assembly
+	- INLINE ASM (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#130-132)
+Address._verifyCallResult(bool,bytes,string) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#236-262) uses assembly
+	- INLINE ASM (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#246-254)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#14) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#138-148):
+	- (success) = recipient.call.value(amount)() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#144)
+Low level call in Address.functionCallWithValue(address,bytes,uint256,string) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#176-188):
+	- (success,returndata) = target.call.value(value)(data) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#184)
+Low level call in Address.functionStaticCall(address,bytes,string) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#200-210):
+	- (success,returndata) = target.staticcall(data) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#206)
+Low level call in Address.functionDelegateCall(address,bytes,string) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#222-232):
+	- (success,returndata) = target.delegatecall(data) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#228)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Function Depository.DURATION() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#512-516) is not in mixedCase
+Variable Depository._DURATION (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#468) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Depository._DURATION (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#468) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#418-422)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#436-442)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol#446-454)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol analyzed (7 contracts with 46 detectors), 23 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xd68f1e8b1644358d3448c696e951f20556d7ce5d.sol
+Tool Runtime = 0.8543997839988151 seconds
+#############################################

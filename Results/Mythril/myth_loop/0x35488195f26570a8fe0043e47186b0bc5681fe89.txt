@@ -1,0 +1,85 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: EOGLottery
+Function name: StartLottery()
+PC address: 1594
+Estimated Gas Usage: 20857 - 128082
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/4/0x35488195f26570a8fe0043e47186b0bc5681fe89.sol:60
+
+EIP20Interface(EOGAddress).balanceOf(Competitors[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x5230108062008424, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: Register(), txdata: 0x19e5bf3a, value: 0x0
+Caller: [CREATOR], function: StartLottery(), txdata: 0x43a3db81, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: EOGLottery
+Function name: GetMaxHolder()
+PC address: 4150
+Estimated Gas Usage: 1025 - 1120
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/4/0x35488195f26570a8fe0043e47186b0bc5681fe89.sol:74
+
+Competitors[0]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8c0040021040400, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: GetMaxHolder(), txdata: 0x9ddaf606, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: EOGLottery
+Function name: Random(uint256)
+PC address: 5388
+Estimated Gas Usage: 2159 - 3103
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/4/0x35488195f26570a8fe0043e47186b0bc5681fe89.sol:69
+
+uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty,Competitors.length,seed))) % max
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: Random(uint256), txdata: 0xbcf69e720000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x35488195f26570a8fe0043e47186b0bc5681fe89.sol
+Tool Runtime = 197.20099555898923 seconds
+#############################################

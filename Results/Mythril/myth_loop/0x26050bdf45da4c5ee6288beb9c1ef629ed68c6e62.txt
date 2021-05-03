@@ -1,0 +1,59 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: MultiSend
+Function name: sendMany(address,address[],uint256[])
+PC address: 671
+Estimated Gas Usage: 3412 - 38494
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/6/0x26050bdf45da4c5ee6288beb9c1ef629ed68c6e62.sol:95
+
+token.transfer(addresses[i], amounts[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000000388, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 454545454545454545454545aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: sendMany(address,address[],uint256[]), txdata: 0x0e6245ef000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: sendMany(address,address[],uint256[]), txdata: 0x0e6245ef454545454545454545454545deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000014545454545454545454545454545454545454545454545454545454545454545, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: MultiSend
+Function name: sendMany(address,address[],uint256[])
+PC address: 671
+Estimated Gas Usage: 5266 - 75005
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/6/0x26050bdf45da4c5ee6288beb9c1ef629ed68c6e62.sol:95
+
+token.transfer(addresses[i], amounts[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200870a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 454545454545454545454545deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: sendMany(address,address[],uint256[]), txdata: 0x0e6245ef000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x26050bdf45da4c5ee6288beb9c1ef629ed68c6e62.sol
+Tool Runtime = 226.05265025199333 seconds
+#############################################

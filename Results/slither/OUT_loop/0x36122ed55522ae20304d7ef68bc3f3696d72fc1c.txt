@@ -1,0 +1,139 @@
+Compilation warnings/errors on ./loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol:
+./loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol:266:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in TouchEvent.addTouchToLikeRewardPool(uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#700-707):
+	External calls:
+	- IERC20(touchToken).safeTransferFrom(msg.sender,address(this),_amounts) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#703)
+	State variables written after the call(s):
+	- events[eventCounts] = event_ (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#706)
+Reentrancy in TouchEvent.setLikeEnded(address) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#776-796):
+	External calls:
+	- IERC20(touchToken).safeTransfer(receiver,reward) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#790)
+	State variables written after the call(s):
+	- events[eventCounts] = event_ (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#793)
+Reentrancy in TouchEvent.userBidGirl(uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#679-698):
+	External calls:
+	- IERC20(touchToken).safeTransferFrom(msg.sender,bidProfitBeneficiary,_amountsToOwner) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#691)
+	- IERC20(touchToken).safeTransferFrom(msg.sender,event_.firstBidder,_price.sub(_amountsToOwner)) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#692)
+	- onlyStaked(msg.sender) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#679)
+		- require(bool,string)(! checkStaked || staker.userDepositsCounts(_user) > 0,should deposit first) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#640)
+	State variables written after the call(s):
+	- events[eventCounts] = event_ (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#697)
+Reentrancy in TouchEvent.userLikeGirl(uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650-677):
+	External calls:
+	- IERC20(touchToken).safeTransferFrom(msg.sender,address(this),_amounts) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#654)
+	- onlyStaked(msg.sender) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650)
+		- require(bool,string)(! checkStaked || staker.userDepositsCounts(_user) > 0,should deposit first) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#640)
+	State variables written after the call(s):
+	- events[eventCounts] = event_ (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#674)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+TouchEvent.withdrawLikeReward(uint256,address) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#709-721) ignores return value by IERC20(touchToken).transfer(_user,reward) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#720)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in TouchEvent.userLikeGirl(uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650-677):
+	External calls:
+	- IERC20(touchToken).safeTransferFrom(msg.sender,address(this),_amounts) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#654)
+	- onlyStaked(msg.sender) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650)
+		- require(bool,string)(! checkStaked || staker.userDepositsCounts(_user) > 0,should deposit first) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#640)
+	State variables written after the call(s):
+	- options[eventCounts][_optionId] = option_ (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#673)
+	- options_addr2Id[eventCounts][_optionId][msg.sender] = option_.uniqueLike (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#661)
+	- options_id2Addr[eventCounts][_optionId][option_.uniqueLike] = msg.sender (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#662)
+	- options_userLike[eventCounts][_optionId][msg.sender] = options_userLike[eventCounts][_optionId][msg.sender].add(_amounts) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#664)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in TouchEvent.setLikeEnded(address) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#776-796):
+	External calls:
+	- IERC20(touchToken).safeTransfer(receiver,reward) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#790)
+	Event emitted after the call(s):
+	- EventEnds(Like) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#795)
+Reentrancy in TouchEvent.userBidGirl(uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#679-698):
+	External calls:
+	- IERC20(touchToken).safeTransferFrom(msg.sender,bidProfitBeneficiary,_amountsToOwner) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#691)
+	- IERC20(touchToken).safeTransferFrom(msg.sender,event_.firstBidder,_price.sub(_amountsToOwner)) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#692)
+	- onlyStaked(msg.sender) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#679)
+		- require(bool,string)(! checkStaked || staker.userDepositsCounts(_user) > 0,should deposit first) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#640)
+	Event emitted after the call(s):
+	- Outbid(msg.sender,event_.firstBidder,_optionId,_price,_price.sub(_amountsToOwner),now) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#693)
+Reentrancy in TouchEvent.userLikeGirl(uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650-677):
+	External calls:
+	- IERC20(touchToken).safeTransferFrom(msg.sender,address(this),_amounts) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#654)
+	- onlyStaked(msg.sender) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650)
+		- require(bool,string)(! checkStaked || staker.userDepositsCounts(_user) > 0,should deposit first) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#640)
+	Event emitted after the call(s):
+	- Liked(_optionId,_amounts,now,msg.sender) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#676)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#259-268) uses assembly
+	- INLINE ASM (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#266-267)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+TouchEvent.setLikeEnded(address) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#776-796) compares to a boolean constant:
+	-require(bool,string)(isLikeEnded == false,like is already ended) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#777)
+TouchEvent.setBidEnded() (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#798-803) compares to a boolean constant:
+	-require(bool,string)(isBidEnded == false,bid is already ended) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#799)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#6) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#535) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#298-304):
+	- (success) = recipient.call.value(amount)() (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#302)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#356-375):
+	- (success,returndata) = address(token).call(data) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#368)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter TouchEvent.userLikeGirl(uint256,uint256)._optionId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650) is not in mixedCase
+Parameter TouchEvent.userLikeGirl(uint256,uint256)._amounts (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#650) is not in mixedCase
+Parameter TouchEvent.userBidGirl(uint256,uint256)._optionId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#679) is not in mixedCase
+Parameter TouchEvent.userBidGirl(uint256,uint256)._price (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#679) is not in mixedCase
+Parameter TouchEvent.addTouchToLikeRewardPool(uint256)._amounts (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#700) is not in mixedCase
+Parameter TouchEvent.withdrawLikeReward(uint256,address)._eventId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#709) is not in mixedCase
+Parameter TouchEvent.withdrawLikeReward(uint256,address)._user (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#709) is not in mixedCase
+Parameter TouchEvent.getOptionLiker(uint256,uint256,uint256,uint256)._eventId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#724) is not in mixedCase
+Parameter TouchEvent.getOptionLiker(uint256,uint256,uint256,uint256)._optionId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#724) is not in mixedCase
+Parameter TouchEvent.getOptionLiker(uint256,uint256,uint256,uint256)._startedId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#724) is not in mixedCase
+Parameter TouchEvent.getOptionLiker(uint256,uint256,uint256,uint256)._length (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#724) is not in mixedCase
+Parameter TouchEvent.getLikedRewardAmount(uint256,address)._eventId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#733) is not in mixedCase
+Parameter TouchEvent.getLikedRewardAmount(uint256,address)._user (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#733) is not in mixedCase
+Parameter TouchEvent.eventIsLikeEnded(uint256)._eventId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#745) is not in mixedCase
+Parameter TouchEvent.eventIsBidEnded(uint256)._eventId (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#756) is not in mixedCase
+Parameter TouchEvent.startNewEvent(uint256)._optionCounts (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#768) is not in mixedCase
+Parameter TouchEvent.setLikeEnded(address)._winner (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#776) is not in mixedCase
+Parameter TouchEvent.setCheckStaked(bool)._shouldCheck (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#805) is not in mixedCase
+Parameter TouchEvent.setBidProfitBeneficiary(address)._user (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#809) is not in mixedCase
+Variable TouchEvent.options_userLike (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#605) is not in mixedCase
+Variable TouchEvent.options_addr2Id (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#606) is not in mixedCase
+Variable TouchEvent.options_id2Addr (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#607) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+canCall(address,address,bytes4) should be declared external:
+	- DSAuthority.canCall(address,address,bytes4) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#444-446)
+disableOwnership() should be declared external:
+	- DSAuth.disableOwnership() (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#466-469)
+transferOwnership(address) should be declared external:
+	- DSAuth.transferOwnership(address) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#471-474)
+acceptOwnership() should be declared external:
+	- DSAuth.acceptOwnership() (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#476-481)
+setAuthority(DSAuthority) should be declared external:
+	- DSAuth.setAuthority(DSAuthority) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#484-490)
+pow(uint256,uint256) should be declared external:
+	- DSMath.pow(uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#569-585)
+getOptionLiker(uint256,uint256,uint256,uint256) should be declared external:
+	- TouchEvent.getOptionLiker(uint256,uint256,uint256,uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#724-731)
+eventIsBidEnded(uint256) should be declared external:
+	- TouchEvent.eventIsBidEnded(uint256) (loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol#756-765)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol analyzed (11 contracts with 46 detectors), 47 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x36122ed55522ae20304d7ef68bc3f3696d72fc1c.sol
+Tool Runtime = 1.2160220250007114 seconds
+#############################################

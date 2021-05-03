@@ -1,0 +1,39 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: TokenDecimalsView
+Function name: getTokenDecimals(address[])
+PC address: 480
+Estimated Gas Usage: 2987 - 75731
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/5/0x5918705f9a172d5caabbd2e2ddb5086ae033dfe8.sol:43
+
+staticcall(
+                    30000,              // 30k gas
+                    tokenAddress,       // The call target.
+                    x,                  // Inputs are stored at location x
+                    0x04,               // Input is 4 bytes long
+                    x,                  // Overwrite x with output
+                    0x20                // The output length
+                )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000800b, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: getTokenDecimals(address[]), txdata: 0x706e2f9b0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x5918705f9a172d5caabbd2e2ddb5086ae033dfe8.sol
+Tool Runtime = 219.60040977899916 seconds
+#############################################

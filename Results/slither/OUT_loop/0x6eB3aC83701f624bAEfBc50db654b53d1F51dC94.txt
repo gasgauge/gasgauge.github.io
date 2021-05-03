@@ -1,0 +1,96 @@
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract Proxy (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#215-287) has payable functions:
+	 - Proxy.fallback() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#262-279)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+SupplySchedule.mintableSupply().totalAmount (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1493) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[93m
+Synthetix.mint() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1967-2002) ignores return value by _supplySchedule.recordMintEvent(supplyToMint) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1977)
+Synthetix.mint() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1967-2002) ignores return value by _rewardsDistribution.distributeRewards(amountToDistribute) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1993)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ExternStateToken.allowance(address,address).owner (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#776) shadows:
+	- Owned.owner (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#107) (state variable)
+ExternStateToken.emitApproval(address,address,uint256).owner (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#875) shadows:
+	- Owned.owner (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#107) (state variable)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+SupplySchedule.mintableSupply() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1492-1531) has external calls inside a loop: totalSupply = IERC20(synthetixProxy).totalSupply() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1522)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in Synthetix.mint() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1967-2002):
+	External calls:
+	- _supplySchedule.recordMintEvent(supplyToMint) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1977)
+	- tokenState.setBalanceOf(address(_rewardsDistribution),tokenState.balanceOf(address(_rewardsDistribution)).add(amountToDistribute)) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1986-1989)
+	- emitTransfer(address(this),address(_rewardsDistribution),amountToDistribute) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1990)
+		- proxy._emit(abi.encode(value),3,TRANSFER_SIG,addressToBytes32(from),addressToBytes32(to),0) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#868)
+	- _rewardsDistribution.distributeRewards(amountToDistribute) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1993)
+	- tokenState.setBalanceOf(msg.sender,tokenState.balanceOf(msg.sender).add(minterReward)) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1996)
+	- emitTransfer(address(this),msg.sender,minterReward) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1997)
+		- proxy._emit(abi.encode(value),3,TRANSFER_SIG,addressToBytes32(from),addressToBytes32(to),0) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#868)
+	State variables written after the call(s):
+	- totalSupply = totalSupply.add(supplyToMint) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1999)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+SelfDestructible.selfDestruct() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#194-199) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(initiationTime + SELFDESTRUCT_DELAY < now,Self destruct delay not met) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#196)
+SupplySchedule.mintableSupply() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1492-1531) uses timestamp for comparisons
+	Dangerous comparisons:
+	- remainingWeeksToMint > 0 (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1505)
+SupplySchedule.weeksSinceLastIssuance() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1562-1567) uses timestamp for comparisons
+	Dangerous comparisons:
+	- lastMintEvent > 0 (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1565)
+SupplySchedule.isMintable() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1573-1578) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now - lastMintEvent > MINT_PERIOD_DURATION (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1574)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Proxy._emit(bytes,uint256,bytes32,bytes32,bytes32,bytes32) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#225-259) uses assembly
+	- INLINE ASM (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#236-259)
+Proxy.fallback() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#262-279) uses assembly
+	- INLINE ASM (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#266-279)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#69) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter Owned.nominateNewOwner(address)._owner (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#116) is not in mixedCase
+Parameter SelfDestructible.setSelfDestructBeneficiary(address)._beneficiary (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#162) is not in mixedCase
+Parameter Proxy.setTarget(Proxyable)._target (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#220) is not in mixedCase
+Function Proxy._emit(bytes,uint256,bytes32,bytes32,bytes32,bytes32) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#225-259) is not in mixedCase
+Parameter Proxyable.setProxy(address)._proxy (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#317) is not in mixedCase
+Parameter Proxyable.setIntegrationProxy(address)._integrationProxy (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#322) is not in mixedCase
+Modifier Proxyable.optionalProxy_onlyOwner() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#342-348) is not in mixedCase
+Constant SafeDecimalMath.highPrecisionDecimals (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#470) is not in UPPER_CASE_WITH_UNDERSCORES
+Parameter State.setAssociatedContract(address)._associatedContract (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#668) is not in mixedCase
+Parameter ExternStateToken.setTokenState(TokenState)._tokenState (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#794) is not in mixedCase
+Parameter MixinResolver.setResolverAndSyncCache(AddressResolver)._resolver (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1079) is not in mixedCase
+Parameter MixinResolver.isResolverCached(AddressResolver)._resolver (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1099) is not in mixedCase
+Parameter SupplySchedule.setSynthetixProxy(ISynthetix)._synthetixProxy (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1622) is not in mixedCase
+Parameter Synthetix.collateralisationRatio(address)._issuer (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1955) is not in mixedCase
+Constant Synthetix.sUSD (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1692) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+SupplySchedule.slitherConstructorConstantVariables() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1440-1656) uses literals with too many digits:
+	- DECAY_RATE = 12500000000000000 (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1473)
+SupplySchedule.slitherConstructorConstantVariables() (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1440-1656) uses literals with too many digits:
+	- TERMINAL_SUPPLY_RATE_ANNUAL = 25000000000000000 (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#1476)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+allowance(address,address) should be declared external:
+	- ExternStateToken.allowance(address,address) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#776-778)
+approve(address,uint256) should be declared external:
+	- ExternStateToken.approve(address,uint256) (loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol#847-853)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol analyzed (23 contracts with 46 detectors), 35 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x6eB3aC83701f624bAEfBc50db654b53d1F51dC94.sol
+Tool Runtime = 4.275644055000157 seconds
+#############################################

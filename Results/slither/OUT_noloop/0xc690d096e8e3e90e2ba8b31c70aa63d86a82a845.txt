@@ -1,0 +1,242 @@
+INFO:Detectors:[93m
+UniHourglass.sell(uint256,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#239-281) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_amountOfTokens,exitFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#243)
+	-_maintenance = SafeMath.div(SafeMath.mul(_undividedDividends,maintenanceFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#246)
+UniHourglass.sell(uint256,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#239-281) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_amountOfTokens,exitFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#243)
+	-_referralBonus = SafeMath.div(SafeMath.mul(_undividedDividends,referralFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#247)
+UniHourglass.transfer(address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#283-308) performs a multiplication on the result of a division:
+	-_tokenFee = SafeMath.div(SafeMath.mul(_amountOfTokens,transferFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#291)
+	-_dividends = _tokenFee (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#293)
+	-profitPerShare_ = SafeMath.add(profitPerShare_,(_dividends * magnitude) / tokenSupply_) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#303)
+UniHourglass.purchaseTokens(address,address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#381-428) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_incomingUNI,entryFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#388)
+	-_maintenance = SafeMath.div(SafeMath.mul(_undividedDividends,maintenanceFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#390)
+UniHourglass.purchaseTokens(address,address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#381-428) performs a multiplication on the result of a division:
+	-_undividedDividends = SafeMath.div(SafeMath.mul(_incomingUNI,entryFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#388)
+	-_referralBonus = SafeMath.div(SafeMath.mul(_undividedDividends,referralFee_),100) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#391)
+UniHourglass.purchaseTokens(address,address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#381-428) performs a multiplication on the result of a division:
+	-_fee = _fee - (_fee - (_amountOfTokens * (_dividends * magnitude / tokenSupply_))) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#414)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Contract locking ether found in :
+	Contract UniHourglass (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#67-471) has payable functions:
+	 - UniHourglass.fallback() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#207-209)
+	But does not have a function to withdraw the ether
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#contracts-that-lock-ether[0m
+INFO:Detectors:[93m
+Reentrancy in UniHourglass.transfer(address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#283-308):
+	External calls:
+	- withdraw() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#288)
+		- erc20.transfer(_customerAddress,_dividends) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#235)
+	State variables written after the call(s):
+	- payoutsTo_[_customerAddress] -= int256(profitPerShare_ * _amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#300)
+	- payoutsTo_[_toAddress] += int256(profitPerShare_ * _taxedTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#301)
+	- profitPerShare_ = SafeMath.add(profitPerShare_,(_dividends * magnitude) / tokenSupply_) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#303)
+	- tokenBalanceLedger_[_customerAddress] = SafeMath.sub(tokenBalanceLedger_[_customerAddress],_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#297)
+	- tokenBalanceLedger_[_toAddress] = SafeMath.add(tokenBalanceLedger_[_toAddress],_taxedTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#298)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+UniHourglass.withdraw() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#228-237) ignores return value by erc20.transfer(_customerAddress,_dividends) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#235)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+Reentrancy in UniHourglass.buy(uint256,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#197-200):
+	External calls:
+	- checkAndTransferUNI(_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#198)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+	State variables written after the call(s):
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- allTimeRefEarnings_[_referredBy] = SafeMath.add(allTimeRefEarnings_[_referredBy],_referralBonus) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#404)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- ambassadorAccumulatedQuota_[_customerAddress] = SafeMath.add(ambassadorAccumulatedQuota_[_customerAddress],_amountOfUNI) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#82)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- invested_[msg.sender] += _incomingUNI (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#386)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- onlyAmbassadors = false (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#77)
+		- onlyAmbassadors = false (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#85)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- payoutsTo_[_customerAddress] += _updatedPayouts (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#422)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- profitPerShare_ += (_dividends * magnitude / tokenSupply_) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#413)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- referralBalance_[maintenanceAddress1] = SafeMath.add(referralBalance_[maintenanceAddress1],(_maintenance / 2)) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#399)
+		- referralBalance_[maintenanceAddress2] = SafeMath.add(referralBalance_[maintenanceAddress2],(_maintenance / 2)) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#400)
+		- referralBalance_[_referredBy] = SafeMath.add(referralBalance_[_referredBy],_referralBonus) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#403)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- tokenBalanceLedger_[_customerAddress] = SafeMath.add(tokenBalanceLedger_[_customerAddress],_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#419)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- tokenSupply_ = SafeMath.add(tokenSupply_,_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#412)
+		- tokenSupply_ = _amountOfTokens (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#416)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- totalHolder ++ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#383)
+	- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+		- totalInvested_[_customerAddress] = SafeMath.add(totalInvested_[_customerAddress],_incomingUNI) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#405)
+Reentrancy in UniHourglass.buyFor(uint256,address,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#202-205):
+	External calls:
+	- checkAndTransferUNI(_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#203)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+	State variables written after the call(s):
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- allTimeRefEarnings_[_referredBy] = SafeMath.add(allTimeRefEarnings_[_referredBy],_referralBonus) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#404)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- ambassadorAccumulatedQuota_[_customerAddress] = SafeMath.add(ambassadorAccumulatedQuota_[_customerAddress],_amountOfUNI) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#82)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- invested_[msg.sender] += _incomingUNI (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#386)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- onlyAmbassadors = false (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#77)
+		- onlyAmbassadors = false (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#85)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- payoutsTo_[_customerAddress] += _updatedPayouts (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#422)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- profitPerShare_ += (_dividends * magnitude / tokenSupply_) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#413)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- referralBalance_[maintenanceAddress1] = SafeMath.add(referralBalance_[maintenanceAddress1],(_maintenance / 2)) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#399)
+		- referralBalance_[maintenanceAddress2] = SafeMath.add(referralBalance_[maintenanceAddress2],(_maintenance / 2)) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#400)
+		- referralBalance_[_referredBy] = SafeMath.add(referralBalance_[_referredBy],_referralBonus) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#403)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- tokenBalanceLedger_[_customerAddress] = SafeMath.add(tokenBalanceLedger_[_customerAddress],_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#419)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- tokenSupply_ = SafeMath.add(tokenSupply_,_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#412)
+		- tokenSupply_ = _amountOfTokens (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#416)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- totalHolder ++ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#383)
+	- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+		- totalInvested_[_customerAddress] = SafeMath.add(totalInvested_[_customerAddress],_incomingUNI) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#405)
+Reentrancy in UniHourglass.distribute(uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#189-195):
+	External calls:
+	- checkAndTransferUNI(_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#191)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+	State variables written after the call(s):
+	- profitPerShare_ = SafeMath.add(profitPerShare_,(_amount * magnitude) / tokenSupply_) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#193)
+	- totalDonation += _amount (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#192)
+Reentrancy in UniHourglass.transfer(address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#283-308):
+	External calls:
+	- withdraw() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#288)
+		- erc20.transfer(_customerAddress,_dividends) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#235)
+	State variables written after the call(s):
+	- tokenSupply_ = SafeMath.sub(tokenSupply_,_tokenFee) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#295)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in UniHourglass.buy(uint256,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#197-200):
+	External calls:
+	- checkAndTransferUNI(_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#198)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+	Event emitted after the call(s):
+	- Transfer(address(0),msg.sender,_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#424)
+		- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+	- onTokenPurchase(_customerAddress,_incomingUNI,_amountOfTokens,_referredBy,now) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#425)
+		- purchaseTokens(_referredBy,msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#199)
+Reentrancy in UniHourglass.buyFor(uint256,address,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#202-205):
+	External calls:
+	- checkAndTransferUNI(_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#203)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+	Event emitted after the call(s):
+	- Transfer(address(0),msg.sender,_amountOfTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#424)
+		- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+	- onTokenPurchase(_customerAddress,_incomingUNI,_amountOfTokens,_referredBy,now) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#425)
+		- purchaseTokens(_referredBy,_customerAddress,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#204)
+Reentrancy in UniHourglass.distribute(uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#189-195):
+	External calls:
+	- checkAndTransferUNI(_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#191)
+		- require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+	Event emitted after the call(s):
+	- onDistribute(msg.sender,_amount) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#194)
+Reentrancy in UniHourglass.transfer(address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#283-308):
+	External calls:
+	- withdraw() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#288)
+		- erc20.transfer(_customerAddress,_dividends) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#235)
+	Event emitted after the call(s):
+	- Transfer(_customerAddress,_toAddress,_taxedTokens) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#305)
+Reentrancy in UniHourglass.withdraw() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#228-237):
+	External calls:
+	- erc20.transfer(_customerAddress,_dividends) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#235)
+	Event emitted after the call(s):
+	- onWithdraw(_customerAddress,_dividends) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#236)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+UniHourglass.checkAndTransferUNI(uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#185-187) compares to a boolean constant:
+	-require(bool,string)(erc20.transferFrom(msg.sender,address(this),_amount) == true,transfer must succeed) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#186)
+UniHourglass.antiEarlyWhale(uint256,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#75-88) compares to a boolean constant:
+	-require(bool)((ambassadors_[_customerAddress] == true && (ambassadorAccumulatedQuota_[_customerAddress] + _amountOfUNI) <= ambassadorMaxPurchase_)) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#81)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#5) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Event UniHourglassonDistribute(address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#100-103) is not in CapWords
+Event UniHourglassonTokenPurchase(address,uint256,uint256,address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#105-111) is not in CapWords
+Event UniHourglassonTokenSell(address,uint256,uint256,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#113-118) is not in CapWords
+Event UniHourglassonReinvestment(address,uint256,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#120-124) is not in CapWords
+Event UniHourglassonWithdraw(address,uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#126-129) is not in CapWords
+Parameter UniHourglass.checkAndTransferUNI(uint256)._amount (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#185) is not in mixedCase
+Parameter UniHourglass.distribute(uint256)._amount (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#189) is not in mixedCase
+Parameter UniHourglass.buy(uint256,address)._amount (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#197) is not in mixedCase
+Parameter UniHourglass.buy(uint256,address)._referredBy (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#197) is not in mixedCase
+Parameter UniHourglass.buyFor(uint256,address,address)._amount (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#202) is not in mixedCase
+Parameter UniHourglass.buyFor(uint256,address,address)._customerAddress (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#202) is not in mixedCase
+Parameter UniHourglass.buyFor(uint256,address,address)._referredBy (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#202) is not in mixedCase
+Parameter UniHourglass.sell(uint256,address)._amountOfTokens (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#239) is not in mixedCase
+Parameter UniHourglass.sell(uint256,address)._referredBy (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#239) is not in mixedCase
+Parameter UniHourglass.transfer(address,uint256)._toAddress (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#283) is not in mixedCase
+Parameter UniHourglass.transfer(address,uint256)._amountOfTokens (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#283) is not in mixedCase
+Parameter UniHourglass.setName(string)._name (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#310) is not in mixedCase
+Parameter UniHourglass.setSymbol(string)._symbol (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#315) is not in mixedCase
+Parameter UniHourglass.myDividends(bool)._includeReferralBonus (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#333) is not in mixedCase
+Parameter UniHourglass.balanceOf(address)._customerAddress (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#342) is not in mixedCase
+Parameter UniHourglass.dividendsOf(address)._customerAddress (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#346) is not in mixedCase
+Parameter UniHourglass.calculateTokensReceived(uint256)._UNIToSpend (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#362) is not in mixedCase
+Parameter UniHourglass.calculateUNIReceived(uint256)._tokensToSell (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#369) is not in mixedCase
+Parameter UniHourglass.purchaseTokens(address,address,uint256)._referredBy (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#381) is not in mixedCase
+Parameter UniHourglass.purchaseTokens(address,address,uint256)._customerAddress (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#381) is not in mixedCase
+Parameter UniHourglass.purchaseTokens(address,address,uint256)._incomingUNI (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#381) is not in mixedCase
+Constant UniHourglass.ambassadorMaxPurchase_ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#70) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable UniHourglass.ACTIVATION_TIME (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#73) is not in mixedCase
+Constant UniHourglass.magnitude (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#147) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+UniHourglass.ACTIVATION_TIME (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#73) should be constant
+UniHourglass.entryFee_ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#140) should be constant
+UniHourglass.exitFee_ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#142) should be constant
+UniHourglass.maintenanceFee_ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#144) should be constant
+UniHourglass.referralFee_ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#143) should be constant
+UniHourglass.stakingRequirement (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#157) should be constant
+UniHourglass.transferFee_ (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#141) should be constant
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant[0m
+INFO:Detectors:[92m
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#59-63)
+updateMaintenanceAddress1(address) should be declared external:
+	- UniHourglass.updateMaintenanceAddress1(address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#175-178)
+updateMaintenanceAddress2(address) should be declared external:
+	- UniHourglass.updateMaintenanceAddress2(address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#180-183)
+distribute(uint256) should be declared external:
+	- UniHourglass.distribute(uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#189-195)
+buy(uint256,address) should be declared external:
+	- UniHourglass.buy(uint256,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#197-200)
+buyFor(uint256,address,address) should be declared external:
+	- UniHourglass.buyFor(uint256,address,address) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#202-205)
+reinvest() should be declared external:
+	- UniHourglass.reinvest() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#211-219)
+setName(string) should be declared external:
+	- UniHourglass.setName(string) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#310-313)
+setSymbol(string) should be declared external:
+	- UniHourglass.setSymbol(string) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#315-318)
+myReferrals() should be declared external:
+	- UniHourglass.myReferrals() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#337-340)
+calculateTokensReceived(uint256) should be declared external:
+	- UniHourglass.calculateTokensReceived(uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#362-367)
+calculateUNIReceived(uint256) should be declared external:
+	- UniHourglass.calculateUNIReceived(uint256) (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#369-375)
+getOneTimeData() should be declared external:
+	- UniHourglass.getOneTimeData() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#430-432)
+multiData() should be declared external:
+	- UniHourglass.multiData() (noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol#434-470)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol analyzed (4 contracts with 46 detectors), 72 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xc690d096e8e3e90e2ba8b31c70aa63d86a82a845.sol
+Tool Runtime = 2.0443067490014073 seconds
+#############################################

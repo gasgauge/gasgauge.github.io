@@ -1,0 +1,480 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: AddressResolver
+Function name: rebuildCaches(address[])
+PC address: 1416
+Estimated Gas Usage: 2198 - 36574
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:250
+
+destinations[i].rebuildCache()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: importAddresses(bytes32[],address[]), txdata: 0xab0b8f7700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000204048040400840041000200140000800101008040004000404800801400402100140400000204008040204400220400002400400108000020080080108020440, value: 0x0
+Caller: [CREATOR], function: rebuildCaches(address[]), txdata: 0x766f781500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001020202020202020202020202deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: AddressResolver
+Function name: rebuildCaches(address[])
+PC address: 1416
+Estimated Gas Usage: 3857 - 72514
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:250
+
+destinations[i].rebuildCache()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000040000003e, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [ATTACKER], function: rebuildCaches(address[]), txdata: 0x766f78150000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000280808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: AddressResolver
+Function name: areAddressesImported(bytes32[],address[])
+PC address: 1960
+Estimated Gas Usage: 866 - 961
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:258
+
+destinations[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4218004000004000c, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [ATTACKER], function: areAddressesImported(bytes32[],address[]), txdata: 0x9f42102f0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Collateral
+Function name: setMinCratio(uint256)
+PC address: 2239
+Estimated Gas Usage: 9891 - 65415
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1717
+
+minCratio = _minCratio
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc0020, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebedeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setMinCratio(uint256), txdata: 0x0cdd1c650000000000000000000001000000000000000000000000600000000000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Collateral
+Function name: setMinCratio(uint256)
+PC address: 2276
+Estimated Gas Usage: 9891 - 65415
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1718
+
+minCratio
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80100010002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1140200021, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: bebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebebedeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setMinCratio(uint256), txdata: 0x0cdd1c650101010101010101010101010000000000000000000000880000000000000001, value: 0x0
+Caller: [ATTACKER], function: setMinCratio(uint256), txdata: 0x0cdd1c650000000000000000000001000000000000000000000000000000000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: CollateralState
+Function name: loans(address,uint256)
+PC address: 2372
+Estimated Gas Usage: 1457 - 1742
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:973
+
+mapping(address => Loan[]) public loans
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: loans(address,uint256), txdata: 0x98c61c3700000000000000000000000000000000000000000000000400100000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Collateral
+Function name: synths(uint256)
+PC address: 3193
+Estimated Gas Usage: 1294 - 1389
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1503
+
+bytes32[] public synths
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: synths(uint256), txdata: 0x30edd9610000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CollateralEth
+Function name: setMinCratio(uint256)
+PC address: 3459
+Estimated Gas Usage: 9846 - 65370
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1717
+
+minCratio = _minCratio
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setMinCratio(uint256), txdata: 0x0cdd1c650000000000000000000001000000000000000000000000000000000000000001, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: Collateral
+Function name: setInteractionDelay(uint256)
+PC address: 3465
+Estimated Gas Usage: 9856 - 65380
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1727
+
+SafeDecimalMath.unit() * 3600
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2020108, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace44e01020202000001020101000000000000000000000101000504010802028001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CollateralEth
+Function name: setMinCratio(uint256)
+PC address: 3496
+Estimated Gas Usage: 9846 - 65370
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1718
+
+minCratio
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x140000101, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace40448003cf70850140001404120012d483205a3008380010c9840000000846158, value: 0x0
+Caller: [ATTACKER], function: setMinCratio(uint256), txdata: 0x0cdd1c650000000000000000000001000000000000000000000000000000000000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Collateral
+Function name: setInteractionDelay(uint256)
+PC address: 3539
+Estimated Gas Usage: 9856 - 65380
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1728
+
+interactionDelay = _interactionDelay
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x100000000020042, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace40400010204040208020101000000000000000000000000010101010100977c70, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Collateral
+Function name: setInteractionDelay(uint256)
+PC address: 3576
+Estimated Gas Usage: 9856 - 65380
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1729
+
+interactionDelay
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x804000a0090, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x5c200000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setMinCratio(uint256), txdata: 0x0cdd1c650101010101010101010101010000000000000000000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace4000000000000000000000100000000000000000000000001a380000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: CollateralEth
+Function name: synths(uint256)
+PC address: 4413
+Estimated Gas Usage: 1228 - 1323
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1503
+
+bytes32[] public synths
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: synths(uint256), txdata: 0x30edd9610000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CollateralEth
+Function name: claim(uint256)
+PC address: 4661
+Estimated Gas Usage: 14873 - 89534
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:2392
+
+msg.sender.call.value(amount)("")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2001c21, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000200000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace40000000000010000000000000000000000000000008000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: claim(uint256), txdata: 0x379607f50000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CollateralEth
+Function name: claim(uint256)
+PC address: 4788
+Estimated Gas Usage: 14946 - 89890
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:2304
+
+_guardCounter
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80080000002112, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000000110800100800840000001082002080400204000000000000000000000000020, value: 0x0
+Caller: [ATTACKER], function: claim(uint256), txdata: 0x379607f50000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: CollateralEth
+Function name: setInteractionDelay(uint256)
+PC address: 5287
+Estimated Gas Usage: 9922 - 65446
+The arithmetic operator can overflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1727
+
+SafeDecimalMath.unit() * 3600
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10084, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace44e00000000000000000001000000000000000000000000005208000000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CollateralEth
+Function name: setInteractionDelay(uint256)
+PC address: 5361
+Estimated Gas Usage: 9922 - 65446
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1728
+
+interactionDelay = _interactionDelay
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200000000001100a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: adadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadaddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace40000000000000000000101000000000000000000000000005200000000000001, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: CollateralEth
+Function name: setInteractionDelay(uint256)
+PC address: 5398
+Estimated Gas Usage: 9922 - 65446
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/1/0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol:1729
+
+interactionDelay
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42000000102010044, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0xc00200020, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace422125a4b1e01028880018900000401bc00000000010000010260081bc605c2a1, value: 0x0
+Caller: [ATTACKER], function: setInteractionDelay(uint256), txdata: 0x4c17ace40000000000000000000001000000000000000000000000005200000000000001, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x3FF5c0A14121Ca39211C95f6cEB221b86A90729E.sol
+Tool Runtime = 5863.049956924995 seconds
+#############################################

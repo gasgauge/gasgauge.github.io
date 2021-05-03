@@ -1,0 +1,423 @@
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoolProxy
+Function name: fallback
+PC address: 142
+Estimated Gas Usage: 3340 - 74629
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1035
+
+delegatecall(gas(), impl, ptr, calldatasize(), 0, 0)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x, value: 0x0
+
+==== Delegatecall to user-supplied address ====
+SWC ID: 112
+Severity: High
+Contract: PoolFactoryProxy
+Function name: fallback
+PC address: 264
+Estimated Gas Usage: 1721 - 38543
+The contract delegates execution to another contract with a user-supplied address.
+The smart contract delegates execution to a user-supplied address.This could allow an attacker to execute arbitrary code in the context of this contract account and manipulate the state of the contract account or execute actions on its behalf.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:902
+
+delegatecall(gas(), impl, ptr, calldatasize(), 0, 0)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Deposit3Tokens
+Function name: period_timestamp(uint256)
+PC address: 380
+Estimated Gas Usage: 278 - 373
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:992
+
+uint[100000000000000000000000000000] public period_timestamp
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: period_timestamp(uint256), txdata: 0x7598108c0000000000000000000000000000000000000002000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Deposit2Tokens
+Function name: period_timestamp(uint256)
+PC address: 393
+Estimated Gas Usage: 278 - 373
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:986
+
+uint[100000000000000000000000000000] public period_timestamp
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x410800000e3fa2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: period_timestamp(uint256), txdata: 0x7598108c0000000000000000000000000000000000000002000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: TokenManager
+Function name: supportAddresses(address,uint256)
+PC address: 613
+Estimated Gas Usage: 1152 - 1437
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:55
+
+mapping(address => address[]) public supportAddresses
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: supportAddresses(address,uint256), txdata: 0xea1958c5000000000000000000000000a50ccc70b6a011cffddf45057e396793791872872000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: PoolProxy
+Function name: supportAddresses(address,uint256)
+PC address: 1317
+Estimated Gas Usage: 1240 - 1525
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:55
+
+mapping(address => address[]) public supportAddresses
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: supportAddresses(address,uint256), txdata: 0xea1958c5000000000000000000000000329239599afb305da0a2ec69c58f8a6697f9f88d8000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 1575
+Estimated Gas Usage: 21785 - 372220
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1082
+
+IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: PoolFactoryProxy
+Function name: supportAddresses(address,uint256)
+PC address: 2114
+Estimated Gas Usage: 1240 - 1525
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:55
+
+mapping(address => address[]) public supportAddresses
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: supportAddresses(address,uint256), txdata: 0xea1958c5000000000000000000000000329239599afb305da0a2ec69c58f8a6697f9f88d8000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 2775
+Estimated Gas Usage: 21785 - 372220
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1093
+
+poolFactoryAddress
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10a8084002048501, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 3050
+Estimated Gas Usage: 21709 - 372144
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1093
+
+isBTCPool
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000401900081a10, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 3207
+Estimated Gas Usage: 21785 - 372220
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1093
+
+PoolFactory(poolFactoryAddress).mint(msg.sender, IERC20(lpTokenAddress).balanceOf(address(this)), isBTCPool)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10a8084002048501, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: PoolFactory
+Function name: supportAddresses(address,uint256)
+PC address: 5037
+Estimated Gas Usage: 1196 - 1481
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:55
+
+mapping(address => address[]) public supportAddresses
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: supportAddresses(address,uint256), txdata: 0xea1958c5000000000000000000000000b6c057591e073249f2d9d88ba59a46cfc9b59edb8000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Pool
+Function name: supportAddresses(address,uint256)
+PC address: 8485
+Estimated Gas Usage: 1218 - 1503
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:55
+
+mapping(address => address[]) public supportAddresses
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: supportAddresses(address,uint256), txdata: 0xea1958c50000000000000000000000004ca9b3063ec5866a4b82e437059d2c43d1be596f8000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 19161
+Estimated Gas Usage: 18160 - 296599
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1257
+
+IERC20(DAI_ADDRESS).approve(_depositPool, amount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: deposit(address,uint256), txdata: 0x47e7ef244343434343434343434343436b175474e89094c44da98b954eedeac495271d0f4343434343434343434343434343434343434343434343434343434343434343, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 22849
+Estimated Gas Usage: 21709 - 372144
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1252
+
+IERC20(lpTokenAddress).approve(gaugeAddress, value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x258004000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: Pool
+Function name: deposit(address,uint256)
+PC address: 23020
+Estimated Gas Usage: 18160 - 296599
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol:1253
+
+IGauge(gaugeAddress).deposit(value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: deposit(address,uint256), txdata: 0x47e7ef240000000000000000000000006b175474e89094c44da98b954eedeac495271d0f0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xe613823c924583D29C33851B1bcf31dC4deD3E56.sol
+Tool Runtime = 2535.5457384600013 seconds
+#############################################

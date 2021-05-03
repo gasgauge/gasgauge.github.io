@@ -1,0 +1,157 @@
+INFO:Detectors:[91m
+Ownable.______gap (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#326) shadows:
+	- Initializable.______gap (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#66)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variable-shadowing[0m
+INFO:Detectors:[93m
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#451-469):
+	External calls:
+	- distribute(registrationFeeWithoutReferrer) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#458)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#522-525)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#463)
+	State variables written after the call(s):
+	- stakerIsRegistered[msg.sender] = true (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#467)
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#451-469):
+	External calls:
+	- distribute(registrationFeeWithoutReferrer) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#458)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#522-525)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#463)
+	- stake(finalAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#468)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Stake failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#477)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#593)
+	State variables written after the call(s):
+	- stake(finalAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#468)
+		- emptyStakeTokens = 0 (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#604)
+		- emptyStakeTokens = emptyStakeTokens.add(amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#608)
+	- stake(finalAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#468)
+		- profitPerShare = profitPerShare.add(amount.mul(DISTRIBUTION_MULTIPLIER).div(totalStaked)) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#606)
+	- stake(finalAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#468)
+		- totalStaked = totalStaked.add(stakeAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#590)
+Reentrancy in LidStaking.unstake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#481-501):
+	External calls:
+	- withdraw(dividendsOf(msg.sender)) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#485)
+		- lidToken.transfer(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#506)
+	State variables written after the call(s):
+	- _increaseProfitPerShare(tax) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#492)
+		- profitPerShare = profitPerShare.add(amount.mul(DISTRIBUTION_MULTIPLIER).div(totalStaked)) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#606)
+	- stakeValue[msg.sender] = stakeValue[msg.sender].sub(amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#488)
+	- stakerPayouts[msg.sender] = uintToInt(profitPerShare.mul(stakeValue[msg.sender])) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#493)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LidStaking.withdraw(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#503-508) ignores return value by lidToken.transfer(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#506)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken).owner (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#434) shadows:
+	- Ownable.owner() (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#278-280) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+LidStaking.unstake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#481-501) has external calls inside a loop: stakeHandlers[i].handleUnstake(msg.sender,amount,stakeValue[msg.sender]) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#496)
+LidStaking._addStake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#587-598) has external calls inside a loop: stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#593)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#451-469):
+	External calls:
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#463)
+	State variables written after the call(s):
+	- accountReferrals[referrer] = accountReferrals[referrer].add(1) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#464)
+Reentrancy in LidStaking.unstake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#481-501):
+	External calls:
+	- withdraw(dividendsOf(msg.sender)) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#485)
+		- lidToken.transfer(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#506)
+	State variables written after the call(s):
+	- _increaseProfitPerShare(tax) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#492)
+		- emptyStakeTokens = 0 (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#604)
+		- emptyStakeTokens = emptyStakeTokens.add(amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#608)
+	- totalStaked = totalStaked.sub(amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#487)
+	- totalStakers = totalStakers.sub(1) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#486)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in LidStaking.distribute(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#518-527):
+	External calls:
+	- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#522-525)
+	Event emitted after the call(s):
+	- OnDistribute(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#526)
+Reentrancy in LidStaking.registerAndStake(uint256,address) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#451-469):
+	External calls:
+	- distribute(registrationFeeWithoutReferrer) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#458)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Distribution failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#522-525)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,referrer,registrationFeeWithReferrer),Stake failed due to failed referral transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#463)
+	- stake(finalAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#468)
+		- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Stake failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#477)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#593)
+	Event emitted after the call(s):
+	- OnStake(msg.sender,amount,tax) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#478)
+		- stake(finalAmount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#468)
+Reentrancy in LidStaking.reinvest(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#510-516):
+	External calls:
+	- tax = _addStake(amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#514)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#593)
+	Event emitted after the call(s):
+	- OnReinvest(msg.sender,amount,tax) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#515)
+Reentrancy in LidStaking.stake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#471-479):
+	External calls:
+	- tax = _addStake(amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#476)
+		- stakeHandlers[i].handleStake(msg.sender,stakeAmount,stakeValue[msg.sender]) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#593)
+	- require(bool,string)(lidToken.transferFrom(msg.sender,address(this),amount),Stake failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#477)
+	Event emitted after the call(s):
+	- OnStake(msg.sender,amount,tax) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#478)
+Reentrancy in LidStaking.unstake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#481-501):
+	External calls:
+	- withdraw(dividendsOf(msg.sender)) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#485)
+		- lidToken.transfer(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#506)
+	- require(bool,string)(lidToken.transferFrom(address(this),msg.sender,earnings),Unstake failed due to failed transfer.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#499)
+	Event emitted after the call(s):
+	- OnUnstake(msg.sender,amount,tax) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#500)
+Reentrancy in LidStaking.withdraw(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#503-508):
+	External calls:
+	- lidToken.transfer(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#506)
+	Event emitted after the call(s):
+	- OnWithdraw(msg.sender,amount) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#507)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Initializable.isConstructor() (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#53-63) uses assembly
+	- INLINE ASM (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#61-62)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+LidStaking.stake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#471-479) compares to a boolean constant:
+	-require(bool,string)(stakerIsRegistered[msg.sender] == true,Must be registered to stake.) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#472)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#6) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Variable Initializable.______gap (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#66) is not in mixedCase
+Variable Ownable.______gap (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#326) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._stakingTaxBP (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#430) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._ustakingTaxBP (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#431) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._registrationFeeWithReferrer (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#432) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._registrationFeeWithoutReferrer (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#433) is not in mixedCase
+Parameter LidStaking.initialize(uint256,uint256,uint256,uint256,address,ILidCertifiableToken)._lidToken (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#435) is not in mixedCase
+Parameter LidStaking.setStartTime(uint256)._startTime (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#570) is not in mixedCase
+Parameter LidSimplifiedPresaleAccess.initialize(LidStaking)._staking (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#621) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+LidSimplifiedPresaleAccess.initialize(LidStaking) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#621-631) uses literals with too many digits:
+	- cutoffs = (500000000000000000000000,100000000000000000000000,50000000000000000000000,25000000000000000000000,1000000000000000000) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#624-630)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits[0m
+INFO:Detectors:[92m
+Ownable.______gap (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#326) is never used in LidStaking (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#385-612)
+Initializable.______gap (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#66) is never used in LidSimplifiedPresaleAccess (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#615-645)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#278-280)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#304-307)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#313-315)
+registerAndStake(uint256) should be declared external:
+	- LidStaking.registerAndStake(uint256) (loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol#447-449)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol analyzed (9 contracts with 46 detectors), 36 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf69eb1fec5b166080ab6322ffe90fd7fb980807b.sol
+Tool Runtime = 1.2025241400006053 seconds
+#############################################

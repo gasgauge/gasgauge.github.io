@@ -1,0 +1,379 @@
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 932
+Estimated Gas Usage: 169 - 264
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:497
+
+require(msg.sender == tx.origin, "Smart contracts cannot work hard")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [CREATOR], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1052
+Estimated Gas Usage: 19336 - 228506
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:499
+
+vaults.length
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000210101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1101
+Estimated Gas Usage: 19336 - 228506
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:501
+
+vaults[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000210101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1283
+Estimated Gas Usage: 19336 - 228506
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:501
+
+IController(controller()).doHardWork(vaults[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x7201, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000210101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1283
+Estimated Gas Usage: 19336 - 228506
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:501
+
+IController(controller()).doHardWork(vaults[i])
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000210101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1326
+Estimated Gas Usage: 19336 - 228506
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:507
+
+farmToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000010, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000210101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1574
+Estimated Gas Usage: 12696 - 152268
+Read of persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:509
+
+farmToken
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [ATTACKER], function: setVaults(address[]), txdata: 0x57efaf5a000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000018080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1768
+Estimated Gas Usage: 6056 - 76030
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:509
+
+farmToken.transfer(msg.sender, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 0000000000000000000000000820010101010101010202000001020101010000000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1768
+Estimated Gas Usage: 6056 - 76030
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:509
+
+farmToken.transfer(msg.sender, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Low
+Contract: HardWorkHelper
+Function name: doHardWork()
+PC address: 1768
+Estimated Gas Usage: 12696 - 152268
+Write to persistent state following external call
+The contract account state is accessed after an external call to a fixed address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:509
+
+farmToken.transfer(msg.sender, balance)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [ATTACKER], function: setVaults(address[]), txdata: 0x57efaf5a000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000018080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [SOMEGUY], function: doHardWork(), txdata: 0x4fa5d854, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: HardWorkHelper
+Function name: setVaults(address[])
+PC address: 2079
+Estimated Gas Usage: 3082 - 40751
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:274
+
+require(store.isGovernance(msg.sender), "Not governance")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000040001088, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: HardWorkHelper
+Function name: setVaults(address[])
+PC address: 2242
+Estimated Gas Usage: 12439 - 70533
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:461
+
+vaults[i]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x100000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000008, value: 0x0
+Caller: [ATTACKER], function: setVaults(address[]), txdata: 0x57efaf5a000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000018080808080808080808080808080808080808080808080808080808080808080, value: 0x0
+Caller: [SOMEGUY], function: setVaults(address[]), txdata: 0x57efaf5a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: HardWorkHelper
+Function name: vaults(uint256)
+PC address: 2688
+Estimated Gas Usage: 1123 - 1218
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:433
+
+address[] public vaults
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x804000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000002, value: 0x0
+Caller: [ATTACKER], function: vaults(uint256), txdata: 0x8c64ea4a0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: HardWorkHelper
+Function name: setStorage(address)
+PC address: 2987
+Estimated Gas Usage: 2732 - 37719
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./contracts/loops7/0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol:274
+
+require(store.isGovernance(msg.sender), "Not governance")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 00000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: setStorage(address), txdata: 0x9137c1a70000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xa9acab4910dca42895afa62b39fb8c2304da7f96.sol
+Tool Runtime = 589.7834341679991 seconds
+#############################################

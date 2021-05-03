@@ -1,0 +1,252 @@
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: NFYStaking
+Function name: pendingRewards(uint256)
+PC address: 12571
+Estimated Gas Usage: 1987 - 2272
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:630
+
+block.number > lastRewardBlock && totalStaked != 0
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: pendingRewards(uint256), txdata: 0x7dcb2abf0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: NFYStaking
+Function name: pendingRewards(uint256)
+PC address: 12585
+Estimated Gas Usage: 2004 - 2289
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:630
+
+if (block.number > lastRewardBlock && totalStaked != 0) {
+            uint256 blocksToReward = block.number.sub(lastRewardBlock);
+            uint256 nfyReward = blocksToReward.mul(getRewardPerBlock());
+            _accNfyPerShare = _accNfyPerShare.add(nfyReward.mul(1e18).div(totalStaked));
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: pendingRewards(uint256), txdata: 0x7dcb2abf0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: NFYStaking
+Function name: addStakeholderExternal(address)
+PC address: 14776
+Estimated Gas Usage: 20396 - 168185
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:727
+
+staking.call(abi.encodeWithSignature("mint(address)", _stakeholder))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfd0100010101000100010001000000000100010010fdfdfdfdfdfdfdfdfdfdfdfd0000000000000001000000000000000000000000fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: addPlatformAddress(address), txdata: 0xfd5e0fe2000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: addStakeholderExternal(address), txdata: 0x9ca152f10f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFYStaking
+Function name: addStakeholderExternal(address)
+PC address: 14968
+Estimated Gas Usage: 20396 - 168185
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:729
+
+StakingNFT
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfd0000000000000000010001000000010000010101fdfdfdfdfdfdfdfdfdfdfdfd0101000101000000010000010101000100000000fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: addPlatformAddress(address), txdata: 0xfd5e0fe2000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: addStakeholderExternal(address), txdata: 0x9ca152f10f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: NFYStaking
+Function name: addStakeholderExternal(address)
+PC address: 15159
+Estimated Gas Usage: 20396 - 168185
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:729
+
+StakingNFT.nftTokenId(_msgSender())
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addPlatformAddress(address), txdata: 0xfd5e0fe2000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: addStakeholderExternal(address), txdata: 0x9ca152f10f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFYStaking
+Function name: addStakeholderExternal(address)
+PC address: 15293
+Estimated Gas Usage: 20396 - 168185
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:729
+
+NFTDetails[StakingNFT.nftTokenId(_msgSender())]._addressOfMinter = _stakeholder
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfd0000000000000000010001000000010000010101fdfdfdfdfdfdfdfdfdfdfdfd0101000101000000010000010101000100000000fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: addPlatformAddress(address), txdata: 0xfd5e0fe2000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: addStakeholderExternal(address), txdata: 0x9ca152f10f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFYStaking
+Function name: addStakeholderExternal(address)
+PC address: 15578
+Estimated Gas Usage: 20396 - 168185
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:730
+
+NFTDetails[StakingNFT.nftTokenId(_msgSender())]._inCirculation = true
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfd0000000000000000010001000000010000010101fdfdfdfdfdfdfdfdfdfdfdfd0101000101000000010000010101000100000000fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: addPlatformAddress(address), txdata: 0xfd5e0fe2000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: addStakeholderExternal(address), txdata: 0x9ca152f10f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: NFYStaking
+Function name: addStakeholderExternal(address)
+PC address: 15592
+Estimated Gas Usage: 20396 - 168185
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:730
+
+NFTDetails[StakingNFT.nftTokenId(_msgSender())]._inCirculation = true
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: fdfdfdfdfdfdfdfdfdfdfdfd0000000000000000010001000000010000010101fdfdfdfdfdfdfdfdfdfdfdfd0101000101000000010000010101000100000000fdfdfdfdfdfdfdfdfdfdfdfddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: addPlatformAddress(address), txdata: 0xfd5e0fe2000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: addStakeholderExternal(address), txdata: 0x9ca152f10f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 120
+Severity: Low
+Contract: NFYStaking
+Function name: updatePool()
+PC address: 16194
+Estimated Gas Usage: 1001 - 1096
+A control flow decision is made based on The block.number environment variable.
+The block.number environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_loop/8/0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol:665
+
+if (block.number <= lastRewardBlock) {
+            return;
+        }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2040080402024c90, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: updatePool(), txdata: 0xe3161ddd, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x9f18363ff3ab60fdf7dcaca8564a48ea0790b9b3.sol
+Tool Runtime = 1565.4771632189804 seconds
+#############################################

@@ -1,0 +1,166 @@
+Compilation warnings/errors on ./loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol:
+./loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol:426:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+
+INFO:Detectors:[93m
+LiquidityMining._unstake(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#661-752) performs a multiplication on the result of a division:
+	-stakingSharesToBurn = totalStakingShares.mul(amount).div(totalStaked()) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#670-672)
+	-sharesLeftToBurn = stakingSharesToBurn (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#680)
+	-newStakingShareSecondsToBurn = sharesLeftToBurn.mul(stakeTimeSec) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#704)
+LiquidityMining.computeNewReward(uint256,uint256,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#768-787) performs a multiplication on the result of a division:
+	-newRewardTokens = totalUnlocked().mul(stakingShareSeconds).div(_totalStakingShareSeconds) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#773-775)
+	-bonusedReward = startBonus.add(oneHundredPct.sub(startBonus).mul(stakeTimeSec).div(bonusPeriodSec)).mul(newRewardTokens).div(oneHundredPct) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#782-785)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+Reentrancy in LiquidityMining._stakeFor(address,address,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#597-640):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#617)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	State variables written after the call(s):
+	- _userTotals[beneficiary].stakingShares = _userTotals[beneficiary].stakingShares.add(mintedStakingShares) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#620-622)
+	- _userTotals[beneficiary].lastAccountingTimestampSec = now (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#623)
+	- totalStakingShares = totalStakingShares.add(mintedStakingShares) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#629)
+Reentrancy in LiquidityMining._unstake(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#661-752):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#662)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	State variables written after the call(s):
+	- _totalStakingShareSeconds = _totalStakingShareSeconds.sub(stakingShareSecondsToBurn) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#727-729)
+	- _userTotals[msg.sender].stakingShareSeconds = _userTotals[msg.sender].stakingShareSeconds.sub(stakingShareSecondsToBurn) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#717-719)
+	- _userTotals[msg.sender].stakingShares = _userTotals[msg.sender].stakingShares.sub(stakingSharesToBurn) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#720-722)
+	- totalStakingShares = totalStakingShares.sub(stakingSharesToBurn) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#730)
+Reentrancy in LiquidityMining.lockTokens(uint256,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#911-943):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#918)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	State variables written after the call(s):
+	- totalLockedShares = totalLockedShares.add(mintedLockedShares) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#932)
+	- unlockSchedules.push(schedule) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#930)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+LiquidityMining.lockTokens(uint256,uint256).schedule (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#925) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+Reentrancy in LiquidityMining._stakeFor(address,address,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#597-640):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#617)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	State variables written after the call(s):
+	- _userStakes[beneficiary].push(newStake) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#626)
+Reentrancy in LiquidityMining._unstake(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#661-752):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#662)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	State variables written after the call(s):
+	- _userStakes[msg.sender].length -- (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#701)
+	- lastStake.stakingShares = lastStake.stakingShares.sub(sharesLeftToBurn) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#713)
+Reentrancy in LiquidityMining.updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#836-881):
+	External calls:
+	- unlockTokens() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#847)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	State variables written after the call(s):
+	- _lastAccountingTimestampSec = now (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#856)
+	- _totalStakingShareSeconds = _totalStakingShareSeconds.add(newStakingShareSeconds) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#853-855)
+	- _userTotals[msg.sender].stakingShareSeconds = _userTotals[msg.sender].stakingShareSeconds.add(newUserStakingShareSeconds) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#862-864)
+	- _userTotals[msg.sender].lastAccountingTimestampSec = now (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#865)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in LiquidityMining._stakeFor(address,address,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#597-640):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#617)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	- require(bool,string)(_stakingPool.token().transferFrom(staker,address(_stakingPool),amount),TokenGeyser: transfer into staking pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#634-637)
+	Event emitted after the call(s):
+	- Staked(beneficiary,amount,totalStakedFor(beneficiary),) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#639)
+Reentrancy in LiquidityMining._unstake(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#661-752):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#662)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	- require(bool,string)(_stakingPool.transfer(msg.sender,amount),TokenGeyser: transfer out of staking pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#735-738)
+	- require(bool,string)(_unlockedPool.transfer(msg.sender,rewardAmount),TokenGeyser: transfer out of unlocked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#739-742)
+	Event emitted after the call(s):
+	- TokensClaimed(msg.sender,rewardAmount) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#745)
+	- Unstaked(msg.sender,amount,totalStakedFor(msg.sender),) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#744)
+Reentrancy in LiquidityMining.lockTokens(uint256,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#911-943):
+	External calls:
+	- updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#918)
+		- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	- require(bool,string)(_lockedPool.token().transferFrom(msg.sender,address(_lockedPool),amount),TokenGeyser: transfer into locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#934-941)
+	Event emitted after the call(s):
+	- TokensLocked(amount,durationSec,totalLocked()) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#942)
+Reentrancy in LiquidityMining.unlockTokens() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#950-974):
+	External calls:
+	- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+	Event emitted after the call(s):
+	- TokensUnlocked(unlockedTokens,totalLocked()) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#970)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+LiquidityMining._unstake(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#661-752) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(_unlockedPool.transfer(msg.sender,rewardAmount),TokenGeyser: transfer out of unlocked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#739-742)
+LiquidityMining.computeNewReward(uint256,uint256,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#768-787) uses timestamp for comparisons
+	Dangerous comparisons:
+	- stakeTimeSec >= bonusPeriodSec (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#777)
+LiquidityMining.updateAccounting() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#836-881) uses timestamp for comparisons
+	Dangerous comparisons:
+	- (_totalStakingShareSeconds > 0) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#867-871)
+LiquidityMining.lockTokens(uint256,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#911-943) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(unlockSchedules.length < _maxUnlockSchedules,TokenGeyser: reached maximum unlock schedules) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#912-915)
+LiquidityMining.unlockTokens() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#950-974) uses timestamp for comparisons
+	Dangerous comparisons:
+	- totalLockedShares == 0 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#954)
+	- unlockedTokens > 0 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#965)
+	- require(bool,string)(_lockedPool.transfer(address(_unlockedPool),unlockedTokens),TokenGeyser: transfer out of locked pool failed) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#966-969)
+LiquidityMining.unlockScheduleShares(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#983-1007) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now >= schedule.endAtSec (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#992)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#218-227) uses assembly
+	- INLINE ASM (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#225-226)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#8) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#119) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#202) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#233) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#311) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#390) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#424) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#286-305):
+	- (success,returndata) = address(token).call(data) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#298)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+owner() should be declared external:
+	- Ownable.owner() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#338-340)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#364-367)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#373-375)
+balance() should be declared external:
+	- TokenPool.balance() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#406-408)
+getDistributionToken() should be declared external:
+	- LiquidityMining.getDistributionToken() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#572-575)
+unstakeQuery(uint256) should be declared external:
+	- LiquidityMining.unstakeQuery(uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#651-653)
+totalShares() should be declared external:
+	- LiquidityMining.totalShares() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#802-804)
+userStakingShares(address) should be declared external:
+	- LiquidityMining.userStakingShares(address) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#806-808)
+unlockScheduleCount() should be declared external:
+	- LiquidityMining.unlockScheduleCount() (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#900-902)
+rescueFundsFromStakingPool(address,address,uint256) should be declared external:
+	- LiquidityMining.rescueFundsFromStakingPool(address,address,uint256) (loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol#1016-1022)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol analyzed (7 contracts with 46 detectors), 39 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0xf3c6586e56c0c595749b8b75ac2a888d20bb48da.sol
+Tool Runtime = 1.4719520100006775 seconds
+#############################################

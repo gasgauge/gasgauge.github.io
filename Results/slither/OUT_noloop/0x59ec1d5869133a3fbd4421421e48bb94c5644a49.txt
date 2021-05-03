@@ -1,0 +1,154 @@
+Compilation warnings/errors on ./noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol:
+./noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol:676:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+./noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol:144:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+yUniswap_ETH_USDT_LP.unstake(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#839-848) performs a multiplication on the result of a division:
+	-_amount = (pool.mul(_shares)).div(totalSupply()) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#842)
+	-_amount = _amount.sub(_amount.mul(fee(msg.sender)).div(1000)) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#844)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+yUniswap_ETH_USDT_LP.constructor() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#815-818) ignores return value by S.approve(miner,uint256(- 1)) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#817)
+yUniswap_ETH_USDT_LP.stake(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#831-837) ignores return value by S.transferFrom(msg.sender,address(this),_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#833)
+yUniswap_ETH_USDT_LP.unstake(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#839-848) ignores return value by S.transfer(msg.sender,_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#847)
+yUniswap_ETH_USDT_LP.set_UNIMINT(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#875-878) ignores return value by WETH.approve(unimint,uint256(- 1)) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#877)
+yUniswap_ETH_USDT_LP.withdraw_S() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#944-946) ignores return value by S.transfer(owner(),S.balanceOf(address(this))) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#945)
+yUniswap_ETH_USDT_LP.withdraw_T() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#947-949) ignores return value by T.transfer(owner(),T.balanceOf(address(this))) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#948)
+yUniswap_ETH_USDT_LP.harvest_beta() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#950-953) ignores return value by T.transfer(owner(),T.balanceOf(address(this))) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#952)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20.constructor(string,string).name (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#420) shadows:
+	- ERC20.name() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#429-431) (function)
+	- IERC20.name() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#18) (function)
+ERC20.constructor(string,string).symbol (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#420) shadows:
+	- ERC20.symbol() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#437-439) (function)
+	- IERC20.symbol() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#24) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in yUniswap_ETH_USDT_LP.harvest_and_mint() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#912-924):
+	External calls:
+	- IStakingRewards(miner).getReward() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#913)
+	- T.safeApprove(uniswap,0) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#916)
+	- T.safeApprove(uniswap,t) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#917)
+	- IUniswap(uniswap).swapExactTokensForTokens(t,uint256(0),path,address(this),now.add(1800)) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#921)
+	- IUnimint(unimint).depositAndClaim(path[1],USDT,WETH.balanceOf(address(this)),0) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#922)
+	State variables written after the call(s):
+	- recycle() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#923)
+		- pool = pool.add(_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#852)
+Reentrancy in yUniswap_ETH_USDT_LP.harvest_to_uniswap() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#898-910):
+	External calls:
+	- IStakingRewards(miner).getReward() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#899)
+	- T.safeApprove(uniswap,0) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#902)
+	- T.safeApprove(uniswap,t) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#903)
+	- IUniswap(uniswap).swapExactTokensForTokens(t,uint256(0),path,address(this),now.add(1800)) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#908)
+	State variables written after the call(s):
+	- recycle() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#909)
+		- pool = pool.add(_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#852)
+Reentrancy in yUniswap_ETH_USDT_LP.stake(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#831-837):
+	External calls:
+	- S.transferFrom(msg.sender,address(this),_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#833)
+	State variables written after the call(s):
+	- _mint(msg.sender,shares) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#836)
+		- _balances[account] = _balances[account].add(amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#598)
+	- _mint(msg.sender,shares) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#836)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#597)
+	- pool = pool.add(_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#836)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in yUniswap_ETH_USDT_LP.stake(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#831-837):
+	External calls:
+	- S.transferFrom(msg.sender,address(this),_amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#833)
+	Event emitted after the call(s):
+	- Transfer(address(0),account,amount) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#599)
+		- _mint(msg.sender,shares) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#836)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#137-146) uses assembly
+	- INLINE ASM (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#144-145)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+yUniswap_ETH_USDT_LP.onlyAlpha() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#930-933) compares to a boolean constant:
+	-require(bool,string)(alpha == true,only alpha) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#931)
+yUniswap_ETH_USDT_LP.onlyBeta() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#934-937) compares to a boolean constant:
+	-require(bool,string)(beta == true,only beta) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#935)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#boolean-equality[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#674) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#164-170):
+	- (success) = recipient.call.value(amount)() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#168)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#763-774):
+	- (success,returndata) = address(token).call(data) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#767)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Contract yUniswap_ETH_USDT_LP (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#785-954) is not in CapWords
+Parameter yUniswap_ETH_USDT_LP.stake(uint256)._amount (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#831) is not in mixedCase
+Parameter yUniswap_ETH_USDT_LP.unstake(uint256)._shares (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#839) is not in mixedCase
+Parameter yUniswap_ETH_USDT_LP.profit(uint256)._amount (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#850) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.change_y3d_threhold(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#860-862) is not in mixedCase
+Parameter yUniswap_ETH_USDT_LP.change_y3d_threhold(uint256)._y3d_threhold (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#860) is not in mixedCase
+Parameter yUniswap_ETH_USDT_LP.setFees(address,uint8)._fee (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#863) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.set_UNISWAP_1(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#866-868) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.set_UNISWAP_2(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#869-871) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.set_UNISWAP_3(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#872-874) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.set_UNIMINT(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#875-878) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.deposit_S(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#880-882) is not in mixedCase
+Parameter yUniswap_ETH_USDT_LP.withdraw(uint256)._amount (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#894) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.harvest_to_uniswap() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#898-910) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.harvest_and_mint() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#912-924) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.withdraw_S() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#944-946) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.withdraw_T() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#947-949) is not in mixedCase
+Function yUniswap_ETH_USDT_LP.harvest_beta() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#950-953) is not in mixedCase
+Constant yUniswap_ETH_USDT_LP.y3d (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#798) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant yUniswap_ETH_USDT_LP.miner (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#802) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant yUniswap_ETH_USDT_LP.uniswap (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#803) is not in UPPER_CASE_WITH_UNDERSCORES
+Variable yUniswap_ETH_USDT_LP.UNISWAP_1 (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#806) is not in mixedCase
+Variable yUniswap_ETH_USDT_LP.UNISWAP_2 (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#807) is not in mixedCase
+Variable yUniswap_ETH_USDT_LP.UNISWAP_3 (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#808) is not in mixedCase
+Variable yUniswap_ETH_USDT_LP.y3d_threhold (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#812) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+name() should be declared external:
+	- ERC20.name() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#429-431)
+symbol() should be declared external:
+	- ERC20.symbol() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#437-439)
+decimals() should be declared external:
+	- ERC20.decimals() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#454-456)
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#468-470)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#480-483)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#488-490)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#499-502)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#516-520)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#534-537)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#553-556)
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#721-724)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#725-727)
+stake(uint256) should be declared external:
+	- yUniswap_ETH_USDT_LP.stake(uint256) (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#831-837)
+endAlpha() should be declared external:
+	- yUniswap_ETH_USDT_LP.endAlpha() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#938-940)
+endBeta() should be declared external:
+	- yUniswap_ETH_USDT_LP.endBeta() (noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol#941-943)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol analyzed (12 contracts with 46 detectors), 61 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x59ec1d5869133a3fbd4421421e48bb94c5644a49.sol
+Tool Runtime = 1.8638366019986279 seconds
+#############################################

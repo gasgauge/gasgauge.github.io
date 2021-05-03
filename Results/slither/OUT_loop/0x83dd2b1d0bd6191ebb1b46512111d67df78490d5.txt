@@ -1,0 +1,131 @@
+INFO:Detectors:[93m
+StockLiquiditator.burnPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1424-1500) performs a multiplication on the result of a division:
+	-cashToRedeem = ((poolTokenAmount.mul(poolToCashRate)).div(1e18)) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1434-1438)
+	-outputStockToken = ((cashToRedeem.mul(stockTokenMultiplier)).div(stockToCashRate)) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1452-1456)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+StockLiquiditator.burnPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1424-1500) uses a dangerous strict equality:
+	- require(bool,string)(balanceAfterTransfer == balanceBeforeTransfer.add(outputCashAmount),Sent & Received Amount mismatched) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1476-1484)
+StockLiquiditator.mintPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1376-1420) uses a dangerous strict equality:
+	- require(bool,string)(balanceAfterTransfer == balanceBeforeTransfer.add(inputCashAmount),Sent & Received Amount mismatched) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1404-1410)
+StockLiquiditator.redeemStockToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1504-1538) uses a dangerous strict equality:
+	- require(bool,string)(balanceAfterTransfer == balanceBeforeTransfer.add(outputCashAmount),Sent & Received Amount mismatched) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1528-1534)
+StockLiquiditator.updatePoolRate() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1352-1372) uses a dangerous strict equality:
+	- totalSupply() == 0 (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1354)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in StockLiquiditator.mintPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1376-1420):
+	External calls:
+	- cash.transferFrom(sender,address(this),inputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1400)
+	State variables written after the call(s):
+	- _mint(sender,poolTokens) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1416)
+		- _totalSupply = _totalSupply.add(amount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#880)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+StockLiquiditator.mintPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1376-1420) ignores return value by cash.transferFrom(sender,address(this),inputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1400)
+StockLiquiditator.burnPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1424-1500) ignores return value by stockToken.transfer(sender,outputStockToken) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1458)
+StockLiquiditator.burnPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1424-1500) ignores return value by stockToken.transfer(sender,outputStockToken) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1466)
+StockLiquiditator.burnPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1424-1500) ignores return value by cash.transfer(sender,outputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1472)
+StockLiquiditator.redeemStockToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1504-1538) ignores return value by stockToken.transferFrom(sender,address(this),stockTokenAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1510)
+StockLiquiditator.redeemStockToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1504-1538) ignores return value by cash.transfer(sender,outputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1524)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#998) shadows:
+	- ERC20Detailed.name() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1022-1026) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1000) shadows:
+	- ERC20Detailed.symbol() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1036-1040) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1002) shadows:
+	- ERC20Detailed.decimals() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1050-1054) (function)
+StockLiquiditator.constructor(address,address,uint256,uint256,string,string,string).stockTokenAddress (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1158) shadows:
+	- StockLiquiditator.stockTokenAddress() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1264-1268) (function)
+StockLiquiditator.constructor(address,address,uint256,uint256,string,string,string).name (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1164) shadows:
+	- ERC20Detailed.name() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1022-1026) (function)
+StockLiquiditator.constructor(address,address,uint256,uint256,string,string,string).symbol (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1166) shadows:
+	- ERC20Detailed.symbol() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1036-1040) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+DeployFactory.getCashBoxesByUser(address) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1647-1699) has external calls inside a loop: cashbox.owner() == account (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1673)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in DeployFactory.createCashBox(address,address,uint256,uint256,string,string,string) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1577-1635):
+	External calls:
+	- cashBox.changeOwner(msg.sender) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1613)
+	State variables written after the call(s):
+	- cashBoxes.push(address(cashBox)) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1617)
+Reentrancy in StockLiquiditator.mintPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1376-1420):
+	External calls:
+	- cash.transferFrom(sender,address(this),inputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1400)
+	State variables written after the call(s):
+	- _mint(sender,poolTokens) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1416)
+		- _balances[account] = _balances[account].add(amount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#882)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in StockLiquiditator.burnPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1424-1500):
+	External calls:
+	- stockToken.transfer(sender,outputStockToken) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1458)
+	- stockToken.transfer(sender,outputStockToken) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1466)
+	- cash.transfer(sender,outputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1472)
+	Event emitted after the call(s):
+	- PoolTokensBurnt(sender,poolTokenAmount,outputStockToken,outputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1488-1498)
+Reentrancy in DeployFactory.createCashBox(address,address,uint256,uint256,string,string,string) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1577-1635):
+	External calls:
+	- cashBox.changeOwner(msg.sender) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1613)
+	Event emitted after the call(s):
+	- CashBoxAdded(address(cashBox),msg.sender,assetTokenAddress,cashTokenAddress,url) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1619-1631)
+Reentrancy in StockLiquiditator.mintPoolToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1376-1420):
+	External calls:
+	- cash.transferFrom(sender,address(this),inputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1400)
+	Event emitted after the call(s):
+	- PoolTokensMinted(sender,inputCashAmount,poolTokens) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1418)
+	- Transfer(address(0),account,amount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#884)
+		- _mint(sender,poolTokens) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1416)
+Reentrancy in StockLiquiditator.redeemStockToken(uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1504-1538):
+	External calls:
+	- stockToken.transferFrom(sender,address(this),stockTokenAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1510)
+	- cash.transfer(sender,outputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1524)
+	Event emitted after the call(s):
+	- StockTokensRedeemed(sender,stockTokenAmount,outputCashAmount) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1536)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#16) uses lesser than
+Pragma version>=0.5<0.7.17 (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1549) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Parameter StockLiquiditator.updateURL(string)._url (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1214) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+balanceOf(address) should be declared external:
+	- ERC20.balanceOf(address) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#552-556)
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#576-582)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#592-604)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#622-628)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#656-686)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#714-734)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#766-792)
+name() should be declared external:
+	- ERC20Detailed.name() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1022-1026)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1036-1040)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1050-1054)
+stockTokenAddress() should be declared external:
+	- StockLiquiditator.stockTokenAddress() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1264-1268)
+createCashBox(address,address,uint256,uint256,string,string,string) should be declared external:
+	- DeployFactory.createCashBox(address,address,uint256,uint256,string,string,string) (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1577-1635)
+getAllCashBoxes() should be declared external:
+	- DeployFactory.getAllCashBoxes() (loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol#1639-1643)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol analyzed (7 contracts with 46 detectors), 42 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x83dd2b1d0bd6191ebb1b46512111d67df78490d5.sol
+Tool Runtime = 1.4110182610020274 seconds
+#############################################

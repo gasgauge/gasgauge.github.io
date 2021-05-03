@@ -1,0 +1,127 @@
+Compilation warnings/errors on ./noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol:
+./noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol:636:25: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+            codehash := extcodehash(account)
+                        ^------------------^
+
+INFO:Detectors:[91m
+Cover_ZapIn_General_V1.withdraw() (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#2016-2024) sends eth to arbitrary user
+	Dangerous calls:
+	- _to.transfer(contractBalance) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#2022)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations[0m
+INFO:Detectors:[93m
+Cover_ZapIn_General_V1.set_new_goodwill(uint16) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1976-1988) contains a tautology or contradiction:
+	- require(bool,string)(_new_goodwill >= 0 && _new_goodwill < 10000,GoodWill Value not allowed) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1978-1984)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#tautology-or-contradiction[0m
+INFO:Detectors:[93m
+Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes).tokenToSend (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1548) is a local variable never initialized
+Cover_ZapIn_General_V1._fillQuote(address,uint256,address,address,bytes).valueToSend (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1840) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables[0m
+INFO:Detectors:[92m
+Reentrancy in Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1504-1636):
+	External calls:
+	- valueToSend = _transferGoodwill(_fromTokenAddress,msg.value) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1554)
+		- (success,returndata) = address(token).call(data) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#960)
+		- IERC20(_tokenContractAddress).safeTransfer(zgoodwillAddress,goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1960-1966)
+	- IERC20(tokenToSend).safeTransferFrom(msg.sender,address(this),_amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1564-1572)
+	- valueToSend = _transferGoodwill(_fromTokenAddress,_amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1574)
+		- (success,returndata) = address(token).call(data) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#960)
+		- IERC20(_tokenContractAddress).safeTransfer(zgoodwillAddress,goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1960-1966)
+	- valueToSend = _fillQuote(tokenToSend,valueToSend,_allowanceTarget,_swapTarget,swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1582-1594)
+		- (success,returndata) = address(token).call(data) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#960)
+		- fromToken.safeApprove(address(_allowanceTarget),0) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1850)
+		- fromToken.safeApprove(address(_allowanceTarget),_amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1852)
+		- (success) = _swapTarget.call.value(valueToSend)(swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1866)
+	- (claimRec,noClaimRec,claimBpt,noClaimBpt) = _enterPosition(_protocolAddress,valueToSend,_claimBalancerAddress,_noClaimBalancerAddress) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1598-1608)
+		- (success,returndata) = address(token).call(data) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#960)
+		- IERC20(_claim).safeApprove(address(_claimBalancerAddress),claimAmt) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1726)
+		- IERC20(_noClaim).safeApprove(address(_noClaimBalancerAddress),noClaimAmt) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1730-1736)
+		- claimBptRec = balancerClaim.joinswapExternAmountIn(_claim,claimAmt,1) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1740)
+		- noClaimBptRec = balancerNoClaim.joinswapExternAmountIn(_noClaim,noClaimAmt,1) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1742-1750)
+		- IERC20(collateralAddress).safeApprove(address(_protocolAddress),0) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1786)
+		- IERC20(collateralAddress).safeApprove(address(_protocolAddress),amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1788-1794)
+		- success = protocol.addCover(collateralAddress,timestamp,amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1798)
+	- IERC20(_claimBalancerAddress).safeTransfer(msg.sender,claimBpt) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1612)
+	- IERC20(_noClaimBalancerAddress).safeTransfer(msg.sender,noClaimBpt) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1616)
+	External calls sending eth:
+	- valueToSend = _transferGoodwill(_fromTokenAddress,msg.value) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1554)
+		- zgoodwillAddress.transfer(goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1956)
+	- valueToSend = _transferGoodwill(_fromTokenAddress,_amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1574)
+		- zgoodwillAddress.transfer(goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1956)
+	- valueToSend = _fillQuote(tokenToSend,valueToSend,_allowanceTarget,_swapTarget,swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1582-1594)
+		- (success) = _swapTarget.call.value(valueToSend)(swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1866)
+	Event emitted after the call(s):
+	- Zapin(msg.sender,_protocolAddress,claimRec,noClaimRec,claimBpt,noClaimBpt) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1620-1634)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#614-642) uses assembly
+	- INLINE ASM (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#634-640)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#58) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#710-734):
+	- (success) = recipient.call.value(amount)() (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#724)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#936-982):
+	- (success,returndata) = address(token).call(data) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#960)
+Low level call in Cover_ZapIn_General_V1._fillQuote(address,uint256,address,address,bytes) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1826-1882):
+	- (success) = _swapTarget.call.value(valueToSend)(swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1866)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Variable Ownable._owner (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1162) is not in mixedCase
+Contract Cover_ZapIn_General_V1 (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1392-2026) is not in CapWords
+Function Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1504-1636) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._fromTokenAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1506) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._protocolAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1508) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._claimBalancerAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1510) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._noClaimBalancerAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1512) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._amount (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1514) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._allowanceTarget (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1516) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes)._swapTarget (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1518) is not in mixedCase
+Function Cover_ZapIn_General_V1.set_new_goodwill(uint16) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1976-1988) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.set_new_goodwill(uint16)._new_goodwill (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1976) is not in mixedCase
+Parameter Cover_ZapIn_General_V1.inCaseTokengetsStuck(address)._tokenAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1992) is not in mixedCase
+Constant Cover_ZapIn_General_V1.zgoodwillAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1408-1410) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Cover_ZapIn_General_V1.collateralAddress (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1414-1416) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Cover_ZapIn_General_V1.coverFactory (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1420-1424) is not in UPPER_CASE_WITH_UNDERSCORES
+Constant Cover_ZapIn_General_V1.BalancerFactory (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1428-1432) is not in UPPER_CASE_WITH_UNDERSCORES
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Reentrancy in Cover_ZapIn_General_V1.ZapIn(address,address,address,address,uint256,address,address,bytes) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1504-1636):
+	External calls:
+	- valueToSend = _transferGoodwill(_fromTokenAddress,msg.value) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1554)
+		- zgoodwillAddress.transfer(goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1956)
+	- valueToSend = _transferGoodwill(_fromTokenAddress,_amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1574)
+		- zgoodwillAddress.transfer(goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1956)
+	External calls sending eth:
+	- valueToSend = _transferGoodwill(_fromTokenAddress,msg.value) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1554)
+		- zgoodwillAddress.transfer(goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1956)
+	- valueToSend = _transferGoodwill(_fromTokenAddress,_amount) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1574)
+		- zgoodwillAddress.transfer(goodwillPortion) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1956)
+	- valueToSend = _fillQuote(tokenToSend,valueToSend,_allowanceTarget,_swapTarget,swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1582-1594)
+		- (success) = _swapTarget.call.value(valueToSend)(swapData) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1866)
+	Event emitted after the call(s):
+	- Zapin(msg.sender,_protocolAddress,claimRec,noClaimRec,claimBpt,noClaimBpt) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1620-1634)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4[0m
+INFO:Detectors:[92m
+renounceOwnership() should be declared external:
+	- Ownable.renounceOwnership() (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1252-1258)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1270-1274)
+set_new_goodwill(uint16) should be declared external:
+	- Cover_ZapIn_General_V1.set_new_goodwill(uint16) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1976-1988)
+inCaseTokengetsStuck(address) should be declared external:
+	- Cover_ZapIn_General_V1.inCaseTokengetsStuck(address) (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#1992-2000)
+toggleContractActive() should be declared external:
+	- Cover_ZapIn_General_V1.toggleContractActive() (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#2006-2010)
+withdraw() should be declared external:
+	- Cover_ZapIn_General_V1.withdraw() (noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol#2016-2024)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol analyzed (13 contracts with 46 detectors), 35 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x9e13628766e81f2ecada1e4489b5177984c3ece6.sol
+Tool Runtime = 1.3371790919991327 seconds
+#############################################

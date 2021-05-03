@@ -1,0 +1,269 @@
+==== Integer Arithmetic Bugs ====
+SWC ID: 101
+Severity: High
+Contract: ENFORCEDTRIBUTE
+Function name: constructor
+PC address: 28
+Estimated Gas Usage: 89149 - 304580
+The arithmetic operator can underflow.
+It is possible to cause an integer overflow or underflow in the arithmetic operation. 
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:60
+
+now-1
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ENFORCEDTRIBUTE2
+Function name: swap()
+PC address: 818
+Estimated Gas Usage: 9375 - 114806
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:37
+
+s1.toSend()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20040, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 1919191919191919191919191919191919191919191919191919191919191919191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ENFORCEDTRIBUTE2
+Function name: swap()
+PC address: 1015
+Estimated Gas Usage: 9375 - 114806
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:37
+
+token.transfer(address(s1),min(token.balanceOf(address(this)),s1.toSend()))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xa0d22, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ENFORCEDTRIBUTE2
+Function name: swap()
+PC address: 1015
+Estimated Gas Usage: 9375 - 114806
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:37
+
+token.transfer(address(s1),min(token.balanceOf(address(this)),s1.toSend()))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40e3a, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x40000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 1919191919191919191919191919191919191919191919191919191919191919191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: ENFORCEDTRIBUTE
+Function name: swap()
+PC address: 1077
+Estimated Gas Usage: 1046 - 1141
+A control flow decision is made based on The block.timestamp environment variable.
+The block.timestamp environment variable is used to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables as sources of randomness and be aware that use of these variables introduces a certain level of trust into miners.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:80
+
+require(now>nextSwap,"must wait for next swap time")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: ENFORCEDTRIBUTE
+Function name: swap()
+PC address: 1742
+Estimated Gas Usage: 23663 - 134957
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:86
+
+token.transfer(address(s2),min(token.balanceOf(address(this)),toSend))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x800000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: changeToSend(uint256), txdata: 0x82d07ce5f0a082310000000000000000000000000901d12ebe1b195e5aa8748e62bd7735, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ENFORCEDTRIBUTE
+Function name: swap()
+PC address: 1742
+Estimated Gas Usage: 23653 - 134947
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:86
+
+token.transfer(address(s2),min(token.balanceOf(address(this)),toSend))
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x204000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ENFORCEDTRIBUTE
+Function name: swap()
+PC address: 1968
+Estimated Gas Usage: 23653 - 134947
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:91
+
+swapHere
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x10000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: changeToSend(uint256), txdata: 0x82d07ce500a082310000000000000000000000000901d12ebe1b195e5aa8748e62bd7735, value: 0x0
+Caller: [ATTACKER], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ENFORCEDTRIBUTE
+Function name: swap()
+PC address: 1989
+Estimated Gas Usage: 23653 - 134947
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:91
+
+swapHere=!swapHere
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x401c10c0100020000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: swap(), txdata: 0x8119c065, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ENFORCEDTRIBUTE
+Function name: swap()
+PC address: 2003
+Estimated Gas Usage: 23653 - 134947
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/7/0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol:91
+
+swapHere=!swapHere
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x401c10c0100020000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 191919191919191919191919deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: swap(), txdata: 0x8119c065, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x6168F02A691Afe7caba520d4df18665e9c780CC6.sol
+Tool Runtime = 248.58905078598764 seconds
+#############################################

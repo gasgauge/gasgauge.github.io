@@ -1,0 +1,195 @@
+Compilation warnings/errors on ./noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol:
+./noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol:160:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369) performs a multiplication on the result of a division:
+	-_value = LINK.getPriceUSD(token).mul(amount).div(uint256(10) ** ERC20Detailed(token).decimals()) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#340)
+	-_credit = _value.mul(utilization(token)).div(BASE) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#362)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply[0m
+INFO:Detectors:[93m
+StableCreditProtocol._utilization(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#441-448) uses a dangerous strict equality:
+	- _ratio == 0 (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#444)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities[0m
+INFO:Detectors:[93m
+Reentrancy in StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369):
+	External calls:
+	- _pair = UniswapFactory(UNI.factory()).createPair(token,address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#345)
+	- IERC20(token).safeTransferFrom(msg.sender,_pair,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#348)
+	- UniswapPair(_pair).mint(address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#352)
+	State variables written after the call(s):
+	- _mint(msg.sender,_credit) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#364)
+		- _balances[account] = _balances[account].add(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#77)
+	- _mint(msg.sender,_credit) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#364)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#76)
+Reentrancy in StableCreditProtocol._withdraw(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#380-429):
+	External calls:
+	- IERC20(_pair).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#397)
+	- IERC20(_pair).safeApprove(address(UNI),_uni) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#398)
+	- UNI.removeLiquidity(token,address(this),_uni,0,0,address(this),now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#400-408)
+	State variables written after the call(s):
+	- _burn(address(this),_valueA) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#421)
+		- _balances[account] = _balances[account].sub(amount,ERC20: burn amount exceeds balance) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#83)
+	- _burn(address(this),_valueA) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#421)
+		- _totalSupply = _totalSupply.sub(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#84)
+Reentrancy in StableCreditProtocol._withdraw(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#380-429):
+	External calls:
+	- IERC20(_pair).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#397)
+	- IERC20(_pair).safeApprove(address(UNI),_uni) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#398)
+	- UNI.removeLiquidity(token,address(this),_uni,0,0,address(this),now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#400-408)
+	- IERC20(token).safeTransfer(msg.sender,_amountA) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#423)
+	State variables written after the call(s):
+	- _transfer(address(this),msg.sender,_left) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#426)
+		- _balances[sender] = _balances[sender].sub(amount,ERC20: transfer amount exceeds balance) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#69)
+		- _balances[recipient] = _balances[recipient].add(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#70)
+Reentrancy in StableCreditProtocol.borrowExactOut(address,uint256,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#267-281):
+	External calls:
+	- IERC20(this).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#270)
+	- IERC20(this).safeApprove(address(UNI),inMax) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#271)
+	- _amounts = UNI.swapTokensForExactTokens(outExact,inMax,_path,msg.sender,now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#277)
+	State variables written after the call(s):
+	- _transfer(address(this),msg.sender,balanceOf(address(this))) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#278)
+		- _balances[sender] = _balances[sender].sub(amount,ERC20: transfer amount exceeds balance) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#69)
+		- _balances[recipient] = _balances[recipient].add(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#70)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[93m
+StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369) ignores return value by UniswapPair(_pair).mint(address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#352)
+StableCreditProtocol._withdraw(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#380-429) ignores return value by UNI.removeLiquidity(token,address(this),_uni,0,0,address(this),now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#400-408)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return[0m
+INFO:Detectors:[92m
+ERC20Detailed.constructor(string,string,uint8).name (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#101) shadows:
+	- ERC20Detailed.name() (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#106-108) (function)
+ERC20Detailed.constructor(string,string,uint8).symbol (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#101) shadows:
+	- ERC20Detailed.symbol() (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#109-111) (function)
+ERC20Detailed.constructor(string,string,uint8).decimals (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#101) shadows:
+	- ERC20Detailed.decimals() (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#112-114) (function)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-variable-shadowing[0m
+INFO:Detectors:[92m
+Reentrancy in StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369):
+	External calls:
+	- _pair = UniswapFactory(UNI.factory()).createPair(token,address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#345)
+	- IERC20(token).safeTransferFrom(msg.sender,_pair,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#348)
+	State variables written after the call(s):
+	- _mint(_pair,_value) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#349)
+		- _balances[account] = _balances[account].add(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#77)
+	- _mint(_pair,_value) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#349)
+		- _totalSupply = _totalSupply.add(amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#76)
+Reentrancy in StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369):
+	External calls:
+	- _pair = UniswapFactory(UNI.factory()).createPair(token,address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#345)
+	- IERC20(token).safeTransferFrom(msg.sender,_pair,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#348)
+	- UniswapPair(_pair).mint(address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#352)
+	State variables written after the call(s):
+	- balances[msg.sender][token] = balances[msg.sender][token].add(_after.sub(_before)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#357)
+	- credit[msg.sender][token] = credit[msg.sender][token].add(_credit) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#363)
+	- markets[msg.sender].push(token) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#367)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369):
+	External calls:
+	- _pair = UniswapFactory(UNI.factory()).createPair(token,address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#345)
+	- IERC20(token).safeTransferFrom(msg.sender,_pair,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#348)
+	Event emitted after the call(s):
+	- Transfer(address(0),account,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#78)
+		- _mint(_pair,_value) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#349)
+Reentrancy in StableCreditProtocol._deposit(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#339-369):
+	External calls:
+	- _pair = UniswapFactory(UNI.factory()).createPair(token,address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#345)
+	- IERC20(token).safeTransferFrom(msg.sender,_pair,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#348)
+	- UniswapPair(_pair).mint(address(this)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#352)
+	Event emitted after the call(s):
+	- Deposit(msg.sender,token,_credit,amount,_value) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#368)
+	- Transfer(address(0),account,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#78)
+		- _mint(msg.sender,_credit) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#364)
+Reentrancy in StableCreditProtocol._withdraw(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#380-429):
+	External calls:
+	- IERC20(_pair).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#397)
+	- IERC20(_pair).safeApprove(address(UNI),_uni) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#398)
+	- UNI.removeLiquidity(token,address(this),_uni,0,0,address(this),now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#400-408)
+	Event emitted after the call(s):
+	- Transfer(account,address(0),amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#85)
+		- _burn(address(this),_valueA) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#421)
+Reentrancy in StableCreditProtocol._withdraw(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#380-429):
+	External calls:
+	- IERC20(_pair).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#397)
+	- IERC20(_pair).safeApprove(address(UNI),_uni) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#398)
+	- UNI.removeLiquidity(token,address(this),_uni,0,0,address(this),now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#400-408)
+	- IERC20(token).safeTransfer(msg.sender,_amountA) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#423)
+	Event emitted after the call(s):
+	- Transfer(sender,recipient,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#71)
+		- _transfer(address(this),msg.sender,_left) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#426)
+	- Withdraw(msg.sender,token,amount,_left,_amountA) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#428)
+Reentrancy in StableCreditProtocol.borrowExactIn(address,uint256,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#284-297):
+	External calls:
+	- IERC20(this).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#287)
+	- IERC20(this).safeApprove(address(UNI),inExact) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#288)
+	- _amounts = UNI.swapExactTokensForTokens(inExact,outMin,_path,msg.sender,now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#294)
+	Event emitted after the call(s):
+	- Borrow(msg.sender,token,_amounts[0],_amounts[1]) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#296)
+Reentrancy in StableCreditProtocol.borrowExactOut(address,uint256,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#267-281):
+	External calls:
+	- IERC20(this).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#270)
+	- IERC20(this).safeApprove(address(UNI),inMax) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#271)
+	- _amounts = UNI.swapTokensForExactTokens(outExact,inMax,_path,msg.sender,now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#277)
+	Event emitted after the call(s):
+	- Borrow(msg.sender,token,_amounts[0],_amounts[1]) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#280)
+	- Transfer(sender,recipient,amount) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#71)
+		- _transfer(address(this),msg.sender,balanceOf(address(this))) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#278)
+Reentrancy in StableCreditProtocol.repayExactIn(address,uint256,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#316-328):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),inExact) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#317)
+	- IERC20(this).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#319)
+	- IERC20(this).safeApprove(address(UNI),inExact) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#320)
+	- _amounts = UNI.swapExactTokensForTokens(inExact,outMin,_path,msg.sender,now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#326)
+	Event emitted after the call(s):
+	- Repay(msg.sender,token,_amounts[1],_amounts[0]) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#327)
+Reentrancy in StableCreditProtocol.repayExactOut(address,uint256,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#300-313):
+	External calls:
+	- IERC20(token).safeTransferFrom(msg.sender,address(this),inMax) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#301)
+	- IERC20(token).safeApprove(address(UNI),0) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#303)
+	- IERC20(token).safeApprove(address(UNI),inMax) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#304)
+	- _amounts = UNI.swapTokensForExactTokens(outExact,inMax,_path,msg.sender,now.add(1800)) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#310)
+	- IERC20(token).safeTransfer(msg.sender,IERC20(token).balanceOf(address(this))) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#311)
+	Event emitted after the call(s):
+	- Repay(msg.sender,token,_amounts[1],_amounts[0]) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#312)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#156-162) uses assembly
+	- INLINE ASM (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#160-161)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#5) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#183-194):
+	- (success,returndata) = address(token).call(data) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#187)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+transfer(address,uint256) should be declared external:
+	- ERC20.transfer(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#41-44)
+allowance(address,address) should be declared external:
+	- ERC20.allowance(address,address) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#45-47)
+approve(address,uint256) should be declared external:
+	- ERC20.approve(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#48-51)
+transferFrom(address,address,uint256) should be declared external:
+	- ERC20.transferFrom(address,address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#52-56)
+increaseAllowance(address,uint256) should be declared external:
+	- ERC20.increaseAllowance(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#57-60)
+decreaseAllowance(address,uint256) should be declared external:
+	- ERC20.decreaseAllowance(address,uint256) (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#61-64)
+name() should be declared external:
+	- ERC20Detailed.name() (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#106-108)
+symbol() should be declared external:
+	- ERC20Detailed.symbol() (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#109-111)
+decimals() should be declared external:
+	- ERC20Detailed.decimals() (noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol#112-114)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./noloops/0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol analyzed (12 contracts with 46 detectors), 34 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x1a389c381a8242B7acFf0eB989173Cd5d0EFc3e3.sol
+Tool Runtime = 1.1692727020017628 seconds
+#############################################

@@ -1,0 +1,132 @@
+Compilation warnings/errors on ./loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol:
+./loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol:272:32: Warning: The "extcodehash" instruction is not supported by the VM version "byzantium" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+
+INFO:Detectors:[93m
+Reentrancy in Core.mint(uint256,address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#558-573):
+	External calls:
+	- dusd.mint(account,dusdAmount) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#570)
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#560)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	State variables written after the call(s):
+	- totalAssets = totalAssets.add(usdDelta) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#571)
+Reentrancy in Core.redeem(uint256,address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#581-596):
+	External calls:
+	- dusd.burn(account,dusdAmount) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#593)
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#583)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	State variables written after the call(s):
+	- totalAssets = totalAssets.sub(usd) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#594)
+Reentrancy in Core.rewardDistributionCheckpoint(bool) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#610-631):
+	External calls:
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#613)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	State variables written after the call(s):
+	- (totalAssets,periodIncome,_adminFee) = lastPeriodIncome() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#617)
+Reentrancy in Core.syncSystem() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#602-608):
+	External calls:
+	- _updateFeed() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#606)
+		- IPeak(peaksAddresses[i]).updateFeed(prices) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#811)
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#604)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	State variables written after the call(s):
+	- totalAssets = totalSystemAssets() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#607)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1[0m
+INFO:Detectors:[92m
+Core.totalSystemAssets() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#655-667) has external calls inside a loop: _totalAssets = _totalAssets.add(IPeak(peaksAddresses[i]).portfolioValue()) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#665)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation/#calls-inside-a-loop[0m
+INFO:Detectors:[92m
+Reentrancy in Core.rewardDistributionCheckpoint(bool) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#610-631):
+	External calls:
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#613)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	State variables written after the call(s):
+	- unclaimedRewards = unclaimedRewards.add(periodIncome).add(_adminFee) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#629)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2[0m
+INFO:Detectors:[92m
+Reentrancy in Core.mint(uint256,address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#558-573):
+	External calls:
+	- dusd.mint(account,dusdAmount) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#570)
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#560)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	Event emitted after the call(s):
+	- Mint(account,dusdAmount) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#572)
+Reentrancy in Core.redeem(uint256,address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#581-596):
+	External calls:
+	- dusd.burn(account,dusdAmount) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#593)
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#583)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	Event emitted after the call(s):
+	- Redeem(account,dusdAmount) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#595)
+Reentrancy in Core.syncSystem() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#602-608):
+	External calls:
+	- _updateFeed() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#606)
+		- IPeak(peaksAddresses[i]).updateFeed(prices) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#811)
+	- checkAndNotifyDeficit() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#604)
+		- stakeLPToken.notify(supply.sub(totalAssets)) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#506)
+		- stakeLPToken.notify(0) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#510)
+	Event emitted after the call(s):
+	- FeedUpdated(feed) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#813)
+		- _updateFeed() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#606)
+Reentrancy in Core.whitelistPeak(address,uint256[],bool) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#736-757):
+	External calls:
+	- _updateFeed() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#754)
+		- IPeak(peaksAddresses[i]).updateFeed(prices) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#811)
+	Event emitted after the call(s):
+	- PeakWhitelisted(peak) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#756)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3[0m
+INFO:Detectors:[92m
+Address.isContract(address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#265-274) uses assembly
+	- INLINE ASM (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#272-273)
+Ownable.owner() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#430-435) uses assembly
+	- INLINE ASM (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#432-435)
+Ownable._transferOwnership(address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#453-460) uses assembly
+	- INLINE ASM (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#457-460)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage[0m
+INFO:Detectors:[92m
+Pragma version>=0.5<0.7.17 (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#10) uses lesser than
+solc-0.5.2 is not recommended for deployment
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity[0m
+INFO:Detectors:[92m
+Low level call in Address.sendValue(address,uint256) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#304-310):
+	- (success) = recipient.call.value(amount)() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#308)
+Low level call in SafeERC20.callOptionalReturn(IERC20,bytes) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#352-371):
+	- (success,returndata) = address(token).call(data) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#364)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls[0m
+INFO:Detectors:[92m
+Parameter Core.initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256)._dusd (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#526) is not in mixedCase
+Parameter Core.initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256)._stakeLPToken (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#527) is not in mixedCase
+Parameter Core.initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256)._oracle (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#528) is not in mixedCase
+Parameter Core.initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256)._redeemFactor (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#529) is not in mixedCase
+Parameter Core.initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256)._adminFee (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#530) is not in mixedCase
+Parameter Core.dusdToUsd(uint256,bool)._dusd (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#688) is not in mixedCase
+Parameter Core.whitelistPeak(address,uint256[],bool)._systemCoins (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#738) is not in mixedCase
+Parameter Core.setFee(uint256,uint256)._redeemFactor (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#773) is not in mixedCase
+Parameter Core.setFee(uint256,uint256)._adminFee (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#773) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions[0m
+INFO:Detectors:[92m
+Initializable._gap (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#415) is never used in Core (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#463-825)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-state-variables[0m
+INFO:Detectors:[92m
+portfolioValue() should be declared external:
+	- IPeak.portfolioValue() (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#385)
+transferOwnership(address) should be declared external:
+	- Ownable.transferOwnership(address) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#449-451)
+initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256) should be declared external:
+	- Core.initialize(IDUSD,IStakeLPToken,IOracle,uint256,uint256) (loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol#525-549)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external[0m
+INFO:Slither:./loops/0x34905bf0a490df50680a82a5ab089a963ee11224.sol analyzed (12 contracts with 46 detectors), 30 result(s) found
+INFO:Slither:[94mUse https://crytic.io/ to get access to additional detectors and Github integration[0m
+
+---------------------------------------------
+For contract 0x34905bf0a490df50680a82a5ab089a963ee11224.sol
+Tool Runtime = 1.0947108489999664 seconds
+#############################################

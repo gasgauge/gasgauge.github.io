@@ -1,0 +1,386 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: LiquidityPool
+Function name: createExchange(address)
+PC address: 586
+Estimated Gas Usage: 2718 - 37705
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:310
+
+uniswapFactory.createExchange(token)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2101000102000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: setup(address), txdata: 0x66d38203000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: createExchange(address), txdata: 0x1648f38e0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: LiquidityPool
+Function name: createExchange(address)
+PC address: 586
+Estimated Gas Usage: 2718 - 37705
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:310
+
+uniswapFactory.createExchange(token)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x28000000000200000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [ATTACKER], function: createExchange(address), txdata: 0x1648f38e0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 904
+Estimated Gas Usage: 7766 - 146724
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:342
+
+uniswapFactory.getExchange(tokenAddress)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: buy(address), txdata: 0xf088d5470000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [ATTACKER], function: addLiquidity(address), txdata: 0xe3412e3dadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadad, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 1076
+Estimated Gas Usage: 7766 - 146724
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:344
+
+uniswapExchange.getEthToTokenInputPrice(msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40207b7aa, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 1076
+Estimated Gas Usage: 7766 - 146724
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:344
+
+uniswapExchange.getEthToTokenInputPrice(msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [ATTACKER], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 1300
+Estimated Gas Usage: 7766 - 146724
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:346
+
+IERC20(tokenAddress).approve(address(uniswapExchange), tokenAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: buy(address), txdata: 0xf088d5470000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [CREATOR], function: addLiquidity(address), txdata: 0xe3412e3d000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 1300
+Estimated Gas Usage: 7766 - 146724
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:346
+
+IERC20(tokenAddress).approve(address(uniswapExchange), tokenAmount)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800b00, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0xb00, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: addLiquidity(address), txdata: 0xe3412e3dd1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 1490
+Estimated Gas Usage: 7766 - 146724
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:348
+
+uniswapExchange.addLiquidity.value(msg.value)(
+
+            tokenAmount,
+
+            tokenAmount,
+
+            now + 120
+
+            )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40101400000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x40000000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: addLiquidity(address), txdata: 0xe3412e3dd1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: LiquidityPool
+Function name: addLiquidity(address)
+PC address: 1490
+Estimated Gas Usage: 7766 - 146724
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:348
+
+uniswapExchange.addLiquidity.value(msg.value)(
+
+            tokenAmount,
+
+            tokenAmount,
+
+            now + 120
+
+            )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000400, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addLiquidity(address), txdata: 0xe3412e3d000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: LiquidityPool
+Function name: buy(address)
+PC address: 1744
+Estimated Gas Usage: 6123 - 110424
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:320
+
+uniswapFactory.getExchange(tokenAddress)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4002c5080000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: buy(address), txdata: 0xf088d5470000000000000000000000000000000000000000000000000000000000000000, value: 0x1
+Caller: [ATTACKER], function: buy(address), txdata: 0xf088d547adadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadad, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: LiquidityPool
+Function name: buy(address)
+PC address: 1916
+Estimated Gas Usage: 6123 - 110424
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:322
+
+uniswapExchange.getEthToTokenInputPrice(msg.value)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x201bfba, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: buy(address), txdata: 0xf088d5470000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: LiquidityPool
+Function name: buy(address)
+PC address: 2151
+Estimated Gas Usage: 6123 - 110424
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:324
+
+uniswapExchange.ethToTokenTransferOutput.value(msg.value)(
+
+            tokenAmount,
+
+            now + 120,
+
+            msg.sender
+
+            )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2230090200e008208, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [ATTACKER], function: buy(address), txdata: 0xf088d5472e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: LiquidityPool
+Function name: buy(address)
+PC address: 2151
+Estimated Gas Usage: 6123 - 110424
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_noloop/2/0xcfea8666972993ea7117027824f8dd13a56c9244.sol:324
+
+uniswapExchange.ethToTokenTransferOutput.value(msg.value)(
+
+            tokenAmount,
+
+            now + 120,
+
+            msg.sender
+
+            )
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addLiquidity(address), txdata: 0xe3412e3d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: buy(address), txdata: 0xf088d547d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xcfea8666972993ea7117027824f8dd13a56c9244.sol
+Tool Runtime = 306.58328622800036 seconds
+#############################################

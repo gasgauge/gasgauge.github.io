@@ -1,0 +1,502 @@
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: fallback
+PC address: 277
+Estimated Gas Usage: 71 - 166
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:1423
+
+require(msg.sender != tx.origin, "Do not send ETH directly")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: unknown, txdata: 0x, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addAToken(address[])
+PC address: 3401
+Estimated Gas Usage: 1588 - 4695
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:190
+
+require(isOwner(), "Ownable: caller is not the owner")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000080000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x20000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: addAToken(address[]), txdata: 0x661f799d0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addAToken(address[])
+PC address: 3652
+Estimated Gas Usage: 17151 - 131255
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:942
+
+IAToken(_aToken[i]).underlyingAssetAddress()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000a00000010, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addAToken(address[]), txdata: 0x661f799d0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000100010000010100000000000000000000000000000000000000000001000000000100000000000000000000, value: 0x0
+Caller: [CREATOR], function: addAToken(address[]), txdata: 0x661f799d000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020202020202020202020202020000000000000000000000000000000000000000020202020202020202020202deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addAToken(address[])
+PC address: 3652
+Estimated Gas Usage: 17151 - 131255
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:942
+
+IAToken(_aToken[i]).underlyingAssetAddress()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addAToken(address[]), txdata: 0x661f799d0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: addAToken(address[])
+PC address: 3802
+Estimated Gas Usage: 17151 - 131255
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:942
+
+aToken[_aToken[i]] = IAToken(_aToken[i]).underlyingAssetAddress()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addAToken(address[]), txdata: 0x661f799d00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: addAToken(address[])
+PC address: 3855
+Estimated Gas Usage: 9402 - 68054
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:942
+
+aToken[_aToken[i]] = IAToken(_aToken[i]).underlyingAssetAddress()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addAToken(address[]), txdata: 0x661f799d00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: renounceOwnership()
+PC address: 3887
+Estimated Gas Usage: 1186 - 1611
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:190
+
+require(isOwner(), "Ownable: caller is not the owner")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: renounceOwnership(), txdata: 0x715018a6, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[])
+PC address: 4667
+Estimated Gas Usage: 7853 - 28608
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:967
+
+path[path.length - 1]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40001080400040004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[]), txdata: 0x9e4b38c00000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000040, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addCToken(address[])
+PC address: 5464
+Estimated Gas Usage: 1521 - 4628
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:190
+
+require(isOwner(), "Ownable: caller is not the owner")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xc0000000008, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [ATTACKER], function: addCToken(address[]), txdata: 0xace8a5090000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addCToken(address[])
+PC address: 5715
+Estimated Gas Usage: 17084 - 131188
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:922
+
+ICompound(_cToken[i]).underlying()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addAToken(address[]), txdata: 0x661f799d0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000400140020202208010202002402020048000010000000000000000000000004080021040004080100040044040100820000040, value: 0x0
+Caller: [CREATOR], function: addCToken(address[]), txdata: 0xace8a509000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000028080808080808080808080800100000000040000040800200800080004000000808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addCToken(address[])
+PC address: 5715
+Estimated Gas Usage: 17084 - 131188
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:922
+
+ICompound(_cToken[i]).underlying()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addCToken(address[]), txdata: 0xace8a5090000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: addCToken(address[])
+PC address: 5865
+Estimated Gas Usage: 17084 - 131188
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:922
+
+cToken[_cToken[i]] = ICompound(_cToken[i]).underlying()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addCToken(address[]), txdata: 0xace8a50900000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: addCToken(address[])
+PC address: 5918
+Estimated Gas Usage: 9335 - 67987
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:922
+
+cToken[_cToken[i]] = ICompound(_cToken[i]).underlying()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addCToken(address[]), txdata: 0xace8a50900000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addYToken(address[])
+PC address: 6001
+Estimated Gas Usage: 1565 - 4672
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:190
+
+require(isOwner(), "Ownable: caller is not the owner")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: addYToken(address[]), txdata: 0xe689eb970000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: addYToken(address[])
+PC address: 6250
+Estimated Gas Usage: 17122 - 131226
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:932
+
+IIearn(_yToken[i]).token()
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x10000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: addYToken(address[]), txdata: 0xe689eb970000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000, value: 0x0
+
+==== Dependence on tx.origin ====
+SWC ID: 115
+Severity: Low
+Contract: Zapper_Swap_General_V1_1
+Function name: transferOwnership(address)
+PC address: 6485
+Estimated Gas Usage: 1251 - 1676
+Use of tx.origin as a part of authorization control.
+The tx.origin environment variable has been found to influence a control flow decision. Note that using tx.origin as a security control might cause a situation where a user inadvertently authorizes a smart contract to perform an action on their behalf. It is recommended to use msg.sender instead.
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:190
+
+require(isOwner(), "Ownable: caller is not the owner")
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38b0000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[])
+PC address: 12140
+Estimated Gas Usage: 8945 - 40521
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:992
+
+starts[0]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1080000080004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[]), txdata: 0x9e4b38c000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011001400140010801100110018001080101010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000af, value: 0x1
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[])
+PC address: 12238
+Estimated Gas Usage: 9377 - 41889
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:997
+
+starts[index + 1]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400064402, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[]), txdata: 0x9e4b38c00000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000080080010000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000280000000000000000000000000000000000000000000000000000000000000020, value: 0x1
+
+==== Exception State ====
+SWC ID: 110
+Severity: Medium
+Contract: Zapper_Swap_General_V1_1
+Function name: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[])
+PC address: 12446
+Estimated Gas Usage: 9700 - 45264
+An assertion violation was triggered.
+It is possible to trigger an assertion violation. Note that Solidity assert() statements should only be used to check invariants. Review the transaction trace generated for this issue and either make sure your program logic is correct, or use require() instead of assert() if your goal is to constrain user inputs or enforce preconditions. Remember to validate inputs from both callers (for instance, via passed arguments) and callees (for instance, via return values).
+--------------------
+In file: ./new_contracts/m_loop/6/0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol:1006
+
+poolData[poolIndex++]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: MultiExchangeSwap(address,address[],uint256,uint256,uint8[],uint8[],address[]), txdata: 0x9e4b38c00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000004200000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000070, value: 0x1
+
+
+
+---------------------------------------------
+For contract 0x2346722daa00ebbd0fc452c0e7ab7976bdafeae8.sol
+Tool Runtime = 10849.660553683992 seconds
+#############################################

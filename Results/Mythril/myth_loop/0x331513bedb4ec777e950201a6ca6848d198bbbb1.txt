@@ -1,0 +1,401 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CJOArtsGateway
+Function name: bulkWithdraw(address[],uint256[],uint256[],bytes32[])
+PC address: 3573
+Estimated Gas Usage: 18483 - 145689
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:246
+
+assetContract.safeTransferFrom(address(this), _to, _tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [SOMEGUY], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000010000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+Caller: [CREATOR], function: bulkWithdraw(address[],uint256[],uint256[],bytes32[]), txdata: 0xf592c79c000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CJOArtsGateway
+Function name: withdraw(address,uint256,uint256,bytes32)
+PC address: 3573
+Estimated Gas Usage: 17348 - 144554
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:246
+
+assetContract.safeTransferFrom(address(this), _to, _tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdraw(address,uint256,uint256,bytes32), txdata: 0x4250a6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000404802000010404040401800400400020080020000000000202004004200402, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CJOArtsGateway
+Function name: bulkWithdraw(address[],uint256[],uint256[],bytes32[])
+PC address: 3880
+Estimated Gas Usage: 18483 - 145689
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:252
+
+_to.transfer(_supportEther)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x42c00802818c0304, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: bulkWithdraw(address[],uint256[],uint256[],bytes32[]), txdata: 0xf592c79c000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: bulkWithdraw(address[],uint256[],uint256[],bytes32[])
+PC address: 3880
+Estimated Gas Usage: 18483 - 145689
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:252
+
+_to.transfer(_supportEther)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: c7c7c7c7c7c7c7c7c7c7c7c7deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: bulkWithdraw(address[],uint256[],uint256[],bytes32[]), txdata: 0xf592c79c000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: withdraw(address,uint256,uint256,bytes32)
+PC address: 4198
+Estimated Gas Usage: 17348 - 144554
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:226
+
+eventHashTransacted[_eventHash] = _desired
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40400000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 040404040404040404040404deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: withdraw(address,uint256,uint256,bytes32), txdata: 0x4250a6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101010100000000000000000000000000000000000000000000000000000004, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: withdraw(address,uint256,uint256,bytes32)
+PC address: 4212
+Estimated Gas Usage: 17348 - 144554
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:226
+
+eventHashTransacted[_eventHash] = _desired
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40400000000000001, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 040404040404040404040404deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: withdraw(address,uint256,uint256,bytes32), txdata: 0x4250a6f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101010100000000000000000000000000000000000000000000000000000004, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5170
+Estimated Gas Usage: 14883 - 156288
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:163
+
+_paused
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000101, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 020202020202020202020202deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5445
+Estimated Gas Usage: 14883 - 156288
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:230
+
+assetContract.ownerOf(_tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [SOMEGUY], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5445
+Estimated Gas Usage: 7698 - 78448
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:230
+
+assetContract.ownerOf(_tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x3040122f100, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdraw(address,uint256,uint256,bytes32), txdata: 0x4250a6f3000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000440000000080000000000000000400000001000000010000800012000, value: 0x1
+Caller: [ATTACKER], function: bulkDeposit(uint256[]), txdata: 0xeeeb019800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001a6a6a6a6a6a6a6a6deadbeefdeadbeefdeadbeefdeadbeefdeadbeefa6a6a6a6, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5643
+Estimated Gas Usage: 14883 - 156288
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:232
+
+assetContract
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000101, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 020202020202020202020202deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5889
+Estimated Gas Usage: 14883 - 156288
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:232
+
+assetContract.safeTransferFrom(owner, address(this), _tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x60012a10af000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x3000000000000001, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x2000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: withdraw(address,uint256,uint256,bytes32), txdata: 0x4250a6f30000000000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000402000000000000080002080000000000020100040008, value: 0x0
+Caller: [ATTACKER], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CJOArtsGateway
+Function name: deposit(uint256)
+PC address: 5889
+Estimated Gas Usage: 7330 - 78080
+Multiple calls are executed in the same transaction.
+This call is executed following another call within the same transaction. It is possible that the call never gets executed if a prior call fails permanently. This might be caused intentionally by a malicious callee. If possible, refactor the code such that each transaction only executes one external call or make sure that all callees can be trusted (i.e. they’re part of your own codebase).
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:232
+
+assetContract.safeTransferFrom(owner, address(this), _tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: deposit(uint256), txdata: 0xb6b55f250000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5889
+Estimated Gas Usage: 14883 - 156288
+Write to persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:232
+
+assetContract.safeTransferFrom(owner, address(this), _tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000101, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 020202020202020202020202deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [CREATOR], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe000000000000000000000000affeaffeaffeaffeaffeaffeaffeaffeaffeaffe00000000, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: CJOArtsGateway
+Function name: bulkDeposit(uint256[])
+PC address: 5889
+Estimated Gas Usage: 7698 - 78448
+Any sender can withdraw Ether from the contract account.
+Arbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:232
+
+assetContract.safeTransferFrom(owner, address(this), _tokenId)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x3ffffffffffffffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: , value: 0x0
+Caller: [CREATOR], function: withdraw(address,uint256,uint256,bytes32), txdata: 0x4250a6f3000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000018004200400014002040040008000080002040410800880081000000004080008, value: 0x1
+Caller: [ATTACKER], function: bulkDeposit(uint256[]), txdata: 0xeeeb019800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001a6a6a6a6a6a6a6a6deadbeefdeadbeefdeadbeefdeadbeefdeadbeefa6a6a6a6, value: 0x0
+
+==== State access after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CJOArtsGateway
+Function name: bulkWithdraw(address[],uint256[],uint256[],bytes32[])
+PC address: 6578
+Estimated Gas Usage: 18483 - 145689
+Read of persistent state following external call
+The contract account state is accessed after an external call to a user defined address. To prevent reentrancy issues, consider accessing the state only before the call, especially if the callee is untrusted. Alternatively, a reentrancy lock can be used to prevent untrusted callees from re-entering the contract in an intermediate state.
+--------------------
+In file: ./new_contracts/m_loop/2/0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol:72
+
+role.bearer[account]
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80000010004, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 808080808080808080808080deadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: bulkDeposit(uint256[]), txdata: 0xeeeb0198000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000, value: 0x0
+Caller: [CREATOR], function: bulkWithdraw(address[],uint256[],uint256[],bytes32[]), txdata: 0xf592c79c000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0x331513bedb4ec777e950201a6ca6848d198bbbb1.sol
+Tool Runtime = 10050.980456291 seconds
+#############################################

@@ -1,0 +1,60 @@
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Low
+Contract: GovernanceProxy
+Function name: trigger(address,bytes)
+PC address: 1681
+Estimated Gas Usage: 2241 - 39156
+A call to a user-supplied address is executed.
+An external message call to an address specified by the caller is executed. Note that the callee account might contain arbitrary code and could re-enter any function within this contract. Reentering the contract in an intermediate state may lead to unexpected behaviour. Make sure that no state modifications are executed after this call and/or reentrancy guards are in place.
+--------------------
+In file: ./new_contracts/m_noloop/9/0xAb7594A440e3354AFe1f0B9792EFb76Dd90fF71d.sol:57
+
+contr.call(params)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2000000100001798, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: trigger(address,bytes), txdata: 0xe9a4022400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+Caller: [SOMEGUY], function: trigger(address,bytes), txdata: 0xe9a40224a4a4a4a4a4a4a4a4a4a4a4a4deadbeefdeadbeefdeadbeefdeadbeefdeadbeef00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000, value: 0x0
+
+==== Unchecked return value from external call. ====
+SWC ID: 104
+Severity: Medium
+Contract: GovernanceProxy
+Function name: trigger(address,bytes)
+PC address: 1681
+Estimated Gas Usage: 2308 - 39506
+The return value of a message call is not checked.
+External calls return a boolean value. If the callee halts with an exception, 'false' is returned and execution continues in the caller. The caller should check whether an exception happened and react accordingly to avoid unexpected behavior. For example it is often desirable to wrap external calls in require() so the transaction is reverted if the call fails.
+--------------------
+In file: ./new_contracts/m_noloop/9/0xAb7594A440e3354AFe1f0B9792EFb76Dd90fF71d.sol:57
+
+contr.call(params)
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x80002032032, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], calldata: 000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: trigger(address,bytes), txdata: 0xe9a4022400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+Caller: [SOMEGUY], function: trigger(address,bytes), txdata: 0xe9a40224a4a40000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002, value: 0x0
+
+
+
+---------------------------------------------
+For contract 0xAb7594A440e3354AFe1f0B9792EFb76Dd90fF71d.sol
+Tool Runtime = 82.29382493300363 seconds
+#############################################
