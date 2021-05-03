@@ -4,7 +4,7 @@ Gas Gauge is designed to focus on gas-related vulnerabilities of Solidity Smart 
 
 ## Source Code, Benchmark and Exprimental Results
 
-You can view our source code, benchmark, and exprimental results as well as our case study on our [Github reposetori](https://github.com/gasgauge/gasgauge.github.io)
+You can view our source code, benchmark, and experimental results as well as our case study on our [Github repository.](https://github.com/gasgauge/gasgauge.github.io)
 
 
 ## Installation and Setup for Ubuntu
