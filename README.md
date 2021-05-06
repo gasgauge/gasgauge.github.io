@@ -24,7 +24,11 @@ $ sudo apt-get install -y pandoc
 $ sudo apt-get install -y git
 $ sudo apt-get install nodejs
 $ sudo apt-get install npm
+$ sudo apt install python-pip
+$ sudo apt install python3-pip
 $ pip install numpy
+$ pip3 install numpy
+
 ```
 
 ### Helper Tools:
@@ -32,7 +36,7 @@ $ pip install numpy
 ### 1. [Slither](https://github.com/crytic/slither) : 
 (Recommneded Method) Clone our repository and navigate to the folder "Slither"
 ```bash
-$ python3 setup.py install
+$ sudo python3 setup.py install
 ```
 Method 2:
 ```bash
@@ -44,14 +48,9 @@ $ pip3 install slither-analyzer
 $ npm install -g truffle
 $ npm install -g ganache-cli
 ```
+If the installation fails, it is most likely because Node.js is using an older version. Please update it to the newest version and try installing Truffle and Ganache again. 
 
 ### 3. [solc-select](https://github.com/crytic/solc-select) : 
-(Recommneded Method) Clone our repository and navigate to the folder "solc-select"
-```bash
-$ python3 setup.py
-```
-Method 2:
-
 ```bash
 $ pip3 install solc-select
 ```
@@ -71,6 +70,8 @@ $ solc-select install 0.8.1
 ```bash
 $ python3 run.py
 ```
+
+4. The tool will generate a report in the file specified as "REPORT_PATH" in run.py
 
 
 
