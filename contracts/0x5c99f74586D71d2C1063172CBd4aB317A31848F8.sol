@@ -2,6 +2,10 @@
  *Submitted for verification at Etherscan.io on 2020-09-22
 */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 63dd03e708c01fd8e0268bd14df0dc7b5cdb734c
 //pragma solidity ^0.5.13;
 pragma solidity >=0.5 <0.7.17;
 
